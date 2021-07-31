@@ -13,7 +13,8 @@ public:
 	void write(char*&);
 	operator int& ();
 
-	static bool valid(char*, size_t);
+	//check if there is a valid varInt in memory with the maximum size of 'max' bytes
+	static bool valid(char*, size_t max);
 };
 
 class varLong
@@ -28,5 +29,6 @@ public:
 	void write(char*&);
 	operator long long& ();
 
-	static bool valid(char*, size_t);
+	//check if there is a valid varLong in memory with the maximum size of 'max' bytes
+	static bool valid(char*, size_t max);
 };

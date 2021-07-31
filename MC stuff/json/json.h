@@ -1,5 +1,8 @@
 #pragma once
 
+//unused
+//WIP
+
 #include "json_base.h"
 #include "json_string.h"
 #include "json_int.h"

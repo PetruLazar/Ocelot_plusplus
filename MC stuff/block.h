@@ -1,5 +1,8 @@
 #pragma once
 
+//ununed at the moment
+//WIP
+
 const char* blockIds[] = {
 	"minecraft:acacia_button",
 	"minecraft:acacia_door",

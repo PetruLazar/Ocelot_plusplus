@@ -8,20 +8,15 @@ class nbt_float : public nbt
 public:
 	nbt_float(std::string name = "");
 	nbt_float(float, std::string name = "");
-	//~nbt_float();
 
-	//write tag to file
 	void write(std::fstream&, bool includeNameAndType = true);
-	//read tag from file
 	void read(std::fstream&, std::string name = "");
-	//write tag to buffer
 	void write(char*&, bool includeNameAndType = true);
-	//read tag from buffer
 	void read(char*&, std::string name = "");
-	//get the value of the tag as string
+	//get the value of the tag as a string
 	std::string getStringValue();
 
-	//get the value of a float tag
+	//get the value of the tag
 	float& vFloat();
 	operator float& ();
 };

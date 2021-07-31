@@ -24,9 +24,18 @@ public:
 private:
 	sf::TcpSocket* socket;
 	bool connected = true;
+	//info about buffering (bit mask)
+	//	bit 0 - buffering packet length
+	//  bit 1 - buffering packet
 	mask info = mask(0);
+	//length of awaiting packet
 	varInt len;
-	char lengthBuffer[3], * buffer = 0, * current;
+	//buffer for incoming packet length
+	char lengthBuffer[3],
+		//buffer for incoming packet
+		* buffer = 0,
+		//current position of any of the buffers
+		* current;
 
 public:
 	ConnectionState state;
@@ -35,14 +44,15 @@ public:
 	~Player();
 
 	void disconnect();
+	//check for incoming data on the socket
 	void updateNet();
-	void send(char*, ull);
+	//send data to player
+	void send(char* data, ull data_length);
 
 	bool operator==(sf::TcpSocket*);
 
 	static std::vector<Player*> players;
 
-	//static void registerDisconnection(Player*);
-	//static void registerDisconnection(ull i);
-	static void clearPlayers();
+	//clears the players list of disconnected players
+	static void clearDisconnectedPlayers();
 };

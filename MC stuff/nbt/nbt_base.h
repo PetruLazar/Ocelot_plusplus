@@ -39,17 +39,13 @@ public:
 	nbt(tag, std::string name = "");
 	virtual ~nbt() = 0;
 
-	//write a tag to file
 	virtual void write(std::fstream&, bool includeNameAndType = true) = 0;
-	//read a tag from file
+	//make sure to either use checkTag() or skip a byte manually
 	virtual void read(std::fstream&, std::string name = "") = 0;
-	//write tag to buffer
 	virtual void write(char*&, bool includeNameAndType = true) = 0;
-	//read tag from buffer
+	//make sure to either use checkTag() or skip a byte manually
 	virtual void read(char*&, std::string name = "") = 0;
-	//get the name of the tag
 	std::string getName();
-	//get the type of a tag
 	tag getType();
 
 	//get the value of any tag as a string
@@ -64,7 +60,7 @@ public:
 	virtual int& vInt();
 	//get the value of a long tag
 	virtual int64& vLong();
-	//get the value of a flaot tag
+	//get the value of a float tag
 	virtual float& vFloat();
 	//get the value of a double tag
 	virtual double& vDouble();
@@ -74,18 +70,19 @@ public:
 	virtual std::string& vString();
 	//get a sub-tag of a compound or list tag
 	virtual nbt& vTag(uint);
+	//get a sub-tag from a compound tag
 	virtual nbt& vTag(std::string);
-	//get a value of an int array tag
+	//get a value from an int array tag
 	virtual int& vInt(uint);
-	//get a value of a long array tag
+	//get a value from a long array tag
 	virtual int64& vLong(uint);
 	//get the size of an array tag
 	virtual uint getSize();
 	//resize a list, an array or a compound tag
 	virtual void resize(uint);
-	//remove a value from a list, an array, or a compound tag
+	//remove a value from a compound tag
 	virtual void remove(nbt*);
-	//add a new element to a list or a compound tag
+	//add a new element to a compound tag
 	virtual void add(nbt*);
 
 	//get the type of the elements of a list tag
@@ -95,7 +92,6 @@ public:
 	static bool checkTag(std::fstream&, tag = Compound);
 	//check if an nbt in memory contains the specified tag
 	static bool checkTag(char*&, tag = Compound);
-	//allocate a pointer of the specified type as nbt*
+	//allocate a pointer of the specified type
 	static nbt* getTagP(tag);
-	//static nbt** getTagArray(tag, int);
 };

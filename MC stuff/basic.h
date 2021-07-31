@@ -34,8 +34,16 @@ struct vector3
 	int x, y, z;
 };*/
 
+//compress/defalte data using zlib
+//return true for success, false otherwise
 bool zlibCompress(char* src, uint size, char* dest, uint maxSize, uint& trueSize, int level = 6, int flush = Z_FINISH);
+//decompress/inflate data using zlib
+//return true for success, false otherwise
 bool zlibDecompress(char* src, uint size, char* dest, uint maxSize, uint& trueSize, int flush = Z_FINISH);
 
+//compress/deflate data using gzip
+//return true for success, false otherwise
 bool gzipCompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int level = 6, int flush = Z_FINISH);
+//decompress/inflate data using gzip
+//return true for success, false otherwise
 bool gzipDecompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int flush = Z_FINISH);

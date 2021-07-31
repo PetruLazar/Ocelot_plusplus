@@ -7,8 +7,10 @@
 
 struct message
 {
+	//struct for each connection state
 	struct handshake
 	{
+		//possible packet ids during handshake
 		enum class id : int
 		{
 			standard = 0x00,
@@ -25,6 +27,7 @@ struct message
 	};
 	struct status
 	{
+		//possible packet ids during status
 		enum class id : int
 		{
 			response = 0x00,
@@ -47,6 +50,7 @@ struct message
 	};
 	struct login
 	{
+		//possible packet ids during login
 		enum class id : int
 		{
 			disconnect = 0x00,
@@ -77,6 +81,7 @@ struct message
 	};
 	struct play
 	{
+		//possible packet ids during play
 		enum class id
 		{
 
@@ -92,5 +97,6 @@ struct message
 		};
 	};
 
+	//dispatch a message from a player
 	static void dispatch(Player*, char*, size_t);
 };

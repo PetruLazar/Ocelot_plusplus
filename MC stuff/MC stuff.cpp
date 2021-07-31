@@ -1,6 +1,6 @@
 #include "endian.h"
 #include "varData.h"
-#include "nbt/nbt.h"
+#include "nbt.h"
 #include "chunk.h"
 #include "position.h"
 #include "mcString.h"
@@ -50,9 +50,7 @@ int main()
 		{
 			cout << "\nUnknown error.";
 		}
-		Player::clearPlayers();
-
-
+		Player::clearDisconnectedPlayers();
 	}
 
 	//fill an existing chunk with stone

@@ -139,7 +139,7 @@ void Player::registerDisconnection(ull i)
 {
 	players[i] = 0;
 }*/
-void Player::clearPlayers()
+void Player::clearDisconnectedPlayers()
 {
 	ull size = players.size();
 	for (ull i = 0; i < size; i++) if (!players[i]->connected)

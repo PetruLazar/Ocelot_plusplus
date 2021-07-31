@@ -10,26 +10,23 @@ public:
 	nbt_compound(std::vector<nbt*>, std::string name = "");
 	~nbt_compound();
 
-	//write tag to file
 	void write(std::fstream&, bool includeNameAndType = true);
-	//read tag from file
 	void read(std::fstream&, std::string name = "");
-	//write tag to buffer
 	void write(char*&, bool includeNameAndType = true);
-	//read tag from buffer
 	void read(char*&, std::string name = "");
-	//get the value of the tag as string
+	//get the value of the tag as a string
 	std::string getStringValue();
 
-	//get a tag from a compound tag
+	//get a tag from the compound tag
 	nbt& vTag(uint);
+	//get a tag from the compound tag
 	nbt& vTag(std::string);
 	nbt& operator[](uint);
 	nbt& operator[](std::string);
-	//get the size of an array tag
+	//get the size of the compound tag
 	uint getSize();
-	//remove a value from a list, an array, or a compound tag
+	//remove a tag from the compound tag
 	virtual void remove(nbt*);
-	//add a new element to a list or a compound tag
+	//add a new tag to the compound tag
 	virtual void add(nbt*);
 };

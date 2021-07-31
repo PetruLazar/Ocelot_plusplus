@@ -11,23 +11,19 @@ public:
 	nbt_long_array(int64*, int, std::string name = "");
 	~nbt_long_array();
 
-	//write tag to file
 	void write(std::fstream&, bool includeNameAndTtype = true);
-	//read tag from file
 	void read(std::fstream&, std::string name = "");
-	//write tag to buffer
 	void write(char*&, bool includeNameAndType = true);
-	//read tag from buffer
 	void read(char*&, std::string name = "");
 	//get the value of the tag as string
 	std::string getStringValue();
 
-	//get a value from a long array tag
+	//get a value from the array
 	int64& vLong(uint);
-	//get a value from a long array tag
+	//get a value from the array
 	int64& operator[](uint);
-	//get the size of an array tag
+	//get the size of the array
 	uint getSize();
-	//resize a list, an array or a compound tag
+	//resize the array
 	virtual void resize(uint);
 };
