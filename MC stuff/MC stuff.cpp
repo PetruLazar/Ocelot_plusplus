@@ -8,6 +8,7 @@
 //#include "particle.h"
 #include "player.h"
 #include "message.h"
+#include "options.h"
 //#include "json/json.h"
 using namespace std;
 
@@ -15,6 +16,7 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
+	Options::load();
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;

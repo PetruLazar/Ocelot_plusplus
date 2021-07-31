@@ -116,9 +116,24 @@ void Player::updateNet()
 }
 void Player::send(char* buffer, ull size)
 {
-	socket->setBlocking(true);
-	socket->send(buffer, size);
-	socket->setBlocking(false);
+	sf::Packet pack;
+	sockStat stat;
+	pack.append(buffer, size);
+
+	do
+	{
+		stat = socket->send(pack);
+	} while (stat == sockStat::Partial);
+
+	switch (stat)
+	{
+	case sockStat::Disconnected:
+		disconnect();
+		throw socketDisconnected;
+	case sockStat::Error:
+		disconnect();
+		throw socketError;
+	}
 }
 
 bool Player::operator==(sf::TcpSocket* s)
@@ -126,19 +141,6 @@ bool Player::operator==(sf::TcpSocket* s)
 	return socket == s;
 }
 
-/*void Player::registerDisconnection(Player* p)
-{
-	ull size = players.size();
-	for (ull i = 0; i < size; i++) if (players[i] == p)
-	{
-		players[i] = 0;
-		break;
-	}
-}
-void Player::registerDisconnection(ull i)
-{
-	players[i] = 0;
-}*/
 void Player::clearDisconnectedPlayers()
 {
 	ull size = players.size();

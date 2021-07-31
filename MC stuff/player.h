@@ -34,9 +34,8 @@ private:
 	char lengthBuffer[3],
 		//buffer for incoming packet
 		* buffer = 0,
-		//current position of any of the buffers
+		//current position of any of the receiving buffers
 		* current;
-
 public:
 	ConnectionState state;
 
