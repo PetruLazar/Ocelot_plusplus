@@ -19,7 +19,11 @@ int main()
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
 
-	listener.listen(port);
+	if (listener.listen(port) != sockStat::Done)
+	{
+		system("pause");
+		return 0;
+	}
 	cout << "Server started.";
 	listener.setBlocking(false);
 	bool keepAlive = true;
@@ -48,7 +52,7 @@ int main()
 		}
 		Player::clearPlayers();
 
-		
+
 	}
 
 	//fill an existing chunk with stone
