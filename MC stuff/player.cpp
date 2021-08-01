@@ -19,6 +19,7 @@ Player::~Player()
 
 void Player::disconnect()
 {
+	std::cout << "\nDisconnecting.";
 	socket->disconnect();
 	connected = false;
 }
@@ -49,7 +50,6 @@ void Player::updateNet()
 		case sockStat::Error:
 			disconnect();
 			throw socketError;
-			break;
 		case sockStat::Disconnected:
 			disconnect();
 			throw socketDisconnected;
@@ -78,7 +78,6 @@ void Player::updateNet()
 		case sockStat::Error:
 			disconnect();
 			throw socketError;
-			break;
 		case sockStat::Disconnected:
 			disconnect();
 			throw socketDisconnected;
@@ -107,7 +106,6 @@ void Player::updateNet()
 		case sockStat::Error:
 			disconnect();
 			throw socketError;
-			break;
 		case sockStat::Disconnected:
 			disconnect();
 			throw socketDisconnected;
@@ -116,13 +114,13 @@ void Player::updateNet()
 }
 void Player::send(char* buffer, ull size)
 {
-	sf::Packet pack;
+	ull sent;
 	sockStat stat;
-	pack.append(buffer, size);
-
 	do
 	{
-		stat = socket->send(pack);
+		stat = socket->send(buffer, size, sent);
+		buffer += sent;
+		size -= sent;
 	} while (stat == sockStat::Partial);
 
 	switch (stat)

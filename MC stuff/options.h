@@ -3,8 +3,12 @@
 
 class Options
 {
+	typedef std::map<std::string, void*> Properties;
+
 	static const char optionsFileName[];
-	static std::map<std::string, void*> properties;
+	static Properties properties;
+	static const void* find(const std::string&);
+
 public:
 	static void load();
 

@@ -1,129 +1,242 @@
 #include "options.h"
 #include <sstream>
 
+using namespace std;
+
+const char* elemNotFound = "Setting not found.";
 const char Options::optionsFileName[] = "server.properties";
-std::map<std::string, void*> Options::properties;
+Options::Properties Options::properties;
 
 void Options::load()
 {
 	//WIP
-	std::ifstream options(optionsFileName);
-	std::string line, name, type;
-	while (std::getline(options, line))
+	ifstream options(optionsFileName);
+	string line, name, type;
+	while (getline(options, line))
 	{
-		std::stringstream stream(line);
+		stringstream stream(line);
 		stream >> name >> type;
-		std::string value;
-		std::getline(stream, value);
+		string value;
+		getline(stream, value);
 		value.erase(0, value.find_first_not_of(' '));
+		void* ptr = nullptr;
 		if (type == "bool")
 		{
-			bool* p = new bool;
-			if (value == "true") *p = true;
-			else if (value == "false") *p = false;
+			if (value == "true") ptr = new bool(true);
+			else if (value == "false") ptr = new bool(false);
 			else
 			{
-				std::cout << "\nUnknown bool value \"" << value << "\"";
+				cout << "Invalid bool value: \"" << value << "\".\n";
 				continue;
 			}
 		}
 		else if (type == "sbyte")
 		{
-			char* p = new char;
+			try
+			{
+				int v = stoi(value);
+				if (v < 0xffffff80i32 || v>0x7f) throw 0;
+				ptr = new char(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid sbyte value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "byte")
 		{
-			byte* p = new byte;
+			try
+			{
+				//long has the same size as int
+				uint v = stoul(value);
+				if (v > 0xff) throw 0;
+				ptr = new byte(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid byte value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "short")
 		{
-			short* p = new short;
+			try
+			{
+				int v = stoi(value);
+				if (v > 0x7fff || v < 0xffff8000i32) throw 0;
+				ptr = new short(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid short value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "ushort")
 		{
-			ush* p = new ush;
+			try
+			{
+				uint v = stoul(value);
+				if (v > 0xffff) throw 0;
+				ptr = new ush(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid ushort value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "int")
 		{
-			int* p = new int;
+			try
+			{
+				int v = stoi(value);
+				ptr = new int(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid int value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "uint")
 		{
-			uint* p = new uint;
+			try
+			{
+				uint v = stoul(value);
+				ptr = new uint(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid uint value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "long")
 		{
-			int64* p = new int64;
+			try
+			{
+				int64 v = stoll(value);
+				ptr = new int64(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid long value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "ulong")
 		{
-			ull* p = new ull;
+			try
+			{
+				ull v = stoull(value);
+				ptr = new ull(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid ulong value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "float")
 		{
-			float* p = new float;
+			try
+			{
+				float v = stof(value);
+				ptr = new float(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid float value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "double")
 		{
-			double* p = new double;
+			try
+			{
+				double v = stod(value);
+				ptr = new double(v);
+			}
+			catch (...)
+			{
+				cout << "Invalid double value: \"" << value << "\".\n";
+				continue;
+			}
 		}
 		else if (type == "string")
 		{
-			std::string* p = new std::string;
+			ptr = new string(value);
 		}
 		else
 		{
-			std::cout << "Unkown type \"" << type << "\"";
+			cout << "Unkown type \"" << type << "\".\n";
 			continue;
+		}
+
+		if (!properties.insert(pair<string, void*>(name, ptr)).second)
+		{
+			cout << "Could not add \"" << name << "\" as a setting.\n";
 		}
 	}
 }
 
-const bool& Options::getBool(const std::string&)
+const void* Options::find(const string& key)
 {
-	throw "WIP";
+	Properties::iterator itr = properties.find(key);
+	if (itr == properties.end())
+	{
+		throw elemNotFound;
+	}
+	return itr->second;
 }
-const byte& Options::getByte(const std::string&)
+
+const bool& Options::getBool(const string& key)
 {
-	throw "WIP";
+	return *(bool*)find(key);
 }
-const char& Options::getSByte(const std::string&)
+const byte& Options::getByte(const string& key)
 {
-	throw "WIP";
+	return *(byte*)find(key);
 }
-const short& Options::getShort(const std::string&)
+const char& Options::getSByte(const string& key)
 {
-	throw "WIP";
+	return *(char*)find(key);
 }
-const ush& Options::getUShort(const std::string&)
+const short& Options::getShort(const string& key)
 {
-	throw "WIP";
+	return *(short*)find(key);
 }
-const int& Options::getInt(const std::string&)
+const ush& Options::getUShort(const string& key)
 {
-	throw "WIP";
+	return *(ush*)find(key);
 }
-const uint& Options::getUInt(const std::string&)
+const int& Options::getInt(const string& key)
 {
-	throw "WIP";
+	return *(int*)find(key);
 }
-const int64& Options::getLong(const std::string&)
+const uint& Options::getUInt(const string& key)
 {
-	throw "WIP";
+	return *(uint*)find(key);
 }
-const ull& Options::getULong(const std::string&)
+const int64& Options::getLong(const string& key)
 {
-	throw "WIP";
+	return *(int64*)find(key);
 }
-const float& Options::getFloat(const std::string&)
+const ull& Options::getULong(const string& key)
 {
-	throw "WIP";
+	return *(ull*)find(key);
 }
-const double& Options::getDouble(const std::string&)
+const float& Options::getFloat(const string& key)
 {
-	throw "WIP";
+	return *(float*)find(key);
 }
-const std::string& Options::getString(const std::string&)
+const double& Options::getDouble(const string& key)
 {
-	throw "WIP";
+	return *(double*)find(key);
+}
+const string& Options::getString(const string& key)
+{
+	return *(string*)find(key);
 }

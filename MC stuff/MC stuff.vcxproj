@@ -96,6 +96,7 @@
     <ClCompile Include="json\json_compound.cpp" />
     <ClCompile Include="json\json_int.cpp" />
     <ClCompile Include="json\json_string.cpp" />
+    <ClCompile Include="log.cpp" />
     <ClCompile Include="MC stuff.cpp" />
     <ClCompile Include="mcString.cpp" />
     <ClCompile Include="message.cpp" />
@@ -131,6 +132,7 @@
     <ClInclude Include="json\json_compound.h" />
     <ClInclude Include="json\json_int.h" />
     <ClInclude Include="json\json_string.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="mcString.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="nbt\nbt.h" />
@@ -151,7 +153,14 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="position.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="varData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MC stuff.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="server.properties" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

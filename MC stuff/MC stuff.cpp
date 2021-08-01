@@ -10,6 +10,10 @@
 #include "message.h"
 #include "options.h"
 //#include "json/json.h"
+#include "log.h"
+
+#include "conio.h"
+
 using namespace std;
 
 const int mc_zlib_compression_level = 6;
@@ -17,11 +21,12 @@ const int mc_zlib_compression_level = 6;
 int main()
 {
 	Options::load();
+	log::initialize();
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
 
-	if (listener.listen(port) != sockStat::Done)
+	if (listener.listen(Options::getUShort("port")) != sockStat::Done)
 	{
 		system("pause");
 		return 0;
@@ -34,9 +39,19 @@ int main()
 		//accept connections
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
-			Player::players.push_back(new Player(buffer));
-			buffer = new sf::TcpSocket;
-			cout << "\nConnection registered.";
+			if (Player::players.size() == 1)
+			{
+				//refuse connection - debugging purposes
+				buffer->disconnect();
+				cout << "\nConnection refused.";
+			}
+			else
+			{
+				//accept connection
+				Player::players.push_back(new Player(buffer));
+				buffer = new sf::TcpSocket;
+				cout << "\nConnection accepted.";
+			}
 		}
 
 		//receive messages
@@ -53,6 +68,7 @@ int main()
 			cout << "\nUnknown error.";
 		}
 		Player::clearDisconnectedPlayers();
+		if (_kbhit()) break;
 	}
 
 	//fill an existing chunk with stone
@@ -202,6 +218,7 @@ int main()
 		debugfile.close();
 	}*/
 
+	delete buffer;
 	_CrtDumpMemoryLeaks();
 
 	return 0;
