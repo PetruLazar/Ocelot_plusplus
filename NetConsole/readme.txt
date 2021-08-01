@@ -7,7 +7,7 @@ The name of each packet has the following format: <id><source>_to_<destination>.
 examples: 0c_to_s.bin
           1s_to_c.bin
 
-# serverconfig.txt
+serverconfig.txt:
 
 example: "127.0.0.1 25565 8888"
 
