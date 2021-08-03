@@ -24,14 +24,8 @@ int main()
 	log::initialize();
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
-
-	/*sf::TcpSocket* buffer = new sf::TcpSocket;
-	sf::TcpSocket* buffer = new sf::TcpSocket[5];
-	delete buffer;
-	delete[] buffer;*/
-
 	sf::TcpListener listener;
-	//_new();
+
 	if (listener.listen(Options::getUShort("port")) != sockStat::Done)
 	{
 		system("pause");
