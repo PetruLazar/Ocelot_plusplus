@@ -160,7 +160,11 @@
     <ResourceCompile Include="MC stuff.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="debug.bin" />
     <None Include="server.properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="debug.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

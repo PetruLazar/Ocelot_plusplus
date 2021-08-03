@@ -2,7 +2,6 @@
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, mcString& serverAdress, Port port, varInt nextState)
 {
-	std::cout << "\nStandard handshake received.";
 	p->state = (ConnectionState)(int)nextState;
 }
 void message::handshake::receive::legacy(Player* p, byte payload)
@@ -12,9 +11,8 @@ void message::handshake::receive::legacy(Player* p, byte payload)
 
 void message::status::send::respose(Player* p, mcString jsonResponse)
 {
-	std::cout << "\nSending status response.";
 	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[4 * 1024], * start = data;
+		* data = new char[1024 * 1024], * start = data;
 
 	varInt id_ = (int)id::response;
 
@@ -24,15 +22,23 @@ void message::status::send::respose(Player* p, mcString jsonResponse)
 	varInt len = int(data - start);
 	len.write(lendata);
 
-	p->send(lendatastart, lendata - lendatastart);
-	p->send(start, data - start);
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
 
 	delete[] lendatastart;
 	delete[] start;
 }
 void message::status::send::pong(Player* p, blong payload)
 {
-	std::cout << "\nSending status pong.";
 	char* lendata = new char[4], * lendatastart = lendata,
 		* data = new char[9], * start = data;
 
@@ -44,8 +50,17 @@ void message::status::send::pong(Player* p, blong payload)
 	len = int(data - start);
 	len.write(lendata);
 
-	p->send(lendatastart, lendata - lendatastart);
-	p->send(start, data - start);
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
 
 	p->disconnect();
 
@@ -71,12 +86,10 @@ void message::status::send::pong(Player* p, blong payload)
 
 void message::status::receive::request(Player* p)
 {
-	std::cout << "\nStatus request received.";
 	message::status::send::respose(p, "{\"version\":{\"name\":\"1.17.1\",\"protocol\":756},\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"Tim\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":{\"text\":\"Minigames (" + std::to_string(rand() % 100) + ")\n    by \",\"extra\":[{\"text\":\"The\",\"color\":\"#aa6946\"},{\"text\":\"Golden\",\"color\":\"gold\"},{\"text\":\"Snowman\",\"color\":\"white\"}]}}");
 }
 void message::status::receive::ping(Player* p, blong payload)
 {
-	std::cout << "\nStatus ping received.";
 	message::status::send::pong(p, payload);
 }
 
@@ -92,8 +105,17 @@ void message::login::send::disconnect(Player* p, mcString reason)
 	varInt length = int(data - start);
 	length.write(lendata);
 
-	p->send(lendatastart, lendata - lendatastart);
-	p->send(start, data - start);
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
 
 	p->disconnect();
 
@@ -120,7 +142,6 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 
 void message::dispatch(Player* p, char* data, size_t size)
 {
-	std::cout << "\nDispatching message:";
 	varInt id;
 	id.read(data);
 	switch (p->state)

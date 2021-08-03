@@ -234,5 +234,13 @@
     <None Include="server.properties">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="debug.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="debug.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

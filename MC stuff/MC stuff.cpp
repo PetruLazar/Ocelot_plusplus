@@ -24,8 +24,14 @@ int main()
 	log::initialize();
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
-	sf::TcpListener listener;
 
+	/*sf::TcpSocket* buffer = new sf::TcpSocket;
+	sf::TcpSocket* buffer = new sf::TcpSocket[5];
+	delete buffer;
+	delete[] buffer;*/
+
+	sf::TcpListener listener;
+	//_new();
 	if (listener.listen(Options::getUShort("port")) != sockStat::Done)
 	{
 		system("pause");
@@ -68,6 +74,7 @@ int main()
 			cout << "\nUnknown error.";
 		}
 		Player::clearDisconnectedPlayers();
+		//makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
 		if (_kbhit()) break;
 	}
 
@@ -218,7 +225,10 @@ int main()
 		debugfile.close();
 	}*/
 
+	Options::free();
 	delete buffer;
+
+	//triggers some false alarms: check with DEBUG_ALLOCATIONS (basic.h) defined to validate output
 	_CrtDumpMemoryLeaks();
 
 	return 0;

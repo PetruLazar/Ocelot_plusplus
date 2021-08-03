@@ -11,6 +11,7 @@ class Options
 
 public:
 	static void load();
+	static void free();
 
 	static const bool& getBool(const std::string&);
 	static const byte& getByte(const std::string&);

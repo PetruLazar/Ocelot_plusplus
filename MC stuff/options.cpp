@@ -180,6 +180,15 @@ void Options::load()
 			cout << "Could not add \"" << name << "\" as a setting.\n";
 		}
 	}
+	options.close();
+}
+void Options::free()
+{
+	for (pair<string, void*> p : properties)
+	{
+		delete p.second;
+	}
+	properties.clear();
 }
 
 const void* Options::find(const string& key)

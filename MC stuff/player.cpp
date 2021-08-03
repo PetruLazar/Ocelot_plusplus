@@ -19,7 +19,6 @@ Player::~Player()
 
 void Player::disconnect()
 {
-	std::cout << "\nDisconnecting.";
 	socket->disconnect();
 	connected = false;
 }
@@ -145,7 +144,7 @@ void Player::clearDisconnectedPlayers()
 	for (ull i = 0; i < size; i++) if (!players[i]->connected)
 	{
 		delete players[i];
-		for (ull j = i + 1; j < size; j++) players[j - 1] = players[j];
+		for (ull j = i-- + 1; j < size; j++) players[j - 1] = players[j];
 		players.pop_back();
 		size--;
 	}

@@ -14,6 +14,19 @@
 #define null *nullptr;
 #define sockStat sf::Socket::Status
 
+//comment or decomment this define to switch between custom new operator and usual new operator
+//#define DEBUG_ALLOCATIONS
+
+#ifdef DEBUG_ALLOCATIONS
+
+void* operator new(size_t s);
+void* operator new[](size_t s);
+
+void operator delete(void*, size_t);
+void operator delete[](void*, size_t);
+
+#endif
+
 typedef unsigned char byte;
 
 typedef unsigned short ush;
@@ -36,7 +49,7 @@ struct vector3
 
 //compress/defalte data using zlib
 //return true for success, false otherwise
-bool zlibCompress(char* src, uint size, char* dest, uint maxSize, uint& trueSize, int level = 6, int flush = Z_FINISH);
+bool zlibCompress(char* src, uint size, char* dest, uint maxSize, uint & trueSize, int level = 6, int flush = Z_FINISH);
 //decompress/inflate data using zlib
 //return true for success, false otherwise
 bool zlibDecompress(char* src, uint size, char* dest, uint maxSize, uint& trueSize, int flush = Z_FINISH);
