@@ -19,7 +19,7 @@ struct message
 
 		struct receive
 		{
-			static void standard(Player*, varInt protocolVersion, mcString& serverAdress, Port port, varInt nextState);
+			static void standard(Player*, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState);
 			//no length prefix
 			//id is 'byte'
 			static void legacy(Player*, byte payload);
@@ -39,7 +39,7 @@ struct message
 
 		struct send
 		{
-			static void respose(Player*, mcString jsonResponse);
+			static void respose(Player*, const mcString& jsonResponse);
 			static void pong(Player*, blong);
 		};
 		struct receive
@@ -66,7 +66,7 @@ struct message
 
 		struct send
 		{
-			static void disconnect(Player*, mcString reason);
+			static void disconnect(Player*, const mcString& reason);
 			static void encryptionRequest(Player*, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken);
 			//static void success(Player*, UUID uuid, mcString username); - UUID not implemented
 			static void setCompression(Player*, varInt threshold);
@@ -74,7 +74,7 @@ struct message
 		};
 		struct receive
 		{
-			static void start(Player*, mcString username);
+			static void start(Player*, const mcString& username);
 			static void encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken);
 			//static void loginPluginResponse(Player*, varInt messageId, bool successful, byte* data);
 		};

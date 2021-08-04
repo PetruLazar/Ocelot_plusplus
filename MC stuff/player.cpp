@@ -25,7 +25,7 @@ void Player::disconnect()
 void Player::updateNet()
 {
 	if (!connected) return;
-	ull received;
+	ull received = 0;
 	if (info & bufferingLength)
 	{
 		ull oldReceived = current - lengthBuffer;
@@ -114,7 +114,7 @@ void Player::updateNet()
 void Player::send(char* buffer, ull size)
 {
 	ull sent;
-	sockStat stat;
+	sockStat stat = sockStat::Error;
 	do
 	{
 		stat = socket->send(buffer, size, sent);

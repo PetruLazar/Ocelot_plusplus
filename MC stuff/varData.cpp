@@ -14,7 +14,7 @@ void varInt::read(std::fstream& is)
 		offset += 7;
 	} while (b & 0x80);
 }
-void varInt::write(std::fstream& os)
+void varInt::write(std::fstream& os) const
 {
 	uint c = (uint)v;
 	byte b;
@@ -38,7 +38,7 @@ void varInt::read(char*& buffer)
 		offset += 7;
 	} while (b & 0x80);
 }
-void varInt::write(char*& buffer)
+void varInt::write(char*& buffer) const
 {
 	uint c = (uint)v;
 	byte b;
@@ -79,7 +79,7 @@ void varLong::read(std::fstream& is)
 		offset += 7;
 	} while (b & 0x80);*/
 }
-void varLong::write(std::fstream& os)
+void varLong::write(std::fstream& os) const
 {
 	ull c = (ull)v;
 	byte b;
@@ -103,7 +103,7 @@ void varLong::read(char*& buffer)
 		offset += 7;
 	} while (b & 0x80);
 }
-void varLong::write(char*& buffer)
+void varLong::write(char*& buffer) const
 {
 	ull c = (ull)v;
 	byte b;

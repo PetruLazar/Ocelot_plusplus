@@ -1,6 +1,7 @@
 #include "message.h"
+#include "options.h"
 
-void message::handshake::receive::standard(Player* p, varInt protocolVersion, mcString& serverAdress, Port port, varInt nextState)
+void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
 	p->state = (ConnectionState)(int)nextState;
 }
@@ -9,7 +10,7 @@ void message::handshake::receive::legacy(Player* p, byte payload)
 	throw "Legacy handshake not yet implemented";
 }
 
-void message::status::send::respose(Player* p, mcString jsonResponse)
+void message::status::send::respose(Player* p, const mcString& jsonResponse)
 {
 	char* lendata = new char[4], * lendatastart = lendata,
 		* data = new char[1024 * 1024], * start = data;
@@ -86,14 +87,14 @@ void message::status::send::pong(Player* p, blong payload)
 
 void message::status::receive::request(Player* p)
 {
-	message::status::send::respose(p, "{\"version\":{\"name\":\"1.17.1\",\"protocol\":756},\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"Tim\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":{\"text\":\"Minigames (" + std::to_string(rand() % 100) + ")\n    by \",\"extra\":[{\"text\":\"The\",\"color\":\"#aa6946\"},{\"text\":\"Golden\",\"color\":\"gold\"},{\"text\":\"Snowman\",\"color\":\"white\"}]}}");
+	message::status::send::respose(p, "{" + Options::version + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"Tim\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
 }
 void message::status::receive::ping(Player* p, blong payload)
 {
 	message::status::send::pong(p, payload);
 }
 
-void message::login::send::disconnect(Player* p, mcString reason)
+void message::login::send::disconnect(Player* p, const mcString& reason)
 {
 	varInt id = (int)id::disconnect;
 	char* lendata = new char[4], * lendatastart = lendata,
@@ -131,7 +132,7 @@ void message::login::send::setCompression(Player*, varInt threshold)
 	throw "compression not supported";
 }
 
-void message::login::receive::start(Player* p, mcString username)
+void message::login::receive::start(Player* p, const mcString& username)
 {
 	login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
 }

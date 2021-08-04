@@ -11,7 +11,6 @@
 #include "options.h"
 //#include "json/json.h"
 #include "log.h"
-
 #include "conio.h"
 
 using namespace std;
@@ -20,13 +19,12 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
-	Options::load();
 	log::initialize();
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
 
-	if (listener.listen(Options::getUShort("port")) != sockStat::Done)
+	if (listener.listen(Options::port()) != sockStat::Done)
 	{
 		system("pause");
 		return 0;
@@ -219,7 +217,6 @@ int main()
 		debugfile.close();
 	}*/
 
-	Options::free();
 	delete buffer;
 
 	//triggers some false alarms: check with DEBUG_ALLOCATIONS (basic.h) defined to validate output

@@ -8,7 +8,7 @@ void Position::read(std::fstream& fs)
 {
 	v.read(fs);
 }
-void Position::write(std::fstream& fs)
+void Position::write(std::fstream& fs) const
 {
 	v.write(fs);
 }
@@ -16,30 +16,30 @@ void Position::read(char*& buffer)
 {
 	v.read(buffer);
 }
-void Position::write(char*& buffer)
+void Position::write(char*& buffer) const
 {
 	v.write(buffer);
 }
 
-int Position::x()
+int Position::x() const
 {
-	int ret = v >> 38;
+	int ret = (ull&)v >> 38;
 	if (ret >> 25) return ret ^ 0xfc000000;
 	return ret;
 }
-int Position::y()
+int Position::y() const
 {
-	int ret = v & 0xfff;
+	int ret = (ull&)v & 0xfff;
 	if (ret >> 11) return ret ^ 0xfffff000;
 	return ret;
 }
-int Position::z()
+int Position::z() const
 {
-	int ret = v << 26 >> 38;
+	int ret = (ull&)v << 26 >> 38;
 	if (ret >> 25) return ret ^ 0xfc000000;
 	return ret;
 }
-sf::Vector3i Position::get()
+sf::Vector3i Position::get() const
 {
 	return sf::Vector3i(x(), y(), z());
 }

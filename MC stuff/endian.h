@@ -13,7 +13,7 @@ template <class T> class bigEndian
 public:
 	bigEndian() : v(0) { }
 	bigEndian(T value) : v(value) { }
-	void write(std::fstream& os)
+	void write(std::fstream& os) const
 	{
 		//write the bytes in reverse
 		for (int i = sizeof(T) - 1; i >= 0; i--) os.write((char*)&v + i, 1);
@@ -23,7 +23,7 @@ public:
 		//read the bytes in reverse
 		for (int i = sizeof(T) - 1; i >= 0; i--) is.read((char*)&v + i, 1);
 	}
-	void write(char*& buffer)
+	void write(char*& buffer) const
 	{
 		for (int i = sizeof(T) - 1; i >= 0; i--) buffer[i] = ((char*)&v)[sizeof(T) - 1 - i];
 		buffer += sizeof(T);

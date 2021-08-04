@@ -3,26 +3,27 @@
 
 class Options
 {
-	typedef std::map<std::string, void*> Properties;
-
 	static const char optionsFileName[];
-	static Properties properties;
-	static const void* find(const std::string&);
+
+	static ush _port;
+	static int _max_players;
+	static std::string _level_name, _motd;
+	static sf::IpAddress _ip;
+
+	//private constructor to disallow object of this class
+	Options();
+	~Options();
+
+	//
+	static Options options;
 
 public:
-	static void load();
-	static void free();
+	//there are not included in server.properties
+	static const std::string version;
 
-	static const bool& getBool(const std::string&);
-	static const byte& getByte(const std::string&);
-	static const char& getSByte(const std::string&);
-	static const short& getShort(const std::string&);
-	static const ush& getUShort(const std::string&);
-	static const int& getInt(const std::string&);
-	static const uint& getUInt(const std::string&);
-	static const int64& getLong(const std::string&);
-	static const ull& getULong(const std::string&);
-	static const float& getFloat(const std::string&);
-	static const double& getDouble(const std::string&);
-	static const std::string& getString(const std::string&);
+	static ush port();
+	static int max_players();
+	static const std::string & level_name();
+	static const std::string& motd();
+	static const sf::IpAddress& ip();
 };

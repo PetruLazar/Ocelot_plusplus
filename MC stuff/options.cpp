@@ -3,11 +3,170 @@
 
 using namespace std;
 
-const char* elemNotFound = "Setting not found.";
+//const char* elemNotFound = "Setting not found.";
 const char Options::optionsFileName[] = "server.properties";
-Options::Properties Options::properties;
+ush Options::_port = 25565;
+int Options::_max_players = 100;
+std::string Options::_level_name = "world", Options::_motd = "{\"text\":\"A Minecraft server.\"}";
+sf::IpAddress Options::_ip = sf::IpAddress::Any;
 
-void Options::load()
+Options Options::options;
+
+const string Options::version = "\"version\":{\"name\":\"1.17.1\",\"protocol\":756}";
+
+ull parseUnsigned(const string& name, const string& value, ull linenumber)
+{
+	ull v;
+	try
+	{
+		v = stoull(value);
+	}
+	catch (out_of_range)
+	{
+		cout << "Error on line " << linenumber << ": value " << value << " too big for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (invalid_argument)
+	{
+		cout << "Error on line " << linenumber << ": value " << value << " is invalid for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (...)
+	{
+		cout << "Unknown error on line " << linenumber << " during value evaluation.\n";
+		throw 0;
+	}
+	return v;
+}
+int64 parse(const string& name, const string& value, ull linenumber)
+{
+	int64 v;
+	try
+	{
+		v = stoll(value);
+	}
+	catch (out_of_range)
+	{
+		cout << "Error on line " << linenumber << ": value " << value << " too big for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (invalid_argument)
+	{
+		cout << "Error on line " << linenumber << ": value " << value << " is invalid for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (...)
+	{
+		cout << "Unknown error on line " << linenumber << " during value evaluation.\n";
+		throw 0;
+	}
+	return v;
+}
+ush parseUShort(const string& name, const string& value, ull linenumber)
+{
+	ull v;
+	try
+	{
+		v = parseUnsigned(name, value, linenumber);
+		if (v > 0xffff) throw out_of_range(0);
+	}
+	catch (out_of_range)
+	{
+		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (...)
+	{
+		throw 0;
+	}
+	return (ush)v;
+}
+int parseInt(const string& name, const string& value, ull linenumber)
+{
+	int64 v;
+	try
+	{
+		v = parse(name, value, linenumber);
+		if (v > 0x7fffffffi64 || v < 0xffffffff80000000i64) throw out_of_range(0);
+	}
+	catch (out_of_range)
+	{
+		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (...)
+	{
+		throw 0;
+	}
+	return (int)v;
+}
+
+Options::Options()
+{
+	ifstream opt(optionsFileName);
+	char* line = new char[4096];
+	ull linenumber = 0;
+	while (opt.getline(line, 4096))
+	{
+		linenumber++;
+		char* str_value = strchr(line, '=');
+		if (!str_value)
+		{
+			cout << "Error on line " << linenumber << ": expected an '='.\n";
+			continue;
+		}
+		*(str_value++) = 0;
+		string name = line, value = str_value;
+		if (name == "port")
+		{
+			try
+			{
+				_port = parseUShort(name, value, linenumber);
+			}
+			catch (...)
+			{
+				continue;
+			}
+		}
+		else if (name == "ip")
+		{
+			_ip = value;
+		}
+		else if (name == "max-players")
+		{
+			try
+			{
+				_max_players = parseInt(name, value, linenumber);
+			}
+			catch (...)
+			{
+				continue;
+			}
+		}
+		else if (name == "motd")
+		{
+			_motd = value;
+		}
+		else
+		{
+			cout << "Error on line " << linenumber << ": unkown property name \"" << name << "\".\n";
+		}
+	}
+	opt.close();
+	delete[] line;
+}
+Options::~Options()
+{
+
+}
+
+ush Options::port() { return _port; }
+int Options::max_players() { return _max_players; }
+const string& Options::level_name() { return _level_name; }
+const string& Options::motd() { return _motd; }
+const sf::IpAddress& Options::ip() { return _ip; }
+
+/*void Options::load()
 {
 	//WIP
 	ifstream options(optionsFileName);
@@ -248,4 +407,4 @@ const double& Options::getDouble(const string& key)
 const string& Options::getString(const string& key)
 {
 	return *(string*)find(key);
-}
+}*/

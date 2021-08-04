@@ -11,14 +11,14 @@ public:
 	Position(sf::Vector3i);
 
 	void read(std::fstream&);
-	void write(std::fstream&);
+	void write(std::fstream&) const;
 	void read(char*&);
-	void write(char*&);
+	void write(char*&) const;
 
-	int x();
-	int y();
-	int z();
-	sf::Vector3i get();
+	int x() const;
+	int y() const;
+	int z() const;
+	sf::Vector3i get() const;
 
 	void setX(int);
 	void setY(int);

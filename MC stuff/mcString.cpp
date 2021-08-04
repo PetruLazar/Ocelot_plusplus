@@ -13,7 +13,7 @@ void mcString::read(std::fstream& fs)
 	assign(data, len);
 	delete[] data;
 }
-void mcString::write(std::fstream& fs)
+void mcString::write(std::fstream& fs) const
 {
 	varInt len = (int)length();
 	len.write(fs);
@@ -26,7 +26,7 @@ void mcString::read(char*& buffer)
 	assign(buffer, len);
 	buffer += len;
 }
-void mcString::write(char*& buffer)
+void mcString::write(char*& buffer) const
 {
 	varInt len = (int)length();
 	len.write(buffer);
