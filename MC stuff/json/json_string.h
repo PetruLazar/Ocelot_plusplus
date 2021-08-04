@@ -1,15 +1,16 @@
 #pragma once
 #include "json_base.h"
-class json_string : private json_base
+class json_string : public json
 {
 	std::string v;
-public:
 
+public:
 	json_string(std::string name);
 	json_string(std::string name, std::string value);
 
-	std::string value();
+	std::string stringValue();
 
-	operator std::string();
+	std::string& value();
+	operator std::string& ();
+	void operator=(const std::string&);
 };
-

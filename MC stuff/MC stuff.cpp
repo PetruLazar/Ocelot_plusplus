@@ -9,7 +9,7 @@
 #include "player.h"
 #include "message.h"
 #include "options.h"
-//#include "json/json.h"
+#include "json/json.h"
 #include "log.h"
 #include "conio.h"
 
