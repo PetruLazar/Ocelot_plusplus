@@ -1,7 +1,7 @@
 #include "nbt_compound.h"
-nbt_compound::nbt_compound(const std::string& name) : nbt(Compound, name) { }
-nbt_compound::nbt_compound(const std::vector <nbt*>& v, const std::string& name) : nbt(Compound, name), values(v) { }
-nbt_compound::nbt_compound(nbt** v, uint s, const std::string& name) : nbt(Compound, name)
+
+nbt_compound::nbt_compound(const std::string& name, const std::vector <nbt*>& v) : nbt(Compound, name), values(v) { }
+nbt_compound::nbt_compound(const std::string& name, nbt** v, uint s) : nbt(Compound, name)
 {
 	for (uint i = 0; i < s; i++) values.push_back(v[i]);
 	delete[] v;
@@ -12,6 +12,7 @@ nbt_compound::~nbt_compound()
 		//possible error: do NOT use the same vector<> to construct multiple compound tags
 		delete e;
 }
+
 void nbt_compound::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
@@ -91,7 +92,7 @@ std::string nbt_compound::getStringValue() const
 {
 	std::string ret = "{";
 
-	for (nbt* e : values) 
+	for (nbt* e : values)
 		ret += e->to_string() + ',';
 	ret.pop_back();
 	ret += '}';

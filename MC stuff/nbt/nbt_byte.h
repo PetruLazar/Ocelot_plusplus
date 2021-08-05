@@ -6,8 +6,7 @@ class nbt_byte : public nbt
 	char value;
 
 public:
-	nbt_byte(const std::string& name = "");
-	nbt_byte(char, const std::string& name = "");
+	nbt_byte(const std::string& name = "", char value = 0);
 
 	void write(std::fstream&, bool includeNameAndType = true) const;
 	void read(std::fstream&, const std::string& name = "");

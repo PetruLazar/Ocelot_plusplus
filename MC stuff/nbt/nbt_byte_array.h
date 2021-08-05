@@ -7,8 +7,7 @@ class nbt_byte_array : public nbt
 	buint _size;
 
 public:
-	nbt_byte_array(const std::string& name = "");
-	nbt_byte_array(char*, int, const std::string& name = "");
+	nbt_byte_array(const std::string& name = "", char* values = nullptr, int size = 0);
 	~nbt_byte_array();
 
 	void write(std::fstream&, bool includeNameAndType = true) const;

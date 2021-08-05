@@ -7,8 +7,7 @@ class nbt_int_array : public nbt
 	buint _size;
 
 public:
-	nbt_int_array(const std::string& name = "");
-	nbt_int_array(int*, int, const std::string& name = "");
+	nbt_int_array(const std::string& name = "", int* values = nullptr, int size = 0);
 	~nbt_int_array();
 
 	void write(std::fstream&, bool includeNameAndType = true) const;

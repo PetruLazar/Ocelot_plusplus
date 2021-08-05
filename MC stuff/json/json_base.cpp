@@ -3,7 +3,6 @@
 
 const char typeError[] = "Invalid json element type.";
 
-json::json(type t) : t(t) { }
 json::json(type t, const std::string& name) : t(t), name(name) { }
 json::~json() { }
 
@@ -39,13 +38,13 @@ json* json::allocate(type tp)
 	case none:
 		return nullptr;
 	case integer:
-		return new json_int("");
+		return new json_int();
 	case string:
-		return new json_string("");
+		return new json_string();
 	case array:
-		return new json_array("");
+		return new json_array();
 	case compound:
-		return new json_compound("");
+		return new json_compound("", nullptr);
 	}
 	throw typeError;
 }

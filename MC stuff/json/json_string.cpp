@@ -1,6 +1,5 @@
 #include "json_string.h"
 
-json_string::json_string(std::string name) : json(string, name) { }
 json_string::json_string(std::string name, std::string value) : json(string, name), v(value) { }
 
 std::string json_string::stringValue() { return '"' + v + '"'; }

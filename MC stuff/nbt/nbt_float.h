@@ -6,8 +6,7 @@ class nbt_float : public nbt
 	bigEndian<float> value;
 
 public:
-	nbt_float(const std::string& name = "");
-	nbt_float(float, const std::string& name = "");
+	nbt_float(const std::string& name = "", float value = 0);
 
 	void write(std::fstream&, bool includeNameAndType = true) const;
 	void read(std::fstream&, const std::string& name = "");

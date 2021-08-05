@@ -1,12 +1,12 @@
 #include "nbt_long_array.h"
-nbt_long_array::nbt_long_array(const std::string& name) : nbt(LongArray, name), values(nullptr), _size(0) { }
-nbt_long_array::nbt_long_array(int64* v, int s, const std::string& name) : nbt(LongArray, name), values((blong*)v), _size(s) { }
+nbt_long_array::nbt_long_array(const std::string& name, int64* v, int s) : nbt(LongArray, name), values((blong*)v), _size(s) { }
 nbt_long_array::~nbt_long_array()
 {
 	delete values;
 	values = nullptr;
 	_size = 0;
 }
+
 void nbt_long_array::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

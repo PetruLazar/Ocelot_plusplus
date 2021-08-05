@@ -1,7 +1,7 @@
 #include "nbt_int.h"
-nbt_int::nbt_int(const std::string& name) : nbt(Int, name) { }
-nbt_int::nbt_int(int v, const std::string& name) : nbt(Int, name), value(v) { }
-//nbt_int::~nbt_int() { }
+
+nbt_int::nbt_int(const std::string& name, int v) : nbt(Int, name), value(v) { }
+
 void nbt_int::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

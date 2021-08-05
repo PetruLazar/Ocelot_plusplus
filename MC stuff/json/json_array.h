@@ -7,8 +7,7 @@ class json_array : public json
 	type childType;
 
 public:
-	json_array(const std::string& name);
-	json_array(const std::string& name, json** values, ull size);
+	json_array(const std::string& name = "", json** values = nullptr, ull size = 0);
 	~json_array();
 
 	std::string stringValue();

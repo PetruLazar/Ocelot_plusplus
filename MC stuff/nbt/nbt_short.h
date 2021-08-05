@@ -6,8 +6,7 @@ class nbt_short : public nbt
 	bigEndian<short> value;
 
 public:
-	nbt_short(const std::string& name = "");
-	nbt_short(short, const std::string& name = "");
+	nbt_short(const std::string& name = "", short value = 0);
 
 	void write(std::fstream&, bool includeNameAndType = true) const;
 	void read(std::fstream&, const std::string& name = "");

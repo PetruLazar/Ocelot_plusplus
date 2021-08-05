@@ -1,7 +1,7 @@
 #include "nbt_byte.h"
-nbt_byte::nbt_byte(const std::string& name) : nbt(Byte, name) { }
-nbt_byte::nbt_byte(char v, const std::string& name) : nbt(Byte, name), value(v) { }
-//nbt_byte::~nbt_byte() { }
+
+nbt_byte::nbt_byte(const std::string& name, char v) : nbt(Byte, name), value(v) { }
+
 void nbt_byte::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

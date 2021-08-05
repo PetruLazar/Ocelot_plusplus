@@ -1,7 +1,7 @@
 #include "nbt_double.h"
-nbt_double::nbt_double(const std::string& name) : nbt(Double, name) { }
-nbt_double::nbt_double(double v, const std::string& name) : nbt(Double, name), value(v) { }
-//nbt_double::~nbt_double() { }
+
+nbt_double::nbt_double(const std::string& name, double v) : nbt(Double, name), value(v) { }
+
 void nbt_double::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

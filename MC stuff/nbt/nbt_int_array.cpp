@@ -1,12 +1,13 @@
 #include "nbt_int_array.h"
-nbt_int_array::nbt_int_array(const std::string& name) : nbt(IntArray, name), values(nullptr), _size(0) { }
-nbt_int_array::nbt_int_array(int* v, int s, const std::string& name) : nbt(IntArray, name), values((bint*)v), _size(s) { }
+
+nbt_int_array::nbt_int_array(const std::string& name, int* v, int s) : nbt(IntArray, name), values((bint*)v), _size(s) { }
 nbt_int_array::~nbt_int_array()
 {
 	delete[] values;
 	values = nullptr;
 	_size = 0;
 }
+
 void nbt_int_array::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

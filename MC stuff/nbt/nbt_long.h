@@ -6,9 +6,8 @@ class nbt_long : public nbt
 	bigEndian<int64> value;
 
 public:
-	nbt_long(const std::string& name = "");
-	nbt_long(int64, const std::string& name = "");
-	
+	nbt_long(const std::string& name = "", int64 value = 0);
+
 	void write(std::fstream&, bool includeNameAndType = true) const;
 	void read(std::fstream&, const std::string& name = "");
 	void write(char*&, bool includeNameAndType = true) const;

@@ -26,7 +26,7 @@ nbt* nbt::getTagP(tag t)
 	case List:
 		return new nbt_list;
 	case Compound:
-		return new nbt_compound;
+		return new nbt_compound("", nullptr);
 	case IntArray:
 		return new nbt_int_array;
 	case LongArray:

@@ -6,8 +6,7 @@ class nbt_double : public nbt
 	bigEndian<double> value;
 
 public:
-	nbt_double(const std::string& name = "");
-	nbt_double(double, const std::string& name = "");
+	nbt_double(const std::string& name = "", double value = 0);
 
 	void write(std::fstream&, bool includeNameAndType = true) const;
 	void read(std::fstream&, const std::string& name = "");

@@ -6,9 +6,8 @@ class nbt_compound : public nbt
 	std::vector<nbt*> values;
 
 public:
-	nbt_compound(const std::string& name = "");
-	nbt_compound(const std::vector<nbt*>&, const std::string& name = "");
-	nbt_compound(nbt** values, uint size, const std::string& name = "");
+	nbt_compound(const std::string& name = "", const std::vector<nbt*>& values = std::vector<nbt*>());
+	nbt_compound(const std::string& name = "", nbt** values = nullptr, uint size = 0);
 	~nbt_compound();
 
 	void write(std::fstream&, bool includeNameAndType = true) const;

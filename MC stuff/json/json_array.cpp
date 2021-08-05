@@ -3,11 +3,11 @@
 const char invalidArrayElements[] = "Not all elements of the array are of the same type.";
 const char outOfBounds[] = "Index out of array bounds.";
 
-json_array::json_array(const std::string& name) : json(array, name), s(0), v(0), childType(none) { }
 json_array::json_array(const std::string& name, json** values, ull size) : json(array, name), s(size), v(values)
 {
 	if (!s)
 	{
+		if (v) delete[] v;
 		v = nullptr;
 		return;
 	}
@@ -61,4 +61,8 @@ void json_array::resize(ull ns)
 	for (ull i = 0; i < mins; i++) nv[i] = v[i];
 	for (ull i = mins; i < s; i++) if (v[i]) delete v[i];
 	for (ull i = mins; i < ns; i++) nv[i] = allocate(childType);
+
+	if (v) delete[] v;
+	v = nv;
+	s = ns;
 }

@@ -1,12 +1,13 @@
 #include "nbt_byte_array.h"
-nbt_byte_array::nbt_byte_array(const std::string& name) : nbt(ByteArray, name), values(nullptr), _size(0) { }
-nbt_byte_array::nbt_byte_array(char* v, int s, const std::string& name) : nbt(ByteArray, name), values(v), _size(s) { }
+
+nbt_byte_array::nbt_byte_array(const std::string& name, char* v, int s) : nbt(ByteArray, name), values(v), _size(s) { }
 nbt_byte_array::~nbt_byte_array()
 {
 	delete values;
 	values = nullptr;
 	_size = 0;
 }
+
 void nbt_byte_array::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

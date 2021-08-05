@@ -9,8 +9,7 @@ class nbt_list : public nbt
 	tag childType;
 
 public:
-	nbt_list(const std::string& name = "");
-	nbt_list(nbt**, int, const std::string& name = "");
+	nbt_list(const std::string& name = "", nbt** values = nullptr, int size = 0);
 	~nbt_list();
 
 	void write(std::fstream&, bool includeNameAndType = true)const;

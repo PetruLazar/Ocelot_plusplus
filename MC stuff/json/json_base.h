@@ -13,9 +13,10 @@ public:
 		compound
 	};
 
-	json(type);
-	json(type, const std::string&);
+	json(type, const std::string& name = "");
 	virtual ~json() = 0;
+
+	//virtual void parse(const std::string) = 0;
 
 	//get the name of a json object
 	std::string getName();

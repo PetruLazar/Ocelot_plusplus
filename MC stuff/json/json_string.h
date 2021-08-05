@@ -5,8 +5,7 @@ class json_string : public json
 	std::string v;
 
 public:
-	json_string(std::string name);
-	json_string(std::string name, std::string value);
+	json_string(std::string name = "", std::string value = "");
 
 	std::string stringValue();
 

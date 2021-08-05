@@ -1,7 +1,7 @@
 #include "nbt_short.h"
-nbt_short::nbt_short(const std::string& name) : nbt(Short, name) { }
-nbt_short::nbt_short(short v, const std::string& name) : nbt(Short, name), value(v) { }
-//nbt_short::~nbt_short() { }
+
+nbt_short::nbt_short(const std::string& name, short v) : nbt(Short, name), value(v) { }
+
 void nbt_short::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

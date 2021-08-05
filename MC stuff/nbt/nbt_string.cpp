@@ -1,7 +1,7 @@
 #include "nbt_string.h"
-nbt_string::nbt_string(const std::string& name) : nbt(String, name) { }
-nbt_string::nbt_string(const std::string& v, const std::string& name) : nbt(String,name), value(v) { }
-//nbt_string::~nbt_string() { }
+
+nbt_string::nbt_string(const std::string& name, const std::string& v) : nbt(String, name), value(v) { }
+
 void nbt_string::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

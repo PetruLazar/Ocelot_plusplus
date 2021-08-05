@@ -1,7 +1,7 @@
 #include "nbt_float.h"
-nbt_float::nbt_float(const std::string& name) : nbt(Float, name) { }
-nbt_float::nbt_float(float v, const std::string& name) : nbt(Float, name), value(v) { }
-//nbt_float::~nbt_float() { }
+
+nbt_float::nbt_float(const std::string& name, float v) : nbt(Float, name), value(v) { }
+
 void nbt_float::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)

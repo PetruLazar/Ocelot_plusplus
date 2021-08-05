@@ -6,8 +6,7 @@ class nbt_int : public nbt
 	bint value;
 
 public:
-	nbt_int(const std::string& name = "");
-	nbt_int(int, const std::string& name = "");
+	nbt_int(const std::string& name = "", int value = 0);
 
 	void write(std::fstream&, bool includeNameAndType = true) const;
 	void read(std::fstream&, const std::string& name = "");

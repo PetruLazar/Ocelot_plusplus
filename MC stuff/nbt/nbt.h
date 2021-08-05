@@ -16,35 +16,35 @@
 //example of constructing an nbt compound tag in memory and editing it
 /*int main()
 {
-	nbt_compound c(new nbt * [12]{
-			new nbt_byte(4,"Byte"),
-			new nbt_short(-3,"Short"),
-			new nbt_int(48,"Int"),
-			new nbt_long(-849,"Long"),
-			new nbt_string("salutari","String"),
-			new nbt_double(15.75,"Double"),
-			new nbt_float(6.25,"Float") ,
-			new nbt_byte_array(new char[3]{45,16,-7},3,"ByteArray"),
-			new nbt_int_array(new int[3]{
+	nbt_compound c("", new nbt * [12]{
+			new nbt_byte("Byte",4),
+			new nbt_short("Short",-3),
+			new nbt_int("Int",48),
+			new nbt_long("Long",-849),
+			new nbt_string("String","salutari"),
+			new nbt_double("Double",15.75),
+			new nbt_float("Float",6.25) ,
+			new nbt_byte_array("ByteArray",new char[3]{45,16,-7},3),
+			new nbt_int_array("IntArray",new int[3]{
 				0x4f9c645a,
 				0x080fcd5a,
 				0x9f57c62ai32
-			},3,"IntArray"),
-			new nbt_long_array(new int64[6]{
+			},3),
+			new nbt_long_array("LongArray",new int64[6]{
 			0x4f9c645a080fcd5ai64,
 			0x4f9c645a9f57c624i64,
 			0x9f57c62080fcd5bai64,
 			0x080fcd5a4f9c6457i64,
 			0x9f57c624f9c645a3i64,
-			0x080fcd5a9f57c628i64},6,"LongArray"),
-			new nbt_list(new nbt * [3]{
-				new nbt_float(7.4375f,"Float0"),
-				new nbt_float(1.5625f,"Float1"),
-				new nbt_float(-3.1875f,"Float2")
-			},3,"List"),
-			new nbt_compound(new nbt * [4]{new nbt_string("Petru","FirstName"),new nbt_string("Lazar","LastName"),new nbt_int(19,"Age"),new nbt_string("Laz","Location")},4,"Compound")
+			0x080fcd5a9f57c628i64},6),
+			new nbt_list("List",new nbt * [3]{
+				new nbt_float("Float0",7.4375f),
+				new nbt_float("Float1",1.5625f),
+				new nbt_float("Float2",-3.1875f)
+			},3),
+			new nbt_compound("Compound",new nbt * [4]{new nbt_string("FirstName","Petru"),new nbt_string("LastName","Lazar"),new nbt_int("Age",19),new nbt_string("Location","Laz")},4)
 		}, 12);
-	cout << c.to_string();
+	std::cout << c.to_string();
 
 	c["Long"] = -100i64;
 	c["Short"] = 0x8000i16;
@@ -58,7 +58,7 @@
 	c["List"].vTag(0) = 512i16;
 	c["List"].vTag(1) = 513i16;
 
-	cout << "\n\n" << c.to_string();
+	std::cout << "\n\n" << c.to_string();
 
 	return 0;
 }*/

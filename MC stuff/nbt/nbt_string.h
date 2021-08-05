@@ -6,8 +6,7 @@ class nbt_string : public nbt
 	std::string value;
 
 public:
-	nbt_string(const std::string& name = "");
-	nbt_string(const std::string&, const std::string& name = "");
+	nbt_string(const std::string& name = "", const std::string& value = "");
 
 	void write(std::fstream&, bool includeNameAndType = true) const;
 	void read(std::fstream&, const std::string& name = "");

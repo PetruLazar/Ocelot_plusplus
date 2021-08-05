@@ -7,8 +7,7 @@ class nbt_long_array : public nbt
 	buint _size;
 
 public:
-	nbt_long_array(const std::string& name = "");
-	nbt_long_array(int64*, int, const std::string& name = "");
+	nbt_long_array(const std::string& name = "", int64* values = nullptr, int size = 0);
 	~nbt_long_array();
 
 	void write(std::fstream&, bool includeNameAndTtype = true) const;

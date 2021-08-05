@@ -1,6 +1,5 @@
 #include "nbt_list.h"
-nbt_list::nbt_list(const std::string& name) : nbt(List, name), values(nullptr), _size(0), childType(End) { }
-nbt_list::nbt_list(nbt** v, int s, const std::string& name) : nbt(List, name), values(v), _size(s)
+nbt_list::nbt_list(const std::string& name, nbt** v, int s) : nbt(List, name), values(v), _size(s)
 {
 	childType = values[0]->getType();
 	for (uint i = 1; i < _size; i++) if (values[i]->getType() != childType) throw "Not all elements of the list are of the same type";
@@ -17,6 +16,7 @@ nbt_list::~nbt_list()
 	values = nullptr;
 	_size = 0;
 }
+
 void nbt_list::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
