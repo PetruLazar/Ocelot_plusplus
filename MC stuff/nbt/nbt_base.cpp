@@ -5,6 +5,8 @@ nbt* nbt::getTagP(tag t)
 {
 	switch (t)
 	{
+	case End:
+		return nullptr;
 	case Byte:
 		return new nbt_byte;
 	case Short:
@@ -30,7 +32,7 @@ nbt* nbt::getTagP(tag t)
 	case LongArray:
 		return new nbt_long_array;
 	}
-	return nullptr;
+	throw typeError;
 }
 /*nbt** nbt::getTagArray(tag t, int s)
 {
@@ -92,7 +94,7 @@ void nbt::readName(std::fstream& is)
 	name.assign(cname, nameSize);
 	delete[] cname;
 }
-void nbt::writeName(std::fstream& os)
+void nbt::writeName(std::fstream& os) const
 {
 	bigEndian<ush> nameSize = (ush)name.length();
 	nameSize.write(os);
@@ -108,7 +110,7 @@ void nbt::readName(char*& buffer)
 
 	buffer += nameSize;
 }
-void nbt::writeName(char*& buffer)
+void nbt::writeName(char*& buffer) const
 {
 	bigEndian<ush> nameSize = (ush)name.length();
 	nameSize.write(buffer);
@@ -124,17 +126,29 @@ double& nbt::vDouble() { throw typeError; }
 char& nbt::vByte(uint) { throw typeError; }
 std::string& nbt::vString() { throw typeError; }
 nbt& nbt::vTag(uint) { throw typeError; }
-nbt& nbt::vTag(std::string) { throw typeError; }
+nbt& nbt::vTag(const std::string&) { throw typeError; }
 int& nbt::vInt(uint) { throw typeError; }
 int64& nbt::vLong(uint) { throw typeError; }
-uint nbt::getSize() { throw typeError; }
+uint nbt::getSize() const { throw typeError; }
 void nbt::resize(uint) { throw typeError; }
 void nbt::remove(nbt*) { throw typeError; }
+void nbt::remove(const std::string&) { throw typeError; }
 void nbt::add(nbt*) { throw typeError; }
-nbt::tag nbt::getElemType() { throw typeError; }
+nbt::tag nbt::getElemType() const { throw typeError; }
+void nbt::changeType(tag) { throw typeError; }
 
-std::string nbt::to_string()
+std::string nbt::to_string() const
 {
 	if (!name.empty()) return name + ':' + getStringValue();
 	return getStringValue();
 }
+void nbt::operator=(char) { throw typeError; }
+void nbt::operator=(short) { throw typeError; }
+void nbt::operator=(int) { throw typeError; }
+void nbt::operator=(int64) { throw typeError; }
+void nbt::operator=(float) { throw typeError; }
+void nbt::operator=(double) { throw typeError; }
+void nbt::operator=(const std::string&) { throw typeError; }
+void nbt::operator=(const char*) { throw typeError; }
+
+nbt& nbt::operator[](const std::string&) { throw typeError; }

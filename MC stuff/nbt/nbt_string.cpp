@@ -1,8 +1,8 @@
 #include "nbt_string.h"
-nbt_string::nbt_string(std::string name) : nbt(String, name) { }
-nbt_string::nbt_string(std::string v, std::string name) : nbt(String), value(v) { }
+nbt_string::nbt_string(const std::string& name) : nbt(String, name) { }
+nbt_string::nbt_string(const std::string& v, const std::string& name) : nbt(String,name), value(v) { }
 //nbt_string::~nbt_string() { }
-void nbt_string::write(std::fstream& os, bool iNT)
+void nbt_string::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -16,7 +16,7 @@ void nbt_string::write(std::fstream& os, bool iNT)
 	size.write(os);
 	os.write(value.c_str(), size);
 }
-void nbt_string::read(std::fstream& is, std::string name)
+void nbt_string::read(std::fstream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 
@@ -32,7 +32,7 @@ void nbt_string::read(std::fstream& is, std::string name)
 
 	delete[] cstr;
 }
-void nbt_string::write(char*& buffer, bool iNT)
+void nbt_string::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -45,7 +45,7 @@ void nbt_string::write(char*& buffer, bool iNT)
 	size.write(buffer);
 	for (ush i = 0; i < size; i++) *(buffer++) = value[i];
 }
-void nbt_string::read(char*& end, std::string name)
+void nbt_string::read(char*& end, const std::string& name)
 {
 	char* buffer = end;
 
@@ -58,13 +58,11 @@ void nbt_string::read(char*& end, std::string name)
 	value.assign(end, size);
 	end += size;
 }
-std::string nbt_string::getStringValue()
+std::string nbt_string::getStringValue() const
 {
 	return "\"" + value + "\"";
 }
-/*std::string nbt_string::to_string()
-{
-
-}*/
 std::string& nbt_string::vString() { return value; }
 nbt_string::operator std::string& () { return value; }
+void nbt_string::operator=(const std::string& v) { value = v; }
+void nbt_string::operator=(const char* v) { value = v; }

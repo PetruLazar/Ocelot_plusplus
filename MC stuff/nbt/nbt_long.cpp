@@ -1,8 +1,8 @@
 #include "nbt_long.h"
-nbt_long::nbt_long(std::string name) : nbt(Long, name) { }
-nbt_long::nbt_long(int64 v, std::string name) : nbt(Long, name), value(v) { }
+nbt_long::nbt_long(const std::string& name) : nbt(Long, name) { }
+nbt_long::nbt_long(int64 v, const std::string& name) : nbt(Long, name), value(v) { }
 //nbt_long::~nbt_long() { }
-void nbt_long::write(std::fstream& os, bool iNT)
+void nbt_long::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -13,7 +13,7 @@ void nbt_long::write(std::fstream& os, bool iNT)
 
 	value.write(os);
 }
-void nbt_long::read(std::fstream& is, std::string name)
+void nbt_long::read(std::fstream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 
@@ -22,7 +22,7 @@ void nbt_long::read(std::fstream& is, std::string name)
 
 	value.read(is);
 }
-void nbt_long::write(char*& buffer, bool iNT)
+void nbt_long::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -33,7 +33,7 @@ void nbt_long::write(char*& buffer, bool iNT)
 
 	value.write(buffer);
 }
-void nbt_long::read(char*& end, std::string name)
+void nbt_long::read(char*& end, const std::string& name)
 {
 	char* buffer = end;
 
@@ -42,13 +42,10 @@ void nbt_long::read(char*& end, std::string name)
 
 	value.read(end);
 }
-std::string nbt_long::getStringValue()
+std::string nbt_long::getStringValue() const
 {
 	return std::to_string(value) + 'l';
 }
-/*std::string nbt_long::to_string()
-{
-
-}*/
 int64& nbt_long::vLong() { return value; }
 nbt_long::operator int64& () { return value; }
+void nbt_long::operator=(int64 v) { value = v; }

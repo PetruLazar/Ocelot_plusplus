@@ -1,6 +1,7 @@
 #include "json_array.h"
 
 const char invalidArrayElements[] = "Not all elements of the array are of the same type.";
+const char outOfBounds[] = "Index out of array bounds.";
 
 json_array::json_array(const std::string& name) : json(array, name), s(0), v(0), childType(none) { }
 json_array::json_array(const std::string& name, json** values, ull size) : json(array, name), s(size), v(values)
@@ -29,8 +30,16 @@ std::string json_array::stringValue()
 	return ret + ']';
 }
 
-json& json_array::value(int i) { return *v[i]; }
-json& json_array::operator[](int i) { return *v[i]; }
+json& json_array::value(int i) 
+{ 
+	return operator[](i);
+}
+json& json_array::operator[](int i)
+{ 
+	if (i < 0) throw outOfBounds;
+	if (i >= s) throw outOfBounds;
+	return *v[i]; 
+}
 
 json::type json_array::getChildType() { return childType; }
 void json_array::changeType(type newType)

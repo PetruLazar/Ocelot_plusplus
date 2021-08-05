@@ -7,22 +7,22 @@ class nbt_int_array : public nbt
 	buint _size;
 
 public:
-	nbt_int_array(std::string name = "");
-	nbt_int_array(int*, int, std::string name = "");
+	nbt_int_array(const std::string& name = "");
+	nbt_int_array(int*, int, const std::string& name = "");
 	~nbt_int_array();
 
-	void write(std::fstream&, bool includeNameAndType = true);
-	void read(std::fstream&, std::string name = "");
-	void write(char*&, bool includeNameAndType = true);
-	void read(char*&, std::string name = "");
+	void write(std::fstream&, bool includeNameAndType = true) const;
+	void read(std::fstream&, const std::string& name = "");
+	void write(char*&, bool includeNameAndType = true) const;
+	void read(char*&, const std::string& name = "");
 	//get the value of the tag as a string
-	std::string getStringValue();
+	std::string getStringValue() const;
 
 	//get a value from the array
 	int& vInt(uint);
 	int& operator[](uint);
 	//get the size of the array
-	uint getSize();
+	uint getSize() const;
 	//resize the array
 	virtual void resize(uint);
 };

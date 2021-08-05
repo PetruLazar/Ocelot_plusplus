@@ -157,7 +157,7 @@ Options::Options()
 }
 Options::~Options()
 {
-
+	cout << "\n\nHello world!";
 }
 
 ush Options::port() { return _port; }

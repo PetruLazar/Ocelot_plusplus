@@ -1,13 +1,13 @@
 #include "nbt_byte_array.h"
-nbt_byte_array::nbt_byte_array(std::string name) : nbt(ByteArray, name), values(nullptr), _size(0) { }
-nbt_byte_array::nbt_byte_array(char* v, int s, std::string name) : nbt(ByteArray, name), values(v), _size(s) { }
+nbt_byte_array::nbt_byte_array(const std::string& name) : nbt(ByteArray, name), values(nullptr), _size(0) { }
+nbt_byte_array::nbt_byte_array(char* v, int s, const std::string& name) : nbt(ByteArray, name), values(v), _size(s) { }
 nbt_byte_array::~nbt_byte_array()
 {
 	delete values;
 	values = nullptr;
 	_size = 0;
 }
-void nbt_byte_array::write(std::fstream& os, bool iNT)
+void nbt_byte_array::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -20,7 +20,7 @@ void nbt_byte_array::write(std::fstream& os, bool iNT)
 
 	os.write(values, _size);
 }
-void nbt_byte_array::read(std::fstream& is, std::string name)
+void nbt_byte_array::read(std::fstream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 
@@ -37,7 +37,7 @@ void nbt_byte_array::read(std::fstream& is, std::string name)
 	values = new char[_size];
 	is.read(values, _size);
 }
-void nbt_byte_array::write(char*& buffer, bool iNT)
+void nbt_byte_array::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -50,7 +50,7 @@ void nbt_byte_array::write(char*& buffer, bool iNT)
 
 	for (uint i = 0; i < _size; i++) *(buffer++) = values[i];
 }
-void nbt_byte_array::read(char*& end, std::string name)
+void nbt_byte_array::read(char*& end, const std::string& name)
 {
 	char* buffer = end;
 
@@ -64,7 +64,7 @@ void nbt_byte_array::read(char*& end, std::string name)
 	values = new char[_size];
 	for (uint i = 0; i < _size; i++) values[i] = *(end++);
 }
-std::string nbt_byte_array::getStringValue()
+std::string nbt_byte_array::getStringValue() const
 {
 	std::string ret = "[";
 
@@ -93,7 +93,7 @@ char& nbt_byte_array::operator [] (uint i)
 	if (i >= _size) throw outOfBoundsError;
 	return values[i];
 }
-uint nbt_byte_array::getSize() { return _size; }
+uint nbt_byte_array::getSize() const { return _size; }
 void nbt_byte_array::resize(uint newSize)
 {
 	char* newValues = new char[newSize];

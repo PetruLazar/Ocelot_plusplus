@@ -1,23 +1,23 @@
 #include "nbt_list.h"
-nbt_list::nbt_list(std::string name) : nbt(List, name), values(nullptr), _size(0) { }
-nbt_list::nbt_list(nbt** v, int s, std::string name) : nbt(List, name), values(v), _size(s)
+nbt_list::nbt_list(const std::string& name) : nbt(List, name), values(nullptr), _size(0), childType(End) { }
+nbt_list::nbt_list(nbt** v, int s, const std::string& name) : nbt(List, name), values(v), _size(s)
 {
 	childType = values[0]->getType();
 	for (uint i = 1; i < _size; i++) if (values[i]->getType() != childType) throw "Not all elements of the list are of the same type";
 }
 nbt_list::~nbt_list()
 {
-	for (uint i = 0; i < _size; i++)
+	if (childType != End) for (uint i = 0; i < _size; i++) if (values[i])
 	{
 		//possible error:	do NOT use the same tags multiple times
 		//					and do not use local variables (due to variable lifetime)
 		delete values[i];
 	}
-	delete[] values;
+	if (values) delete[] values;
 	values = nullptr;
 	_size = 0;
 }
-void nbt_list::write(std::fstream& os, bool iNT)
+void nbt_list::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -35,11 +35,11 @@ void nbt_list::write(std::fstream& os, bool iNT)
 		values[i]->write(os, false);
 	}
 }
-void nbt_list::read(std::fstream& is, std::string name)
+void nbt_list::read(std::fstream& is, const std::string& name)
 {
 	if (values)
 	{
-		for (uint i = 0; i < _size; i++)
+		if (childType != End) for (uint i = 0; i < _size; i++)
 		{
 			//possible error:	do NOT use the same tags multiple times
 			//					and do not use local variables (due to variable lifetime)
@@ -64,7 +64,7 @@ void nbt_list::read(std::fstream& is, std::string name)
 		values[i]->read(is, std::to_string(i));
 	}
 }
-void nbt_list::write(char*& buffer, bool iNT)
+void nbt_list::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -79,11 +79,11 @@ void nbt_list::write(char*& buffer, bool iNT)
 
 	for (uint i = 0; i < _size; i++) values[i]->write(buffer, false);
 }
-void nbt_list::read(char*& end, std::string name)
+void nbt_list::read(char*& end, const std::string& name)
 {
 	if (values)
 	{
-		for (uint i = 0; i < _size; i++)
+		if (childType != End) for (uint i = 0; i < _size; i++)
 		{
 			//possible error:	do NOT use the same tags multiple times
 			//					and do not use local variables (due to variable lifetim
@@ -108,7 +108,7 @@ void nbt_list::read(char*& end, std::string name)
 		values[i]->read(end, std::to_string(i));
 	}
 }
-std::string nbt_list::getStringValue()
+std::string nbt_list::getStringValue() const
 {
 	std::string ret = "[";
 
@@ -117,10 +117,6 @@ std::string nbt_list::getStringValue()
 	ret += ']';
 	return ret;
 }
-/*std::string nbt_list::to_string()
-{
-
-}*/
 nbt& nbt_list::vTag(uint i)
 {
 	if (i >= _size) throw outOfBoundsError;
@@ -131,11 +127,21 @@ nbt& nbt_list::operator[](uint i)
 	if (i >= _size) throw outOfBoundsError;
 	return *values[i];
 }
-uint nbt_list::getSize() { return _size; }
-nbt::tag nbt_list::getElemType()
+uint nbt_list::getSize() const { return _size; }
+nbt::tag nbt_list::getElemType() const
 {
 	if (!_size) throw outOfBoundsError;
 	return values[0]->getType();
+}
+void nbt_list::changeType(tag newtag)
+{
+	if (childType == newtag) return;
+	for (uint i = 0; i < _size; i++)
+	{
+		if (childType != End) delete values[i];
+		values[i] = getTagP(newtag);
+	}
+	childType = newtag;
 }
 void nbt_list::resize(uint newSize)
 {
@@ -143,7 +149,7 @@ void nbt_list::resize(uint newSize)
 
 	uint minSize = newSize < _size ? newSize : (uint)_size;
 	for (uint i = 0; i < minSize; i++) newValues[i] = values[i];
-	for (uint i = minSize; i < _size; i++) delete values[i];
+	if (childType != End) for (uint i = minSize; i < _size; i++) delete values[i];
 	for (uint i = minSize; i < newSize; i++) values[i] = getTagP(childType);
 
 	delete[] values;

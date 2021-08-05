@@ -1,8 +1,8 @@
 #include "nbt_short.h"
-nbt_short::nbt_short(std::string name) : nbt(Short, name) { }
-nbt_short::nbt_short(short v, std::string name) : nbt(Short, name), value(v) { }
+nbt_short::nbt_short(const std::string& name) : nbt(Short, name) { }
+nbt_short::nbt_short(short v, const std::string& name) : nbt(Short, name), value(v) { }
 //nbt_short::~nbt_short() { }
-void nbt_short::write(std::fstream& os, bool iNT)
+void nbt_short::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -13,7 +13,7 @@ void nbt_short::write(std::fstream& os, bool iNT)
 
 	value.write(os);
 }
-void nbt_short::read(std::fstream& is, std::string name)
+void nbt_short::read(std::fstream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 
@@ -22,7 +22,7 @@ void nbt_short::read(std::fstream& is, std::string name)
 
 	value.read(is);
 }
-void nbt_short::write(char*& buffer, bool iNT)
+void nbt_short::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -33,7 +33,7 @@ void nbt_short::write(char*& buffer, bool iNT)
 
 	value.write(buffer);
 }
-void nbt_short::read(char*& end, std::string name)
+void nbt_short::read(char*& end, const std::string& name)
 {
 	char* buffer = end;
 
@@ -42,13 +42,10 @@ void nbt_short::read(char*& end, std::string name)
 
 	value.read(end);
 }
-std::string nbt_short::getStringValue()
+std::string nbt_short::getStringValue() const
 {
 	return std::to_string(value) + 's';
 }
-/*std::string nbt_short::to_string()
-{
-
-}*/
 short& nbt_short::vShort() { return value; }
 nbt_short::operator short& () { return value; }
+void nbt_short::operator=(short v) { value = v; }

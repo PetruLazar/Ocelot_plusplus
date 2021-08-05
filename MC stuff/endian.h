@@ -44,4 +44,9 @@ public:
 	{
 		return v;
 	}
+	operator const T& () const { return v; }
+	void operator=(const T& value)
+	{
+		v = value;
+	}
 };

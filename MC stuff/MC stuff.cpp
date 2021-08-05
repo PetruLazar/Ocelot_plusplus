@@ -170,57 +170,16 @@ int main()
 		}
 	}*/
 
-	//example of forming a tag in memory, writing in file, reading from file, and converting in a string
-	/*{
-		ofstream out("test.bin", ios::binary);
-
-		vector <nbt*> alltags[5];
-		for (int i = 0; i < 5; i++)
-		{
-			alltags[i].push_back(new nbt_byte(55, "byteTag"));
-			alltags[i].push_back(new nbt_short(-15642, "shortTag"));
-			alltags[i].push_back(new nbt_int(-1265102002, "intTag"));
-			alltags[i].push_back(new nbt_long(156202486155401, "longTag"));
-			alltags[i].push_back(new nbt_float(1.75f, "floatTag"));
-			alltags[i].push_back(new nbt_double(125.1569, "doubleTag"));
-			alltags[i].push_back(new nbt_byte_array(new char[5]{ 16,-98,12,64,-5 }, 5, "byteArrayTag"));
-			//alltags[i].push_back(new nbt_string(1.75f, "height"));
-			alltags[i].push_back(new nbt_int_array(new int[5]{ 49,15264,-64521,18,-84 }, 5, "intArrayTag"));
-			alltags[i].push_back(new nbt_long_array(new int64[5]{ -156497635214,12345678910,9876543210123,-597846325448,3 }, 5, "longArrayTag"));
-		}
-
-		alltags[0].push_back(new nbt_compound(alltags[1], "compoundPart"));
-		alltags[0].push_back(new nbt_list(new nbt * [3]{ new nbt_compound(alltags[2]),new nbt_compound(alltags[3]),new nbt_compound(alltags[4]) }, 3, "listTag"));
-
-		nbt_compound test(alltags[0], "finalCompTag"), test2;
-		test.write(out);
-
-		out.close();
-
-		ifstream in("test.bin", ios::binary);
-
-		if (!nbt::checkFileForTag(in))
-		{
-			cout << "File does not contain the right tag.\n";
-			in.close();
-			return 0;
-		}
-		test2.read(in);
-		//cout << test2["mass"].getStringValue() << ' ' << test2["age"].getStringValue() << ' ' << test2["height"].getStringValue();
-
-		in.close();
-
-		ofstream debugfile("log.txt");
-
-		debugfile << test.to_string() << '\n' << test2.to_string();
-
-		debugfile.close();
-	}*/
-
 	delete buffer;
-
-	//triggers some false alarms: check with DEBUG_ALLOCATIONS (basic.h) defined to validate output
-	_CrtDumpMemoryLeaks();
 
 	return 0;
 }
+
+class MemoryLeakDetection
+{
+public:
+	~MemoryLeakDetection()
+	{
+		_CrtDumpMemoryLeaks();
+	}
+} memoryLeakDetection;

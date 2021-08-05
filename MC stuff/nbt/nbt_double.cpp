@@ -1,8 +1,8 @@
 #include "nbt_double.h"
-nbt_double::nbt_double(std::string name) : nbt(Double, name) { }
-nbt_double::nbt_double(double v, std::string name) : nbt(Double, name), value(v) { }
+nbt_double::nbt_double(const std::string& name) : nbt(Double, name) { }
+nbt_double::nbt_double(double v, const std::string& name) : nbt(Double, name), value(v) { }
 //nbt_double::~nbt_double() { }
-void nbt_double::write(std::fstream& os, bool iNT)
+void nbt_double::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -13,7 +13,7 @@ void nbt_double::write(std::fstream& os, bool iNT)
 
 	value.write(os);
 }
-void nbt_double::read(std::fstream& is, std::string name)
+void nbt_double::read(std::fstream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 
@@ -22,7 +22,7 @@ void nbt_double::read(std::fstream& is, std::string name)
 
 	value.read(is);
 }
-void nbt_double::write(char*& buffer, bool iNT)
+void nbt_double::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -33,7 +33,7 @@ void nbt_double::write(char*& buffer, bool iNT)
 
 	value.write(buffer);
 }
-void nbt_double::read(char*& end, std::string name)
+void nbt_double::read(char*& end, const std::string& name)
 {
 	char* buffer = end;
 
@@ -42,13 +42,10 @@ void nbt_double::read(char*& end, std::string name)
 
 	value.read(end);
 }
-std::string nbt_double::getStringValue()
+std::string nbt_double::getStringValue() const
 {
 	return std::to_string(value);
 }
-/*std::string nbt_double::to_string()
-{
-
-}*/
 double& nbt_double::vDouble() { return value; }
 nbt_double::operator double& () { return value; }
+void nbt_double::operator=(double v) { value = v; }

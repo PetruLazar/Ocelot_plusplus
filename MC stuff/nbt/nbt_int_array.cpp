@@ -1,13 +1,13 @@
 #include "nbt_int_array.h"
-nbt_int_array::nbt_int_array(std::string name) : nbt(IntArray, name), values(nullptr), _size(0) { }
-nbt_int_array::nbt_int_array(int* v, int s, std::string name) : nbt(IntArray, name), values((bint*)v), _size(s) { }
+nbt_int_array::nbt_int_array(const std::string& name) : nbt(IntArray, name), values(nullptr), _size(0) { }
+nbt_int_array::nbt_int_array(int* v, int s, const std::string& name) : nbt(IntArray, name), values((bint*)v), _size(s) { }
 nbt_int_array::~nbt_int_array()
 {
 	delete[] values;
 	values = nullptr;
 	_size = 0;
 }
-void nbt_int_array::write(std::fstream& os, bool iNT)
+void nbt_int_array::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -23,7 +23,7 @@ void nbt_int_array::write(std::fstream& os, bool iNT)
 		values[i].write(os);
 	}
 }
-void nbt_int_array::read(std::fstream& is, std::string name)
+void nbt_int_array::read(std::fstream& is, const std::string& name)
 {
 	if (values)
 	{
@@ -40,7 +40,7 @@ void nbt_int_array::read(std::fstream& is, std::string name)
 	values = new bint[_size];
 	for (uint i = 0; i < _size; i++) values[i].read(is);
 }
-void nbt_int_array::write(char*& buffer, bool iNT)
+void nbt_int_array::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -53,7 +53,7 @@ void nbt_int_array::write(char*& buffer, bool iNT)
 
 	for (uint i = 0; i < _size; i++) values[i].write(buffer);
 }
-void nbt_int_array::read(char*& end, std::string name)
+void nbt_int_array::read(char*& end, const std::string& name)
 {
 	if (values) delete[] values;
 
@@ -67,7 +67,7 @@ void nbt_int_array::read(char*& end, std::string name)
 	values = new bint[_size];
 	for (uint i = 0; i < _size; i++) values[i].read(end);
 }
-std::string nbt_int_array::getStringValue()
+std::string nbt_int_array::getStringValue() const
 {
 	std::string ret = "[";
 
@@ -82,10 +82,6 @@ std::string nbt_int_array::getStringValue()
 	ret += "]i";
 	return ret;
 }
-/*std::string nbt_int_array::to_string()
-{
-
-}*/
 int& nbt_int_array::vInt(uint i)
 {
 	if (i >= _size) throw outOfBoundsError;
@@ -96,7 +92,7 @@ int& nbt_int_array::operator[](uint i)
 	if (i >= _size) throw outOfBoundsError;
 	return values[i];
 }
-uint nbt_int_array::getSize() { return _size; }
+uint nbt_int_array::getSize() const { return _size; }
 void nbt_int_array::resize(uint newSize)
 {
 	bint* newValues = new bint[newSize];

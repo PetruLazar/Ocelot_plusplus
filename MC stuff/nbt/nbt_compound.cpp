@@ -1,13 +1,18 @@
 #include "nbt_compound.h"
-nbt_compound::nbt_compound(std::string name) : nbt(Compound, name) { }
-nbt_compound::nbt_compound(std::vector <nbt*> v, std::string name) : nbt(Compound, name), values(v) { }
+nbt_compound::nbt_compound(const std::string& name) : nbt(Compound, name) { }
+nbt_compound::nbt_compound(const std::vector <nbt*>& v, const std::string& name) : nbt(Compound, name), values(v) { }
+nbt_compound::nbt_compound(nbt** v, uint s, const std::string& name) : nbt(Compound, name)
+{
+	for (uint i = 0; i < s; i++) values.push_back(v[i]);
+	delete[] v;
+}
 nbt_compound::~nbt_compound()
 {
 	for (nbt* e : values)
 		//possible error: do NOT use the same vector<> to construct multiple compound tags
 		delete e;
 }
-void nbt_compound::write(std::fstream& os, bool iNT)
+void nbt_compound::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -20,7 +25,7 @@ void nbt_compound::write(std::fstream& os, bool iNT)
 
 	os.write("\0", 1);
 }
-void nbt_compound::read(std::fstream& is, std::string name)
+void nbt_compound::read(std::fstream& is, const std::string& name)
 {
 	if (!values.empty())
 	{
@@ -46,7 +51,7 @@ void nbt_compound::read(std::fstream& is, std::string name)
 		values.push_back(v);
 	}
 }
-void nbt_compound::write(char*& buffer, bool iNT)
+void nbt_compound::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -59,7 +64,7 @@ void nbt_compound::write(char*& buffer, bool iNT)
 
 	*(buffer++) = 0;
 }
-void nbt_compound::read(char*& end, std::string name)
+void nbt_compound::read(char*& end, const std::string& name)
 {
 	if (!values.empty())
 	{
@@ -82,42 +87,26 @@ void nbt_compound::read(char*& end, std::string name)
 		values.push_back(v);
 	}
 }
-std::string nbt_compound::getStringValue()
+std::string nbt_compound::getStringValue() const
 {
 	std::string ret = "{";
 
-	for (nbt* e : values) ret += e->to_string() + ',';
+	for (nbt* e : values) 
+		ret += e->to_string() + ',';
 	ret.pop_back();
 	ret += '}';
 	return ret;
 }
-/*std::string nbt_compound::to_string()
+nbt& nbt_compound::vTag(const std::string& n)
 {
-
-}*/
-nbt& nbt_compound::vTag(uint i)
-{
-	if (i >= values.size()) throw outOfBoundsError;
-	return *values[i];
+	return operator[](n);
 }
-nbt& nbt_compound::vTag(std::string n)
+nbt& nbt_compound::operator[](const std::string& n)
 {
 	for (nbt* e : values) if (n == e->getName()) return *e;
 	throw searchFailedError;
 }
-nbt& nbt_compound::operator[](uint i)
-{
-	return vTag(i);
-}
-nbt& nbt_compound::operator[](std::string n)
-{
-	return vTag(n);
-}
-uint nbt_compound::getSize() { return (uint)values.size(); }
-/*void nbt_compound::resize(uint newSize)
-{
-	uint s = values.size();
-}*/
+uint nbt_compound::getSize() const { return (uint)values.size(); }
 void nbt_compound::add(nbt* newElem)
 {
 	values.push_back(newElem);
@@ -132,4 +121,16 @@ void nbt_compound::remove(nbt* elem)
 		values.pop_back();
 		break;
 	}
+}
+void nbt_compound::remove(const std::string& elem)
+{
+	uint s = (uint)values.size();
+	for (uint i = 0; i < s; i++) if (values[i]->getName() == elem)
+	{
+		delete values[i];
+		for (uint j = i + 1; j < s; j++) values[(size_t)j - 1] = values[j];
+		values.pop_back();
+		return;
+	}
+	throw searchFailedError;
 }

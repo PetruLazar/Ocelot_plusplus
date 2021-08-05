@@ -9,24 +9,25 @@ class nbt_list : public nbt
 	tag childType;
 
 public:
-	nbt_list(std::string name = "");
-	nbt_list(nbt**, int, std::string name = "");
+	nbt_list(const std::string& name = "");
+	nbt_list(nbt**, int, const std::string& name = "");
 	~nbt_list();
 
-	void write(std::fstream&, bool includeNameAndType = true);
-	void read(std::fstream&, std::string name = "");
-	void write(char*&, bool includeNameAndType = true);
-	void read(char*&, std::string name = "");
+	void write(std::fstream&, bool includeNameAndType = true)const;
+	void read(std::fstream&, const std::string& name = "");
+	void write(char*&, bool includeNameAndType = true)const;
+	void read(char*&, const std::string& name = "");
 	//get the value of the tag as a string
-	std::string getStringValue();
+	std::string getStringValue()const;
 
 	//get a tag from the list
 	nbt& vTag(uint);
 	nbt& operator[](uint);
 	//get the size of the list
-	uint getSize();
+	uint getSize()const;
 	//resize the list
 	void resize(uint);
 
-	tag getElemType();
+	tag getElemType()const;
+	void changeType(tag);
 };

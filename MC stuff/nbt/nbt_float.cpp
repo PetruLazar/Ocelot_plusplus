@@ -1,8 +1,8 @@
 #include "nbt_float.h"
-nbt_float::nbt_float(std::string name) : nbt(Float, name) { }
-nbt_float::nbt_float(float v, std::string name) : nbt(Float, name), value(v) { }
+nbt_float::nbt_float(const std::string& name) : nbt(Float, name) { }
+nbt_float::nbt_float(float v, const std::string& name) : nbt(Float, name), value(v) { }
 //nbt_float::~nbt_float() { }
-void nbt_float::write(std::fstream& os, bool iNT)
+void nbt_float::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -13,7 +13,7 @@ void nbt_float::write(std::fstream& os, bool iNT)
 
 	value.write(os);
 }
-void nbt_float::read(std::fstream& is, std::string name)
+void nbt_float::read(std::fstream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 
@@ -22,7 +22,7 @@ void nbt_float::read(std::fstream& is, std::string name)
 
 	value.read(is);
 }
-void nbt_float::write(char*& buffer, bool iNT)
+void nbt_float::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -33,7 +33,7 @@ void nbt_float::write(char*& buffer, bool iNT)
 
 	value.write(buffer);
 }
-void nbt_float::read(char*& end, std::string name)
+void nbt_float::read(char*& end, const std::string& name)
 {
 	char* buffer = end;
 
@@ -42,13 +42,10 @@ void nbt_float::read(char*& end, std::string name)
 
 	value.read(end);
 }
-std::string nbt_float::getStringValue()
+std::string nbt_float::getStringValue() const
 {
 	return std::to_string(value) + 'f';
 }
-/*std::string nbt_float::to_string()
-{
-
-}*/
 float& nbt_float::vFloat() { return value; }
 nbt_float::operator float& () { return value; }
+void nbt_float::operator=(float v) { value = v; }

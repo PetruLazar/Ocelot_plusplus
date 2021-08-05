@@ -7,22 +7,22 @@ class nbt_byte_array : public nbt
 	buint _size;
 
 public:
-	nbt_byte_array(std::string name = "");
-	nbt_byte_array(char*, int, std::string name = "");
+	nbt_byte_array(const std::string& name = "");
+	nbt_byte_array(char*, int, const std::string& name = "");
 	~nbt_byte_array();
 
-	void write(std::fstream&, bool includeNameAndType = true);
-	void read(std::fstream&, std::string name = "");
-	void write(char*&, bool includeNameAndType = true);
-	void read(char*&, std::string name = "");
+	void write(std::fstream&, bool includeNameAndType = true) const;
+	void read(std::fstream&, const std::string& name = "");
+	void write(char*&, bool includeNameAndType = true) const;
+	void read(char*&, const std::string& name = "");
 	//get the value of the tag as a string
-	std::string getStringValue();
+	std::string getStringValue() const;
 
 	//get a value from the array
 	char& vByte(uint);
-	char& operator [] (uint);
+	char& operator[](uint);
 	//get the size of the array
-	uint getSize();
+	uint getSize() const;
 	//resize the array
 	void resize(uint);
 };
