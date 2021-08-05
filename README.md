@@ -1,7 +1,10 @@
 # Minecraft-server
 Minecraft server implemented in c++
 
-# to-do
+# Documentation
+https://wiki.vg/Protocol
+
+# To-do
 class for 'Angle'
 
 class for 'Slot'
