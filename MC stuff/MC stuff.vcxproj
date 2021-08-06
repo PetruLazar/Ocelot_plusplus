@@ -119,7 +119,9 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="position.cpp" />
+    <ClCompile Include="region.cpp" />
     <ClCompile Include="varData.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="angle.h" />
@@ -155,8 +157,10 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="position.h" />
+    <ClInclude Include="region.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="varData.h" />
+    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MC stuff.rc" />
