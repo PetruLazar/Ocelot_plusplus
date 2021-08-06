@@ -4,6 +4,9 @@
 using namespace std;
 
 //const char* elemNotFound = "Setting not found.";
+
+const char commentChar = '#';
+
 const char Options::optionsFileName[] = "server.properties";
 ush Options::_port = 25565;
 int Options::_max_players = 100;
@@ -104,11 +107,20 @@ int parseInt(const string& name, const string& value, ull linenumber)
 Options::Options()
 {
 	ifstream opt(optionsFileName);
+	if (!opt.is_open())
+	{
+		cout << "File \"server.properties\" not found, so one has been generated.\n";
+		ofstream out(optionsFileName);
+		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#level-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0";
+		out.close();
+		return;
+	}
 	char* line = new char[4096];
 	ull linenumber = 0;
 	while (opt.getline(line, 4096))
 	{
 		linenumber++;
+		if (*line == commentChar) continue;
 		char* str_value = strchr(line, '=');
 		if (!str_value)
 		{
@@ -157,7 +169,7 @@ Options::Options()
 }
 Options::~Options()
 {
-	
+
 }
 
 ush Options::port() { return _port; }

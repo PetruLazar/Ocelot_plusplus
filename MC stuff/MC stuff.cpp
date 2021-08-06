@@ -24,12 +24,12 @@ int main()
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
 
-	if (listener.listen(Options::port()) != sockStat::Done)
+	if (listener.listen(Options::port(), Options::ip()) != sockStat::Done)
 	{
 		system("pause");
 		return 0;
 	}
-	cout << "Server started.";
+	cout << "Server started on " << Options::ip() << ':' << Options::port();
 	listener.setBlocking(false);
 	bool keepAlive = true;
 	while (keepAlive)
@@ -37,19 +37,9 @@ int main()
 		//accept connections
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
-			if (Player::players.size() == 1)
-			{
-				//refuse connection - debugging purposes
-				buffer->disconnect();
-				cout << "\nConnection refused.";
-			}
-			else
-			{
-				//accept connection
-				Player::players.push_back(new Player(buffer));
-				buffer = new sf::TcpSocket;
-				cout << "\nConnection accepted.";
-			}
+			Player::players.push_back(new Player(buffer));
+			cout << '\n' << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.";
+			buffer = new sf::TcpSocket;
 		}
 
 		//receive messages
@@ -66,8 +56,12 @@ int main()
 			cout << "\nUnknown error.";
 		}
 		Player::clearDisconnectedPlayers();
-		//makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
-		if (_kbhit()) break;
+		//exit on excape - makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
+		if (_kbhit())
+		{
+			//27 is escape
+			if (_getch() == 27) break;
+		}
 	}
 
 	//fill an existing chunk with stone
