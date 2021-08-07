@@ -170,13 +170,17 @@ void message::login::receive::start(Player* p, const mcString& username)
 	//login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
 	login::send::success(p, mcUUID(), username);
 
-	playerInfo::Player* pl = new playerInfo::Player(mcUUID(), username, gamemode::survival, 100);
-	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
-	delete pl;
-
 	mcString* wlds = new mcString("world");
 	play::send::joinGame(p, 0x17, false, gamemode::survival, gamemode::none, 1, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 5, false, true, true, true);
 	delete wlds;
+
+	play::send::playerAbilities(p, false, false, false, false, 1.f, 1.f);
+
+	play::send::playerPosAndLook(p, 16.5, 1., 16.5, 0.f, 0.f, 0, 0x6, false);
+
+	playerInfo::Player* pl = new playerInfo::Player(mcUUID(), username, gamemode::survival, 100);
+	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
+	delete pl;
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
 
@@ -202,9 +206,6 @@ void message::login::receive::start(Player* p, const mcString& username)
 	delete bitMask;
 	delete[] biomes;
 	delete[] chunkData;
-
-	play::send::playerAbilities(p, false, false, false, false, 1.f, 1.f);
-	play::send::playerPosAndLook(p, 16.5, 1., 16.5, 0.f, 0.f, 0, 0x6, false);
 
 	play::send::keepAlive(p, 0x49f3c6c78a462b6a);
 }
@@ -241,7 +242,7 @@ void message::play::send::keepAlive(Player* p, blong keepAlive_id)
 	delete[] start;
 }
 void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec,
-	const nbt_compound& dimension, mcString worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat)
+	const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat)
 {
 	varInt id = (int)id::joinGame;
 	char* lendata = new char[4], * lendatastart = lendata,

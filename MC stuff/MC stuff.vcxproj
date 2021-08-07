@@ -168,6 +168,7 @@
     <ResourceCompile Include="MC stuff.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="debug.bin" />
     <None Include="server.properties" />
   </ItemGroup>

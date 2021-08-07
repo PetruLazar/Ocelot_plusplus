@@ -11,6 +11,8 @@ class for 'Chat'
 
 classes for world/region/chunk (in progress)
 
+finish message.h : statistics::custom and create header/source files for it
+
 class for Identifier?
 
 'play' messages

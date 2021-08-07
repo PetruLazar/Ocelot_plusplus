@@ -261,6 +261,9 @@
     <None Include="debug.bin">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\README.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="debug.txt">

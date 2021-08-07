@@ -1,10 +1,14 @@
 #pragma once
 #include "basic.h"
 
+#define bshort bigEndian<short>
+#define bushort bigEndian<ush>
 #define bint bigEndian<int>
 #define buint bigEndian<uint>
 #define blong bigEndian<int64>
 #define bulong bigEndian<ull>
+#define bfloat bigEndian<float>
+#define bdouble bigEndian<double>
 
 template <class T> class bigEndian
 {
