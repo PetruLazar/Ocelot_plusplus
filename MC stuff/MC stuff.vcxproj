@@ -120,6 +120,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="position.cpp" />
     <ClCompile Include="region.cpp" />
+    <ClCompile Include="uuid.cpp" />
     <ClCompile Include="varData.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="position.h" />
     <ClInclude Include="region.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="uuid.h" />
     <ClInclude Include="varData.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>

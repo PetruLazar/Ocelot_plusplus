@@ -34,9 +34,19 @@ typedef unsigned int uint;
 typedef unsigned long long ull;
 typedef long long int64;
 
+enum class gamemode : byte
+{
+	survival,
+	creative,
+	adventure,
+	spectator,
+
+	//the 'previous gamemode' default value (-1)
+	none = 0xff
+};
+
 typedef unsigned short Port;
 const int protocolVersionCurrent = 756; // 1.17.1
-const Port port = 25565;
 
 /*struct vector2
 {

@@ -1,8 +1,12 @@
 #pragma once
 #include "basic.h"
+#include "chunk.h"
 
-class Region
+class region
 {
+	chunk* chunks[32][32];
+
+public:
 
 };
 

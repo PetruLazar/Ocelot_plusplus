@@ -4,6 +4,56 @@
 #include "mcString.h"
 #include "player.h"
 #include "endian.h"
+#include "uuid.h"
+#include "nbt.h"
+
+//The vanilla server sends:
+// join game
+// plugin message
+// server difficulty
+// player abilities
+// held item change
+// declare recipes
+// tags
+// entity status
+// 
+//
+
+namespace playerInfo
+{
+	class Player
+	{
+	public:
+		mcUUID uuid;
+		mcString name;
+		varInt nOfProperties = 0;
+		class property
+		{
+			mcString name;
+			mcString value;
+			bool isSigned = false;
+			mcString signature;
+		} *properties = nullptr;
+		varInt gm;
+		varInt ping;
+		bool hasDisplayName = false;
+		//Chat displayName - optional
+
+		Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping);
+	};
+	enum action
+	{
+		addPlayer,
+		updateGm,
+		updateLatency,
+		updateDisplayName,
+		removePlayer
+	};
+}
+namespace playerPosAndLook
+{
+
+}
 
 struct message
 {
@@ -13,7 +63,7 @@ struct message
 		//possible packet ids during handshake
 		enum class id : int
 		{
-			standard = 0x00,
+			standard,
 			legacy = 0xfe
 		};
 
@@ -30,11 +80,11 @@ struct message
 		//possible packet ids during status
 		enum class id : int
 		{
-			response = 0x00,
-			pong = 0x01,
+			response,
+			pong,
 
 			request = 0x00,
-			ping = 0x01,
+			ping,
 		};
 
 		struct send
@@ -53,22 +103,22 @@ struct message
 		//possible packet ids during login
 		enum class id : int
 		{
-			disconnect = 0x00,
-			encryptionRequest = 0x01,
-			success = 0x02,
-			setCompression = 0x03,
-			loginPluginRequest = 0x04,
+			disconnect,
+			encryptionRequest,
+			success,
+			setCompression,
+			loginPluginRequest,
 
 			start = 0x00,
-			encryptionResponse = 0x01,
-			loginPluginResponse = 0x02
+			encryptionResponse,
+			loginPluginResponse
 		};
 
 		struct send
 		{
 			static void disconnect(Player*, const mcString& reason);
 			static void encryptionRequest(Player*, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken);
-			//static void success(Player*, UUID uuid, mcString username); - UUID not implemented
+			static void success(Player*, const mcUUID& uuid, const mcString& username);
 			static void setCompression(Player*, varInt threshold);
 			//static void loginPluginRequest(Player*, ...); - Identifier not implemented
 		};
@@ -84,16 +134,30 @@ struct message
 		//possible packet ids during play
 		enum class id
 		{
+			keepAlive_clientbound = 0x21,
+			chunkData = 0x22,
+			joinGame = 0x26,
+			playerAbilities = 0x32,
+			playerInfo = 0x36,
+			playerPosAndLook = 0x38,
+			timeUpdate = 0x58,
 
+			keepAlive_serverbound = 0x0f
 		};
 
 		struct send
 		{
-
+			static void chunkData(Player*, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes, varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities);
+			static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, mcString worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
+			static void playerAbilities(Player*, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier);
+			static void playerInfo(Player*, varInt action, varInt playerCount, playerInfo::Player*);
+			static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle);
+			static void timeUpdate(Player*, blong worldAge, blong timeOfDay);
+			static void keepAlive(Player*, blong keepAlive_id);
 		};
 		struct receive
 		{
-
+			static void keepAlive(Player*, blong keepAlive_id);
 		};
 	};
 

@@ -1,7 +1,6 @@
 #include "endian.h"
 #include "varData.h"
 #include "nbt.h"
-#include "chunk.h"
 #include "position.h"
 #include "mcString.h"
 #include "fixedPoint.h"
@@ -12,6 +11,10 @@
 #include "json/json.h"
 #include "log.h"
 #include "conio.h"
+#include "angle.h"
+#include "world.h"
+#include "region.h"
+#include "chunk.h"
 
 using namespace std;
 
@@ -20,6 +23,7 @@ const int mc_zlib_compression_level = 6;
 int main()
 {
 	log::initialize();
+	World::load();
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;

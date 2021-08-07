@@ -1,5 +1,8 @@
 #include "message.h"
 #include "options.h"
+#include "world.h"
+
+playerInfo::Player::Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping) :uuid(uuid), name(name), gm((byte)gm), ping(ping) { }
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
@@ -131,14 +134,359 @@ void message::login::send::setCompression(Player*, varInt threshold)
 {
 	throw "compression not supported";
 }
+void message::login::send::success(Player* p, const mcUUID& uuid, const mcString& username)
+{
+	p->state = ConnectionState::play;
+
+	varInt id = (int)id::success;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	uuid.write(data);
+	username.write(data);
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
 
 void message::login::receive::start(Player* p, const mcString& username)
 {
-	login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
+	//login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
+	login::send::success(p, mcUUID(), username);
+
+	playerInfo::Player* pl = new playerInfo::Player(mcUUID(), username, gamemode::survival, 100);
+	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
+	delete pl;
+
+	mcString* wlds = new mcString("world");
+	play::send::joinGame(p, 0x17, false, gamemode::survival, gamemode::none, 1, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 5, false, true, true, true);
+	delete wlds;
+
+	play::send::timeUpdate(p, 6000i64, 6000i64);
+
+	blong* bitMask = new blong(0x1i64);
+	varInt* biomes = new varInt[1024]{ 127 }; //127 is "void"
+	char* chunkData = new char[20024];
+	chunkData[0] = 0x00;
+	chunkData[1] = 0x01;
+	chunkData[2] = 4;
+	chunkData[3] = 2;
+	chunkData[4] = 0;
+	chunkData[5] = 1;
+	char* buffer = chunkData + 6;
+	varInt(256).write(buffer);
+	blong(1).write(buffer);
+	for (int i = 1; i < 256; i++) blong(0).write(buffer);
+
+	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
+	{
+		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
+	}
+
+	delete bitMask;
+	delete[] biomes;
+	delete[] chunkData;
+
+	play::send::playerAbilities(p, false, false, false, false, 1.f, 1.f);
+	play::send::playerPosAndLook(p, 16.5, 1., 16.5, 0.f, 0.f, 0, 0x6, false);
+
+	play::send::keepAlive(p, 0x49f3c6c78a462b6a);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
 	throw "Encryption not supported";
+}
+
+void message::play::send::keepAlive(Player* p, blong keepAlive_id)
+{
+	varInt id = (int)id::keepAlive_clientbound;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	keepAlive_id.write(data);
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec,
+	const nbt_compound& dimension, mcString worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat)
+{
+	varInt id = (int)id::joinGame;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	eid.write(data);
+	*(data++) = isHardcore;
+	*(((gamemode*&)data)++) = gm;
+	*(((gamemode*&)data)++) = prev_gm;
+	worldCount.write(data);
+	for (int i = 0; i < worldCount; i++) worldNames[i].write(data);
+	dimensionCodec.write(data);
+	dimension.write(data);
+	worldName.write(data);
+	*(((int64*&)data)++) = hashedSeedHigh;
+	maxPlayers.write(data);
+	viewDistance.write(data);
+	*(data++) = reducedDebugInfo;
+	*(data++) = respawnScreen;
+	*(data++) = isDebug;
+	*(data++) = isFlat;
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::playerInfo(Player* p, varInt action, varInt playerCount, playerInfo::Player* players)
+{
+	varInt id = (int)id::playerInfo;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	action.write(data);
+	playerCount.write(data);
+	switch (action)
+	{
+	case playerInfo::addPlayer:
+		for (int i = 0; i < playerCount; i++)
+		{
+			playerInfo::Player& player = players[i];
+			player.uuid.write(data);
+			player.name.write(data);
+			player.nOfProperties.write(data);
+			player.gm.write(data);
+			player.ping.write(data);
+			*(data++) = player.hasDisplayName;
+		}
+		break;
+	case playerInfo::updateGm:
+		throw "WIP";
+		for (int i = 0; i < playerCount; i++)
+		{
+
+		}
+		break;
+	case playerInfo::updateLatency:
+		throw "WIP";
+		for (int i = 0; i < playerCount; i++)
+		{
+
+		}
+		break;
+	case playerInfo::updateDisplayName:
+		throw "WIP";
+		for (int i = 0; i < playerCount; i++)
+		{
+
+		}
+		break;
+	case playerInfo::removePlayer:
+		throw "WIP";
+		for (int i = 0; i < playerCount; i++)
+		{
+
+		}
+		break;
+	}
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes,
+	varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities)
+{
+	varInt id = (int)id::chunkData;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	cX.write(data);
+	cZ.write(data);
+	bitMaskLength.write(data);
+	for (int i = 0; i < bitMaskLength; i++) bitMask[i].write(data);
+	heightMaps.write(data);
+	biomesLength.write(data);
+	for (int i = 0; i < biomesLength; i++) biomes[i].write(data);
+	dataSize.write(data);
+	for (int i = 0; i < dataSize; i++) *(data++) = chunkData[i];
+	nOfBlockEntities.write(data);
+	for (int i = 0; i < nOfBlockEntities; i++) blockEntities[i].write(data);
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle)
+{
+	varInt id = (int)id::playerPosAndLook;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	yaw.write(data);
+	pitch.write(data);
+	*(data++) = flags;
+	teleportId.write(data);
+	*(data++) = dismountVehicle;
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::playerAbilities(Player* p, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier)
+{
+	varInt id = (int)id::playerAbilities;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	*(data++) = char(byte(invulnerable) | (byte(flying) << 1) | (byte(allowFlying) << 2) | (byte(creative) << 3));
+	flyingSpeed.write(data);
+	fovModifier.write(data);
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
+{
+	varInt id = (int)id::timeUpdate;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	worldAge.write(data);
+	timeOfDay.write(data);
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+
+void message::play::receive::keepAlive(Player*, blong keepAlive_id)
+{
+	std::cout << "\nKeep alive message received.";
 }
 
 void message::dispatch(Player* p, char* data, size_t size)
@@ -206,6 +554,21 @@ void message::dispatch(Player* p, char* data, size_t size)
 		{
 			p->disconnect();
 			throw "Login Plugin not supported.";
+		}
+		break;
+		default:
+			p->disconnect();
+			throw "Invalid packet id";
+		}
+		break;
+	case ConnectionState::play:
+		switch ((play::id)(int)id)
+		{
+		case play::id::keepAlive_serverbound:
+		{
+			blong keepAlive_id;
+			keepAlive_id.read(data);
+			play::receive::keepAlive(p, keepAlive_id);
 		}
 		break;
 		default:
