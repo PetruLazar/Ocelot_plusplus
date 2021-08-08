@@ -7,7 +7,7 @@ class Position
 
 public:
 	Position();
-	Position(int, int, int);
+	Position(int x, int y, int z);
 	Position(sf::Vector3i);
 
 	void read(std::fstream&);

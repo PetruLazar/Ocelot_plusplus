@@ -10,21 +10,152 @@
 #include "position.h"
 
 //The vanilla server sends:
+// login success - done
 // join game - done
 // plugin message
-// server difficulty
+// server difficulty - done
 // player abilities - done
 // held item change
-// declare recipes
+// declare recipes - done?
 // tags
 // entity status
 // declare commands
+// unlock recipes
 // player position and look - done
-// player info - done
+// player info - done (starting in file 7)
+// player info (2nd)
+// update light
+// chunk data
+// update light (2nd)
+// chunk data(2nd)
+// update light (3rd)
+// chunk data (3rd)
+// update light (4th)
+// chunk data (4th)
+// update light (5th)
+// chunk data (5th)
+// update light (6th)
+// chunk data (6th)
+// update light (7th)
+// possibly missed something
+// update light (8th)
+// chunk data (7th)
+// update light (9th)
+// chunk data (8th)
+// spawn living entity
+// entity metadata
+// entity properties
+// update light (10th)
+// chunk data (9th)
+// spawn living entity (2nd)
+// entity metadata (2nd)
+// entity properties (2nd)
+// update light (11th)
+// chunk data (10th)
+// update light (12th)
+// chunk data (11th)
+// update light (13th)
+// chunk data (12th)
+// update light (14th)
+// chunk data (13th)
+// update light (15th)
+// chunk data (14th)
+// spawn living entity (3rd)
+// entity metadata (3rd)
+// entity properties (3rd)
+// spawn living entity (4th)
+// entity metadata (4th)
+// entity properties (4th)
+// spawn living entity (5th)
+// entity metadata (5th)
+// entity properties (5th)
+// update light (16th)
+// chunk data (15th)
+// spawn living entity (6th)
+// entity metadata (6th)
+// entity properties (6th)
+// spawn living entity (7th)
+// entity metadata (7th)
+// entity properties (7th)
+// update light (17th)
+// chunk data (16th)
+// spawn living entity (8th)
+// entity metadata (8th)
+// entity properties (8th)
+// update light (18th)
+// chunk data (17th)
+// update light (19th)
+// chunk data (18th)
+// update light (20th)
+// chunk data (19th)
+// update light (21st)
+// chunk data (20th)
+// update light (22nd)
+// chunk data (21st)
+// spawn entity
+// entity metadata (9th)
+// entity velocity
+// update light (23rd)
+// chunk data(22nd)
+// spawn living entity (9th)
+// entity metadata (10th)
+// entity properties (9th)
+// update light (24th)
+// chunk data (23rd)
+// spawn living entity (10th)
+// entity metadata (11th)
+// entity properties (10th)
+// spawn living entity (11th)
+// entity metadata (12th)
+// entity properties (11th)
+// update light (25th
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// update light x=5, z=3
+// chunk data x=5, y=3
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// spawn living entity
+// entity metadata
+// entity properties
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// update light
+// chunk data
+// 
+// 
+// 
+// ... offset 12b6 in file 18
+// 
 // spawn entity
 // update view position
+// 
+// 
+// 
 //...
 //window Items?
+//spawnPosition? - done
 
 namespace painting
 {
@@ -317,7 +448,7 @@ struct message
 			chatMessage_clientbound,
 			clearTitles,
 			tabComplete_clientbound,
-			declare_commands,
+			declareCommands,
 			closeWindow,
 			windowItems,
 			windowProperty,
@@ -337,14 +468,120 @@ struct message
 			effect,
 			particle,
 			updateLight,
-			joinGame = 0x26,
+			joinGame,
+			mapData,
+			tradeList,
+			entityPosition,
+			entitypositionAndRotation,
+			entityRotation,
+			vehicleMove_clientbound,
+			openBook,
+			openWindow,
+			openSignEditor,
+			ping,
+			craftRecipeResponse,
+			playerAbilities_clientbound,
+			endCombatEvent,
+			enterCombatEvent,
+			deathCombatEvent,
+			playerInfo,
+			facePlayer,
+			playerPosAndLook_clientbound,
+			unlockRecipes,
+			destroyEntities,
+			removeEntityEffect,
+			resourcePackSend,
+			respawn,
+			entityHeadLook,
+			multiBLockChange,
+			selectAdvancementTab,
+			actionBar,
+			worldBorderCenter,
+			worldBorderLerpSize,
+			worldBorderSize,
+			worldBorderWarningDelay,
+			worldBorderWarningReach,
+			camera,
+			heldItemChange_clientbound,
+			updateViewPosition,
+			updateViewDistance,
+			spawnPosition,
+			displayScoreboard,
+			entityMetadata,
+			attachEntity,
+			entityVelocity,
+			entityEquipment,
+			setXp,
+			updateHp,
+			scoreboardObjective,
+			setPassengers,
+			teams,
+			updateScore,
+			setTitleSubtitle,
+			timeUpdate,
+			setTitleText,
+			setTitleTimes,
+			entitySoundEffect,
+			soundEffect,
+			stopSound,
+			playerListHeaderAndFooter,
+			nbtQueryResponse,
+			collectItem,
+			entityTeleport,
+			advancements, //auto tab starts here, why?
+			entityProperties,
+			entityEffect,
+			declareRecipes,
+			tags,
 
-			playerAbilities = 0x32,
-			playerInfo = 0x36,
-			playerPosAndLook = 0x38,
-			timeUpdate = 0x58,
-
-			keepAlive_serverbound = 0x0f
+			teleportConfirm = 0x00,
+			queryBlockNbt,
+			setDifficulty,
+			chatMessage_serverbound,
+			clientStatus,
+			clientSettings,
+			tabComplete_serverbound,
+			clickWindowButton,
+			clickWindow,
+			closeWindow_serverbound,
+			pluginMessage_serverbound,
+			editBook,
+			queryEntityNbt,
+			interactEntity,
+			generateStructure,
+			keepAlive_serverbound,
+			lockDifficulty,
+			playerPosition,
+			playerPositionAndRotation_serverbound,
+			playerRotation,
+			playerMovement,
+			vehicleMove,
+			steerBoat,
+			pickItem,
+			craftRecipeRequest,
+			playerAbilities_serverbound,
+			playerDigging,
+			entityAction,
+			steerVehicle,
+			pong,
+			setRecipeBookState,
+			setDisplayedRecipe,
+			nameItem,
+			resourcePackStatus,
+			advancementTab,
+			selectTrade,
+			setBeaconEffect,
+			heldItemChange_serverbound,
+			updateCommandBlock,
+			updateCommandBlockMinecart,
+			creativeInventoryAction,
+			updateJigsawBlock,
+			updateStructureBlock,
+			updateSign,
+			animation_serverbound,
+			spectate,
+			playerBlockPlacement,
+			useItem
 		};
 
 		struct send
@@ -371,11 +608,11 @@ struct message
 			static void closeWindow(Player*, byte winId);
 			//static void windowItems(Player*, byte winId, varInt stateId, varInt count, Slot* slots, const Slot& carried);
 			static void windowProperty(Player*, byte winId, bshort property, bshort value);
-			//static void setSlot(Player*, byte winId, varInt stateId, bshort slot, Slot data);
+			//static void setSlot(Player*, byte winId, varInt stateId, bshort slot, const Slot& data);
 			static void setCooldown(Player*, varInt itemId, varInt cooldown);
 			static void pluginMessage(Player*, const mcString& channel, char* data);
 			static void namedSoundEffect(Player*, const mcString& soundName, varInt category, bint effectX, bint effectY, bint effectZ, bfloat volume, bfloat pitch);
-			//static void disconnect(Player*, Chat reason);
+			//static void disconnect(Player*, const Chat& reason);
 			static void entityStatus(Player*, bint eid, byte status);
 			static void explosion(Player*, bfloat x, bfloat y, bfloat z, bfloat strength, varInt recordCount, byte* records, bfloat playerMotionX, bfloat playerMotionY, bfloat playerMotionZ);
 			static void unloadChunk(Player*, bint x, bint z);
@@ -388,14 +625,76 @@ struct message
 			//static void particle(Player*, bint particleId, bool longDistance, bdouble X, bdouble Y, bdouble Z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat data, bint count, ???);
 			//static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLight, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, .....);
 			static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
-
+			//static void mapData(Player*, varInt mapId, byte scale, bool locked, bool trackingPosition, varInt iconCount, Icon* icons, byte optColumns, byte optRows, byte optX, byte optZ, varInt optLength, byte* data);
+			//static void tradeList(Player*, varInt winId, byte size, Trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock);
+			static void entityPosition(Player*, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, bool onGround);
+			static void entityPositionAndRotation(Player*, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, Angle yaw, Angle pitch, bool onGround);
+			static void entityRotation(Player*, varInt eid, Angle yaw, Angle pitch, bool onGround);
+			static void vehicleMove(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch);
+			static void openBook(Player*, varInt hand);
+			//static void openWindow(Player*, varInt winId, varInt winType, const Chat& winTitle);
+			static void openSignEditor(Player*, Position location);
+			static void ping(Player*, bint pingId);
+			static void craftRecipeResponse(Player*, byte winId, const mcString& recipeIdentifier);
 			static void playerAbilities(Player*, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier);
+			static void endCombatEvent(Player*, varInt duration, bint eid);
+			static void enterCombatEvent(Player*);
+			//static void deathCombatEvent(Player*, varInt playerId, bint eid, const Chat& message);
 			static void playerInfo(Player*, varInt action, varInt playerCount, playerInfo::Player*);
+			static void facePlayer(Player*, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot);
 			static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle);
+			static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, mcString* array1, varInt size2, mcString* array2);
+			static void destroyEntities(Player*, varInt count, varInt* eids);
+			static void removeEntityEffect(Player*, varInt eid, byte effectId);
+			//static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
+			static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, byte gm, byte prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
+			static void entityHeadLook(Player*, varInt eid, Angle headYaw);
+			static void multiBlockChange(Player, blong sectionPosition, bool unknown, varInt size, varLong* blocks);
+			static void selectAdvancementTab(Player*, bool hasId, const mcString& id);
+			//static void actionBar(Player*, const Chat& actionBarText);
+			static void worldBorderCenter(Player*, bdouble x, bdouble z);
+			static void worldBorderLerpSize(Player*, bdouble oldDiameter, bdouble newDiameter, varLong speed);
+			static void worldBorderSize(Player*, bdouble diameter);
+			static void worldBorderWarningDelay(Player*, varInt warningTime);
+			static void worldBorderWarningReach(Player*, varInt warningBlocks);
+			static void camera(Player*, varInt camId);
+			static void heldItemChange(Player*, byte slot);
+			static void updateViewPosition(Player*, varInt chunkX, varInt chunkZ);
+			static void updateViewDistance(Player*, varInt distance);
+			static void spawnPosition(Player*, Position location, bfloat angle);
+			static void displayScoreboard(Player*, byte position, const mcString& scoreName);
+			//static void entityMetadata(varInt eid, const Metadata& metadata);
+			static void attachEntity(Player*, bint attachedEid, bint holdingEid);
+			static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
+			//static void entityEquipment(Player*, varInt eid, Equipment* equipment);
+			static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
+			static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
+			//static void scoreboardObjective(Player*, const mcString& name, byte mode, const Chat& value, varInt type);
+			static void setPassengers(Player*, varInt vehicleEid, varInt count, varInt* passenders);
+			//static void teams(Player*, const mcString& name, byte mode, ...);
+			static void updateScore(Player*, const mcString& name, byte action, const mcString& objective, varInt value);
+			//static void setTitleSubtitle(Player*, const Chat& subtitle);
 			static void timeUpdate(Player*, blong worldAge, blong timeOfDay);
+			//static void setTitleText(Player*, const Chat& title);
+			static void setTitleTimes(Player*, bint fadeIn, bint stay, bint fadeOut);
+			static void entitySoundEffect(Player*, varInt soundId, varInt category, varInt eid, bfloat volume, bfloat pitch);
+			static void soundEffect(Player*, varInt soundId, varInt category, bint effectPosX, bint effectPosY, bint effectPosZ, bfloat volume, bfloat pitch);
+			static void stopSound(Player*, byte flags, varInt source, const mcString& name);
+			//static void playerListHeaderAndFooter(Player*, const Chat& header, const Chat& footer);
+			static void nbtQueryResponse(Player*, varInt transactionId, const nbt& tag);
+			static void collectItem(Player*, varInt collectedEid, varInt collectorEid, varInt pickupCount);
+			static void entityTeleport(Player*, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround);
+			//static void advancements(Player*, bool reset,)
+			//static void entityProperties(Player*, varInt eid, varInt nOfProperties, Property* properties);
+			static void entityEffect(Player*, varInt entityId, byte effectId, char amplifier, varInt duration, byte flags);
+			static void declareRecipes(Player*, varInt nOfRecipes);
+			//static void tags(Player*, varInt length, TagGroup* tags);
 		};
 		struct receive
 		{
+
+
+
 			static void keepAlive(Player*, blong keepAlive_id);
 		};
 	};

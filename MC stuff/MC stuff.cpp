@@ -22,6 +22,7 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
+	
 	log::initialize();
 	World::load();
 	srand((uint)time(nullptr));

@@ -174,13 +174,19 @@ void message::login::receive::start(Player* p, const mcString& username)
 	play::send::joinGame(p, 0x17, false, gamemode::survival, gamemode::none, 1, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 5, false, true, true, true);
 	delete wlds;
 
+	play::send::serverDifficulty(p, 2, false);
+
 	play::send::playerAbilities(p, false, false, false, false, 1.f, 1.f);
 
-	play::send::playerPosAndLook(p, 16.5, 1., 16.5, 0.f, 0.f, 0, 0x6, false);
+	play::send::declareRecipes(p, 0);
+
+	play::send::playerPosAndLook(p, 96.5, 1., 96.5, 0.f, 0.f, 0, 0x6, false);
 
 	playerInfo::Player* pl = new playerInfo::Player(mcUUID(), username, gamemode::survival, 100);
 	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
 	delete pl;
+
+	play::send::spawnPosition(p, Position(96, 1, 96), 0.f);
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
 
@@ -395,7 +401,7 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 }
 void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle)
 {
-	varInt id = (int)id::playerPosAndLook;
+	varInt id = (int)id::playerPosAndLook_clientbound;
 	char* lendata = new char[4], * lendatastart = lendata,
 		* data = new char[1024 * 1024], * start = data;
 
@@ -429,7 +435,7 @@ void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEn
 }
 void message::play::send::playerAbilities(Player* p, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier)
 {
-	varInt id = (int)id::playerAbilities;
+	varInt id = (int)id::playerAbilities_clientbound;
 	char* lendata = new char[4], * lendatastart = lendata,
 		* data = new char[1024 * 1024], * start = data;
 
@@ -465,6 +471,90 @@ void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 	id.write(data);
 	worldAge.write(data);
 	timeOfDay.write(data);
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+
+void message::play::send::serverDifficulty(Player* p, byte difficulty, bool isLocked)
+{
+	varInt id = (int)id::serverDIfficulty;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	*(data++) = difficulty;
+	*(data++) = isLocked;
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::spawnPosition(Player* p, Position location, bfloat angle)
+{
+	varInt id = (int)id::spawnPosition;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	location.write(data);
+	angle.write(data);
+
+	varInt length = int(data - start);
+	length.write(lendata);
+
+	try
+	{
+		p->send(lendatastart, lendata - lendatastart);
+		p->send(start, data - start);
+	}
+	catch (const char* c)
+	{
+		delete[] lendatastart;
+		delete[] start;
+		throw c;
+	}
+
+	delete[] lendatastart;
+	delete[] start;
+}
+void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
+{
+	varInt id = (int)id::declareRecipes;
+	char* lendata = new char[4], * lendatastart = lendata,
+		* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	nOfRecipes.write(data);
 
 	varInt length = int(data - start);
 	length.write(lendata);
