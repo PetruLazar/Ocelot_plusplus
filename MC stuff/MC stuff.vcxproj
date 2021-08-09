@@ -88,10 +88,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="angle.cpp" />
     <ClCompile Include="basic.cpp" />
     <ClCompile Include="chunk.cpp" />
-    <ClCompile Include="fixedPoint.cpp" />
     <ClCompile Include="json\json_array.cpp" />
     <ClCompile Include="json\json_base.cpp" />
     <ClCompile Include="json\json_compound.cpp" />
@@ -99,7 +97,6 @@
     <ClCompile Include="json\json_string.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="MC stuff.cpp" />
-    <ClCompile Include="mcString.cpp" />
     <ClCompile Include="message.cpp" />
     <ClCompile Include="nbt\nbt.cpp" />
     <ClCompile Include="nbt\nbt_base.cpp" />
@@ -118,19 +115,19 @@
     <ClCompile Include="options.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="position.cpp" />
     <ClCompile Include="region.cpp" />
-    <ClCompile Include="uuid.cpp" />
-    <ClCompile Include="varData.cpp" />
+    <ClCompile Include="types\angle.cpp" />
+    <ClCompile Include="types\fixedPoint.cpp" />
+    <ClCompile Include="types\mcString.cpp" />
+    <ClCompile Include="types\position.cpp" />
+    <ClCompile Include="types\uuid.cpp" />
+    <ClCompile Include="types\varData.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="angle.h" />
     <ClInclude Include="basic.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="chunk.h" />
-    <ClInclude Include="endian.h" />
-    <ClInclude Include="fixedPoint.h" />
     <ClInclude Include="json\json.h" />
     <ClInclude Include="json\json_array.h" />
     <ClInclude Include="json\json_base.h" />
@@ -138,7 +135,6 @@
     <ClInclude Include="json\json_int.h" />
     <ClInclude Include="json\json_string.h" />
     <ClInclude Include="log.h" />
-    <ClInclude Include="mcString.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="nbt\nbt.h" />
     <ClInclude Include="nbt\nbt_base.h" />
@@ -157,11 +153,15 @@
     <ClInclude Include="options.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="position.h" />
     <ClInclude Include="region.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="uuid.h" />
-    <ClInclude Include="varData.h" />
+    <ClInclude Include="types\angle.h" />
+    <ClInclude Include="types\endian.h" />
+    <ClInclude Include="types\fixedPoint.h" />
+    <ClInclude Include="types\mcString.h" />
+    <ClInclude Include="types\position.h" />
+    <ClInclude Include="types\uuid.h" />
+    <ClInclude Include="types\varData.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>

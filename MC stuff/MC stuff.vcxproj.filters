@@ -25,27 +25,21 @@
     <Filter Include="Header Files\json">
       <UniqueIdentifier>{e4bb7612-9b2c-4ba4-a3e8-dc20c9fb31c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\types">
+      <UniqueIdentifier>{4cf13d90-6f43-4427-ad49-8206c2e8f3fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\types">
+      <UniqueIdentifier>{b17e9405-e8ab-4fe9-9b24-323c892d856b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MC stuff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="varData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="chunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="basic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mcString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="position.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fixedPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="particle.cpp">
@@ -120,27 +114,33 @@
     <ClCompile Include="log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="angle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="region.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="uuid.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="types\angle.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\fixedPoint.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\mcString.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\position.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\uuid.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\varData.cpp">
+      <Filter>Source Files\types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="endian.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="basic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="varData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="chunk.h">
@@ -150,15 +150,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="block.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mcString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="position.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fixedPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="particle.h">
@@ -236,17 +227,32 @@
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="angle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="region.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="world.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="uuid.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="types\angle.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\endian.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\fixedPoint.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\mcString.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\position.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\uuid.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\varData.h">
+      <Filter>Header Files\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
