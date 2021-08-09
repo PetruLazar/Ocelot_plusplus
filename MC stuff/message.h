@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "basic.h"
 #include "varData.h"
 #include "mcString.h"
@@ -444,7 +444,7 @@ struct message
 			blockAction,
 			blockChange,
 			bossBar,
-			serverDIfficulty,
+			serverDifficulty,
 			chatMessage_clientbound,
 			clearTitles,
 			tabComplete_clientbound,
@@ -692,13 +692,58 @@ struct message
 		};
 		struct receive
 		{
-
-
-
+			static void confirmTeleport(Player*, varInt id);
+			static void queryBlockNbt(Player*, varInt transactionId, Position location);
+			static void setDifficulty(Player*, byte difficulty);
+			static void chatMessage(Player*, const mcString& content);
+			static void clientStatus(Player*, varInt actionId);
+			static void clientSettings(Player*, const mcString& locale, byte viewDistance, varInt chatMode, bool chatColors, byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
+			static void tabComplete(Player*, varInt transactionId, const mcString& text);
+			static void clickWindowButton(Player*, byte winId, byte buttonId);
+			//static void clickWindow(Player*, byte winId, bshort slot, varInt stateId, byte button, varInt mode, varInt length, );
+			static void closeWindow(Player*, byte winId);
+			static void pluginMessage(Player*, const mcString& channel, ull dataSize, char* data);
+			//static void editBook(Player*, varInt hand, varInt count, mcString* pages,???);
+			static void queryEntityNbt(Player*, varInt transactionId, varInt eid);
+			static void interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, varInt  hand, bool sneaking);
+			static void generateStructure(Player*, Position location, varInt levels, bool keepJigsaw);
 			static void keepAlive(Player*, blong keepAlive_id);
+			static void lockDifficulty(Player*, bool locked);
+			static void palyerPosition(Player*, bdouble x, bdouble feetY, bdouble Z, bool onGround);
+			static void playerPositionAndRotation(Player*, bdouble X, bdouble Y, bdouble Z, bfloat yaw, bfloat pitch, bool onGround);
+			static void playerRotation(Player*, bfloat yaw, bfloat pitch, bool onGround);
+			static void playerMovement(Player*, bool onGround);
+			static void vehicleMove(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch);
+			static void steerBoat(Player*, bool leftPaddleTurning, bool rightPaddleTurning);
+			static void pickItem(Player*, varInt slot);
+			static void craftRecipeRequest(Player*, byte winId, const mcString& recipe, bool makeAll);
+			static void playerAbilities(Player*, byte falgs);
+			static void playerDigging(Player*, varInt status, Position location, byte face);
+			static void entityAction(Player*, varInt eid, varInt actionId, varInt jumpBoost);
+			static void steerVehicle(Player*, bfloat sideways, bfloat forward);
+			static void pong(Player*, bint id);
+			static void setRecipeBookState(Player*, varInt bookid, bool open, bool filterActive);
+			static void setDisplayedRecipe(Player*, const mcString& recipeId);
+			static void nameItem(Player*, const mcString newName);
+			static void resourcePackStatus(Player*, varInt result);
+			static void advancementTab(Player*, varInt action, const mcString& tabId);
+			static void selectTrade(Player*, varInt selectedSlot);
+			static void setBeaconEffect(Player*, varInt primary, varInt secondary);
+			static void heldItemChange(Player*, bshort slot);
+			static void updateCommandBlock(Player*, Position location, const mcString& command, varInt mode, byte flags);
+			static void updateCommandBlockMinecart(Player*, varInt eid, const mcString& command, bool trackOutput);
+			//static void creativeInventoryAction(Player*, bshort slot, const Slot& clickedItem);
+			static void updateJigsawBlock(Player*, Position location, const mcString& name, const mcString& target, const mcString& pool, const mcString& finalState, const mcString& jointType);
+			static void updateStructureBlock(Player*, Position location, varInt action, varInt mode, const mcString& name, char offsetX, char offsetY, char offsetZ, byte sizeX, byte sizeY, byte sizeZ, varInt mirror, varInt rotation, const mcString& metadata, bfloat integrity, varLong seed, byte flags);
+			static void updateSign(Player*, Position location, const mcString& line1, const mcString& line2, const mcString& line3, const mcString& line4);
+			static void animation(Player*, varInt hand);
+			static void spectate(Player*, const mcUUID& target);
+			static void playerBlockPlacement(Player*, varInt hand, Position location, varInt face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
+			static void useItem(Player*, varInt hand);
 		};
 	};
 
 	//dispatch a message from a player
+	static void sendPacketData(Player*, char*, ull);
 	static void dispatch(Player*, char*, size_t);
 };

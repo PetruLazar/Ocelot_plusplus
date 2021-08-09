@@ -18,8 +18,9 @@ class Options
 	static Options options;
 
 public:
-	//there are not included in server.properties
+	//thee are not included in server.properties
 	static const std::string version;
+	static bool allowJoin;
 
 	static ush port();
 	static int max_players();

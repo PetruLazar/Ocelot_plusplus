@@ -22,7 +22,7 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
-	
+
 	log::initialize();
 	World::load();
 	srand((uint)time(nullptr));
@@ -65,7 +65,14 @@ int main()
 		if (_kbhit())
 		{
 			//27 is escape
-			if (_getch() == 27) break;
+			int key = _getch();
+			if (key == 27) break;
+			if (key == 's')
+			{
+				Options::allowJoin = !Options::allowJoin;
+				if (Options::allowJoin) cout << "\nPlayers are now allowed to join.";
+				else cout << "\nPlayers are not allowed to join anymore.";
+			}
 		}
 	}
 

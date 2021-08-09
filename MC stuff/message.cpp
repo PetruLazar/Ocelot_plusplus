@@ -4,6 +4,8 @@
 
 playerInfo::Player::Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping) :uuid(uuid), name(name), gm((byte)gm), ping(ping) { }
 
+#define disconnectAfter(p,f) try { f; } catch (const char* c) { p->disconnect(); throw c; } p->disconnect()
+
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
 	p->state = (ConnectionState)(int)nextState;
@@ -15,61 +17,23 @@ void message::handshake::receive::legacy(Player* p, byte payload)
 
 void message::status::send::respose(Player* p, const mcString& jsonResponse)
 {
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
-
 	varInt id_ = (int)id::response;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id_.write(data);
 	jsonResponse.write(data);
 
-	varInt len = int(data - start);
-	len.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::status::send::pong(Player* p, blong payload)
 {
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[9], * start = data;
+	varInt id = (int)id::pong;
+	char* data = new char[9], * start = data;
 
-	varInt id_ = (int)id::pong, len;
-
-	id_.write(data);
+	id.write(data);
 	payload.write(data);
 
-	len = int(data - start);
-	len.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	p->disconnect();
-
-	delete[] lendatastart;
-	delete[] start;
+	disconnectAfter(p, sendPacketData(p, start, data - start));
 }
 
 /*
@@ -100,31 +64,12 @@ void message::status::receive::ping(Player* p, blong payload)
 void message::login::send::disconnect(Player* p, const mcString& reason)
 {
 	varInt id = (int)id::disconnect;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	reason.write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	p->disconnect();
-
-	delete[] lendatastart;
-	delete[] start;
+	disconnectAfter(p, sendPacketData(p, start, data - start));
 }
 void message::login::send::encryptionRequest(Player*, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -132,6 +77,7 @@ void message::login::send::encryptionRequest(Player*, varInt publicKeyLength, by
 }
 void message::login::send::setCompression(Player*, varInt threshold)
 {
+	//support for compression
 	throw "compression not supported";
 }
 void message::login::send::success(Player* p, const mcUUID& uuid, const mcString& username)
@@ -139,35 +85,22 @@ void message::login::send::success(Player* p, const mcUUID& uuid, const mcString
 	p->state = ConnectionState::play;
 
 	varInt id = (int)id::success;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	uuid.write(data);
 	username.write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 
 void message::login::receive::start(Player* p, const mcString& username)
 {
-	//login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
+	if (!Options::allowJoin)
+	{
+		login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
+		return;
+	}
 	login::send::success(p, mcUUID(), username);
 
 	mcString* wlds = new mcString("world");
@@ -223,36 +156,18 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 void message::play::send::keepAlive(Player* p, blong keepAlive_id)
 {
 	varInt id = (int)id::keepAlive_clientbound;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	keepAlive_id.write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec,
 	const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat)
 {
 	varInt id = (int)id::joinGame;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	eid.write(data);
@@ -272,29 +187,12 @@ void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemod
 	*(data++) = isDebug;
 	*(data++) = isFlat;
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::playerInfo(Player* p, varInt action, varInt playerCount, playerInfo::Player* players)
 {
 	varInt id = (int)id::playerInfo;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	action.write(data);
@@ -343,30 +241,13 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		break;
 	}
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes,
 	varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities)
 {
 	varInt id = (int)id::chunkData;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	cX.write(data);
@@ -381,29 +262,12 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 	nOfBlockEntities.write(data);
 	for (int i = 0; i < nOfBlockEntities; i++) blockEntities[i].write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	x.write(data);
@@ -415,164 +279,63 @@ void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEn
 	teleportId.write(data);
 	*(data++) = dismountVehicle;
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::playerAbilities(Player* p, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier)
 {
 	varInt id = (int)id::playerAbilities_clientbound;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	*(data++) = char(byte(invulnerable) | (byte(flying) << 1) | (byte(allowFlying) << 2) | (byte(creative) << 3));
 	flyingSpeed.write(data);
 	fovModifier.write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 {
 	varInt id = (int)id::timeUpdate;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	worldAge.write(data);
 	timeOfDay.write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 
 void message::play::send::serverDifficulty(Player* p, byte difficulty, bool isLocked)
 {
-	varInt id = (int)id::serverDIfficulty;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	varInt id = (int)id::serverDifficulty;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	*(data++) = difficulty;
 	*(data++) = isLocked;
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::spawnPosition(Player* p, Position location, bfloat angle)
 {
 	varInt id = (int)id::spawnPosition;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	location.write(data);
 	angle.write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
 {
 	varInt id = (int)id::declareRecipes;
-	char* lendata = new char[4], * lendatastart = lendata,
-		* data = new char[1024 * 1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	nOfRecipes.write(data);
 
-	varInt length = int(data - start);
-	length.write(lendata);
-
-	try
-	{
-		p->send(lendatastart, lendata - lendatastart);
-		p->send(start, data - start);
-	}
-	catch (const char* c)
-	{
-		delete[] lendatastart;
-		delete[] start;
-		throw c;
-	}
-
-	delete[] lendatastart;
-	delete[] start;
+	sendPacketData(p, start, data - start);
 }
 
 void message::play::receive::keepAlive(Player*, blong keepAlive_id)
@@ -580,6 +343,31 @@ void message::play::receive::keepAlive(Player*, blong keepAlive_id)
 	std::cout << "\nKeep alive message received.";
 }
 
+void message::sendPacketData(Player* p, char* data, ull size)
+{
+	varInt len = (int)(uint)size;
+	char* lendata = new char[3], * buffer = lendata;
+	len.write(buffer);
+
+	//suport for compression
+
+	try
+	{
+		p->send(lendata, buffer - lendata);
+		p->send(data, size);
+	}
+	catch (const char* c)
+	{
+		delete[] lendata;
+		delete[] data;
+		throw c;
+	}
+
+	delete[] lendata;
+	delete[] data;
+
+
+}
 void message::dispatch(Player* p, char* data, size_t size)
 {
 	varInt id;
