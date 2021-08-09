@@ -1,5 +1,5 @@
 #include "nbt_base.h"
-#include "nbt.h"
+#include "../nbt.h"
 
 nbt* nbt::getTagP(tag t)
 {

@@ -1,5 +1,5 @@
 #include "json_base.h"
-#include "json.h"
+#include "../json.h"
 
 const char typeError[] = "Invalid json element type.";
 

@@ -1,13 +1,7 @@
 ﻿#pragma once
-#include "basic.h"
-#include "varData.h"
-#include "mcString.h"
 #include "player.h"
-#include "endian.h"
-#include "uuid.h"
 #include "nbt.h"
-#include "angle.h"
-#include "position.h"
+#include "json.h"
 
 //The vanilla server sends:
 // login success - done

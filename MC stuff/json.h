@@ -3,11 +3,11 @@
 //unused
 //WIP
 
-#include "json_base.h"
-#include "json_string.h"
-#include "json_int.h"
-#include "json_array.h"
-#include "json_compound.h"
+#include "json/json_base.h"
+#include "json/json_string.h"
+#include "json/json_int.h"
+#include "json/json_array.h"
+#include "json/json_compound.h"
 
 //example of forming a json object in memory and editing it
 /*int main()

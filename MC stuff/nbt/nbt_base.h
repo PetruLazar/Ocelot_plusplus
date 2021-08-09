@@ -1,6 +1,5 @@
 #pragma once
-#include "../basic.h"
-#include "../endian.h"
+#include "../types.h"
 
 extern const char* typeError;
 extern const char* outOfBoundsError;

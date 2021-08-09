@@ -1,5 +1,5 @@
 #pragma once
-#include "basic.h"
+#include "typedefs.h"
 
 class mcUUID
 {

@@ -90,9 +90,6 @@
     <ClCompile Include="nbt\nbt_string.cpp">
       <Filter>Source Files\nbt</Filter>
     </ClCompile>
-    <ClCompile Include="nbt\nbt.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
     <ClCompile Include="json\json_base.cpp">
       <Filter>Source Files\json</Filter>
     </ClCompile>
@@ -137,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="types\varData.cpp">
       <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="nbt.cpp">
+      <Filter>Source Files\nbt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +197,6 @@
     <ClInclude Include="nbt\nbt_string.h">
       <Filter>Header Files\nbt</Filter>
     </ClInclude>
-    <ClInclude Include="nbt\nbt.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
     <ClInclude Include="json\json_base.h">
       <Filter>Header Files\json</Filter>
     </ClInclude>
@@ -213,9 +210,6 @@
       <Filter>Header Files\json</Filter>
     </ClInclude>
     <ClInclude Include="json\json_string.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json.h">
       <Filter>Header Files\json</Filter>
     </ClInclude>
     <ClInclude Include="options.h">
@@ -253,6 +247,18 @@
     </ClInclude>
     <ClInclude Include="types\varData.h">
       <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\typedefs.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="json.h">
+      <Filter>Header Files\json</Filter>
+    </ClInclude>
+    <ClInclude Include="nbt.h">
+      <Filter>Header Files\nbt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 #pragma once
-#include "nbt/nbt.h"
+#include "nbt.h"
 
 class chunk
 {
@@ -9,8 +9,6 @@ class chunk
 		zlibCompression,
 		none
 	};
-
-
 
 public:
 	//not actually empty, has a platform of stone

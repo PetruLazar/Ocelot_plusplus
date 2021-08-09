@@ -1,5 +1,6 @@
 #pragma once
-#include "basic.h"
+#include "typedefs.h"
+
 class Angle
 {
 	byte v;

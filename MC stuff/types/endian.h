@@ -1,5 +1,5 @@
 #pragma once
-#include "basic.h"
+#include "typedefs.h"
 
 #define bshort bigEndian<short>
 #define bushort bigEndian<ush>

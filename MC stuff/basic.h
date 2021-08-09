@@ -1,12 +1,7 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <string>
+#include "types.h"
 #include <Windows.h>
-#include <zlib.h>
-#include <vector>
-#include <SFML/Network.hpp>
 
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
@@ -26,13 +21,6 @@ void operator delete(void*, size_t);
 void operator delete[](void*, size_t);
 
 #endif
-
-typedef unsigned char byte;
-
-typedef unsigned short ush;
-typedef unsigned int uint;
-typedef unsigned long long ull;
-typedef long long int64;
 
 enum class gamemode : byte
 {

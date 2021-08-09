@@ -1,7 +1,5 @@
 #pragma once
 #include "basic.h"
-#include "player.h"
-#include "varData.h"
 
 enum class ConnectionState : byte
 {

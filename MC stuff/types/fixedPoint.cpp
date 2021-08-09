@@ -1,5 +1,5 @@
 #include "fixedPoint.h"
-#include "basic.h"
+#include "cmath"
 
 fixedPoint::fixedPoint() : v(0) { }
 fixedPoint::fixedPoint(int value) : v(value) { }
