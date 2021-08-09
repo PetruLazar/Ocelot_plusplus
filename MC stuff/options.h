@@ -19,6 +19,7 @@ class Options
 
 public:
 	//thee are not included in server.properties
+	static const int currentProtocol = 756;
 	static const std::string version;
 	static bool allowJoin;
 

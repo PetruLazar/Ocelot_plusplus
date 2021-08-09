@@ -3,150 +3,103 @@
 #include "nbt.h"
 #include "json.h"
 
-//The vanilla server sends:
-// login success - done
-// join game - done
-// plugin message
-// server difficulty - done
-// player abilities - done
-// held item change
-// declare recipes - done?
-// tags
-// entity status
-// declare commands
-// unlock recipes
-// player position and look - done
-// player info - done (starting in file 7)
-// player info (2nd)
-// update light
-// chunk data
-// update light (2nd)
-// chunk data(2nd)
-// update light (3rd)
-// chunk data (3rd)
-// update light (4th)
-// chunk data (4th)
-// update light (5th)
-// chunk data (5th)
-// update light (6th)
-// chunk data (6th)
-// update light (7th)
-// possibly missed something
-// update light (8th)
-// chunk data (7th)
-// update light (9th)
-// chunk data (8th)
-// spawn living entity
-// entity metadata
-// entity properties
-// update light (10th)
-// chunk data (9th)
-// spawn living entity (2nd)
-// entity metadata (2nd)
-// entity properties (2nd)
-// update light (11th)
-// chunk data (10th)
-// update light (12th)
-// chunk data (11th)
-// update light (13th)
-// chunk data (12th)
-// update light (14th)
-// chunk data (13th)
-// update light (15th)
-// chunk data (14th)
-// spawn living entity (3rd)
-// entity metadata (3rd)
-// entity properties (3rd)
-// spawn living entity (4th)
-// entity metadata (4th)
-// entity properties (4th)
-// spawn living entity (5th)
-// entity metadata (5th)
-// entity properties (5th)
-// update light (16th)
-// chunk data (15th)
-// spawn living entity (6th)
-// entity metadata (6th)
-// entity properties (6th)
-// spawn living entity (7th)
-// entity metadata (7th)
-// entity properties (7th)
-// update light (17th)
-// chunk data (16th)
-// spawn living entity (8th)
-// entity metadata (8th)
-// entity properties (8th)
-// update light (18th)
-// chunk data (17th)
-// update light (19th)
-// chunk data (18th)
-// update light (20th)
-// chunk data (19th)
-// update light (21st)
-// chunk data (20th)
-// update light (22nd)
-// chunk data (21st)
-// spawn entity
-// entity metadata (9th)
-// entity velocity
-// update light (23rd)
-// chunk data(22nd)
-// spawn living entity (9th)
-// entity metadata (10th)
-// entity properties (9th)
-// update light (24th)
-// chunk data (23rd)
-// spawn living entity (10th)
-// entity metadata (11th)
-// entity properties (10th)
-// spawn living entity (11th)
-// entity metadata (12th)
-// entity properties (11th)
-// update light (25th
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// update light x=5, z=3
-// chunk data x=5, y=3
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// spawn living entity
-// entity metadata
-// entity properties
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// update light
-// chunk data
-// 
-// 
-// 
-// ... offset 12b6 in file 18
-// 
-// spawn entity
-// update view position
-// 
-// 
-// 
+//A log of the vanilla client playing on a vanilla server:
+//S: join game - done
+//S : plugin message - done
+//S : server difficulty - done
+//S : player abilities - done
+//S : held item change
+//S : declare recipes - done
+//S : tags
+//										C: client settings
+//S : entity status
+//										C: plugin message
+//S : declare commands
+//S : unlock recipes
+//S : player positionand look - done
+//S : player info
+//S : player info
+//S : update view position
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : spawn living entity
+//S : entity metadata
+//S : entity properties
+//S : spawn living entity
+//S : entity metadata
+//S : entity properties
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : spawn entity
+//S : entity metadata
+//S : entity velocity
+//S : spawn living entity
+//S : entity metadata
+//S : entity properties
+//S : spawn entity
+//S : entity metadata
+//S : entity velocity
+//S : spawn living entity
+//S : entity metadata
+//S : entity properties
+//S : update light
+//S : chunk data
+//S : spawn living entity
+//S : entity metadata
+//S : entity properties
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : update light
+//S : chunk data
+//S : spawn living entity
+//S : entity metadata
+//S : entity properties
+//										C: teleport confirm
+//S : spawn living entity
+//										C: player positionand rotation
+//S : entity metadata
+//S : entity properties
+//										C: player positionand rotation
 //...
 //window Items?
 //spawnPosition? - done
@@ -344,6 +297,10 @@ public:
 	varInt statisticId;
 	varInt value;
 };
+class tags
+{
+	mcString id;
+};
 
 struct message
 {
@@ -448,7 +405,7 @@ struct message
 			windowProperty,
 			setSlot,
 			setCooldown,
-			pluginMessage,
+			pluginMessage_clientbound,
 			namedSoundEffect,
 			disconnect,
 			entityStatus,
@@ -604,7 +561,7 @@ struct message
 			static void windowProperty(Player*, byte winId, bshort property, bshort value);
 			//static void setSlot(Player*, byte winId, varInt stateId, bshort slot, const Slot& data);
 			static void setCooldown(Player*, varInt itemId, varInt cooldown);
-			static void pluginMessage(Player*, const mcString& channel, char* data);
+			static void pluginMessage(Player*, const mcString& channel, ull dataSize, const char* data);
 			static void namedSoundEffect(Player*, const mcString& soundName, varInt category, bint effectX, bint effectY, bint effectZ, bfloat volume, bfloat pitch);
 			//static void disconnect(Player*, const Chat& reason);
 			static void entityStatus(Player*, bint eid, byte status);

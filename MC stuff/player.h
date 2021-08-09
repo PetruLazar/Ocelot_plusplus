@@ -35,6 +35,7 @@ private:
 		//current position of any of the receiving buffers
 		* current;
 public:
+	int protocolVersion;
 	ConnectionState state;
 
 	Player(sf::TcpSocket*);

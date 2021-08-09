@@ -16,7 +16,7 @@ sf::IpAddress Options::_ip = sf::IpAddress::Any;
 Options Options::options;
 
 const string Options::version = "\"version\":{\"name\":\"1.17.1\",\"protocol\":756}";
-bool Options::allowJoin = false;
+bool Options::allowJoin = true;
 
 ull parseUnsigned(const string& name, const string& value, ull linenumber)
 {

@@ -8,6 +8,7 @@ playerInfo::Player::Player(const mcUUID& uuid, const mcString& name, gamemode gm
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
+	p->protocolVersion = protocolVersion;
 	p->state = (ConnectionState)(int)nextState;
 }
 void message::handshake::receive::legacy(Player* p, byte payload)
@@ -101,17 +102,28 @@ void message::login::receive::start(Player* p, const mcString& username)
 		login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
 		return;
 	}
+	if (p->protocolVersion != Options::currentProtocol)
+	{
+		login::send::disconnect(p, "{\"text\":\"Use 1.17.1, " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
+		return;
+	}
 	login::send::success(p, mcUUID(), username);
-
+	
 	mcString* wlds = new mcString("world");
 	play::send::joinGame(p, 0x17, false, gamemode::survival, gamemode::none, 1, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 5, false, true, true, true);
 	delete wlds;
+
+	play::send::pluginMessage(p, "minecraft:brand", 9, "lazorenii");
 
 	play::send::serverDifficulty(p, 2, false);
 
 	play::send::playerAbilities(p, false, false, false, false, 1.f, 1.f);
 
+	play::send::heldItemChange(p, 0);
+
 	play::send::declareRecipes(p, 0);
+
+	//tags
 
 	play::send::playerPosAndLook(p, 96.5, 1., 96.5, 0.f, 0.f, 0, 0x6, false);
 
@@ -140,6 +152,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
 	{
 		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
+		//play::send::updateLight();
 	}
 
 	delete bitMask;
@@ -304,6 +317,27 @@ void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 
 	sendPacketData(p, start, data - start);
 }
+void message::play::send::pluginMessage(Player* p, const mcString& channel, ull byteCount, const char* bytes)
+{
+	varInt id = (int)id::pluginMessage_clientbound;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	channel.write(data);
+	for (ull i = 0; i < byteCount; i++) *(data++) = bytes[i];
+
+	sendPacketData(p, start, data - start);
+}
+void message::play::send::heldItemChange(Player* p, byte slot)
+{
+	varInt id = (int)id::heldItemChange_clientbound;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	*(data++) = slot;
+
+	sendPacketData(p, start, data - start);
+}
 
 void message::play::send::serverDifficulty(Player* p, byte difficulty, bool isLocked)
 {
@@ -337,6 +371,7 @@ void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
 
 	sendPacketData(p, start, data - start);
 }
+//void message::play::send::tags
 
 void message::play::receive::keepAlive(Player*, blong keepAlive_id)
 {
