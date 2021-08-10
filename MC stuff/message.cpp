@@ -112,15 +112,15 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->username = username;
 	p->nextKeepAlive = clock() + p->keepAliveInterval;
 
-	mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 1, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 5, false, true, false, true);
-	delete wlds;
+	//mcString* wlds = new mcString("world");
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::dimension, "", 0x5f19a34be6c9129a, 0, 5, false, true, false, true);
+	//delete wlds;
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
 	play::send::serverDifficulty(p, 2, false);
 
-	play::send::playerAbilities(p, false, true, true, false, 0.1f, 1.f);
+	play::send::playerAbilities(p, false, true, true, false, 0.05f, 0.1f);
 
 	//play::send::heldItemChange(p, 0);
 
@@ -137,7 +137,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::spawnPosition(p, Position(96, 1, 96), 0.f);
 
-	//play::send::timeUpdate(p, 6000i64, 6000i64);
+	play::send::timeUpdate(p, 6000i64, -6000i64);
+
+	//play::send::chatMessage();
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -369,14 +371,14 @@ void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
 	blong* bitMask = new blong(0x1i64);
-	varInt* biomes = new varInt[1024]{ 127 }; //127 is "void"
+
 	char* chunkData = new char[20024];
 	chunkData[0] = 0x01;
 	chunkData[1] = 0x00;
 	chunkData[2] = 4;
 	chunkData[3] = 2;
 	chunkData[4] = 0;
-	chunkData[5] = 1;
+	chunkData[5] = 1; // 34 for water
 	char* buffer = chunkData + 6;
 	varInt(256).write(buffer);
 	//blong(1).write(buffer);
@@ -385,12 +387,14 @@ void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 
 	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
 	{
+		varInt* biomes = new varInt[1024];
+		for (ull k = 0; k < 1024; k++) biomes[k] = (i + j) % 10;
 		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
 		//play::send::updateLight();
+		delete[] biomes;
 	}
 
 	delete bitMask;
-	delete[] biomes;
 	delete[] chunkData;
 }
 

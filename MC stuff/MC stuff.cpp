@@ -18,6 +18,14 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
+	/*while (true)
+	{
+		int x;
+		cin >> x;
+		cout << to_hexstring(x) << endl;
+	}*/
+
+	//Chat msg("Hello world!", 0x55ff55);
 
 	log::initialize();
 	World::load();

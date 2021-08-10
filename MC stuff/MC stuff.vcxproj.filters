@@ -138,6 +138,12 @@
     <ClCompile Include="nbt.cpp">
       <Filter>Source Files\nbt</Filter>
     </ClCompile>
+    <ClCompile Include="types\chat.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\utils.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic.h">
@@ -259,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="nbt.h">
       <Filter>Header Files\nbt</Filter>
+    </ClInclude>
+    <ClInclude Include="types\chat.h">
+      <Filter>Header Files\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

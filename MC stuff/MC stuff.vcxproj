@@ -117,9 +117,11 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="region.cpp" />
     <ClCompile Include="types\angle.cpp" />
+    <ClCompile Include="types\chat.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
     <ClCompile Include="types\mcString.cpp" />
     <ClCompile Include="types\position.cpp" />
+    <ClCompile Include="types\utils.cpp" />
     <ClCompile Include="types\uuid.cpp" />
     <ClCompile Include="types\varData.cpp" />
     <ClCompile Include="world.cpp" />
@@ -157,6 +159,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="types\angle.h" />
+    <ClInclude Include="types\chat.h" />
     <ClInclude Include="types\endian.h" />
     <ClInclude Include="types\fixedPoint.h" />
     <ClInclude Include="types\mcString.h" />
