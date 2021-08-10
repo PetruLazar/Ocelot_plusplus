@@ -22,9 +22,22 @@ void Player::disconnect()
 	socket->disconnect();
 	connected = false;
 }
-void Player::updateNet()
+void Player::updateNet(clock_t time)
 {
 	if (!connected) return;
+	if (time > nextKeepAlive && lastKeepAliveId == -1)
+	{
+		nextKeepAlive = time + keepAliveInterval;
+		keepAliveTimeoutPoint = time + keepAliveTimeoutAfter;
+		lastKeepAliveId = time;
+		message::play::send::keepAlive(this, lastKeepAliveId);
+	}
+	else if (lastKeepAliveId != -1 && time > keepAliveTimeoutPoint)
+	{
+		disconnect();
+		std::cout << '\n' << username << " was timed out.";
+		return;
+	}
 	ull received = 0;
 	if (info & bufferingLength)
 	{

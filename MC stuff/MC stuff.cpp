@@ -35,6 +35,7 @@ int main()
 	bool keepAlive = true;
 	while (keepAlive)
 	{
+		clock_t time = clock();
 		//accept connections
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
@@ -46,7 +47,7 @@ int main()
 		//receive messages
 		for (int64 i = 0; i < (int64)Player::players.size(); i++) try
 		{
-			Player::players[i]->updateNet();
+			Player::players[i]->updateNet(time);
 		}
 		catch (const char* err_msg)
 		{

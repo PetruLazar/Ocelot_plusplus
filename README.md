@@ -117,8 +117,6 @@ play::send::openHorseWindow
 
 play::send::initializeWorldBorder
 
-play::send::keepAlive
-
 play::send::chunkData
 
 play::send::effect
@@ -286,8 +284,6 @@ play::receive::queryEntityNbt
 play::receive::interactEntity
 
 play::receive::generateStructure
-
-play::receive::keepAlive
 
 play::receive::lockDifficulty
 

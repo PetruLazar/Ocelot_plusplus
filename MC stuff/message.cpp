@@ -108,24 +108,28 @@ void message::login::receive::start(Player* p, const mcString& username)
 		return;
 	}
 	login::send::success(p, mcUUID(), username);
-	
+
+	p->username = username;
+	p->nextKeepAlive = clock() + p->keepAliveInterval;
+
 	mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::survival, gamemode::none, 1, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 5, false, true, true, true);
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 1, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 5, false, true, false, true);
 	delete wlds;
 
-	play::send::pluginMessage(p, "minecraft:brand", 9, "lazorenii");
+	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
 	play::send::serverDifficulty(p, 2, false);
 
-	play::send::playerAbilities(p, false, false, false, false, 1.f, 1.f);
+	play::send::playerAbilities(p, false, true, true, false, 0.1f, 1.f);
 
-	play::send::heldItemChange(p, 0);
+	//play::send::heldItemChange(p, 0);
 
 	play::send::declareRecipes(p, 0);
 
 	//tags
 
 	play::send::playerPosAndLook(p, 96.5, 1., 96.5, 0.f, 0.f, 0, 0x6, false);
+	play::send::updateViewPosition(p, 5, 5);
 
 	playerInfo::Player* pl = new playerInfo::Player(mcUUID(), username, gamemode::survival, 100);
 	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
@@ -133,33 +137,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::spawnPosition(p, Position(96, 1, 96), 0.f);
 
-	play::send::timeUpdate(p, 6000i64, 6000i64);
-
-	blong* bitMask = new blong(0x1i64);
-	varInt* biomes = new varInt[1024]{ 127 }; //127 is "void"
-	char* chunkData = new char[20024];
-	chunkData[0] = 0x00;
-	chunkData[1] = 0x01;
-	chunkData[2] = 4;
-	chunkData[3] = 2;
-	chunkData[4] = 0;
-	chunkData[5] = 1;
-	char* buffer = chunkData + 6;
-	varInt(256).write(buffer);
-	blong(1).write(buffer);
-	for (int i = 1; i < 256; i++) blong(0).write(buffer);
-
-	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
-	{
-		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
-		//play::send::updateLight();
-	}
-
-	delete bitMask;
-	delete[] biomes;
-	delete[] chunkData;
-
-	play::send::keepAlive(p, 0x49f3c6c78a462b6a);
+	//play::send::timeUpdate(p, 6000i64, 6000i64);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -371,11 +349,49 @@ void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
 
 	sendPacketData(p, start, data - start);
 }
+void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt chunkZ)
+{
+	varInt id = (int)id::updateViewPosition;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	chunkX.write(data);
+	chunkZ.write(data);
+
+	sendPacketData(p, start, data - start);
+}
 //void message::play::send::tags
 
-void message::play::receive::keepAlive(Player*, blong keepAlive_id)
+void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 {
-	std::cout << "\nKeep alive message received.";
+	if (keepAlive_id == p->lastKeepAliveId) p->lastKeepAliveId = -1;
+}
+void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
+{
+	blong* bitMask = new blong(0x1i64);
+	varInt* biomes = new varInt[1024]{ 127 }; //127 is "void"
+	char* chunkData = new char[20024];
+	chunkData[0] = 0x01;
+	chunkData[1] = 0x00;
+	chunkData[2] = 4;
+	chunkData[3] = 2;
+	chunkData[4] = 0;
+	chunkData[5] = 1;
+	char* buffer = chunkData + 6;
+	varInt(256).write(buffer);
+	//blong(1).write(buffer);
+	for (int i = 0; i < 16; i++) blong(0x1111111111111111).write(buffer);
+	for (int i = 16; i < 256; i++) blong(0).write(buffer);
+
+	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
+	{
+		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
+		//play::send::updateLight();
+	}
+
+	delete bitMask;
+	delete[] biomes;
+	delete[] chunkData;
 }
 
 void message::sendPacketData(Player* p, char* data, ull size)
@@ -478,11 +494,249 @@ void message::dispatch(Player* p, char* data, size_t size)
 	case ConnectionState::play:
 		switch ((play::id)(int)id)
 		{
+		case play::id::teleportConfirm:
+		{
+			varInt teleportId;
+			teleportId.read(data);
+			play::receive::teleportConfirm(p, teleportId);
+			throw "Partially handled packet: teleport confirm";
+		}
+		break;
+		case play::id::queryBlockNbt:
+		{
+			throw "Unhandled packet: query block nbt";
+		}
+		break;
+		case play::id::setDifficulty:
+		{
+			throw "Unhandled packet: set difficulty";
+		}
+		break;
+		case play::id::chatMessage_serverbound:
+		{
+			throw "Unhandled packet: chat message";
+		}
+		break;
+		case play::id::clientStatus:
+		{
+			throw "Unhandled packet: client status";
+		}
+		break;
+		case play::id::clientSettings:
+		{
+			throw "Unhandled packet: client settings";
+		}
+		break;
+		case play::id::tabComplete_serverbound:
+		{
+			throw "Unhandled packet: tab complete";
+		}
+		break;
+		case play::id::clickWindowButton:
+		{
+			throw "Unhandled packet: click window button";
+		}
+		break;
+		case play::id::clickWindow:
+		{
+			throw "Unhandled packet: click window";
+		}
+		break;
+		case play::id::closeWindow_serverbound:
+		{
+			throw "Unhandled packet: close window";
+		}
+		break;
+		case play::id::pluginMessage_serverbound:
+		{
+			throw "Unhandled packet: plugin message";
+		}
+		break;
+		case play::id::editBook:
+		{
+			throw "Unhandled packet: edit book";
+		}
+		break;
+		case play::id::queryEntityNbt:
+		{
+			throw "Unhandled packet: query entity nbt";
+		}
+		break;
+		case play::id::interactEntity:
+		{
+			throw "Unhandled packet: interact entity";
+		}
+		break;
+		case play::id::generateStructure:
+		{
+			throw "Unhandled packet: generate structure";
+		}
+		break;
 		case play::id::keepAlive_serverbound:
 		{
 			blong keepAlive_id;
 			keepAlive_id.read(data);
 			play::receive::keepAlive(p, keepAlive_id);
+		}
+		break;
+		case play::id::lockDifficulty:
+		{
+			throw "Unhandled packet: lock difficulty";
+		}
+		break;
+		case play::id::playerPosition:
+		{
+			throw "Unhandled packet: player position";
+		}
+		break;
+		case play::id::playerPositionAndRotation_serverbound:
+		{
+			throw "Unhandled packet: player position and rotation";
+		}
+		break;
+		case play::id::playerRotation:
+		{
+			throw "Unhandled packet: player rotation";
+		}
+		break;
+		case play::id::playerMovement:
+		{
+			throw "Unhandled packet: player movement";
+		}
+		break;
+		case play::id::vehicleMove:
+		{
+			throw "Unhandled packet: vehicle move";
+		}
+		break;
+		case play::id::steerBoat:
+		{
+			throw "Unhandled packet: steer boat";
+		}
+		break;
+		case play::id::pickItem:
+		{
+			throw "Unhandled packet: pick item";
+		}
+		break;
+		case play::id::craftRecipeRequest:
+		{
+			throw "Unhandled packet: craft recipe request";
+		}
+		break;
+		case play::id::playerAbilities_serverbound:
+		{
+			throw "Unhandled packet: player abilities";
+		}
+		break;
+		case play::id::playerDigging:
+		{
+			throw "Unhandled packet: player digging";
+		}
+		break;
+		case play::id::entityAction:
+		{
+			throw "Unhandled packet: entity action";
+		}
+		break;
+		case play::id::steerVehicle:
+		{
+			throw "Unhandled packet: steer vehicle";
+		}
+		break;
+		case play::id::pong:
+		{
+			throw "Unhandled packet: pong";
+		}
+		break;
+		case play::id::setRecipeBookState:
+		{
+			throw "Unhandled packet: set recipe book state";
+		}
+		break;
+		case play::id::setDisplayedRecipe:
+		{
+			throw "Unhandled packet: set displayed recipe";
+		}
+		break;
+		case play::id::nameItem:
+		{
+			throw "Unhandled packet: name item";
+		}
+		break;
+		case play::id::resourcePackStatus:
+		{
+			throw "Unhandled packet: resource pack status";
+		}
+		break;
+		case play::id::advancementTab:
+		{
+			throw "Unhandled packet: advancement tab";
+		}
+		break;
+		case play::id::selectTrade:
+		{
+			throw "Unhandled packet: select trade";
+		}
+		break;
+		case play::id::setBeaconEffect:
+		{
+			throw "Unhandled packet: set beacon effect";
+		}
+		break;
+		case play::id::heldItemChange_serverbound:
+		{
+			throw "Unhandled packet: held item change";
+		}
+		break;
+		case play::id::updateCommandBlock:
+		{
+			throw "Unhandled packet: update command block";
+		}
+		break;
+		case play::id::updateCommandBlockMinecart:
+		{
+			throw "Unhandled packet: update command block minecart";
+		}
+		break;
+		case play::id::creativeInventoryAction:
+		{
+			throw "Unhandled packet: creative inventoty action";
+		}
+		break;
+		case play::id::updateJigsawBlock:
+		{
+			throw "Unhandled packet: update jigsaw block";
+		}
+		break;
+		case play::id::updateStructureBlock:
+		{
+			throw "Unhandled packet: update structure block";
+		}
+		break;
+		case play::id::updateSign:
+		{
+			throw "Unhandled packet: update sign";
+		}
+		break;
+		case play::id::animation_serverbound:
+		{
+			throw "Unhandled packet: animation";
+		}
+		break;
+		case play::id::spectate:
+		{
+			throw "Unhandled packet: spectate";
+		}
+		break;
+		case play::id::playerBlockPlacement:
+		{
+			throw "Unhandled packet: player block placement";
+		}
+		break;
+		case play::id::useItem:
+		{
+			throw "Unhandled packet: use item";
 		}
 		break;
 		default:

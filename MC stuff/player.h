@@ -34,16 +34,25 @@ private:
 		* buffer = 0,
 		//current position of any of the receiving buffers
 		* current;
+
 public:
+	mcString username;
+
 	int protocolVersion;
 	ConnectionState state;
+
+	static const clock_t keepAliveInterval = 10000; // how often to send keep alive packets
+	static const clock_t keepAliveTimeoutAfter = 30000; // kick the client if it doesn't respond for this many ms
+	clock_t nextKeepAlive = 0x7fffffff; //when to send the next keep alive message
+	clock_t keepAliveTimeoutPoint; //when will the keep alive timeout end?
+	int64 lastKeepAliveId = -1; //the expected id for which a keep alive is pending or -1 if there is no pending response
 
 	Player(sf::TcpSocket*);
 	~Player();
 
 	void disconnect();
 	//check for incoming data on the socket
-	void updateNet();
+	void updateNet(clock_t time);
 	//send data to player
 	void send(char* data, ull data_length);
 

@@ -643,7 +643,7 @@ struct message
 		};
 		struct receive
 		{
-			static void confirmTeleport(Player*, varInt id);
+			static void teleportConfirm(Player*, varInt id);
 			static void queryBlockNbt(Player*, varInt transactionId, Position location);
 			static void setDifficulty(Player*, byte difficulty);
 			static void chatMessage(Player*, const mcString& content);

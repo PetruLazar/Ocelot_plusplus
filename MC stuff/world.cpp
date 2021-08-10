@@ -6,7 +6,7 @@ const char invalidLevelDatFile[] = "The level.dat file is invalid.";
 const ull levelDatMaxSize = 1024 * 1024; //size after decompression
 
 nbt_compound World::level_dat("", nullptr);
-nbt_compound World::dimension_codec("", new nbt* [1]{
+nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
 		new nbt_string("type","minecraft:dimension_type"),
 		new nbt_list("value",new nbt * [1]{
@@ -33,10 +33,32 @@ nbt_compound World::dimension_codec("", new nbt* [1]{
 			},3)
 		},1)
 	}, 2),
-	//new nbt_compound("minecraft:worldgen/biome",new nbt * [2]{
-	//	new nbt_string("type","minecraft:worldgen/biome")
-	//},2)
-	}, 1);
+	new nbt_compound("minecraft:worldgen/biome",new nbt * [2]{
+		new nbt_string("type","minecraft:worldgen/biome"),
+		new nbt_list("value",new nbt * [1]{
+			new nbt_compound("",new nbt * [3]{
+				new nbt_string("name","minecraft:plains"),
+				new nbt_int("id",0),
+				new nbt_compound("element",new nbt * [7]{
+					new nbt_string("precipitation","none"),
+					new nbt_float("depth", 0.f),
+					new nbt_float("temperature", 1.f),
+					new nbt_float("scale", .75f),
+					new nbt_float("downfall", .5f),
+					new nbt_string("category", "none"),
+					new nbt_compound("effects",new nbt * [6] {
+						new nbt_int("sky_color",0xff00),
+						new nbt_int("water_fog_color",0xff00),
+						new nbt_int("fog_color",0xff00),
+						new nbt_int("water_color",0xff00),
+						new nbt_int("foliage_color",0xff00),
+						new nbt_int("grass_color",0xff00)
+					},6)
+				},7)
+			},3)
+		},1)
+	},2)
+	}, 2);
 nbt_compound World::dimension("", new nbt* [15]{
 						new nbt_byte("piglin_safe",1),
 						new nbt_byte("natural",1),
