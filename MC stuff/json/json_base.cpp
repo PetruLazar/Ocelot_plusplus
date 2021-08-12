@@ -11,7 +11,7 @@ json::type json::getType() { return t; }
 json::type json::getChildType() { throw typeError; };
 void json::changeType(type) { throw typeError; }
 
-std::string json::to_string()
+std::string json::to_string() const
 {
 	return '"' + name + "\":" + stringValue();
 }

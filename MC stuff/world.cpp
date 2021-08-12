@@ -9,19 +9,40 @@ nbt_compound World::level_dat("", nullptr);
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
 		new nbt_string("type","minecraft:dimension_type"),
-		new nbt_list("value",new nbt * [1]{
+		new nbt_list("value",new nbt * [2]{
 			new nbt_compound("",new nbt * [3]{
 				new nbt_string("name","minecraft:overworld"),
 				new nbt_int("id",0),
 				new nbt_compound("element",new nbt * [15]{
-					new nbt_byte("piglin_safe",1),
+					new nbt_byte("piglin_safe",0),
 					new nbt_byte("natural",1),
-					new nbt_float("ambient_light",1.f),
-					new nbt_string("infiniburn",""),
+					new nbt_float("ambient_light",0.f),
+					new nbt_string("infiniburn","minecraft:infiniburn_overworld"),
 					new nbt_byte("respawn_anchor_works",0),
 					new nbt_byte("has_skylight",1),
 					new nbt_byte("bed_works",1),
 					new nbt_string("effects","minecraft:overworld"),
+					new nbt_byte("has_raids",1),
+					new nbt_int("min_y",0),
+					new nbt_int("height",256),
+					new nbt_int("logical_height",256),
+					new nbt_float("coordinate_scale",1.f),
+					new nbt_byte("ultrawarm",0),
+					new nbt_byte("has_ceiling",0)
+				},15)
+			},3),
+			new nbt_compound("",new nbt * [3]{
+				new nbt_string("name","minecraft:fakeworld"),
+				new nbt_int("id",1),
+				new nbt_compound("element",new nbt * [15]{
+					new nbt_byte("piglin_safe",1),
+					new nbt_byte("natural",0),
+					new nbt_float("ambient_light",1.f),
+					new nbt_string("infiniburn",""),
+					new nbt_byte("respawn_anchor_works",0),
+					new nbt_byte("has_skylight",1),
+					new nbt_byte("bed_works",0),
+					new nbt_string("effects","minecraft:the_end"),
 					new nbt_byte("has_raids",0),
 					new nbt_int("min_y",0),
 					new nbt_int("height",256),
@@ -31,7 +52,8 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 					new nbt_byte("has_ceiling",0)
 				},15)
 			},3)
-		},1)
+
+		},2)
 	}, 2),
 	new nbt_compound("minecraft:worldgen/biome",new nbt * [2]{
 		new nbt_string("type","minecraft:worldgen/biome"),
@@ -57,7 +79,7 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 				},7)
 			},3),
 			new nbt_compound("",new nbt * [3]{
-				new nbt_string("name","minecraft:void"),
+				new nbt_string("name","uab:domsa"),
 				new nbt_int("id",1),
 				new nbt_compound("element",new nbt * [7]{
 					new nbt_string("precipitation","none"),
@@ -243,15 +265,15 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 	},2)
 	}, 2);
 nbt_compound World::dimension("", new nbt* [15]{
-						new nbt_byte("piglin_safe",1),
+						new nbt_byte("piglin_safe",0),
 						new nbt_byte("natural",1),
-						new nbt_float("ambient_light",1.f),
-						new nbt_string("infiniburn",""),
+						new nbt_float("ambient_light",0.f),
+						new nbt_string("infiniburn","minecraft:infiniburn_overworld"),
 						new nbt_byte("respawn_anchor_works",0),
 						new nbt_byte("has_skylight",1),
 						new nbt_byte("bed_works",1),
 						new nbt_string("effects","minecraft:overworld"),
-						new nbt_byte("has_raids",0),
+						new nbt_byte("has_raids",1),
 						new nbt_int("min_y",0),
 						new nbt_int("height",256),
 						new nbt_int("logical_height",256),
@@ -260,7 +282,7 @@ nbt_compound World::dimension("", new nbt* [15]{
 						new nbt_byte("has_ceiling",0)
 	}, 15);
 nbt_compound World::heightMap("", new nbt* [1]{
-	new nbt_long_array("MOTION_BLOCKING",new int64[36]{0x1},36)
+	new nbt_long_array("MOTION_BLOCKING",new int64[37]{0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0x1ffffffffe},37)
 	}, 1);
 
 void World::load()

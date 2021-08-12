@@ -54,6 +54,7 @@ varInt::operator int& ()
 {
 	return v;
 }
+void varInt::operator=(int o) { v = o; }
 
 varLong::varLong() : v(0) { };
 varLong::varLong(long long a) : v(a) { };
@@ -119,6 +120,7 @@ varLong::operator long long& ()
 {
 	return v;
 }
+void varLong::operator=(int64 o) { v = o; }
 
 bool varInt::valid(char* buffer, size_t max)
 {

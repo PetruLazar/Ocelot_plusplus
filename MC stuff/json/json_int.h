@@ -8,7 +8,7 @@ class json_int : public json
 public:
 	json_int(const std::string& name = "", int value = 0);
 
-	std::string stringValue();
+	std::string stringValue() const;
 
 	int& iValue();
 	operator int& ();

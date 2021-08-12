@@ -16,7 +16,7 @@
 //										C: plugin message
 //S : declare commands
 //S : unlock recipes
-//S : player positionand look - done
+//S : player position and look - done
 //S : player info
 //S : player info
 //S : update view position
@@ -96,10 +96,10 @@
 //S : entity properties
 //										C: teleport confirm
 //S : spawn living entity
-//										C: player positionand rotation
+//										C: player position and rotation
 //S : entity metadata
 //S : entity properties
-//										C: player positionand rotation
+//										C: player position and rotation
 //...
 //window Items?
 //spawnPosition? - done
@@ -552,7 +552,7 @@ struct message
 			static void blockChange(Player*, Position location, varInt blockId);
 			//static void bossBar();
 			static void serverDifficulty(Player*, byte difficulty, bool isLocked);
-			//static void chatMessage(Player*, Chat data, byte position, const mcUUID& sender);
+			static void chatMessage(Player*, const Chat& data, byte position, const mcUUID& sender);
 			static void clearTitles(Player*, bool reset);
 			//static void tabComplete(Player*, varInt id, varInt start, varInt length, varInt count, );
 			//static void declareCommands(Player*, varInt count, Node* nodes, varInt root);
@@ -563,7 +563,7 @@ struct message
 			static void setCooldown(Player*, varInt itemId, varInt cooldown);
 			static void pluginMessage(Player*, const mcString& channel, ull dataSize, const char* data);
 			static void namedSoundEffect(Player*, const mcString& soundName, varInt category, bint effectX, bint effectY, bint effectZ, bfloat volume, bfloat pitch);
-			//static void disconnect(Player*, const Chat& reason);
+			static void disconnect(Player*, const Chat& reason);
 			static void entityStatus(Player*, bint eid, byte status);
 			static void explosion(Player*, bfloat x, bfloat y, bfloat z, bfloat strength, varInt recordCount, byte* records, bfloat playerMotionX, bfloat playerMotionY, bfloat playerMotionZ);
 			static void unloadChunk(Player*, bint x, bint z);
@@ -574,7 +574,7 @@ struct message
 			static void chunkData(Player*, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes, varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities);
 			static void effect(Player*, bint effectId, Position location, bint data, bool disableRelativeVolume);
 			//static void particle(Player*, bint particleId, bool longDistance, bdouble X, bdouble Y, bdouble Z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat data, bint count, ???);
-			//static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLight, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, .....);
+			static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
 			static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
 			//static void mapData(Player*, varInt mapId, byte scale, bool locked, bool trackingPosition, varInt iconCount, Icon* icons, byte optColumns, byte optRows, byte optX, byte optZ, varInt optLength, byte* data);
 			//static void tradeList(Player*, varInt winId, byte size, Trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock);
@@ -660,7 +660,7 @@ struct message
 			static void generateStructure(Player*, Position location, varInt levels, bool keepJigsaw);
 			static void keepAlive(Player*, blong keepAlive_id);
 			static void lockDifficulty(Player*, bool locked);
-			static void palyerPosition(Player*, bdouble x, bdouble feetY, bdouble Z, bool onGround);
+			static void playerPosition(Player*, bdouble x, bdouble feetY, bdouble Z, bool onGround);
 			static void playerPositionAndRotation(Player*, bdouble X, bdouble Y, bdouble Z, bfloat yaw, bfloat pitch, bool onGround);
 			static void playerRotation(Player*, bfloat yaw, bfloat pitch, bool onGround);
 			static void playerMovement(Player*, bool onGround);

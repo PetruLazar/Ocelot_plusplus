@@ -2,7 +2,7 @@
 
 json_string::json_string(std::string name, std::string value) : json(string, name), v(value) { }
 
-std::string json_string::stringValue() { return '"' + v + '"'; }
+std::string json_string::stringValue() const { return '"' + v + '"'; }
 
 std::string& json_string::value() { return v; }
 json_string::operator std::string& () { return v; }

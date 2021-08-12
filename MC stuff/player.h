@@ -37,6 +37,7 @@ private:
 
 public:
 	mcString username;
+	mcUUID *uuid = 0;
 
 	int protocolVersion;
 	ConnectionState state;

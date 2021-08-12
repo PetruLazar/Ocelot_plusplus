@@ -1,4 +1,5 @@
 #include "json_compound.h"
+#include "../types/mcString.h"
 
 const char notFound[] = "No element found by that name.";
 
@@ -13,13 +14,22 @@ json_compound::~json_compound()
 	for (json* e : v) delete e;
 }
 
-std::string json_compound::stringValue()
+std::string json_compound::stringValue() const
 {
 	if (!v.size()) return "{}";
 	std::string ret = "{";
 	for (json* e : v) ret += e->to_string() + ',';
 	ret.pop_back();
 	return ret + '}';
+}
+
+void json_compound::write(char*& buffer) const
+{
+	mcString(stringValue()).write(buffer);
+}
+void json_compound::write(std::fstream& is) const
+{
+	mcString(stringValue()).write(is);
 }
 
 json& json_compound::value(const std::string& i)

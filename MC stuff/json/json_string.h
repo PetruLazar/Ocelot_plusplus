@@ -7,7 +7,7 @@ class json_string : public json
 public:
 	json_string(std::string name = "", std::string value = "");
 
-	std::string stringValue();
+	std::string stringValue() const;
 
 	std::string& value();
 	operator std::string& ();

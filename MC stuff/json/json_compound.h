@@ -10,7 +10,9 @@ public:
 	json_compound(const std::string& name = "", const std::vector<json*>& values = std::vector<json*>(0));
 	~json_compound();
 
-	std::string stringValue();
+	std::string stringValue() const;
+	void write(char*&) const;
+	void write(std::fstream&) const;
 
 	json& value(const std::string& i);
 	json& operator[](const std::string& i);

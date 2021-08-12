@@ -1,5 +1,5 @@
 #pragma once
-#include "../basic.h"
+#include "../types/typedefs.h"
 
 class json
 {
@@ -41,9 +41,9 @@ public:
 	virtual json& operator[](const std::string&);
 
 	//get the value of any json object as a string
-	virtual std::string stringValue() = 0;
+	virtual std::string stringValue() const = 0;
 	//convert a json objec to a string (name + value)
-	virtual std::string to_string();
+	virtual std::string to_string() const;
 
 	//get the size of an arrayor compound json object
 	virtual ull getSize();

@@ -7,3 +7,4 @@
 #include "types/position.h"
 #include "types/uuid.h"
 #include "types/varData.h"
+#include "types/chat.h"

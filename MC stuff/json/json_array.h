@@ -10,7 +10,7 @@ public:
 	json_array(const std::string& name = "", json** values = nullptr, ull size = 0);
 	~json_array();
 
-	std::string stringValue();
+	std::string stringValue() const;
 
 	json& value(int);
 	json& operator[](int);

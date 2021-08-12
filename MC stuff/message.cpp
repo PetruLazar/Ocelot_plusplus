@@ -107,14 +107,15 @@ void message::login::receive::start(Player* p, const mcString& username)
 		login::send::disconnect(p, "{\"text\":\"Use 1.17.1, " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
 		return;
 	}
-	login::send::success(p, mcUUID(), username);
+	p->uuid = new mcUUID(mcUUID::player);
+	login::send::success(p, *p->uuid, username);
 
 	p->username = username;
 	p->nextKeepAlive = clock() + p->keepAliveInterval;
 
-	//mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::dimension, "", 0x5f19a34be6c9129a, 0, 5, false, true, false, true);
-	//delete wlds;
+	mcString* wlds = new mcString("world");
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 10, false, true, false, true);
+	delete wlds;
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
@@ -122,24 +123,56 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::playerAbilities(p, false, true, true, false, 0.05f, 0.1f);
 
-	//play::send::heldItemChange(p, 0);
-
 	play::send::declareRecipes(p, 0);
 
-	//tags
-
-	play::send::playerPosAndLook(p, 96.5, 1., 96.5, 0.f, 0.f, 0, 0x6, false);
-	play::send::updateViewPosition(p, 5, 5);
-
-	playerInfo::Player* pl = new playerInfo::Player(mcUUID(), username, gamemode::survival, 100);
+	playerInfo::Player* pl = new playerInfo::Player(*p->uuid, p->username, gamemode::survival, 100);
 	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
 	delete pl;
 
-	play::send::spawnPosition(p, Position(96, 1, 96), 0.f);
+	play::send::updateViewPosition(p, 5, 5);
 
-	play::send::timeUpdate(p, 6000i64, -6000i64);
+	play::send::timeUpdate(p, 6000i64, 6000i64);
 
-	//play::send::chatMessage();
+	blong* bitMask = new blong(0b1000000000011111i64);
+	blong* lightMask = new blong(0b111111111111111111i64);
+
+	char* chunkData = new char[1120024], * buffer = chunkData;
+	for (int s = 0; s < 6; s++)
+	{
+		*(buffer++) = 0x10;
+		*(buffer++) = 0x00;
+		*(buffer++) = 4;
+		*(buffer++) = 2;
+		*(buffer++) = 0;
+		*(buffer++) = 9; // 34 for water, 9 for grass block
+		//char* buffer = chunkData + 6;
+		varInt(256).write(buffer);
+		//blong(1).write(buffer);
+		for (int i = 0; i < 256; i++) blong(0x1111111111111111).write(buffer);
+	}
+	char* sectionLight = new char[2048]{  };
+	for (int i = 0; i < 2048; i++) sectionLight[i] = 0xffi8;
+	char** arrays = new char* [18]{ sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight };
+	for (int i = 0; i < 18; i++) sectionLight[i] = 0xffi8;
+
+	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
+	{
+		//Sleep(10);
+		varInt* biomes = new varInt[1024];
+		for (ull k = 0; k < 1024; k++) biomes[k] = int((i + j) % 10);
+		play::send::updateLight(p, i, j, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 18, arrays, 18, arrays);
+		//std::cout << "\nSending chunk " << i << ' ' << j << "...";
+		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
+		delete[] biomes;
+	}
+
+	delete[] lightMask;
+	delete bitMask;
+	delete[] chunkData;
+	delete[] sectionLight;
+	delete[] arrays;
+
+	play::send::playerPosAndLook(p, 96.5, 80., 96.5, 0.f, 0.f, 0, 0x6, false);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -318,7 +351,6 @@ void message::play::send::heldItemChange(Player* p, byte slot)
 
 	sendPacketData(p, start, data - start);
 }
-
 void message::play::send::serverDifficulty(Player* p, byte difficulty, bool isLocked)
 {
 	varInt id = (int)id::serverDifficulty;
@@ -362,6 +394,70 @@ void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt ch
 
 	sendPacketData(p, start, data - start);
 }
+void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges,
+	varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask,
+	varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask,
+	varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays)
+{
+	varInt id = (int)id::updateLight;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	cX.write(data);
+	cZ.write(data);
+	*(data++) = trustEdges;
+	length1.write(data);
+	for (int i = 0; i < length1; i++) skyLightMask[i].write(data);
+	length2.write(data);
+	for (int i = 0; i < length2; i++) blockLightMask[i].write(data);
+	length3.write(data);
+	for (int i = 0; i < length3; i++) emptySkyLightMask[i].write(data);
+	length4.write(data);
+	for (int i = 0; i < length4; i++) emptyBlockLightMask[i].write(data);
+
+	skyLightArrayCount.write(data);
+	for (int i = 0; i < skyLightArrayCount; i++)
+	{
+		varInt(2048).write(data);
+		for (int j = 0; j < 2048; j++)
+		{
+			*(data++) = skyLightArrays[i][j];
+		}
+	}
+	blockLightArrayCount.write(data);
+	for (int i = 0; i < blockLightArrayCount; i++)
+	{
+		varInt(2048).write(data);
+		for (int j = 0; j < 2048; j++)
+		{
+			*(data++) = blockLightArrays[i][j];
+		}
+	}
+
+	sendPacketData(p, start, data - start);
+}
+void message::play::send::disconnect(Player* p, const Chat& reason)
+{
+	varInt id = (int)id::disconnect;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	reason.write(data);
+
+	disconnectAfter(p, sendPacketData(p, start, data - start));
+}
+void message::play::send::chatMessage(Player* p, const Chat& msg, byte position, const mcUUID& sender)
+{
+	varInt id = (int)id::chatMessage_clientbound;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	msg.write(data);
+	*(data++) = position;
+	sender.write(data);
+
+	p, sendPacketData(p, start, data - start);
+}
 //void message::play::send::tags
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
@@ -370,32 +466,21 @@ void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 }
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
-	blong* bitMask = new blong(0x1i64);
 
-	char* chunkData = new char[20024];
-	chunkData[0] = 0x01;
-	chunkData[1] = 0x00;
-	chunkData[2] = 4;
-	chunkData[3] = 2;
-	chunkData[4] = 0;
-	chunkData[5] = 1; // 34 for water
-	char* buffer = chunkData + 6;
-	varInt(256).write(buffer);
-	//blong(1).write(buffer);
-	for (int i = 0; i < 16; i++) blong(0x1111111111111111).write(buffer);
-	for (int i = 16; i < 256; i++) blong(0).write(buffer);
+}
+void message::play::receive::clientSettings(Player* p, const mcString& locale, byte viewDistance, varInt chatMode, bool chatColors, byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
+{
 
-	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
+}
+void message::play::receive::chatMessage(Player* p, const mcString& content)
+{
+	if (content[0] == '/')
 	{
-		varInt* biomes = new varInt[1024];
-		for (ull k = 0; k < 1024; k++) biomes[k] = (i + j) % 10;
-		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
-		//play::send::updateLight();
-		delete[] biomes;
-	}
 
-	delete bitMask;
-	delete[] chunkData;
+		return;
+	}
+	Chat msg(('<' + p->username + "> " + content).c_str());
+	for (Player* pl : Player::players) message::play::send::chatMessage(pl, msg, 0, *p->uuid);
 }
 
 void message::sendPacketData(Player* p, char* data, ull size)
@@ -420,8 +505,6 @@ void message::sendPacketData(Player* p, char* data, ull size)
 
 	delete[] lendata;
 	delete[] data;
-
-
 }
 void message::dispatch(Player* p, char* data, size_t size)
 {
@@ -518,7 +601,10 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		case play::id::chatMessage_serverbound:
 		{
-			throw "Unhandled packet: chat message";
+			mcString content;
+			content.read(data);
+			message::play::receive::chatMessage(p, content);
+			throw "Partially handled packet: chat message";
 		}
 		break;
 		case play::id::clientStatus:
@@ -528,7 +614,21 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		case play::id::clientSettings:
 		{
-			throw "Unhandled packet: client settings";
+			mcString locale;
+			byte viewDistance, displayedSkinParts;
+			varInt chatMode, mainHand;
+			bool chatColors, disableTextFiltering;
+
+			locale.read(data);
+			viewDistance = *(data++);
+			chatMode.read(data);
+			chatColors = *(data++);
+			displayedSkinParts = *(data++);
+			mainHand.read(data);
+			disableTextFiltering = *(data++);
+
+			play::receive::clientSettings(p, locale, viewDistance, chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
+			throw "Partially handled packet: client settings";
 		}
 		break;
 		case play::id::tabComplete_serverbound:

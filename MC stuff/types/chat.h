@@ -1,5 +1,6 @@
 #pragma once
-#include "../json.h"
+#include "../json/json_compound.h"
+#include "../json/json_string.h"
 
 class Chat : public json_compound
 {

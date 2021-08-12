@@ -9,7 +9,7 @@ void json_int::operator=(int val)
 	v = val;
 }
 
-std::string json_int::stringValue()
+std::string json_int::stringValue() const
 {
 	return std::to_string(v);
 }

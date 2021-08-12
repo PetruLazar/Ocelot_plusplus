@@ -15,6 +15,7 @@ Player::~Player()
 {
 	delete socket;
 	if (buffer) delete buffer;
+	if (uuid) delete uuid;
 }
 
 void Player::disconnect()
@@ -133,7 +134,7 @@ void Player::send(char* buffer, ull size)
 		stat = socket->send(buffer, size, sent);
 		buffer += sent;
 		size -= sent;
-	} while (stat == sockStat::Partial);
+	} while (stat == sockStat::Partial || stat == sockStat::NotReady);
 
 	switch (stat)
 	{

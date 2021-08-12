@@ -81,6 +81,19 @@ int main()
 		}
 	}
 
+	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
+	{
+		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
+	}
+	catch (const char* err_msg)
+	{
+		cout << "\nError: " << err_msg;
+	}
+	catch (...)
+	{
+		cout << "\nUnknown error.";
+	}
+
 	//fill an existing chunk with stone
 	/*try
 	{

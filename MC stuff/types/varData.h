@@ -12,6 +12,7 @@ public:
 	void read(char*&);
 	void write(char*&) const;
 	operator int& ();
+	void operator=(int);
 
 	//check if there is a valid varInt in memory with the maximum size of 'max' bytes
 	static bool valid(char*, size_t max);
@@ -28,6 +29,7 @@ public:
 	void read(char*&);
 	void write(char*&) const;
 	operator long long& ();
+	void operator=(int64);
 
 	//check if there is a valid varLong in memory with the maximum size of 'max' bytes
 	static bool valid(char*, size_t max);

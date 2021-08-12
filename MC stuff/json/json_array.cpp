@@ -21,7 +21,7 @@ json_array::~json_array()
 	if (v) delete[] v;
 }
 
-std::string json_array::stringValue()
+std::string json_array::stringValue() const
 {
 	if (!s) return "[]";
 	std::string ret = "[";
