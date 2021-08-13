@@ -8,3 +8,4 @@
 #include "types/uuid.h"
 #include "types/varData.h"
 #include "types/chat.h"
+#include "types/error.h"

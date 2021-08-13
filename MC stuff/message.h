@@ -571,6 +571,7 @@ struct message
 			static void openHorseWindow(Player*, byte winId, varInt slotCount, bint eid);
 			static void initializeWorldBorder(Player*, bdouble x, bdouble z, bdouble oldDiameter, bdouble newDiameter, varLong speed, varInt portalTeleportBoundary, varInt warningBlocks, varInt warningTime);
 			static void keepAlive(Player*, blong keepAlive_id);
+			static void chunkData(Player*, bint cX, bint cZ);
 			static void chunkData(Player*, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes, varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities);
 			static void effect(Player*, bint effectId, Position location, bint data, bool disableRelativeVolume);
 			//static void particle(Player*, bint particleId, bool longDistance, bdouble X, bdouble Y, bdouble Z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat data, bint count, ???);

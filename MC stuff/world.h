@@ -6,20 +6,46 @@
 
 class World
 {
-	static nbt_compound level_dat;
+	std::vector<Region*> regions;
 
-	static std::vector<region*> regions;
+	void load(int x, int z);
+	void save(int x, int z);
+	bool check(int x, int z);
+	Chunk* generate(int x, int z);
 
 public:
+	World(const char* name);
+
+	mcString name;
+	/*Contents of nbt_compound characteristics
+	*
+	* piglin safe - byte
+	* natural - byte
+	* ambient_light - float (0 - 1)
+	* fixed_time - optional long (0 - 24 000)
+	* infiniburn - string
+	* respawn_anchor_works - byte
+	* has_skylight - byte
+	* bed_works - byte
+	* effects - string
+	* has_raids - byte
+	* min_y - int
+	* height - int
+	* logical_height - int (0 - 256)
+	* coordinate_scale - float (0.00001 (1e-5) - 30000000 (3e7))
+	* ultrawarm - byte
+	* has_ceiling - byte
+	*/
+	nbt_compound characteristics;
+	//static nbt_compound heightMap;
+
+	Chunk* get(int x, int z);
+
+	//static members
 	static nbt_compound dimension_codec;
-	static nbt_compound dimension;
-	static nbt_compound heightMap;
 
-	static void load();
-	static void load(int, int);
-	static void save();
-	static void save(int, int);
-
-	static void createNewLevelDat();
+	static void loadAll();
+	//initial spawn in first world
+	static std::vector<World*> worlds;
 };
 

@@ -79,7 +79,7 @@ void message::login::send::encryptionRequest(Player*, varInt publicKeyLength, by
 void message::login::send::setCompression(Player*, varInt threshold)
 {
 	//support for compression
-	throw "compression not supported";
+	throw protocolError("compression not supported");
 }
 void message::login::send::success(Player* p, const mcUUID& uuid, const mcString& username)
 {
@@ -108,14 +108,14 @@ void message::login::receive::start(Player* p, const mcString& username)
 		return;
 	}
 	p->uuid = new mcUUID(mcUUID::player);
-	login::send::success(p, *p->uuid, username);
-
 	p->username = username;
 	p->nextKeepAlive = clock() + p->keepAliveInterval;
+	p->world = World::worlds[0];
+	login::send::success(p, *p->uuid, username);
 
-	mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, wlds, World::dimension_codec, World::dimension, "world", 0x5f19a34be6c9129a, 0, 10, false, true, false, true);
-	delete wlds;
+	//mcString* wlds = new mcString("world");
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, 10, false, true, false, true);
+	//delete wlds;
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
@@ -133,8 +133,10 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
 
-	blong* bitMask = new blong(0b1000000000011111i64);
-	blong* lightMask = new blong(0b111111111111111111i64);
+	play::send::spawnPosition(p, Position(96, 16, 96), 0.f);
+
+	blong* bitMask = new blong(0b100000000000000000011111i64);
+	blong* lightMask = new blong(0b11111111111111111111111111i64);
 
 	char* chunkData = new char[1120024], * buffer = chunkData;
 	for (int s = 0; s < 6; s++)
@@ -152,17 +154,17 @@ void message::login::receive::start(Player* p, const mcString& username)
 	}
 	char* sectionLight = new char[2048]{  };
 	for (int i = 0; i < 2048; i++) sectionLight[i] = 0xffi8;
-	char** arrays = new char* [18]{ sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight };
-	for (int i = 0; i < 18; i++) sectionLight[i] = 0xffi8;
+	char** arrays = new char* [26]{ sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight };
+	for (int i = 0; i < 26; i++) sectionLight[i] = 0xffi8;
 
 	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
 	{
 		//Sleep(10);
-		varInt* biomes = new varInt[1024];
-		for (ull k = 0; k < 1024; k++) biomes[k] = int((i + j) % 10);
-		play::send::updateLight(p, i, j, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 18, arrays, 18, arrays);
+		varInt* biomes = new varInt[1536];
+		for (ull k = 0; k < 1536; k++) biomes[k] = int((i + j) % 10);
+		play::send::updateLight(p, i, j, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 26, arrays, 26, arrays);
 		//std::cout << "\nSending chunk " << i << ' ' << j << "...";
-		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1024, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
+		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1536, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
 		delete[] biomes;
 	}
 
@@ -172,11 +174,11 @@ void message::login::receive::start(Player* p, const mcString& username)
 	delete[] sectionLight;
 	delete[] arrays;
 
-	play::send::playerPosAndLook(p, 96.5, 80., 96.5, 0.f, 0.f, 0, 0x6, false);
+	play::send::playerPosAndLook(p, 96.5, 16., 96.5, 0.f, 0.f, 0, 0x6, false);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
-	throw "Encryption not supported";
+	throw protocolError("Encryption not supported");
 }
 
 void message::play::send::keepAlive(Player* p, blong keepAlive_id)
@@ -268,6 +270,17 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 	}
 
 	sendPacketData(p, start, data - start);
+}
+void message::play::send::chunkData(Player* p, bint cX, bint cZ)
+{
+	varInt id = (int)id::chunkData;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	cX.write(data);
+	cZ.write(data);
+
+	Chunk* chunk = p->world->get(cX, cZ);
 }
 void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes,
 	varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities)
@@ -458,6 +471,17 @@ void message::play::send::chatMessage(Player* p, const Chat& msg, byte position,
 
 	p, sendPacketData(p, start, data - start);
 }
+void message::play::send::changeGameState(Player* p, byte reason, bfloat value)
+{
+	varInt id = (int)id::changeGameState;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	*(data++) = reason;
+	value.write(data);
+
+	p, sendPacketData(p, start, data - start);
+}
 //void message::play::send::tags
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
@@ -476,7 +500,18 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 {
 	if (content[0] == '/')
 	{
+		if (content == "/fast")
+		{
 
+		}
+		if (content == "/fly")
+		{
+
+		}
+		if (content == "/gamemode")
+		{
+			play::send::changeGameState(p, 3, 0.f);
+		}
 		return;
 	}
 	Chat msg(('<' + p->username + "> " + content).c_str());
@@ -495,6 +530,18 @@ void message::sendPacketData(Player* p, char* data, ull size)
 	{
 		p->send(lendata, buffer - lendata);
 		p->send(data, size);
+	}
+	catch (protocolError obj)
+	{
+		delete[] lendata;
+		delete[] data;
+		throw obj;
+	}
+	catch (protocolWarning obj)
+	{
+		delete[] lendata;
+		delete[] data;
+		throw obj;
 	}
 	catch (const char* c)
 	{
@@ -529,7 +576,7 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		default:
 			p->disconnect();
-			throw "Invalid packet id";
+			throw protocolError("Invalid packet id");
 		}
 		break;
 	case ConnectionState::status:
@@ -549,7 +596,7 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		default:
 			p->disconnect();
-			throw "Invalid packet id";
+			throw protocolError("Invalid packet id");
 		}
 		break;
 	case ConnectionState::login:
@@ -570,12 +617,12 @@ void message::dispatch(Player* p, char* data, size_t size)
 		case login::id::loginPluginResponse:
 		{
 			p->disconnect();
-			throw "Login Plugin not supported.";
+			throw protocolError("Login Plugin not supported.");
 		}
 		break;
 		default:
 			p->disconnect();
-			throw "Invalid packet id";
+			throw protocolError("Invalid packet id");
 		}
 		break;
 	case ConnectionState::play:
@@ -586,17 +633,17 @@ void message::dispatch(Player* p, char* data, size_t size)
 			varInt teleportId;
 			teleportId.read(data);
 			play::receive::teleportConfirm(p, teleportId);
-			throw "Partially handled packet: teleport confirm";
+			throw protocolWarning("Partially handled packet: teleport confirm");
 		}
 		break;
 		case play::id::queryBlockNbt:
 		{
-			throw "Unhandled packet: query block nbt";
+			throw protocolWarning("Unhandled packet: query block nbt");
 		}
 		break;
 		case play::id::setDifficulty:
 		{
-			throw "Unhandled packet: set difficulty";
+			throw protocolWarning("Unhandled packet: set difficulty");
 		}
 		break;
 		case play::id::chatMessage_serverbound:
@@ -604,12 +651,12 @@ void message::dispatch(Player* p, char* data, size_t size)
 			mcString content;
 			content.read(data);
 			message::play::receive::chatMessage(p, content);
-			throw "Partially handled packet: chat message";
+			throw protocolWarning("Partially handled packet: chat message");
 		}
 		break;
 		case play::id::clientStatus:
 		{
-			throw "Unhandled packet: client status";
+			throw protocolWarning("Unhandled packet: client status");
 		}
 		break;
 		case play::id::clientSettings:
@@ -628,52 +675,52 @@ void message::dispatch(Player* p, char* data, size_t size)
 			disableTextFiltering = *(data++);
 
 			play::receive::clientSettings(p, locale, viewDistance, chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
-			throw "Partially handled packet: client settings";
+			throw protocolWarning("Partially handled packet: client settings");
 		}
 		break;
 		case play::id::tabComplete_serverbound:
 		{
-			throw "Unhandled packet: tab complete";
+			throw protocolWarning("Unhandled packet: tab complete");
 		}
 		break;
 		case play::id::clickWindowButton:
 		{
-			throw "Unhandled packet: click window button";
+			throw protocolWarning("Unhandled packet: click window button");
 		}
 		break;
 		case play::id::clickWindow:
 		{
-			throw "Unhandled packet: click window";
+			throw protocolWarning("Unhandled packet: click window");
 		}
 		break;
 		case play::id::closeWindow_serverbound:
 		{
-			throw "Unhandled packet: close window";
+			throw protocolWarning("Unhandled packet: close window");
 		}
 		break;
 		case play::id::pluginMessage_serverbound:
 		{
-			throw "Unhandled packet: plugin message";
+			throw protocolWarning("Unhandled packet: plugin message");
 		}
 		break;
 		case play::id::editBook:
 		{
-			throw "Unhandled packet: edit book";
+			throw protocolWarning("Unhandled packet: edit book");
 		}
 		break;
 		case play::id::queryEntityNbt:
 		{
-			throw "Unhandled packet: query entity nbt";
+			throw protocolWarning("Unhandled packet: query entity nbt");
 		}
 		break;
 		case play::id::interactEntity:
 		{
-			throw "Unhandled packet: interact entity";
+			throw protocolWarning("Unhandled packet: interact entity");
 		}
 		break;
 		case play::id::generateStructure:
 		{
-			throw "Unhandled packet: generate structure";
+			throw protocolWarning("Unhandled packet: generate structure");
 		}
 		break;
 		case play::id::keepAlive_serverbound:
@@ -685,171 +732,171 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		case play::id::lockDifficulty:
 		{
-			throw "Unhandled packet: lock difficulty";
+			throw protocolWarning("Unhandled packet: lock difficulty");
 		}
 		break;
 		case play::id::playerPosition:
 		{
-			throw "Unhandled packet: player position";
+			throw protocolWarning("Unhandled packet: player position");
 		}
 		break;
 		case play::id::playerPositionAndRotation_serverbound:
 		{
-			throw "Unhandled packet: player position and rotation";
+			throw protocolWarning("Unhandled packet: player position and rotation");
 		}
 		break;
 		case play::id::playerRotation:
 		{
-			throw "Unhandled packet: player rotation";
+			throw protocolWarning("Unhandled packet: player rotation");
 		}
 		break;
 		case play::id::playerMovement:
 		{
-			throw "Unhandled packet: player movement";
+			throw protocolWarning("Unhandled packet: player movement");
 		}
 		break;
 		case play::id::vehicleMove:
 		{
-			throw "Unhandled packet: vehicle move";
+			throw protocolWarning("Unhandled packet: vehicle move");
 		}
 		break;
 		case play::id::steerBoat:
 		{
-			throw "Unhandled packet: steer boat";
+			throw protocolWarning("Unhandled packet: steer boat");
 		}
 		break;
 		case play::id::pickItem:
 		{
-			throw "Unhandled packet: pick item";
+			throw protocolWarning("Unhandled packet: pick item");
 		}
 		break;
 		case play::id::craftRecipeRequest:
 		{
-			throw "Unhandled packet: craft recipe request";
+			throw protocolWarning("Unhandled packet: craft recipe request");
 		}
 		break;
 		case play::id::playerAbilities_serverbound:
 		{
-			throw "Unhandled packet: player abilities";
+			throw protocolWarning("Unhandled packet: player abilities");
 		}
 		break;
 		case play::id::playerDigging:
 		{
-			throw "Unhandled packet: player digging";
+			throw protocolWarning("Unhandled packet: player digging");
 		}
 		break;
 		case play::id::entityAction:
 		{
-			throw "Unhandled packet: entity action";
+			throw protocolWarning("Unhandled packet: entity action");
 		}
 		break;
 		case play::id::steerVehicle:
 		{
-			throw "Unhandled packet: steer vehicle";
+			throw protocolWarning("Unhandled packet: steer vehicle");
 		}
 		break;
 		case play::id::pong:
 		{
-			throw "Unhandled packet: pong";
+			throw protocolWarning("Unhandled packet: pong");
 		}
 		break;
 		case play::id::setRecipeBookState:
 		{
-			throw "Unhandled packet: set recipe book state";
+			throw protocolWarning("Unhandled packet: set recipe book state");
 		}
 		break;
 		case play::id::setDisplayedRecipe:
 		{
-			throw "Unhandled packet: set displayed recipe";
+			throw protocolWarning("Unhandled packet: set displayed recipe");
 		}
 		break;
 		case play::id::nameItem:
 		{
-			throw "Unhandled packet: name item";
+			throw protocolWarning("Unhandled packet: name item");
 		}
 		break;
 		case play::id::resourcePackStatus:
 		{
-			throw "Unhandled packet: resource pack status";
+			throw protocolWarning("Unhandled packet: resource pack status");
 		}
 		break;
 		case play::id::advancementTab:
 		{
-			throw "Unhandled packet: advancement tab";
+			throw protocolWarning("Unhandled packet: advancement tab");
 		}
 		break;
 		case play::id::selectTrade:
 		{
-			throw "Unhandled packet: select trade";
+			throw protocolWarning("Unhandled packet: select trade");
 		}
 		break;
 		case play::id::setBeaconEffect:
 		{
-			throw "Unhandled packet: set beacon effect";
+			throw protocolWarning("Unhandled packet: set beacon effect");
 		}
 		break;
 		case play::id::heldItemChange_serverbound:
 		{
-			throw "Unhandled packet: held item change";
+			throw protocolWarning("Unhandled packet: held item change");
 		}
 		break;
 		case play::id::updateCommandBlock:
 		{
-			throw "Unhandled packet: update command block";
+			throw protocolWarning("Unhandled packet: update command block");
 		}
 		break;
 		case play::id::updateCommandBlockMinecart:
 		{
-			throw "Unhandled packet: update command block minecart";
+			throw protocolWarning("Unhandled packet: update command block minecart");
 		}
 		break;
 		case play::id::creativeInventoryAction:
 		{
-			throw "Unhandled packet: creative inventoty action";
+			throw protocolWarning("Unhandled packet: creative inventoty action");
 		}
 		break;
 		case play::id::updateJigsawBlock:
 		{
-			throw "Unhandled packet: update jigsaw block";
+			throw protocolWarning("Unhandled packet: update jigsaw block");
 		}
 		break;
 		case play::id::updateStructureBlock:
 		{
-			throw "Unhandled packet: update structure block";
+			throw protocolWarning("Unhandled packet: update structure block");
 		}
 		break;
 		case play::id::updateSign:
 		{
-			throw "Unhandled packet: update sign";
+			throw protocolWarning("Unhandled packet: update sign");
 		}
 		break;
 		case play::id::animation_serverbound:
 		{
-			throw "Unhandled packet: animation";
+			throw protocolWarning("Unhandled packet: animation");
 		}
 		break;
 		case play::id::spectate:
 		{
-			throw "Unhandled packet: spectate";
+			throw protocolWarning("Unhandled packet: spectate");
 		}
 		break;
 		case play::id::playerBlockPlacement:
 		{
-			throw "Unhandled packet: player block placement";
+			throw protocolWarning("Unhandled packet: player block placement");
 		}
 		break;
 		case play::id::useItem:
 		{
-			throw "Unhandled packet: use item";
+			throw protocolWarning("Unhandled packet: use item");
 		}
 		break;
 		default:
 			p->disconnect();
-			throw "Invalid packet id";
+			throw protocolError("Invalid packet id");
 		}
 		break;
 	default:
 		p->disconnect();
-		throw "Invalid connection state";
+		throw protocolError("Invalid connection state");
 	}
 }

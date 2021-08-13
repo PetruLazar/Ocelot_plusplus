@@ -11,6 +11,8 @@ class for 'Chat'
 
 classes for world/region/chunk (in progress)
 
+	- Arrange regions in order in a world, and implement binary search
+
 finish message.h : statistics::custom and create header/source files for it
 
 class for Identifier?

@@ -144,6 +144,15 @@
     <ClCompile Include="types\utils.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
+    <ClCompile Include="types\error.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\queue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="section.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic.h">
@@ -268,6 +277,15 @@
     </ClInclude>
     <ClInclude Include="types\chat.h">
       <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\error.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="section.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

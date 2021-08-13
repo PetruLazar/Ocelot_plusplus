@@ -15,3 +15,13 @@ std::string to_hexstring(int value)
 
 	return std::string(cur + 1);
 }
+
+uint bitCount(ull n)
+{
+	uint count = 0;
+	do
+	{
+		count++;
+		n >>= 1;
+	} while (n);
+}

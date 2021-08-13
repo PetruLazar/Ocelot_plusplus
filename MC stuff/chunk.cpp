@@ -3,7 +3,9 @@
 
 using namespace std;
 
-void chunk::loadChunk(nbt_compound& comp, int x, int z)
+Chunk::Chunk() : heightmaps("", nullptr) { }
+
+/*void Chunk::loadChunk(nbt_compound& comp, int x, int z)
 {
 	int rx = x >> 5, rz = z >> 5;
 	x &= 31; z &= 31;
@@ -32,7 +34,7 @@ void chunk::loadChunk(nbt_compound& comp, int x, int z)
 	if (!nbt::checkTag(res)) throw 0;
 	comp.read(res);
 }
-void chunk::updateChunk(nbt_compound& data)
+void Chunk::updateChunk(nbt_compound& data)
 {
 	throw "WIP";
-}
+}*/

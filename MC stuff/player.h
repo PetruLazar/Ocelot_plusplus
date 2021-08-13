@@ -42,11 +42,15 @@ public:
 	int protocolVersion;
 	ConnectionState state;
 
+	//data for keep alive messages
 	static const clock_t keepAliveInterval = 10000; // how often to send keep alive packets
 	static const clock_t keepAliveTimeoutAfter = 30000; // kick the client if it doesn't respond for this many ms
 	clock_t nextKeepAlive = 0x7fffffff; //when to send the next keep alive message
 	clock_t keepAliveTimeoutPoint; //when will the keep alive timeout end?
 	int64 lastKeepAliveId = -1; //the expected id for which a keep alive is pending or -1 if there is no pending response
+
+	//world and position information
+	World* world; // pointer to the world the player is in
 
 	Player(sf::TcpSocket*);
 	~Player();

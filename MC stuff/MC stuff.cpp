@@ -28,7 +28,7 @@ int main()
 	//Chat msg("Hello world!", 0x55ff55);
 
 	log::initialize();
-	World::load();
+	World::loadAll();
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
@@ -57,9 +57,17 @@ int main()
 		{
 			Player::players[i]->updateNet(time);
 		}
+		catch (protocolError obj)
+		{
+			cout << "\nError: " << obj.msg;
+		}
+		catch (protocolWarning obj)
+		{
+			cout << "\nWarning: " << obj.msg;
+		}
 		catch (const char* err_msg)
 		{
-			cout << "\nError: " << err_msg;
+			cout << "\nError (old format): " << err_msg;
 		}
 		catch (...)
 		{

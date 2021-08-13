@@ -2,10 +2,10 @@
 
 using namespace std;
 
-const char invalidLevelDatFile[] = "The level.dat file is invalid.";
+const char invalidMainFile[] = "Invalid characteristics.bin file.";
+const char noAccesMainFile[] = "Could not open characteristics.bin file";
 const ull levelDatMaxSize = 1024 * 1024; //size after decompression
 
-nbt_compound World::level_dat("", nullptr);
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
 		new nbt_string("type","minecraft:dimension_type"),
@@ -264,7 +264,7 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 		},10)
 	},2)
 	}, 2);
-nbt_compound World::dimension("", new nbt* [15]{
+/*nbt_compound World::dimension("", new nbt* [15]{
 						new nbt_byte("piglin_safe",0),
 						new nbt_byte("natural",1),
 						new nbt_float("ambient_light",0.f),
@@ -274,48 +274,76 @@ nbt_compound World::dimension("", new nbt* [15]{
 						new nbt_byte("bed_works",1),
 						new nbt_string("effects","minecraft:overworld"),
 						new nbt_byte("has_raids",1),
-						new nbt_int("min_y",0),
-						new nbt_int("height",256),
+						new nbt_int("min_y",-64),
+						new nbt_int("height",384),
 						new nbt_int("logical_height",256),
 						new nbt_float("coordinate_scale",1.f),
 						new nbt_byte("ultrawarm",0),
 						new nbt_byte("has_ceiling",0)
-	}, 15);
-nbt_compound World::heightMap("", new nbt* [1]{
-	new nbt_long_array("MOTION_BLOCKING",new int64[37]{0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0xfffffffffffffffei64,0x1ffffffffe},37)
-	}, 1);
+	}, 15);*/
+	/*nbt_compound World::heightMap("", new nbt* [1]{
+		new nbt_long_array("MOTION_BLOCKING",new int64[37]{0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64,0b1100000011100000011100000011100000011100000011100000011100000010i64},37)
+		}, 1);*/
 
-void World::load()
+World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 {
-	ifstream level_dat_file(Options::level_name() + "\\level.dat", ios::binary | ios::ate);
-	if (!level_dat_file.is_open())
+	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::in);
+	if (!worldMain.is_open())
 	{
-		cout << "\"level.dat\" file not found, generating new one.";
-		createNewLevelDat();
-		level_dat_file.open(Options::level_name() + "\\level.dat", ios::binary | ios::ate);
+		cout << "World \"" << c_name << "\": cannot open charactestics.bin\n";
+		throw 0;
 	}
-	ull compressedSize = level_dat_file.tellg();
-	uint size;
-	level_dat_file.seekg(0);
-
-	char* compressedData = new char[compressedSize],
-		* data = new char[levelDatMaxSize], * buffer = data;
-	level_dat_file.read(compressedData, compressedSize);
-
-	gzipDecompress(compressedData, (uint)compressedSize, buffer, levelDatMaxSize, size);
-
-	delete[] compressedData;
-	if (!nbt::checkTag(buffer))
+	if (!nbt::checkTag(worldMain))
 	{
-		delete[] data;
-		throw invalidLevelDatFile;
+		cout << "World \"" << c_name << "\": charactestics.bin has an invalid format\n";
+		throw 0;
 	}
-	level_dat.read(buffer);
-
-	delete[] data;
+	characteristics.read(worldMain);
 }
 
-void World::createNewLevelDat()
+Chunk* World::generate(int x, int z)
 {
-	throw "Ma-ta";
+	//predefined chunks for now
+	Chunk* chunk = new Chunk;
+
+	//heightmap generation
+	uint bitsPerHeight = bitCount((int&)characteristics["height"]);
+	ull heightEntries = 256 / (64 / bitsPerHeight);
+	chunk->heightmaps.add(new nbt_long_array("MOTION_BLOCKING", new int64[48]{}, 48));
+}
+
+Chunk* World::get(int x, int z)
+{
+	int rX = x >> 5,
+		rZ = z >> 5,
+		relX = x & 31,
+		relZ = z & 31;
+
+	for (ull i = 0; i < regions.size(); i++) if (rX == regions[i]->rX && rZ == regions[i]->rZ)
+	{
+		Chunk* chunk = regions[i]->get(relX, relZ);
+		if (!chunk)
+		{
+			chunk = generate(x, z);
+			regions[i]->set(relX, relZ, chunk);
+		}
+		return chunk;
+	}
+
+	Region* region = new Region(rX, rZ);
+	regions.push_back(region);
+	Chunk* chunk = generate(x, z);
+	region->set(relX, relZ, chunk);
+	return chunk;
+
+}
+
+void World::loadAll()
+{
+	ifstream worldList("worlds\\worldList.txt");
+	char name[256];
+	while (worldList >> name)
+	{
+		worlds.push_back(new World(name));
+	}
 }
