@@ -9,3 +9,5 @@
 #include "types/varData.h"
 #include "types/chat.h"
 #include "types/error.h"
+#include "types/bitstream.h"
+#include "types/bitarray.h"

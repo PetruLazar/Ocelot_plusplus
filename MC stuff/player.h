@@ -1,5 +1,6 @@
 #pragma once
 #include "basic.h"
+#include "world.h"
 
 enum class ConnectionState : byte
 {

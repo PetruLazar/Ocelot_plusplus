@@ -3,8 +3,6 @@
 
 using namespace std;
 
-Chunk::Chunk() : heightmaps("", nullptr) { }
-
 /*void Chunk::loadChunk(nbt_compound& comp, int x, int z)
 {
 	int rx = x >> 5, rz = z >> 5;

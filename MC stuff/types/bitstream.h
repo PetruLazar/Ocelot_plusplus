@@ -11,10 +11,12 @@ class BitStream
 	std::vector<bulong> entries;
 	ull sz;
 public:
-	BitStream(byte bitsPerEntry, bool rightPadded);
+	BitStream(byte bitsPerEntry, bool rightPadded = false);
 
 	//clear the bit stream
 	void clear();
+	//are there any more entries in the stream?
+	//bool empty() const;
 	//get the size of the bitstream (how many longs?)
 	ull size() const;
 	//write the bitstream entries to file

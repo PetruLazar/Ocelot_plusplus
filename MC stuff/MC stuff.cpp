@@ -18,17 +18,27 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
-	/*while (true)
+	/*BitStream str(9);
+	ull x;
+	do
 	{
-		int x;
 		cin >> x;
-		cout << to_hexstring(x) << endl;
-	}*/
-
-	//Chat msg("Hello world!", 0x55ff55);
+		if (x == 1)
+		{
+			str >> x;
+			cout << x;
+			x = 1;
+		}
+		else
+		{
+			str << x;
+		}
+	} while (x);
+	return 0;*/
 
 	log::initialize();
 	World::loadAll();
+	World::worlds[0]->get(0, 0);
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;

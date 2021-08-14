@@ -12,20 +12,17 @@ class Chunk
 	};
 
 public:
-	//not actually empty, has a platform of stone
-	//static nbt_compound emptyChunk;
-
-	Chunk();
+	//Chunk();
 
 	static const int max_inflated_chunkSize = 64 * 1024;
 	static const int max_deflated_chunkSize = 128 * 1024;
 
 	ull playerCount; // 
 
-	varInt sectionMaskLength;
-	blong* sectionMask;
+	//varInt sectionMaskLength;
+	//blong* sectionMask;
 
-	nbt_compound heightmaps;
+	short motion_blocking[16][16];
 
 	//biomes are stored in sections
 

@@ -6,6 +6,7 @@ const char invalidMainFile[] = "Invalid characteristics.bin file.";
 const char noAccesMainFile[] = "Could not open characteristics.bin file";
 const ull levelDatMaxSize = 1024 * 1024; //size after decompression
 
+std::vector<World*> World::worlds;
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
 		new nbt_string("type","minecraft:dimension_type"),
@@ -307,9 +308,73 @@ Chunk* World::generate(int x, int z)
 	Chunk* chunk = new Chunk;
 
 	//heightmap generation
-	uint bitsPerHeight = bitCount((int&)characteristics["height"]);
-	ull heightEntries = 256 / (64 / bitsPerHeight);
-	chunk->heightmaps.add(new nbt_long_array("MOTION_BLOCKING", new int64[48]{}, 48));
+	int height = characteristics["height"].vInt();
+	for (int i = 0; i < 16; i++) for (int j = 0; j < 16; j++) chunk->motion_blocking[i][j] = 128;
+
+	int biomeId = (x + z) % 10;
+
+	uint sectionCount = height / 16;
+	for (uint i = 0; i < sectionCount; i++)
+	{
+		chunk->sections.push_back(Section());
+		Section& section = chunk->sections[i];
+
+		//biomes
+		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+
+		//data
+		if (i == 0)
+		{
+			//bedrock section
+			section.blockCount = 0x1000;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(1);
+			section.pallete.push_back(33);
+			byte* blocks = new byte[16 * 16 * 16];
+			for (int j = 0; j < 256; j++) blocks[j] = 1;
+			for (int j = 256; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		else if (i < 8)
+		{
+			//underground layer
+			section.blockCount = 0x1000;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(1);
+			byte* blocks = new byte[4096];
+			for (int j = 0; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		else if (i == 8)
+		{
+			//surface layer
+			section.blockCount = 0x1000;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(1);
+			section.pallete.push_back(10);
+			section.pallete.push_back(9);
+			byte* blocks = new byte[16 * 16 * 16];
+			for (int y0 = 0; y0 < 13; y0++) for (int j = 0; j < 256; j++) blocks[y0 * 256 + j] = 0;
+			for (int y0 = 13; y0 < 15; y0++) for (int j = 0; j < 256; j++) blocks[y0 * 256 + j] = 1;
+			for (int j = 0; j < 256; j++) blocks[15 * 16 * 16 + j] = 2;
+			section.blockStates = new BitArray(16 * 16 * 16, 4, blocks);
+		}
+		else
+		{
+			//air layer
+			section.blockCount = 0x0;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(0);
+			byte* blocks = new byte[4096];
+			for (int j = 0; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+	}
+	return chunk;
 }
 
 Chunk* World::get(int x, int z)
@@ -322,11 +387,12 @@ Chunk* World::get(int x, int z)
 	for (ull i = 0; i < regions.size(); i++) if (rX == regions[i]->rX && rZ == regions[i]->rZ)
 	{
 		Chunk* chunk = regions[i]->get(relX, relZ);
-		if (!chunk)
+		if (chunk)
 		{
-			chunk = generate(x, z);
-			regions[i]->set(relX, relZ, chunk);
+			return chunk;
 		}
+		chunk = generate(x, z);
+		regions[i]->set(relX, relZ, chunk);
 		return chunk;
 	}
 
@@ -335,7 +401,6 @@ Chunk* World::get(int x, int z)
 	Chunk* chunk = generate(x, z);
 	region->set(relX, relZ, chunk);
 	return chunk;
-
 }
 
 void World::loadAll()

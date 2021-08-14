@@ -4,7 +4,7 @@
 
 class Region
 {
-	Chunk* chunks[32][32];
+	Chunk* chunks[32][32] = { 0 };
 
 public:
 	int rX, rZ;

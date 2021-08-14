@@ -133,7 +133,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
 
-	play::send::spawnPosition(p, Position(96, 16, 96), 0.f);
+	play::send::spawnPosition(p, Position(96, 144, 96), 0.f);
 
 	blong* bitMask = new blong(0b100000000000000000011111i64);
 	blong* lightMask = new blong(0b11111111111111111111111111i64);
@@ -164,7 +164,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 		for (ull k = 0; k < 1536; k++) biomes[k] = int((i + j) % 10);
 		play::send::updateLight(p, i, j, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 26, arrays, 26, arrays);
 		//std::cout << "\nSending chunk " << i << ' ' << j << "...";
-		play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1536, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
+		//play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1536, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
+		play::send::chunkData(p, i, j);
 		delete[] biomes;
 	}
 
@@ -174,7 +175,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	delete[] sectionLight;
 	delete[] arrays;
 
-	play::send::playerPosAndLook(p, 96.5, 16., 96.5, 0.f, 0.f, 0, 0x6, false);
+	play::send::playerPosAndLook(p, 96.5, 144., 96.5, 0.f, 0.f, 0, 0x6, false);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -281,6 +282,65 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 	cZ.write(data);
 
 	Chunk* chunk = p->world->get(cX, cZ);
+	int worldHeight = World::worlds[0]->characteristics["height"].vInt();
+	int sectionCount = worldHeight >> 4;
+
+	//primary bitmask length
+	varInt(((sectionCount - 1) >> 6) + 1).write(data);
+	//primary bitmask
+	BitStream bitmask(1);
+	for (int i = 0; i < sectionCount; i++)
+		bitmask << (bool)(chunk->sections[i].blockCount);
+	bitmask.write(data);
+	//heightMaps
+	BitStream heightmap(bitCount(worldHeight));
+	for (int z = 0; z < 16; z++) for (int x = 0; x < 16; x++) heightmap << chunk->motion_blocking[x][z];
+	ull heightmapSize = heightmap.size();
+	blong* heightmapValues = new blong[heightmapSize];
+	int64* trueValues = new int64[heightmapSize];
+	char* heightmapBuffer = (char*)heightmapValues;
+	heightmap.write(heightmapBuffer);
+	heightmapBuffer = (char*)trueValues;
+	for (int i = 0; i < heightmapSize; i++) heightmapValues[i].write(heightmapBuffer);
+	nbt_compound nbt_heightmap("", new nbt * [1]{
+		new nbt_long_array("MOTION_BLOCKING",trueValues,heightmapSize)
+		}, 1);
+	nbt_heightmap.write(data);
+	//delete[] heightmapValues;
+	//biomes length
+	varInt(uint(64 * chunk->sections.size())).write(data);
+	//biomes
+	for (int s = 0; s < chunk->sections.size(); s++) for (int y = 0; y < 4; y++) for (int z = 0; z < 4; z++) for (int x = 0; x < 4; x++) chunk->sections[s].biomes[x][y][z].write(data);
+	//size
+
+	//data
+	char* dataBuffer = new char[1024024], * dataStart = dataBuffer;
+	for (int i = 0; i < sectionCount; i++)
+	{
+		Section& section = chunk->sections[i];
+		if (section.blockCount)
+		{
+			section.blockCount.write(dataBuffer);
+			*(dataBuffer++) = section.bitsPerBlock;
+			if (!section.useGlobalPallete)
+			{
+				varInt((uint)section.pallete.size()).write(dataBuffer);
+				for (varInt val : section.pallete) val.write(dataBuffer);
+			}
+			varInt((uint)section.blockStates->getCompactedSize()).write(dataBuffer);
+			section.blockStates->write(dataBuffer);
+		}
+	}
+	uint size = (uint)(dataBuffer - dataStart);
+	varInt(size).write(data);
+	for (uint i = 0; i < size; i++) *(data++) = dataStart[i];
+	delete[] dataStart;
+
+	//nOfBlockEntities
+	varInt(0).write(data);
+	//blockEntities
+
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes,
 	varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities)

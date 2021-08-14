@@ -104,7 +104,9 @@ nbt& nbt_compound::vTag(const std::string& n)
 }
 nbt& nbt_compound::operator[](const std::string& n)
 {
-	for (nbt* e : values) if (n == e->getName()) return *e;
+	for (nbt* e : values) 
+		if (n == e->getName())
+			return *e;
 	throw searchFailedError;
 }
 uint nbt_compound::getSize() const { return (uint)values.size(); }

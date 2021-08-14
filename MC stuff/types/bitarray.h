@@ -27,6 +27,8 @@ class BitArray
 	blong* compactedData;
 public:
 	BitArray(ull entryCount, byte bitsPerEntry, ull* values = nullptr);
+	BitArray(ull entryCount, byte bitsPerEntry, uint* values = nullptr);
+	BitArray(ull entryCount, byte bitsPerEntry, byte* values = nullptr);
 
 	//maybe a getAll and a setAll for speed
 

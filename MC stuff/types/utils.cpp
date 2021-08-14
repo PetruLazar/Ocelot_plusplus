@@ -24,4 +24,5 @@ uint bitCount(ull n)
 		count++;
 		n >>= 1;
 	} while (n);
+	return count;
 }

@@ -3,17 +3,17 @@
 
 class Section
 {
-	varInt biomes[64];
+public:
+	varInt biomes[4][4][4];
 
 	bshort blockCount;
 	byte bitsPerBlock;
 
-	bool indirectPallete;
+	bool useGlobalPallete;
 	std::vector<varInt> pallete;
 
 	varInt dataLength;
-	//bitstream data
-public:
+	BitArray* blockStates;
 
 };
 
