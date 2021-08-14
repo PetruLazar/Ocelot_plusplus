@@ -118,6 +118,8 @@
     <ClCompile Include="region.cpp" />
     <ClCompile Include="section.cpp" />
     <ClCompile Include="types\angle.cpp" />
+    <ClCompile Include="types\bitarray.cpp" />
+    <ClCompile Include="types\bitstream.cpp" />
     <ClCompile Include="types\chat.cpp" />
     <ClCompile Include="types\error.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
@@ -163,6 +165,8 @@
     <ClInclude Include="section.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="types\angle.h" />
+    <ClInclude Include="types\bitarray.h" />
+    <ClInclude Include="types\bitstream.h" />
     <ClInclude Include="types\chat.h" />
     <ClInclude Include="types\endian.h" />
     <ClInclude Include="types\error.h" />
