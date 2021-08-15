@@ -62,10 +62,10 @@ void Player::updateNet(clock_t time)
 			break;
 		case sockStat::Error:
 			disconnect();
-			throw socketError;
+			throw protocolError(socketError);
 		case sockStat::Disconnected:
 			disconnect();
-			throw socketDisconnected;
+			throw protocolError(socketDisconnected);
 		}
 	}
 	else if (info & bufferingMessage)
@@ -99,10 +99,10 @@ void Player::updateNet(clock_t time)
 			break;
 		case sockStat::Error:
 			disconnect();
-			throw socketError;
+			throw protocolError(socketError);
 		case sockStat::Disconnected:
 			disconnect();
-			throw socketDisconnected;
+			throw protocolError(socketDisconnected);
 		}
 	}
 	else

@@ -13,6 +13,16 @@ classes for world/region/chunk (in progress)
 
 	- Arrange regions in order in a world, and implement binary search
 
+	- Save regions/chunks to file when needed
+
+	- Unload chunks when player leaves
+
+	- Unload a region when no loaded chunks are left in that region
+
+Increase code efficiency for world generation/load/unload/etc.
+
+Split logging into log.txt (normal log) and debug.txt (for protocol/runtime warnings and error)
+
 finish message.h : statistics::custom and create header/source files for it
 
 class for Identifier?

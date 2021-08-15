@@ -12,6 +12,7 @@ ush Options::_port = 25565;
 int Options::_max_players = 100;
 std::string Options::_level_name = "world", Options::_motd = "{\"text\":\"A Minecraft server.\"}";
 sf::IpAddress Options::_ip = sf::IpAddress::Any;
+byte Options::_viewDistance = 10;
 
 Options Options::options;
 
@@ -104,6 +105,25 @@ int parseInt(const string& name, const string& value, ull linenumber)
 	}
 	return (int)v;
 }
+byte parseByte(const string& name, const string& value, ull linenumber)
+{
+	ull v;
+	try
+	{
+		v = parseUnsigned(name, value, linenumber);
+		if (v > 0xff) throw out_of_range(0);
+	}
+	catch (out_of_range)
+	{
+		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (...)
+	{
+		throw 0;
+	}
+	return (byte)v;
+}
 
 Options::Options()
 {
@@ -112,7 +132,7 @@ Options::Options()
 	{
 		cout << "File \"server.properties\" not found, so one has been generated.\n";
 		ofstream out(optionsFileName);
-		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#level-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0";
+		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#level-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10";
 		out.close();
 		return;
 	}
@@ -160,6 +180,17 @@ Options::Options()
 		{
 			_motd = value;
 		}
+		else if (name == "view-distance")
+		{
+			try
+			{
+				_viewDistance = parseByte(name, value, linenumber);
+			}
+			catch (...)
+			{
+				continue;
+			}
+		}
 		else
 		{
 			cout << "Error on line " << linenumber << ": unkown property name \"" << name << "\".\n";
@@ -178,6 +209,7 @@ int Options::max_players() { return _max_players; }
 const string& Options::level_name() { return _level_name; }
 const string& Options::motd() { return _motd; }
 const sf::IpAddress& Options::ip() { return _ip; }
+byte Options::viewDistance() { return _viewDistance; }
 
 /*void Options::load()
 {

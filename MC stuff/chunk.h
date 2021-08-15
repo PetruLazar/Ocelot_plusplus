@@ -18,7 +18,7 @@ public:
 	static const int max_inflated_chunkSize = 64 * 1024;
 	static const int max_deflated_chunkSize = 128 * 1024;
 
-	ull playerCount; // 
+	ull loadCount; // 
 
 	//varInt sectionMaskLength;
 	//blong* sectionMask;

@@ -2,7 +2,7 @@
 
 Position::Position() { };
 Position::Position(int x, int y, int z) : v((ull(x & 0x3ffffff) << 38) | (ull(z & 0x3ffffff) << 12) | ((ull)y & 0xfff)) { }
-Position::Position(sf::Vector3i v3) : v((ull(v3.x & 0x3ffffff) << 38) | (ull(v3.z & 0x3ffffff) << 12) | ((ull)v3.y & 0xfff)) { }
+Position::Position(const sf::Vector3i& v3) : v((ull(v3.x & 0x3ffffff) << 38) | (ull(v3.z & 0x3ffffff) << 12) | ((ull)v3.y & 0xfff)) { }
 
 void Position::read(std::fstream& fs)
 {

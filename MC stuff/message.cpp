@@ -4,7 +4,7 @@
 
 playerInfo::Player::Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping) :uuid(uuid), name(name), gm((byte)gm), ping(ping) { }
 
-#define disconnectAfter(p,f) try { f; } catch (const char* c) { p->disconnect(); throw c; } p->disconnect()
+#define disconnectAfter(p,f) try { f; } catch (...) { p->disconnect(); throw; } p->disconnect()
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
@@ -111,10 +111,16 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->username = username;
 	p->nextKeepAlive = clock() + p->keepAliveInterval;
 	p->world = World::worlds[0];
+	p->X = p->world->spawnX;
+	p->Y = p->world->spawnY;
+	p->Z = p->world->spawnZ;
+	p->yaw = p->world->spawnYaw;
+	p->pitch = p->world->spawnPitch;
+	p->viewDistance = Options::viewDistance();
 	login::send::success(p, *p->uuid, username);
 
 	//mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, 5, false, true, false, true);
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, true);
 	//delete wlds;
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
@@ -129,29 +135,22 @@ void message::login::receive::start(Player* p, const mcString& username)
 	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
 	delete pl;
 
-	play::send::updateViewPosition(p, 5, 5);
+	play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
 
-	play::send::spawnPosition(p, Position(96, 144, 96), 0.f);
+	play::send::spawnPosition(p, p->world->spawn, 0.f);
 
-	blong* lightMask = new blong(0b11111111111111111111111111i64);
-	char* sectionLight = new char[2048]{  };
-	for (int i = 0; i < 2048; i++) sectionLight[i] = 0xffi8;
-	char** arrays = new char* [26]{ sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight };
-	for (int i = 0; i < 26; i++) sectionLight[i] = 0xffi8;
 
-	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
+
+	for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++)
 	{
-		play::send::updateLight(p, i, j, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 26, arrays, 26, arrays);
-		play::send::chunkData(p, i, j);
+		play::send::updateLight(p, x, z);
+		play::send::chunkData(p, x, z);
 	}
 
-	delete[] lightMask;
-	delete[] sectionLight;
-	delete[] arrays;
-
-	play::send::playerPosAndLook(p, 96.5, double(p->world->characteristics["min_y"].vInt()) + World::worlds[0]->get(6, 6)->heightmaps->getElement(0), 96.5, 0.f, 0.f, 0, 0x6, false);
+	//play::send::playerPosAndLook(p, 96.5, double(p->world->characteristics["min_y"].vInt()) + World::worlds[0]->get(6, 6)->heightmaps->getElement(0), 96.5, 0.f, 0.f, 0, 0x6, false);
+	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, 0x0, false);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -434,6 +433,30 @@ void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt ch
 
 	sendPacketData(p, start, data - start);
 }
+void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
+{
+	blong* lightMask = new blong(0b11111111111111111111111111i64);
+	char* sectionLight = new char[2048]{  };
+	for (int i = 0; i < 2048; i++) sectionLight[i] = 0xffi8;
+	char** arrays = new char* [26]{ sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight };
+	for (int i = 0; i < 26; i++) sectionLight[i] = 0xffi8;
+
+	try
+	{
+		play::send::updateLight(p, cX, cZ, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 26, arrays, 26, arrays);
+	}
+	catch (...)
+	{
+		delete[] lightMask;
+		delete[] sectionLight;
+		delete[] arrays;
+		throw;
+	}
+
+	delete[] lightMask;
+	delete[] sectionLight;
+	delete[] arrays;
+}
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges,
 	varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask,
 	varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask,
@@ -496,7 +519,7 @@ void message::play::send::chatMessage(Player* p, const Chat& msg, byte position,
 	*(data++) = position;
 	sender.write(data);
 
-	p, sendPacketData(p, start, data - start);
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::changeGameState(Player* p, byte reason, bfloat value)
 {
@@ -507,7 +530,20 @@ void message::play::send::changeGameState(Player* p, byte reason, bfloat value)
 	*(data++) = reason;
 	value.write(data);
 
-	p, sendPacketData(p, start, data - start);
+	sendPacketData(p, start, data - start);
+}
+void message::play::send::unloadChunk(Player* p, bint x, bint z)
+{
+	varInt id = (int)id::unloadChunk;
+	char* data = new char[1024], * start = data;
+
+	id.write(data);
+	x.write(data);
+	z.write(data);
+
+	p->world->unload(x, z);
+
+	sendPacketData(p, start, data - start);
 }
 //void message::play::send::tags
 
@@ -529,20 +565,201 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 	{
 		if (content == "/fast")
 		{
-
+			return;
 		}
 		if (content == "/fly")
 		{
-
+			return;
 		}
 		if (content == "/gamemode")
 		{
 			play::send::changeGameState(p, 3, 0.f);
+			return;
 		}
-		return;
+		if (content == "/test")
+		{
+			return;
+		}
+		//return;
 	}
 	Chat msg(('<' + p->username + "> " + content).c_str());
 	for (Player* pl : Player::players) message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+}
+void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
+{
+	int newChunkX = int(floor(X)) >> 4,
+		newChunkZ = int(floor(Z)) >> 4;
+
+	if (newChunkX != p->chunkX && newChunkZ != p->chunkZ)
+	{
+		send::updateViewPosition(p, newChunkX, newChunkZ);
+		if (newChunkX < p->chunkX && newChunkZ < p->chunkZ)
+		{
+			//towards negative X
+			//towards negative Z
+			bint unloadX = p->chunkX + p->viewDistance;
+			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
+			bint unloadZ = p->chunkZ + p->viewDistance;
+			for (int x = p->chunkX - p->viewDistance; x < p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
+
+			bint loadX = newChunkX - p->viewDistance;
+			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
+			{
+				send::updateLight(p, (int)loadX, (int)z);
+				send::chunkData(p, loadX, z);
+			}
+			bint loadZ = newChunkZ - p->viewDistance;
+			for (int x = newChunkX - p->viewDistance + 1; x <= newChunkX + p->viewDistance; x++)
+			{
+				send::updateLight(p, (int)x, (int)loadZ);
+				send::chunkData(p, x, loadZ);
+			}
+		}
+		else if (newChunkX < p->chunkX)
+		{
+			//towards negative X
+			//towards positive Z
+			bint unloadX = p->chunkX + p->viewDistance;
+			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
+			bint unloadZ = p->chunkZ - p->viewDistance;
+			for (int x = p->chunkX - p->viewDistance; x < p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
+
+			bint loadX = newChunkX - p->viewDistance;
+			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
+			{
+				send::updateLight(p, (int)loadX, (int)z);
+				send::chunkData(p, loadX, z);
+			}
+			bint loadZ = newChunkZ + p->viewDistance;
+			for (int x = newChunkX - p->viewDistance + 1; x <= newChunkX + p->viewDistance; x++)
+			{
+				send::updateLight(p, (int)x, (int)loadZ);
+				send::chunkData(p, x, loadZ);
+			}
+		}
+		else if (newChunkZ < p->chunkZ)
+		{
+			//???
+			//towards positive X
+			//towards negative Z
+			bint unloadX = p->chunkX - p->viewDistance;
+			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
+			bint unloadZ = p->chunkZ + p->viewDistance;
+			for (int x = p->chunkX - p->viewDistance + 1; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
+
+			bint loadX = newChunkX + p->viewDistance;
+			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
+			{
+				send::updateLight(p, (int)loadX, (int)z);
+				send::chunkData(p, loadX, z);
+			}
+			bint loadZ = newChunkZ - p->viewDistance;
+			for (int x = newChunkX - p->viewDistance; x < newChunkX + p->viewDistance; x++)
+			{
+				send::updateLight(p, (int)x, (int)loadZ);
+				send::chunkData(p, x, loadZ);
+			}
+		}
+		else
+		{
+			//towards positive X
+			//towards positive Z
+			bint unloadX = p->chunkX - p->viewDistance;
+			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
+			bint unloadZ = p->chunkZ - p->viewDistance;
+			for (int x = p->chunkX - p->viewDistance + 1; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
+
+			bint loadX = newChunkX + p->viewDistance;
+			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
+			{
+				send::updateLight(p, (int)loadX, (int)z);
+				send::chunkData(p, loadX, z);
+			}
+			bint loadZ = newChunkZ + p->viewDistance;
+			for (int x = newChunkX - p->viewDistance; x < newChunkX + p->viewDistance; x++)
+			{
+				send::updateLight(p, (int)x, (int)loadZ);
+				send::chunkData(p, x, loadZ);
+			}
+		}
+	}
+	else if (newChunkX != p->chunkX)
+	{
+		send::updateViewPosition(p, newChunkX, newChunkZ);
+		if (newChunkX < p->chunkX)
+		{
+			//towards negative X
+			bint unloadX = p->chunkX + p->viewDistance;
+			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
+			bint loadX = newChunkX - p->viewDistance;
+			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
+			{
+				send::updateLight(p, (int)loadX, (int)z);
+				send::chunkData(p, loadX, z);
+			}
+		}
+		else
+		{
+			//towards positive X
+			bint unloadX = p->chunkX - p->viewDistance;
+			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
+			bint loadX = newChunkX + p->viewDistance;
+			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
+			{
+				send::updateLight(p, (int)loadX, (int)z);
+				send::chunkData(p, loadX, z);
+			}
+		}
+	}
+	else if (newChunkZ != p->chunkZ)
+	{
+		send::updateViewPosition(p, newChunkX, newChunkZ);
+		if (newChunkZ < p->chunkZ)
+		{
+			//towards negative Z
+			bint unloadZ = p->chunkZ + p->viewDistance;
+			for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
+			bint loadZ = newChunkZ - p->viewDistance;
+			for (int x = newChunkX - p->viewDistance; x <= newChunkX + p->viewDistance; x++)
+			{
+				send::updateLight(p, (int)x, (int)loadZ);
+				send::chunkData(p, x, loadZ);
+			}
+		}
+		else
+		{
+			//towards positive Z
+			bint unloadZ = p->chunkZ - p->viewDistance;
+			for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++)
+			{
+				send::unloadChunk(p, x, unloadZ);
+				bint loadZ = newChunkZ + p->viewDistance;
+				for (int x = newChunkX - p->viewDistance; x <= newChunkX + p->viewDistance; x++)
+				{
+					send::updateLight(p, (int)x, (int)loadZ);
+					send::chunkData(p, x, loadZ);
+				}
+			}
+		}
+	}
+
+	p->X = X;
+	p->Y = feetY;
+	p->Z = Z;
+	p->onGround = onGround;
+	p->chunkX = newChunkX;
+	p->chunkZ = newChunkZ;
+}
+void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdouble Y, bdouble Z, bfloat yaw, bfloat pitch, bool onGround)
+{
+	playerRotation(p, yaw, pitch, onGround);
+	playerPosition(p, X, Y, Z, onGround);
+}
+void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch, bool onGround)
+{
+	p->yaw = yaw;
+	p->pitch = pitch;
+	p->onGround = onGround;
 }
 
 void message::sendPacketData(Player* p, char* data, ull size)
@@ -558,23 +775,11 @@ void message::sendPacketData(Player* p, char* data, ull size)
 		p->send(lendata, buffer - lendata);
 		p->send(data, size);
 	}
-	catch (protocolError obj)
+	catch (...)
 	{
 		delete[] lendata;
 		delete[] data;
-		throw obj;
-	}
-	catch (protocolWarning obj)
-	{
-		delete[] lendata;
-		delete[] data;
-		throw obj;
-	}
-	catch (const char* c)
-	{
-		delete[] lendata;
-		delete[] data;
-		throw c;
+		throw;
 	}
 
 	delete[] lendata;
@@ -768,17 +973,40 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		case play::id::playerPosition:
 		{
-			throw protocolWarning("Unhandled packet: player position");
+			bdouble x, y, z;
+			bool onGround;
+			x.read(data);
+			y.read(data);
+			z.read(data);
+			onGround = *(data++);
+			play::receive::playerPosition(p, x, y, z, onGround);
+			throw protocolWarning("Partially handled packet: player position");
 		}
 		break;
 		case play::id::playerPositionAndRotation_serverbound:
 		{
-			throw protocolWarning("Unhandled packet: player position and rotation");
+			bdouble x, y, z;
+			bfloat yaw, pitch;
+			bool onGround;
+			x.read(data);
+			y.read(data);
+			z.read(data);
+			yaw.read(data);
+			pitch.read(data);
+			onGround = *(data++);
+			play::receive::playerPositionAndRotation(p, x, y, z, yaw, pitch, onGround);
+			throw protocolWarning("Partially handled packet: player position and rotation");
 		}
 		break;
 		case play::id::playerRotation:
 		{
-			throw protocolWarning("Unhandled packet: player rotation");
+			bfloat yaw, pitch;
+			bool onGround;
+			yaw.read(data);
+			pitch.read(data);
+			onGround = *(data++);
+			play::receive::playerRotation(p, yaw, pitch, onGround);
+			throw protocolWarning("Partially handled packet: player rotation");
 		}
 		break;
 		case play::id::playerMovement:

@@ -15,6 +15,10 @@ public:
 	~World();
 
 	mcString name;
+	Position spawn;
+	bdouble spawnX, spawnY, spawnZ;
+	bfloat spawnYaw, spawnPitch;
+	int spawnChunkX, spawnChunkZ;
 	/*Contents of nbt_compound characteristics
 	*
 	* piglin safe - byte

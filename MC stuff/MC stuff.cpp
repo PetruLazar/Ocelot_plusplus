@@ -18,9 +18,9 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
+	srand((uint)time(nullptr));
 	log::initialize();
 	World::loadAll();
-	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
 

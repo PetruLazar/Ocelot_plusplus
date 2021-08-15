@@ -31,6 +31,15 @@
     <Filter Include="Source Files\types">
       <UniqueIdentifier>{b17e9405-e8ab-4fe9-9b24-323c892d856b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Worlds">
+      <UniqueIdentifier>{7730f085-7d8c-48f0-ba15-c556fb438508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Worlds\World">
+      <UniqueIdentifier>{45760748-e3bb-4b60-a815-5859390425e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Worlds\World\regions">
+      <UniqueIdentifier>{b6d3ced4-bf78-4929-af61-ec70c5d48126}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MC stuff.cpp">
@@ -315,10 +324,16 @@
     <None Include="..\README.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="worlds\world\characteristics.bin">
+      <Filter>Resource Files\Worlds\World</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="debug.txt">
       <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="worlds\worldList.txt">
+      <Filter>Resource Files\Worlds</Filter>
     </Text>
   </ItemGroup>
 </Project>

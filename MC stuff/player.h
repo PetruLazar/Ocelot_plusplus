@@ -38,7 +38,7 @@ private:
 
 public:
 	mcString username;
-	mcUUID *uuid = 0;
+	mcUUID* uuid = 0;
 
 	int protocolVersion;
 	ConnectionState state;
@@ -52,6 +52,12 @@ public:
 
 	//world and position information
 	World* world; // pointer to the world the player is in
+	bdouble X, Y, Z;
+	bfloat yaw, pitch;
+	int chunkX, chunkZ;
+	bool onGround;
+
+	int viewDistance;
 
 	Player(sf::TcpSocket*);
 	~Player();

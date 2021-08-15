@@ -9,6 +9,7 @@ class Options
 	static int _max_players;
 	static std::string _level_name, _motd;
 	static sf::IpAddress _ip;
+	static byte _viewDistance;
 
 	//private constructor to disallow object of this class
 	Options();
@@ -25,7 +26,8 @@ public:
 
 	static ush port();
 	static int max_players();
-	static const std::string & level_name();
+	static const std::string& level_name();
 	static const std::string& motd();
 	static const sf::IpAddress& ip();
+	static byte viewDistance();
 };

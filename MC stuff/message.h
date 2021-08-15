@@ -575,6 +575,7 @@ struct message
 			static void chunkData(Player*, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes, varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities);
 			static void effect(Player*, bint effectId, Position location, bint data, bool disableRelativeVolume);
 			//static void particle(Player*, bint particleId, bool longDistance, bdouble X, bdouble Y, bdouble Z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat data, bint count, ???);
+			static void updateLight(Player*, varInt cX, varInt cZ);
 			static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
 			static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
 			//static void mapData(Player*, varInt mapId, byte scale, bool locked, bool trackingPosition, varInt iconCount, Icon* icons, byte optColumns, byte optRows, byte optX, byte optZ, varInt optLength, byte* data);

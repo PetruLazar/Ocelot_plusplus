@@ -288,24 +288,39 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 
 World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 {
+	cout << "Loading world \"" << c_name << "...\n";
 	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::in);
 	if (!worldMain.is_open())
 	{
-		cout << "World \"" << c_name << "\": cannot open charactestics.bin\n";
+		cout << "Error: cannot open charactestics.bin\n";
 		throw 0;
 	}
 	if (!nbt::checkTag(worldMain))
 	{
-		cout << "World \"" << c_name << "\": charactestics.bin has an invalid format\n";
+		cout << "Error: charactestics.bin has an invalid format\n";
 		throw 0;
 	}
 	characteristics.read(worldMain);
+	spawnX.read(worldMain);
+	spawnZ.read(worldMain);
+	spawnYaw.read(worldMain);
+	spawnPitch.read(worldMain);
+
+	spawnChunkX = int(floor(spawnX)) >> 4;
+	spawnChunkZ = int(floor(spawnZ)) >> 4;
+	spawn = sf::Vector3i(int(floor(spawnX)), int(floor(spawnY)), int(floor(spawnZ)));
+
+	cout << "Loading spawn area...\n";
+	for (int x = spawnChunkX - 3; x < spawnChunkX + 4; x++) for (int z = spawnChunkZ - 3; x < spawnChunkZ + 4; x++) get(x, z)->loadCount = 1;
+
+	spawnY = double(characteristics["min_y"].vInt()) + get(spawnChunkX, spawnChunkZ)->heightmaps->getElement(((ull)spawn.z() - ((ull)spawnChunkZ << 4)) * 16 + ((ull)spawn.x() - ((ull)spawnChunkX << 4)));
+	cout << "Done!\n";
 }
 World::~World()
 {
 	for (Region* r : regions)
 	{
-		r->unload(name);
+		r->unload(this);
 		delete r;
 	}
 	//update characteristics.bin
@@ -322,6 +337,7 @@ Chunk* World::generate(int x, int z)
 	for (int z0 = 0; z0 < 16; z0++) for (int x0 = 0; x0 < 16; x0++) chunk->heightmaps->setElement((ull)z0 * 16 + x0, 144);
 
 	int biomeId = (x + z) % 10;
+	if (biomeId < 0) biomeId += 10;
 
 	uint sectionCount = height / 16;
 	chunk->sections.resize(sectionCount);
@@ -394,11 +410,12 @@ void World::unload(int x, int z)
 
 	for (ull i = 0; i < regions.size(); i++) if (rX == regions[i]->rX && rZ == regions[i]->rZ)
 	{
-		regions[i]->unload(name, relX, relZ);
+		regions[i]->unload(this, relX, relZ);
 		return;
 	}
 
-	throw runtimeWarning(("Tried to unload chunk [" + to_string(x) + ", " + to_string(z) + "], but it is not loaded.").c_str());
+	std::cout << "Incorrect chunk unload at [" << x << ", " << z << "]\n";
+	throw runtimeWarning("Tries to unload a chunk in an unloaded region");
 }
 Chunk* World::get(int x, int z)
 {
@@ -409,7 +426,7 @@ Chunk* World::get(int x, int z)
 
 	for (ull i = 0; i < regions.size(); i++) if (rX == regions[i]->rX && rZ == regions[i]->rZ)
 	{
-		Chunk* chunk = regions[i]->get(name, relX, relZ);
+		Chunk* chunk = regions[i]->get(this, relX, relZ);
 		if (chunk)
 		{
 			return chunk;
@@ -434,6 +451,7 @@ void World::loadAll()
 	{
 		worlds.push_back(new World(name));
 	}
+	cout << "Finished loading " << worlds.size() << " worlds!\n";
 }
 void World::unloadAll()
 {

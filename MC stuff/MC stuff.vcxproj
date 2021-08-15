@@ -186,9 +186,11 @@
     <None Include="..\README.md" />
     <None Include="debug.bin" />
     <None Include="server.properties" />
+    <None Include="worlds\world\characteristics.bin" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="debug.txt" />
+    <Text Include="worlds\worldList.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
