@@ -8,13 +8,11 @@ class World
 {
 	std::vector<Region*> regions;
 
-	void load(int x, int z);
-	void save(int x, int z);
-	bool check(int x, int z);
 	Chunk* generate(int x, int z);
 
 public:
 	World(const char* name);
+	~World();
 
 	mcString name;
 	/*Contents of nbt_compound characteristics
@@ -39,13 +37,15 @@ public:
 	nbt_compound characteristics;
 	//static nbt_compound heightMap;
 
+	void unload(int x, int z);
 	Chunk* get(int x, int z);
 
 	//static members
 	static nbt_compound dimension_codec;
 
 	static void loadAll();
-	//initial spawn in first world
+	static void unloadAll();
+	//initial spawn is in first world
 	static std::vector<World*> worlds;
 };
 

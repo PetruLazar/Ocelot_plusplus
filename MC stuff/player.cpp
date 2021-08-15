@@ -78,7 +78,16 @@ void Player::updateNet(clock_t time)
 			{
 				info = mask(info & ~bufferingMessage);
 
-				message::dispatch(this, buffer, len);
+				try
+				{
+					message::dispatch(this, buffer, len);
+				}
+				catch (...)
+				{
+					delete[] buffer;
+					buffer = 0;
+					throw;
+				}
 
 				delete[] buffer;
 				buffer = 0;
@@ -118,10 +127,10 @@ void Player::updateNet(clock_t time)
 			break;
 		case sockStat::Error:
 			disconnect();
-			throw socketError;
+			throw protocolError(socketError);
 		case sockStat::Disconnected:
 			disconnect();
-			throw socketDisconnected;
+			throw protocolError(socketDisconnected);
 		}
 	}
 }
@@ -140,10 +149,10 @@ void Player::send(char* buffer, ull size)
 	{
 	case sockStat::Disconnected:
 		disconnect();
-		throw socketDisconnected;
+		throw protocolError(socketDisconnected);
 	case sockStat::Error:
 		disconnect();
-		throw socketError;
+		throw protocolError(socketError);
 	}
 }
 

@@ -18,27 +18,8 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
-	/*BitStream str(9);
-	ull x;
-	do
-	{
-		cin >> x;
-		if (x == 1)
-		{
-			str >> x;
-			cout << x;
-			x = 1;
-		}
-		else
-		{
-			str << x;
-		}
-	} while (x);
-	return 0;*/
-
 	log::initialize();
 	World::loadAll();
-	World::worlds[0]->get(0, 0);
 	srand((uint)time(nullptr));
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
@@ -67,13 +48,21 @@ int main()
 		{
 			Player::players[i]->updateNet(time);
 		}
+		catch (runtimeError obj)
+		{
+			cout << "\nRuntime error: " << obj.msg;
+		}
+		catch (runtimeWarning obj)
+		{
+			cout << "\nRuntime warning: " << obj.msg;
+		}
 		catch (protocolError obj)
 		{
-			cout << "\nError: " << obj.msg;
+			cout << "\nProtocol error: " << obj.msg;
 		}
 		catch (protocolWarning obj)
 		{
-			cout << "\nWarning: " << obj.msg;
+			cout << "\nProtocol warning: " << obj.msg;
 		}
 		catch (const char* err_msg)
 		{
@@ -102,6 +91,23 @@ int main()
 	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
 	{
 		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
+		delete Player::players[i];
+	}
+	catch (runtimeError obj)
+	{
+		cout << "\nRuntime error: " << obj.msg;
+	}
+	catch (runtimeWarning obj)
+	{
+		cout << "\nRuntime warning: " << obj.msg;
+	}
+	catch (protocolError obj)
+	{
+		cout << "\nProtocol error: " << obj.msg;
+	}
+	catch (protocolWarning obj)
+	{
+		cout << "\nProtocol warning: " << obj.msg;
 	}
 	catch (const char* err_msg)
 	{
@@ -213,6 +219,26 @@ int main()
 	}*/
 
 	delete buffer;
+	try
+	{
+		World::unloadAll();
+	}
+	catch (runtimeError obj)
+	{
+		cout << "\nRuntime error: " << obj.msg;
+	}
+	catch (runtimeWarning obj)
+	{
+		cout << "\nRuntime warning: " << obj.msg;
+	}
+	catch (protocolError obj)
+	{
+		cout << "\nProtocol error: " << obj.msg;
+	}
+	catch (protocolWarning obj)
+	{
+		cout << "\nProtocol warning: " << obj.msg;
+	}
 
 	return 0;
 }

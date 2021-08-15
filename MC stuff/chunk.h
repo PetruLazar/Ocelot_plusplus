@@ -13,6 +13,7 @@ class Chunk
 
 public:
 	//Chunk();
+	~Chunk();
 
 	static const int max_inflated_chunkSize = 64 * 1024;
 	static const int max_deflated_chunkSize = 128 * 1024;
@@ -22,7 +23,7 @@ public:
 	//varInt sectionMaskLength;
 	//blong* sectionMask;
 
-	short motion_blocking[16][16];
+	BitArray* heightmaps;
 
 	//biomes are stored in sections
 
@@ -33,7 +34,7 @@ public:
 	//block Entities
 
 	//for loading/saving from/to file
-	void read(std::fstream&);
+	void read(std::fstream&, int sectionCount);
 	void write(std::fstream&);
 };
 

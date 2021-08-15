@@ -114,7 +114,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	login::send::success(p, *p->uuid, username);
 
 	//mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, 10, false, true, false, true);
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, 5, false, true, false, true);
 	//delete wlds;
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
@@ -135,23 +135,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::spawnPosition(p, Position(96, 144, 96), 0.f);
 
-	blong* bitMask = new blong(0b100000000000000000011111i64);
 	blong* lightMask = new blong(0b11111111111111111111111111i64);
-
-	char* chunkData = new char[1120024], * buffer = chunkData;
-	for (int s = 0; s < 6; s++)
-	{
-		*(buffer++) = 0x10;
-		*(buffer++) = 0x00;
-		*(buffer++) = 4;
-		*(buffer++) = 2;
-		*(buffer++) = 0;
-		*(buffer++) = 9; // 34 for water, 9 for grass block
-		//char* buffer = chunkData + 6;
-		varInt(256).write(buffer);
-		//blong(1).write(buffer);
-		for (int i = 0; i < 256; i++) blong(0x1111111111111111).write(buffer);
-	}
 	char* sectionLight = new char[2048]{  };
 	for (int i = 0; i < 2048; i++) sectionLight[i] = 0xffi8;
 	char** arrays = new char* [26]{ sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight };
@@ -159,23 +143,15 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	for (int i = 0; i < 12; i++) for (int j = 0; j < 12; j++)
 	{
-		//Sleep(10);
-		varInt* biomes = new varInt[1536];
-		for (ull k = 0; k < 1536; k++) biomes[k] = int((i + j) % 10);
 		play::send::updateLight(p, i, j, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 26, arrays, 26, arrays);
-		//std::cout << "\nSending chunk " << i << ' ' << j << "...";
-		//play::send::chunkData(p, i, j, 1, bitMask, World::heightMap, 1536, biomes, int(buffer - chunkData), chunkData, 0, nullptr);
 		play::send::chunkData(p, i, j);
-		delete[] biomes;
 	}
 
 	delete[] lightMask;
-	delete bitMask;
-	delete[] chunkData;
 	delete[] sectionLight;
 	delete[] arrays;
 
-	play::send::playerPosAndLook(p, 96.5, 144., 96.5, 0.f, 0.f, 0, 0x6, false);
+	play::send::playerPosAndLook(p, 96.5, double(p->world->characteristics["min_y"].vInt()) + World::worlds[0]->get(6, 6)->heightmaps->getElement(0), 96.5, 0.f, 0.f, 0, 0x6, false);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -293,17 +269,8 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 		bitmask << (bool)(chunk->sections[i].blockCount);
 	bitmask.write(data);
 	//heightMaps
-	BitStream heightmap(bitCount(worldHeight));
-	for (int z = 0; z < 16; z++) for (int x = 0; x < 16; x++) heightmap << chunk->motion_blocking[x][z];
-	ull heightmapSize = heightmap.size();
-	blong* heightmapValues = new blong[heightmapSize];
-	int64* trueValues = new int64[heightmapSize];
-	char* heightmapBuffer = (char*)heightmapValues;
-	heightmap.write(heightmapBuffer);
-	heightmapBuffer = (char*)trueValues;
-	for (int i = 0; i < heightmapSize; i++) heightmapValues[i].write(heightmapBuffer);
 	nbt_compound nbt_heightmap("", new nbt * [1]{
-		new nbt_long_array("MOTION_BLOCKING",trueValues,heightmapSize)
+		new nbt_long_array("MOTION_BLOCKING",*chunk->heightmaps)
 		}, 1);
 	nbt_heightmap.write(data);
 	//delete[] heightmapValues;
@@ -708,9 +675,11 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		case play::id::chatMessage_serverbound:
 		{
-			mcString content;
-			content.read(data);
-			message::play::receive::chatMessage(p, content);
+			{
+				mcString content;
+				content.read(data);
+				message::play::receive::chatMessage(p, content);
+			}
 			throw protocolWarning("Partially handled packet: chat message");
 		}
 		break;
@@ -721,20 +690,22 @@ void message::dispatch(Player* p, char* data, size_t size)
 		break;
 		case play::id::clientSettings:
 		{
-			mcString locale;
-			byte viewDistance, displayedSkinParts;
-			varInt chatMode, mainHand;
-			bool chatColors, disableTextFiltering;
+			{
+				mcString locale;
+				byte viewDistance, displayedSkinParts;
+				varInt chatMode, mainHand;
+				bool chatColors, disableTextFiltering;
 
-			locale.read(data);
-			viewDistance = *(data++);
-			chatMode.read(data);
-			chatColors = *(data++);
-			displayedSkinParts = *(data++);
-			mainHand.read(data);
-			disableTextFiltering = *(data++);
+				locale.read(data);
+				viewDistance = *(data++);
+				chatMode.read(data);
+				chatColors = *(data++);
+				displayedSkinParts = *(data++);
+				mainHand.read(data);
+				disableTextFiltering = *(data++);
 
-			play::receive::clientSettings(p, locale, viewDistance, chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
+				play::receive::clientSettings(p, locale, viewDistance, chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
+			}
 			throw protocolWarning("Partially handled packet: client settings");
 		}
 		break;

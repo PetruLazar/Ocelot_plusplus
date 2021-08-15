@@ -31,7 +31,8 @@ vector <void*> all_info::blocks;
 uint all_info::count;*/
 
 //decomment this and select a block id if needed, or comment if you are not targeting a specific id
-#define TARGET_MEMORY_BLOCK 237
+//#define TARGET_MEMORY_BLOCK 2865
+//80 bytes: F0 32 DC 71 F6 7F 00 00 00 00 00 00 CD CD CD CD
 
 void* operator new(size_t s)
 {
@@ -39,7 +40,7 @@ void* operator new(size_t s)
 	int bid = ((int*)p)[-2];
 #ifdef TARGET_MEMORY_BLOCK
 	if (bid == TARGET_MEMORY_BLOCK)
-		0;
+		cout << "";
 #endif
 	log::txt() << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")\n";
 	return p;
@@ -50,7 +51,7 @@ void* operator new[](size_t s)
 	int bid = ((int*)p)[-2];
 #ifdef TARGET_MEMORY_BLOCK
 	if (bid == TARGET_MEMORY_BLOCK)
-		log::txt();
+		cout << "";
 #endif
 	log::txt() << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")\n";
 	return p;

@@ -5,22 +5,26 @@ BitArrayElement::BitArrayElement(BitArray* parent, ull index) : parent(parent), 
 BitArrayElement::operator ull() const { return parent->getElement(index); }
 void BitArrayElement::operator=(ull v) const { parent->setElement(index, v); }
 
+BitArray::BitArray(ull entryCount, byte bitsPerEntry) : entryCount(entryCount), bitsPerEntry(bitsPerEntry), mask(0xffffffffffffffff << (64 - bitsPerEntry) >> (64 - bitsPerEntry)), groupSize(64 / bitsPerEntry), compactedSize((entryCount - 1) / groupSize + 1), compactedData(new blong[compactedSize]) { }
 BitArray::BitArray(ull entryCount, byte bitsPerEntry, ull* values) : entryCount(entryCount), bitsPerEntry(bitsPerEntry), mask(0xffffffffffffffff << (64 - bitsPerEntry) >> (64 - bitsPerEntry)), groupSize(64 / bitsPerEntry), compactedSize((entryCount - 1) / groupSize + 1), compactedData(new blong[compactedSize])
 {
-	if (values) for (int i = 0; i < entryCount; i++) setElement(i, values[i]);
+	for (int i = 0; i < entryCount; i++) setElement(i, values[i]);
 }
-
 BitArray::BitArray(ull entryCount, byte bitsPerEntry, uint* values) : entryCount(entryCount), bitsPerEntry(bitsPerEntry), mask(0xffffffffffffffff << (64 - bitsPerEntry) >> (64 - bitsPerEntry)), groupSize(64 / bitsPerEntry), compactedSize((entryCount - 1) / groupSize + 1), compactedData(new blong[compactedSize])
 {
-	if (values) for (int i = 0; i < entryCount; i++) setElement(i, values[i]);
+	for (int i = 0; i < entryCount; i++) setElement(i, values[i]);
 }
 BitArray::BitArray(ull entryCount, byte bitsPerEntry, byte* values) : entryCount(entryCount), bitsPerEntry(bitsPerEntry), mask(0xffffffffffffffff << (64 - bitsPerEntry) >> (64 - bitsPerEntry)), groupSize(64 / bitsPerEntry), compactedSize((entryCount - 1) / groupSize + 1), compactedData(new blong[compactedSize])
 {
-	if (values) for (int i = 0; i < entryCount; i++) setElement(i, values[i]);
+	for (int i = 0; i < entryCount; i++) setElement(i, values[i]);
+}
+BitArray::~BitArray()
+{
+	delete[] compactedData;
 }
 
-
-ull BitArray::getElement(ull i) { return (compactedData[i / groupSize] >> i % groupSize * bitsPerEntry) & mask; }
+ull BitArray::getElement(ull i) { 
+	return (compactedData[i / groupSize] >> (i % groupSize * bitsPerEntry)) & mask; }
 void BitArray::setElement(ull i, ull value)
 {
 	ull compactedArrayElement = i / groupSize,
@@ -29,6 +33,7 @@ void BitArray::setElement(ull i, ull value)
 }
 
 ull BitArray::getCompactedSize() const { return compactedSize; }
+blong* BitArray::getCompactedValues() const { return compactedData; }
 void BitArray::changeSize(ull newEntryCount)
 {
 	entryCount = newEntryCount;

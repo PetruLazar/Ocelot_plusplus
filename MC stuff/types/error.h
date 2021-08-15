@@ -15,3 +15,19 @@ public:
 
 	protocolWarning(const char* msg);
 };
+
+class runtimeError
+{
+public:
+	const char* msg;
+
+	runtimeError(const char* msg);
+};
+
+class runtimeWarning
+{
+public:
+	const char* msg;
+
+	runtimeWarning(const char* msg);
+};

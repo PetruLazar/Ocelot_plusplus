@@ -26,9 +26,11 @@ class BitArray
 	ull compactedSize;
 	blong* compactedData;
 public:
-	BitArray(ull entryCount, byte bitsPerEntry, ull* values = nullptr);
-	BitArray(ull entryCount, byte bitsPerEntry, uint* values = nullptr);
-	BitArray(ull entryCount, byte bitsPerEntry, byte* values = nullptr);
+	BitArray(ull entryCount, byte bitsPerEntry);
+	BitArray(ull entryCount, byte bitsPerEntry, ull* values);
+	BitArray(ull entryCount, byte bitsPerEntry, uint* values);
+	BitArray(ull entryCount, byte bitsPerEntry, byte* values);
+	~BitArray();
 
 	//maybe a getAll and a setAll for speed
 
@@ -36,6 +38,7 @@ public:
 	void setElement(ull index, ull value);
 
 	ull getCompactedSize() const;
+	blong* getCompactedValues() const;
 	void changeSize(ull);
 	void changeBitsPerEntry(byte);
 

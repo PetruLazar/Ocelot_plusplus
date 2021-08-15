@@ -4,6 +4,8 @@
 class Section
 {
 public:
+	~Section();
+
 	varInt biomes[4][4][4];
 
 	bshort blockCount;
@@ -14,6 +16,4 @@ public:
 
 	varInt dataLength;
 	BitArray* blockStates;
-
 };
-

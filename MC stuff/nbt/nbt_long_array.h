@@ -1,13 +1,15 @@
 #pragma once
 #include "nbt_base.h"
+#include "../types/bitarray.h"
 
 class nbt_long_array : public nbt
 {
-	bigEndian<int64>* values;
+	blong* values;
 	buint _size;
 
 public:
 	nbt_long_array(const std::string& name = "", int64* values = nullptr, int size = 0);
+	nbt_long_array(const std::string& name, const BitArray& bitarray);
 	~nbt_long_array();
 
 	void write(std::fstream&, bool includeNameAndTtype = true) const;

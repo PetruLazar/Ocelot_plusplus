@@ -301,6 +301,15 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	}
 	characteristics.read(worldMain);
 }
+World::~World()
+{
+	for (Region* r : regions)
+	{
+		r->unload(name);
+		delete r;
+	}
+	//update characteristics.bin
+}
 
 Chunk* World::generate(int x, int z)
 {
@@ -309,19 +318,21 @@ Chunk* World::generate(int x, int z)
 
 	//heightmap generation
 	int height = characteristics["height"].vInt();
-	for (int i = 0; i < 16; i++) for (int j = 0; j < 16; j++) chunk->motion_blocking[i][j] = 128;
+	chunk->heightmaps = new BitArray(256, bitCount(height));
+	for (int z0 = 0; z0 < 16; z0++) for (int x0 = 0; x0 < 16; x0++) chunk->heightmaps->setElement((ull)z0 * 16 + x0, 144);
 
 	int biomeId = (x + z) % 10;
 
 	uint sectionCount = height / 16;
+	chunk->sections.resize(sectionCount);
 	for (uint i = 0; i < sectionCount; i++)
 	{
-		chunk->sections.push_back(Section());
 		Section& section = chunk->sections[i];
 
 		//biomes
 		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
 
+		byte* blocks = new byte[16 * 16 * 16];
 		//data
 		if (i == 0)
 		{
@@ -331,7 +342,6 @@ Chunk* World::generate(int x, int z)
 			section.useGlobalPallete = false;
 			section.pallete.push_back(1);
 			section.pallete.push_back(33);
-			byte* blocks = new byte[16 * 16 * 16];
 			for (int j = 0; j < 256; j++) blocks[j] = 1;
 			for (int j = 256; j < 4096; j++) blocks[j] = 0;
 			section.blockStates = new BitArray(4096, 4, blocks);
@@ -343,7 +353,6 @@ Chunk* World::generate(int x, int z)
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
 			section.pallete.push_back(1);
-			byte* blocks = new byte[4096];
 			for (int j = 0; j < 4096; j++) blocks[j] = 0;
 			section.blockStates = new BitArray(4096, 4, blocks);
 		}
@@ -356,7 +365,6 @@ Chunk* World::generate(int x, int z)
 			section.pallete.push_back(1);
 			section.pallete.push_back(10);
 			section.pallete.push_back(9);
-			byte* blocks = new byte[16 * 16 * 16];
 			for (int y0 = 0; y0 < 13; y0++) for (int j = 0; j < 256; j++) blocks[y0 * 256 + j] = 0;
 			for (int y0 = 13; y0 < 15; y0++) for (int j = 0; j < 256; j++) blocks[y0 * 256 + j] = 1;
 			for (int j = 0; j < 256; j++) blocks[15 * 16 * 16 + j] = 2;
@@ -369,14 +377,29 @@ Chunk* World::generate(int x, int z)
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
 			section.pallete.push_back(0);
-			byte* blocks = new byte[4096];
 			for (int j = 0; j < 4096; j++) blocks[j] = 0;
 			section.blockStates = new BitArray(4096, 4, blocks);
 		}
+		delete[] blocks;
 	}
 	return chunk;
 }
 
+void World::unload(int x, int z)
+{
+	int rX = x >> 5,
+		rZ = z >> 5,
+		relX = x & 31,
+		relZ = z & 31;
+
+	for (ull i = 0; i < regions.size(); i++) if (rX == regions[i]->rX && rZ == regions[i]->rZ)
+	{
+		regions[i]->unload(name, relX, relZ);
+		return;
+	}
+
+	throw runtimeWarning(("Tried to unload chunk [" + to_string(x) + ", " + to_string(z) + "], but it is not loaded.").c_str());
+}
 Chunk* World::get(int x, int z)
 {
 	int rX = x >> 5,
@@ -386,7 +409,7 @@ Chunk* World::get(int x, int z)
 
 	for (ull i = 0; i < regions.size(); i++) if (rX == regions[i]->rX && rZ == regions[i]->rZ)
 	{
-		Chunk* chunk = regions[i]->get(relX, relZ);
+		Chunk* chunk = regions[i]->get(name, relX, relZ);
 		if (chunk)
 		{
 			return chunk;
@@ -411,4 +434,8 @@ void World::loadAll()
 	{
 		worlds.push_back(new World(name));
 	}
+}
+void World::unloadAll()
+{
+	for (World* w : worlds) delete w;
 }
