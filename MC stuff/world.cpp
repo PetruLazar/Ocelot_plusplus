@@ -341,7 +341,94 @@ Chunk* World::generate(int x, int z)
 
 	uint sectionCount = height / 16;
 	chunk->sections.resize(sectionCount);
-	for (uint i = 0; i < sectionCount; i++)
+
+	if (rand() == 2495) for (uint i = 0; i < sectionCount; i++)
+	{
+		Section& section = chunk->sections[i];
+
+		//biomes
+		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+
+		byte* blocks = new byte[16 * 16 * 16];
+		//data
+		if (i == 0)
+		{
+			//bedrock section
+			section.blockCount = 0x1000;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(34);
+			section.pallete.push_back(33);
+			for (int j = 0; j < 256; j++) blocks[j] = 1;
+			for (int j = 256; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		else if (i <= 8)
+		{
+			//underground layer
+			section.blockCount = 0x1000;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(34);
+			for (int j = 0; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		else
+		{
+			//air layer
+			section.blockCount = 0x0;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(0);
+			for (int j = 0; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		delete[] blocks;
+	}
+	else if (rand() == 15294) for (uint i = 0; i < sectionCount; i++)
+	{
+		Section& section = chunk->sections[i];
+
+		//biomes
+		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+
+		byte* blocks = new byte[16 * 16 * 16];
+		//data
+		if (i == 0)
+		{
+			//bedrock section
+			section.blockCount = 0x1000;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(50);
+			section.pallete.push_back(33);
+			for (int j = 0; j < 256; j++) blocks[j] = 1;
+			for (int j = 256; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		else if (i <= 8)
+		{
+			//underground layer
+			section.blockCount = 0x1000;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(50);
+			for (int j = 0; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		else
+		{
+			//air layer
+			section.blockCount = 0x0;
+			section.bitsPerBlock = 4;
+			section.useGlobalPallete = false;
+			section.pallete.push_back(0);
+			for (int j = 0; j < 4096; j++) blocks[j] = 0;
+			section.blockStates = new BitArray(4096, 4, blocks);
+		}
+		delete[] blocks;
+	}
+	else for (uint i = 0; i < sectionCount; i++)
 	{
 		Section& section = chunk->sections[i];
 
