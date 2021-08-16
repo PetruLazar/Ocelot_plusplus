@@ -95,6 +95,7 @@
     <ClCompile Include="json\json_compound.cpp" />
     <ClCompile Include="json\json_int.cpp" />
     <ClCompile Include="json\json_string.cpp" />
+    <ClCompile Include="json\json_boolean.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="MC stuff.cpp" />
     <ClCompile Include="message.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="region.cpp" />
     <ClCompile Include="section.cpp" />
+    <ClCompile Include="types\slot.cpp" />
     <ClCompile Include="types\angle.cpp" />
     <ClCompile Include="types\bitarray.cpp" />
     <ClCompile Include="types\bitstream.cpp" />
@@ -141,6 +143,7 @@
     <ClInclude Include="json\json_compound.h" />
     <ClInclude Include="json\json_int.h" />
     <ClInclude Include="json\json_string.h" />
+    <ClInclude Include="json\json_boolean.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="nbt.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="types\typedefs.h" />
     <ClInclude Include="types\uuid.h" />
     <ClInclude Include="types\varData.h" />
+    <ClInclude Include="types\slot.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>

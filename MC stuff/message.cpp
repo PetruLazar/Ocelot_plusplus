@@ -585,7 +585,9 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 		//return;
 	}
 	Chat msg(('<' + p->username + "> " + content).c_str());
-	for (Player* pl : Player::players) message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+
+	for (Player* pl : Player::players)
+		message::play::send::chatMessage(pl, msg, 0, *p->uuid);
 }
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
 {

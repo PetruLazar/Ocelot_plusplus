@@ -8,6 +8,7 @@
 #include "json/json_int.h"
 #include "json/json_array.h"
 #include "json/json_compound.h"
+#include "json/json_boolean.h"
 
 //example of forming a json object in memory and editing it
 /*int main()
