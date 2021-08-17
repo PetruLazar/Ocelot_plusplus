@@ -141,8 +141,6 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::spawnPosition(p, p->world->spawn, 0.f);
 
-
-
 	for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++)
 	{
 		play::send::updateLight(p, x, z);
@@ -587,8 +585,8 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 }
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
 {
-	int newChunkX = int(floor(X)) >> 4,
-		newChunkZ = int(floor(Z)) >> 4;
+	int newChunkX = fastfloor(X) >> 4,
+		newChunkZ = fastfloor(Z) >> 4;
 
 	if (newChunkX != p->chunkX && newChunkZ != p->chunkZ)
 	{

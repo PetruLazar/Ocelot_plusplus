@@ -26,3 +26,8 @@ uint bitCount(ull n)
 	} while (n);
 	return count;
 }
+
+int fastfloor(double x)
+{
+	return x > 0 ? int(x) : int(x) - 1;
+}

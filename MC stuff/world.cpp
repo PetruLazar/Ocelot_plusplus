@@ -306,9 +306,9 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	spawnYaw.read(worldMain);
 	spawnPitch.read(worldMain);
 
-	spawnChunkX = int(floor(spawnX)) >> 4;
-	spawnChunkZ = int(floor(spawnZ)) >> 4;
-	spawn = sf::Vector3i(int(floor(spawnX)), int(floor(spawnY)), int(floor(spawnZ)));
+	spawnChunkX = fastfloor(spawnX) >> 4;
+	spawnChunkZ = fastfloor(spawnZ) >> 4;
+	spawn = sf::Vector3i(fastfloor(spawnX), fastfloor(spawnY), fastfloor(spawnZ));
 
 	cout << "Loading spawn area...\n";
 	for (int x = spawnChunkX - 3; x < spawnChunkX + 4; x++) for (int z = spawnChunkZ - 3; x < spawnChunkZ + 4; x++) get(x, z)->loadCount = 1;
