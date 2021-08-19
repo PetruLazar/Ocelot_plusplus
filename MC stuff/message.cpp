@@ -120,7 +120,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	login::send::success(p, *p->uuid, username);
 
 	//mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, true);
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, false);
 	//delete wlds;
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");

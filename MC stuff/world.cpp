@@ -6,9 +6,9 @@ const char invalidMainFile[] = "Invalid characteristics.bin file.";
 const char noAccesMainFile[] = "Could not open characteristics.bin file";
 const ull levelDatMaxSize = 1024 * 1024; //size after decompression
 
-const int terrainHeightAverage = 75;
-const int terrainHeightAmplitude = 30;
-const double noiseFactor_x = .015625, noiseFactor_z = .015625;
+const int terrainHeightAverage = 149;
+const int terrainHeightAmplitude = 35;
+const double noiseFactor_x = 0.0078125, noiseFactor_z = 1. / 128;
 
 std::vector<World*> World::worlds;
 nbt_compound World::dimension_codec("", new nbt* [2]{
@@ -345,8 +345,8 @@ Chunk* World::generate(int X, int Z)
 	chunk->sections.resize(sectionCount);
 
 	//[z][x]
-	uint heightmaps[16][16];
-	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++) heightmaps[j][i] = int(perlin::get(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + terrainHeightAverage);
+	uint heightmaps[16][16]{};
+	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++) heightmaps[j][i] = int(simplex::get_orig(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + terrainHeightAverage);
 
 	//blocks
 	for (uint i = 0; i < sectionCount; i++)
@@ -359,7 +359,7 @@ Chunk* World::generate(int X, int Z)
 		//block data
 		int section_base = (i << 4);
 		//[y][z][x]
-		byte blocks[16][16][16];
+		byte blocks[16][16][16]{};
 		section.blockCount = 0;
 		section.bitsPerBlock = 4;
 		section.useGlobalPallete = false;

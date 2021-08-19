@@ -8,6 +8,10 @@ namespace perlin
 
 namespace simplex
 {
+	const double F2 = (sqrt(3) - 1) / 2;
+	const double G2 = (3. - sqrt(3)) / 6;
+
+	double get_orig(double, double);
 	double get(double, double);
 	double get(double, double, double);
 	double get(const std::vector<double>& nDimensionalCoordinates);
