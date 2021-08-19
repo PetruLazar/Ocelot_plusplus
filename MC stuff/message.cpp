@@ -135,6 +135,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
 	delete pl;
 
+	play::send::tags(p);
+
 	play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
@@ -147,7 +149,6 @@ void message::login::receive::start(Player* p, const mcString& username)
 		play::send::chunkData(p, x, z);
 	}
 
-	//play::send::playerPosAndLook(p, 96.5, double(p->world->characteristics["min_y"].vInt()) + World::worlds[0]->get(6, 6)->heightmaps->getElement(0), 96.5, 0.f, 0.f, 0, 0x6, false);
 	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, 0x0, false);
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
@@ -273,10 +274,10 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 	//biomes length
 	varInt(uint(64 * chunk->sections.size())).write(data);
 	//biomes
-	for (int s = 0; s < chunk->sections.size(); s++) 
-		for (int y = 0; y < 4; y++) 
-			for (int z = 0; z < 4; z++) 
-				for (int x = 0; x < 4; x++) 
+	for (int s = 0; s < chunk->sections.size(); s++)
+		for (int y = 0; y < 4; y++)
+			for (int z = 0; z < 4; z++)
+				for (int x = 0; x < 4; x++)
 					chunk->sections[s].biomes[x][y][z].write(data);
 	//size
 
@@ -546,7 +547,33 @@ void message::play::send::unloadChunk(Player* p, bint x, bint z)
 
 	sendPacketData(p, start, data - start);
 }
-//void message::play::send::tags
+void message::play::send::tags(Player* p)
+{
+	tags(p, Tags::defaltTagsLengthCount, Tags::defaultTags);
+}
+void message::play::send::tags(Player* p, varInt tagCategoryCount, Tags* tags)
+{
+	varInt id = (int)id::tags;
+	char* data = new char[1024*1024], * start = data;
+
+	id.write(data);
+	tagCategoryCount.write(data);
+	for (int i = 0; i < tagCategoryCount; i++)
+	{
+		tags[i].tagType.write(data);
+		tags[i].tagCount.write(data);
+		int& count = tags[i].tagCount;
+		for (int j = 0; j < count; j++)
+		{
+			Tags::Tag& tag = tags[i].tags[j];
+			tag.name.write(data);
+			tag.entryCount.write(data);
+			for (int k = 0; k < tag.entryCount; k++) tag.entries[k].write(data);
+		}
+	}
+
+	sendPacketData(p, start, data - start);
+}
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 {

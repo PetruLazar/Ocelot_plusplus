@@ -11,3 +11,4 @@
 #include "types/error.h"
 #include "types/bitstream.h"
 #include "types/bitarray.h"
+#include "types/gametags.h"

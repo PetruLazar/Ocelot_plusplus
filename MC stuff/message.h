@@ -297,10 +297,6 @@ public:
 	varInt statisticId;
 	varInt value;
 };
-class tags
-{
-	mcString id;
-};
 
 struct message
 {
@@ -641,7 +637,8 @@ struct message
 			//static void entityProperties(Player*, varInt eid, varInt nOfProperties, Property* properties);
 			static void entityEffect(Player*, varInt entityId, byte effectId, char amplifier, varInt duration, byte flags);
 			static void declareRecipes(Player*, varInt nOfRecipes);
-			//static void tags(Player*, varInt length, TagGroup* tags);
+			static void tags(Player*);
+			static void tags(Player*, varInt tagCategoryCount, Tags* tags);
 		};
 		struct receive
 		{
