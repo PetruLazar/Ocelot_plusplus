@@ -3,6 +3,7 @@
 #include "nbt.h"
 #include "options.h"
 #include "region.h"
+#include "noise.h"
 
 class World
 {
@@ -39,6 +40,8 @@ public:
 	* has_ceiling - byte
 	*/
 	nbt_compound characteristics;
+	int height;
+	int min_y;
 	//static nbt_compound heightMap;
 
 	void unload(int x, int z);

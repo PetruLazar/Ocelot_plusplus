@@ -168,6 +168,9 @@
     <ClCompile Include="types\bitarray.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
+    <ClCompile Include="noise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic.h">
@@ -307,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="types\bitarray.h">
       <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="noise.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

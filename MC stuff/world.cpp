@@ -6,6 +6,10 @@ const char invalidMainFile[] = "Invalid characteristics.bin file.";
 const char noAccesMainFile[] = "Could not open characteristics.bin file";
 const ull levelDatMaxSize = 1024 * 1024; //size after decompression
 
+const int terrainHeightAverage = 75;
+const int terrainHeightAmplitude = 30;
+const double noiseFactor_x = .015625, noiseFactor_z = .015625;
+
 std::vector<World*> World::worlds;
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
@@ -63,20 +67,24 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 				new nbt_string("name","minecraft:plains"),
 				new nbt_int("id",0),
 				new nbt_compound("element",new nbt * [7]{
-					new nbt_string("precipitation","none"),
-					new nbt_float("depth", 0.f),
-					new nbt_float("temperature", 1.f),
-					new nbt_float("scale", .75f),
-					new nbt_float("downfall", .5f),
-					new nbt_string("category", "none"),
-					new nbt_compound("effects",new nbt * [6] {
-						new nbt_int("sky_color",0x00),
-						new nbt_int("water_fog_color",0x00),
-						new nbt_int("fog_color",0x00),
-						new nbt_int("water_color",0x00),
-						new nbt_int("foliage_color",0x00),
-						new nbt_int("grass_color",0x00)
-					},6)
+					new nbt_string("precipitation","rain"),
+					new nbt_float("depth", .125f),
+					new nbt_float("temperature", .8f),
+					new nbt_float("scale", .05f),
+					new nbt_float("downfall", .4f),
+					new nbt_string("category", "plains"),
+					new nbt_compound("effects",new nbt * [5] {
+						new nbt_int("sky_color",7907327),
+						new nbt_int("water_fog_color",329011),
+						new nbt_int("fog_color",12638463),
+						new nbt_int("water_color",4159204),
+						new nbt_compound("mood_sound", new nbt * [4]{
+							new nbt_int("tick_delay", 6000),
+							new nbt_double("offset", 2.),
+							new nbt_string("sound", "minecraft:ambient.cave"),
+							new nbt_int("block_search_extend", 8)
+						},4)
+					},5)
 				},7)
 			},3),
 			new nbt_compound("",new nbt * [3]{
@@ -259,9 +267,6 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 					},6)
 				},7)
 			}, 3)
-
-
-
 		},10)
 	},2)
 	}, 2);
@@ -301,6 +306,9 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 		throw 0;
 	}
 	characteristics.read(worldMain);
+	height = characteristics["height"].vInt();
+	min_y = characteristics["min_y"].vInt();
+
 	spawnX.read(worldMain);
 	spawnZ.read(worldMain);
 	spawnYaw.read(worldMain);
@@ -326,165 +334,62 @@ World::~World()
 	//update characteristics.bin
 }
 
-Chunk* World::generate(int x, int z)
+Chunk* World::generate(int X, int Z)
 {
-	//predefined chunks for now
 	Chunk* chunk = new Chunk;
 
-	//heightmap generation
-	int height = characteristics["height"].vInt();
-	chunk->heightmaps = new BitArray(256, bitCount(height));
-	for (int z0 = 0; z0 < 16; z0++) for (int x0 = 0; x0 < 16; x0++) chunk->heightmaps->setElement((ull)z0 * 16 + x0, 144);
-
-	int biomeId = (x + z) % 10;
-	if (biomeId < 0) biomeId += 10;
+	//biome and section creation
+	int biomeId = 0;
 
 	uint sectionCount = height / 16;
 	chunk->sections.resize(sectionCount);
 
-	if (rand() == 2495) for (uint i = 0; i < sectionCount; i++)
+	//[z][x]
+	uint heightmaps[16][16];
+	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++) heightmaps[j][i] = int(perlin::get(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + terrainHeightAverage);
+
+	//blocks
+	for (uint i = 0; i < sectionCount; i++)
 	{
 		Section& section = chunk->sections[i];
 
 		//biomes
-		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+		for (int y = 0; y < 4; y++) for (int z = 0; z < 4; z++) for (int x = 0; x < 4; x++) section.biomes[y][z][x] = biomeId;
 
-		byte* blocks = new byte[16 * 16 * 16];
-		//data
-		if (i == 0)
-		{
-			//bedrock section
-			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(34);
-			section.pallete.push_back(33);
-			for (int j = 0; j < 256; j++) blocks[j] = 1;
-			for (int j = 256; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		else if (i <= 8)
-		{
-			//underground layer
-			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(34);
-			for (int j = 0; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		else
-		{
-			//air layer
-			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(0);
-			for (int j = 0; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		delete[] blocks;
+		//block data
+		int section_base = (i << 4);
+		//[y][z][x]
+		byte blocks[16][16][16];
+		section.blockCount = 0;
+		section.bitsPerBlock = 4;
+		section.useGlobalPallete = false;
+
+		section.pallete.push_back(0);
+		section.pallete.push_back(1);
+
+		for (int z = 0; z < 16; z++)
+			for (int x = 0; x < 16; x++)
+			{
+				int adjustedHeight = heightmaps[z][x] - section_base;
+				if (adjustedHeight > 16) adjustedHeight = 16;
+				else if (adjustedHeight < 0) adjustedHeight = 0;
+
+				//if (i == 9 && z == 3 && x == 4)
+				//	cout << ' ';
+
+				section.blockCount = section.blockCount + adjustedHeight;
+				for (int y = 0; y < adjustedHeight; y++) blocks[y][z][x] = 1;
+				for (int y = adjustedHeight; y < 16; y++)
+					blocks[y][z][x] = 0;
+			}
+
+		section.blockStates = new BitArray(0x1000, 4, (byte*)blocks);
 	}
-	else if (rand() == 15294) for (uint i = 0; i < sectionCount; i++)
-	{
-		Section& section = chunk->sections[i];
 
-		//biomes
-		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+	//heightmap generation
+	chunk->heightmaps = new BitArray(256, bitCount(height), (uint*)heightmaps);
+	//for (int z = 0; z < 16; z++) for (int x = 0; x < 16; x++) chunk->heightmaps->setElement((ull)z * 16 + x, 144);
 
-		byte* blocks = new byte[16 * 16 * 16];
-		//data
-		if (i == 0)
-		{
-			//bedrock section
-			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(50);
-			section.pallete.push_back(33);
-			for (int j = 0; j < 256; j++) blocks[j] = 1;
-			for (int j = 256; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		else if (i <= 8)
-		{
-			//underground layer
-			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(50);
-			for (int j = 0; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		else
-		{
-			//air layer
-			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(0);
-			for (int j = 0; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		delete[] blocks;
-	}
-	else for (uint i = 0; i < sectionCount; i++)
-	{
-		Section& section = chunk->sections[i];
-
-		//biomes
-		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
-
-		byte* blocks = new byte[16 * 16 * 16];
-		//data
-		if (i == 0)
-		{
-			//bedrock section
-			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(1);
-			section.pallete.push_back(33);
-			for (int j = 0; j < 256; j++) blocks[j] = 1;
-			for (int j = 256; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		else if (i < 8)
-		{
-			//underground layer
-			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(1);
-			for (int j = 0; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		else if (i == 8)
-		{
-			//surface layer
-			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(1);
-			section.pallete.push_back(10);
-			section.pallete.push_back(9);
-			for (int y0 = 0; y0 < 13; y0++) for (int j = 0; j < 256; j++) blocks[y0 * 256 + j] = 0;
-			for (int y0 = 13; y0 < 15; y0++) for (int j = 0; j < 256; j++) blocks[y0 * 256 + j] = 1;
-			for (int j = 0; j < 256; j++) blocks[15 * 16 * 16 + j] = 2;
-			section.blockStates = new BitArray(16 * 16 * 16, 4, blocks);
-		}
-		else
-		{
-			//air layer
-			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.pallete.push_back(0);
-			for (int j = 0; j < 4096; j++) blocks[j] = 0;
-			section.blockStates = new BitArray(4096, 4, blocks);
-		}
-		delete[] blocks;
-	}
 	return chunk;
 }
 

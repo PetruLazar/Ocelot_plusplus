@@ -112,6 +112,7 @@
     <ClCompile Include="nbt\nbt_long_array.cpp" />
     <ClCompile Include="nbt\nbt_short.cpp" />
     <ClCompile Include="nbt\nbt_string.cpp" />
+    <ClCompile Include="noise.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="player.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="nbt\nbt_long_array.h" />
     <ClInclude Include="nbt\nbt_short.h" />
     <ClInclude Include="nbt\nbt_string.h" />
+    <ClInclude Include="noise.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />

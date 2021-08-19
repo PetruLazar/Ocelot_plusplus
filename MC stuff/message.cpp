@@ -270,7 +270,6 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 		new nbt_long_array("MOTION_BLOCKING",*chunk->heightmaps)
 		}, 1);
 	nbt_heightmap.write(data);
-	//delete[] heightmapValues;
 	//biomes length
 	varInt(uint(64 * chunk->sections.size())).write(data);
 	//biomes
