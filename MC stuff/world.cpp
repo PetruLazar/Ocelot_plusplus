@@ -309,19 +309,19 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	height = characteristics["height"].vInt();
 	min_y = characteristics["min_y"].vInt();
 
-	spawnX.read(worldMain);
-	spawnZ.read(worldMain);
-	spawnYaw.read(worldMain);
-	spawnPitch.read(worldMain);
+	spawn.X.read(worldMain);
+	spawn.Z.read(worldMain);
+	spawn.Yaw.read(worldMain);
+	spawn.Pitch.read(worldMain);
 
-	spawnChunkX = fastfloor(spawnX) >> 4;
-	spawnChunkZ = fastfloor(spawnZ) >> 4;
-	spawn = sf::Vector3i(fastfloor(spawnX), fastfloor(spawnY), fastfloor(spawnZ));
+	spawn.ChunkX = int(floor(spawn.X)) >> 4;
+	spawn.ChunkZ = int(floor(spawn.Z)) >> 4;
+	spawn.Absolute = sf::Vector3i(int(floor(spawn.X)), int(floor(spawn.Y)), int(floor(spawn.Z)));
 
 	cout << "Loading spawn area...\n";
-	for (int x = spawnChunkX - 3; x < spawnChunkX + 4; x++) for (int z = spawnChunkZ - 3; x < spawnChunkZ + 4; x++) get(x, z)->loadCount = 1;
+	for (int x = spawn.ChunkX - 3; x < spawn.ChunkX + 4; x++) for (int z = spawn.ChunkZ - 3; x < spawn.ChunkZ + 4; x++) get(x, z)->loadCount = 1;
 
-	spawnY = double(characteristics["min_y"].vInt()) + get(spawnChunkX, spawnChunkZ)->heightmaps->getElement(((ull)spawn.z() - ((ull)spawnChunkZ << 4)) * 16 + ((ull)spawn.x() - ((ull)spawnChunkX << 4)));
+	spawn.Y = double(characteristics["min_y"].vInt()) + get(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
 	cout << "Done!\n";
 }
 World::~World()

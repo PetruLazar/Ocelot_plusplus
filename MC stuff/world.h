@@ -16,10 +16,15 @@ public:
 	~World();
 
 	mcString name;
-	Position spawn;
-	bdouble spawnX, spawnY, spawnZ;
-	bfloat spawnYaw, spawnPitch;
-	int spawnChunkX, spawnChunkZ;
+
+	struct {
+		Position Absolute;
+
+		bdouble X, Y, Z;
+		bfloat Yaw, Pitch;
+		int ChunkX, ChunkZ;
+	} spawn;
+
 	/*Contents of nbt_compound characteristics
 	*
 	* piglin safe - byte

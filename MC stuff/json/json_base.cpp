@@ -17,6 +17,7 @@ std::string json::to_string() const
 }
 
 int& json::iValue() { throw typeError; }
+bool& json::bValue() { throw typeError; }
 std::string& json::value() { throw typeError; }
 json& json::value(int) { throw typeError; }
 json& json::value(const std::string&) { throw typeError; }
@@ -45,6 +46,8 @@ json* json::allocate(type tp)
 		return new json_array();
 	case compound:
 		return new json_compound("", nullptr);
+	case boolean:
+		return new json_boolean();
 	}
 	throw typeError;
 }

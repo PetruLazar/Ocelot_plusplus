@@ -10,7 +10,8 @@ public:
 		integer,
 		string,
 		array,
-		compound
+		compound,
+		boolean
 	};
 
 	json(type, const std::string& name = "");
@@ -29,6 +30,8 @@ public:
 
 	//get the value of an int json object
 	virtual int& iValue();
+	//get tje va;ie pf an bool json object
+	virtual bool& bValue();
 	//get the value of a string json object
 	virtual std::string& value();
 	//get a value from an array json object
@@ -42,7 +45,7 @@ public:
 
 	//get the value of any json object as a string
 	virtual std::string stringValue() const = 0;
-	//convert a json objec to a string (name + value)
+	//convert a json object to a string (name + value)
 	virtual std::string to_string() const;
 
 	//get the size of an arrayor compound json object

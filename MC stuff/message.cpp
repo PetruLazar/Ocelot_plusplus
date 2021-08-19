@@ -111,11 +111,11 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->username = username;
 	p->nextKeepAlive = clock() + p->keepAliveInterval;
 	p->world = World::worlds[0];
-	p->X = p->world->spawnX;
-	p->Y = p->world->spawnY;
-	p->Z = p->world->spawnZ;
-	p->yaw = p->world->spawnYaw;
-	p->pitch = p->world->spawnPitch;
+	p->X = p->world->spawn.X;
+	p->Y = p->world->spawn.Y;
+	p->Z = p->world->spawn.Z;
+	p->yaw = p->world->spawn.Yaw;
+	p->pitch = p->world->spawn.Pitch;
 	p->viewDistance = Options::viewDistance();
 	login::send::success(p, *p->uuid, username);
 
@@ -139,7 +139,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
 
-	play::send::spawnPosition(p, p->world->spawn, 0.f);
+	play::send::spawnPosition(p, p->world->spawn.Absolute, 0.f);
 
 	for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++)
 	{
@@ -273,7 +273,11 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 	//biomes length
 	varInt(uint(64 * chunk->sections.size())).write(data);
 	//biomes
-	for (int s = 0; s < chunk->sections.size(); s++) for (int y = 0; y < 4; y++) for (int z = 0; z < 4; z++) for (int x = 0; x < 4; x++) chunk->sections[s].biomes[x][y][z].write(data);
+	for (int s = 0; s < chunk->sections.size(); s++) 
+		for (int y = 0; y < 4; y++) 
+			for (int z = 0; z < 4; z++) 
+				for (int x = 0; x < 4; x++) 
+					chunk->sections[s].biomes[x][y][z].write(data);
 	//size
 
 	//data
@@ -580,7 +584,9 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 		//return;
 	}
 	Chat msg(('<' + p->username + "> " + content).c_str());
-	for (Player* pl : Player::players) message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+
+	for (Player* pl : Player::players)
+		message::play::send::chatMessage(pl, msg, 0, *p->uuid);
 }
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
 {

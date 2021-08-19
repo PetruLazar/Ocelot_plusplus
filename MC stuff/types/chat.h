@@ -1,11 +1,11 @@
 #pragma once
 #include "../json/json_compound.h"
 #include "../json/json_string.h"
+#include "../json/json_boolean.h"
 
 class Chat : public json_compound
 {
 public:
-
 	enum color
 	{
 		black,
@@ -26,7 +26,11 @@ public:
 		white = 0xffffff
 	};
 
+	enum styles
+	{
+		obfuscated, bold, strikethrough, underline, italic, reset
+	};
+
 	Chat(const char* text);
 	Chat(const char* text, color cl);
 };
-

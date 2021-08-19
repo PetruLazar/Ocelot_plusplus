@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 NetConsole/tcp
+MC stuff/server.properties
