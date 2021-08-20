@@ -5,11 +5,14 @@
 #include "region.h"
 #include "noise.h"
 
+typedef Chunk* (*GeneratorFunction)(World*, int, int);
+
 class World
 {
 	std::vector<Region*> regions;
 
-	Chunk* generate(int x, int z);
+	static Chunk* generate_def(World*, int x, int z);
+	static Chunk* generate_flat(World*, int x, int z);
 
 public:
 	World(const char* name);
@@ -47,10 +50,12 @@ public:
 	nbt_compound characteristics;
 	int height;
 	int min_y;
-	//static nbt_compound heightMap;
+	bool isFlat;
 
 	void unload(int x, int z);
 	Chunk* get(int x, int z);
+
+	GeneratorFunction generatorFunction;
 
 	//static members
 	static nbt_compound dimension_codec;
@@ -60,4 +65,3 @@ public:
 	//initial spawn is in first world
 	static std::vector<World*> worlds;
 };
-
