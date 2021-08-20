@@ -221,6 +221,7 @@ namespace blockEntityData
 	};
 }
 
+
 class statistic
 {
 public:
@@ -551,7 +552,8 @@ struct message
 			static void chatMessage(Player*, const Chat& data, byte position, const mcUUID& sender);
 			static void clearTitles(Player*, bool reset);
 			//static void tabComplete(Player*, varInt id, varInt start, varInt length, varInt count, );
-			//static void declareCommands(Player*, varInt count, Node* nodes, varInt root);
+			static void declareCommands(Player*);
+			static void declareCommands(Player*, varInt count, Node* nodes, varInt root);
 			static void closeWindow(Player*, byte winId);
 			//static void windowItems(Player*, byte winId, varInt stateId, varInt count, Slot* slots, const Slot& carried);
 			static void windowProperty(Player*, byte winId, bshort property, bshort value);
@@ -596,7 +598,7 @@ struct message
 			static void destroyEntities(Player*, varInt count, varInt* eids);
 			static void removeEntityEffect(Player*, varInt eid, byte effectId);
 			//static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
-			static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, byte gm, byte prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
+			static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
 			static void entityHeadLook(Player*, varInt eid, Angle headYaw);
 			static void multiBlockChange(Player, blong sectionPosition, bool unknown, varInt size, varLong* blocks);
 			static void selectAdvancementTab(Player*, bool hasId, const mcString& id);

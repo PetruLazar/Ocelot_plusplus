@@ -18,8 +18,46 @@ Player::~Player()
 	if (uuid) delete uuid;
 }
 
+void Player::changeWorld(World* newWorld)
+{
+	message::play::send::respawn(this, newWorld->characteristics, newWorld->name, 0x5f19a34be6c9129a, gm, gamemode::none, false, newWorld->isFlat, true);
+
+	//unload chunks
+	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) world->unload(x, z);
+
+	//change dimension
+	world = newWorld;
+	X = world->spawn.X;
+	Y = world->spawn.Y;
+	Z = world->spawn.Z;
+	chunkX = world->spawn.ChunkX;
+	chunkZ = world->spawn.ChunkZ;
+	yaw = world->spawn.Yaw;
+	pitch = world->spawn.Pitch;
+
+	//finish dimension change
+	message::play::send::updateViewPosition(this, chunkX, chunkZ);
+
+	message::play::send::timeUpdate(this, 6000i64, 6000i64);
+
+	message::play::send::spawnPosition(this, world->spawn.Absolute, 0.f);
+
+	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++)
+	{
+		message::play::send::updateLight(this, x, z);
+		message::play::send::chunkData(this, x, z);
+	}
+
+	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, 0x0, false);
+}
+void Player::changeWorld(const mcString& worldName)
+{
+	for (uint i = 0; i < World::worlds.size(); i++) if (World::worlds[i]->name == worldName) changeWorld(World::worlds[i]);
+}
+
 void Player::disconnect()
 {
+	//if (state == ConnectionState::play) for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) world->unload(x, z);
 	socket->disconnect();
 	connected = false;
 }

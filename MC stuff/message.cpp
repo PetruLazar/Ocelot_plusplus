@@ -1,6 +1,7 @@
 #include "message.h"
 #include "options.h"
 #include "world.h"
+#include "command.h"
 
 playerInfo::Player::Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping) :uuid(uuid), name(name), gm((byte)gm), ping(ping) { }
 
@@ -107,6 +108,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 		login::send::disconnect(p, "{\"text\":\"Use 1.17.1, " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
 		return;
 	}
+
+	//player initialization
 	p->uuid = new mcUUID(mcUUID::player);
 	p->username = username;
 	p->nextKeepAlive = clock() + p->keepAliveInterval;
@@ -114,9 +117,13 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->X = p->world->spawn.X;
 	p->Y = p->world->spawn.Y;
 	p->Z = p->world->spawn.Z;
+	p->chunkX = p->world->spawn.ChunkX;
+	p->chunkZ = p->world->spawn.ChunkZ;
 	p->yaw = p->world->spawn.Yaw;
 	p->pitch = p->world->spawn.Pitch;
 	p->viewDistance = Options::viewDistance();
+	p->gm = gamemode::creative;
+
 	login::send::success(p, *p->uuid, username);
 
 	//mcString* wlds = new mcString("world");
@@ -131,11 +138,13 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::declareRecipes(p, 0);
 
-	playerInfo::Player* pl = new playerInfo::Player(*p->uuid, p->username, gamemode::survival, 100);
+	playerInfo::Player* pl = new playerInfo::Player(*p->uuid, p->username, p->gm, 100);
 	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
 	delete pl;
 
 	play::send::tags(p);
+
+	play::send::declareCommands(p);
 
 	play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
 
@@ -574,6 +583,100 @@ void message::play::send::tags(Player* p, varInt tagCategoryCount, Tags* tags)
 
 	sendPacketData(p, start, data - start);
 }
+void message::play::send::declareCommands(Player* p)
+{
+	declareCommands(p, Node::defaultCommandsCount, Node::defaultCommands, Node::defaultCommandsRootIndex);
+}
+void message::play::send::declareCommands(Player* p, varInt count, Node* nodes, varInt root)
+{
+	varInt id = (int)id::declareCommands;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	count.write(data);
+	for (int i = 0; i < count; i++)
+	{
+		Node& node = nodes[i];
+		*(data++) = node.flags();
+		node.childrenCount.write(data);
+		for (int j = 0; j < node.childrenCount; j++) node.children[j].write(data);
+		if (node.hasRedirect) node.redirectNode.write(data);
+		if (node.type == Node::argument || node.type == Node::literal) node.name->write(data);
+		if (node.type == Node::argument)
+		{
+			node.parser->write(data);
+			if (*node.parser == "brigadier:double")
+			{
+				Node::Properties::DoubleProperties& prop = node.properties.doubleProperties;
+				*(data++) = prop.flags;
+				if (prop.flags & prop.hasMin) prop.min.write(data);
+				if (prop.flags & prop.hasMax) prop.max.write(data);
+			}
+			else if (*node.parser == "brigadier:float")
+			{
+				Node::Properties::FloatProperties& prop = node.properties.floatProperties;
+				*(data++) = prop.flags;
+				if (prop.flags & prop.hasMin) prop.min.write(data);
+				if (prop.flags & prop.hasMax) prop.max.write(data);
+			}
+			else if (*node.parser == "brigadier:integer")
+			{
+				Node::Properties::IntegerProperties& prop = node.properties.integerProperties;
+				*(data++) = prop.flags;
+				if (prop.flags & prop.hasMin) prop.min.write(data);
+				if (prop.flags & prop.hasMax) prop.max.write(data);
+			}
+			else if (*node.parser == "brigadier:long")
+			{
+				Node::Properties::LongProperties& prop = node.properties.longProperties;
+				*(data++) = prop.flags;
+				if (prop.flags & prop.hasMin) prop.min.write(data);
+				if (prop.flags & prop.hasMax) prop.max.write(data);
+			}
+			else if (*node.parser == "brigadier:string")
+			{
+				Node::Properties::StringProperties& prop = node.properties.stringProperties;
+				prop.flag.write(data);
+			}
+			else if (*node.parser == "brigadier:entity")
+			{
+				Node::Properties::EntityProperties& prop = node.properties.entityProperties;
+				*(data++) = prop.flags;
+			}
+			else if (*node.parser == "brigadier:score_holder")
+			{
+				Node::Properties::ScoreHolderProperties& prop = node.properties.scoreHolderProperties;
+				*(data++) = prop.flags;
+			}
+			else if (*node.parser == "brigadier:range")
+			{
+				Node::Properties::RangeProperties& prop = node.properties.rangeProperties;
+				*(data++) = prop.decimals;
+			}
+		}
+		if (node.hasSuggestionsType) node.suggestionsType->write(data);
+	}
+	root.write(data);
+
+	sendPacketData(p, start, data - start);
+}
+void message::play::send::respawn(Player* p, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata)
+{
+	varInt id = (int)id::respawn;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	dimension.write(data);
+	worldName.write(data);
+	hashedSeed.write(data);
+	*(data++) = (byte)gm;
+	*(data++) = (byte)prev_gm;
+	*(data++) = isDebug;
+	*(data++) = isFlat;
+	*(data++) = copyMetadata;
+
+	sendPacketData(p, start, data - start);
+}
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 {
@@ -591,24 +694,20 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 {
 	if (content[0] == '/')
 	{
-		if (content == "/fast")
+		try
 		{
-			return;
+			char* command = (char*)content.c_str();
+			Command::parse(p, command);
 		}
-		if (content == "/fly")
+		catch (const Chat& errormessage)
 		{
-			return;
+			send::chatMessage(p, errormessage, 1, mcUUID(0, 0, 0, 0));
 		}
-		if (content == "/gamemode")
+		catch (...)
 		{
-			play::send::changeGameState(p, 3, 0.f);
-			return;
+			throw;
 		}
-		if (content == "/test")
-		{
-			return;
-		}
-		//return;
+		return;
 	}
 	Chat msg(('<' + p->username + "> " + content).c_str());
 

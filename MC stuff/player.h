@@ -57,10 +57,15 @@ public:
 	int chunkX, chunkZ;
 	bool onGround;
 
+	gamemode gm;
+
 	int viewDistance;
 
 	Player(sf::TcpSocket*);
 	~Player();
+
+	void changeWorld(World* newWorld);
+	void changeWorld(const mcString& worldName);
 
 	void disconnect();
 	//check for incoming data on the socket

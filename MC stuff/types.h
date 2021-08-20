@@ -12,3 +12,5 @@
 #include "types/bitstream.h"
 #include "types/bitarray.h"
 #include "types/gametags.h"
+#include "types/node.h"
+#include "types/enums.h"

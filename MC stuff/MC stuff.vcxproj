@@ -90,6 +90,7 @@
   <ItemGroup>
     <ClCompile Include="basic.cpp" />
     <ClCompile Include="chunk.cpp" />
+    <ClCompile Include="command.cpp" />
     <ClCompile Include="json\json_array.cpp" />
     <ClCompile Include="json\json_base.cpp" />
     <ClCompile Include="json\json_compound.cpp" />
@@ -120,6 +121,7 @@
     <ClCompile Include="region.cpp" />
     <ClCompile Include="section.cpp" />
     <ClCompile Include="types\gametags.cpp" />
+    <ClCompile Include="types\node.cpp" />
     <ClCompile Include="types\slot.cpp" />
     <ClCompile Include="types\angle.cpp" />
     <ClCompile Include="types\bitarray.cpp" />
@@ -138,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="basic.h" />
     <ClInclude Include="chunk.h" />
+    <ClInclude Include="command.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="json\json_array.h" />
     <ClInclude Include="json\json_base.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="types\chat.h" />
     <ClInclude Include="types\endian.h" />
     <ClInclude Include="types\entity.h" />
+    <ClInclude Include="types\enums.h" />
     <ClInclude Include="types\error.h" />
     <ClInclude Include="types\fixedPoint.h" />
     <ClInclude Include="types\fluid.h" />
@@ -183,6 +187,7 @@
     <ClInclude Include="types\gametags.h" />
     <ClInclude Include="types\item.h" />
     <ClInclude Include="types\mcString.h" />
+    <ClInclude Include="types\node.h" />
     <ClInclude Include="types\position.h" />
     <ClInclude Include="types\queue.h" />
     <ClInclude Include="types\typedefs.h" />
@@ -198,6 +203,7 @@
     <None Include="..\README.md" />
     <None Include="debug.bin" />
     <None Include="server.properties" />
+    <None Include="worlds\old\characteristics.bin" />
     <None Include="worlds\world\characteristics.bin" />
   </ItemGroup>
   <ItemGroup>

@@ -34,11 +34,17 @@
     <Filter Include="Resource Files\Worlds">
       <UniqueIdentifier>{7730f085-7d8c-48f0-ba15-c556fb438508}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Worlds\World">
+    <Filter Include="Resource Files\Worlds\old">
+      <UniqueIdentifier>{c7880e89-7353-49a2-8980-f98c6f6632cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Worlds\world">
       <UniqueIdentifier>{45760748-e3bb-4b60-a815-5859390425e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Worlds\World\regions">
+    <Filter Include="Resource Files\Worlds\world\regions">
       <UniqueIdentifier>{b6d3ced4-bf78-4929-af61-ec70c5d48126}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Worlds\old\regions">
+      <UniqueIdentifier>{65e86123-8cb3-49d8-bf5e-68965f4a7779}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +185,12 @@
     </ClCompile>
     <ClCompile Include="types\gametags.cpp">
       <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\node.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="command.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -344,6 +356,15 @@
     <ClInclude Include="types\gameevent.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
+    <ClInclude Include="types\node.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="types\enums.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MC stuff.rc">
@@ -361,7 +382,10 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="worlds\world\characteristics.bin">
-      <Filter>Resource Files\Worlds\World</Filter>
+      <Filter>Resource Files\Worlds\world</Filter>
+    </None>
+    <None Include="worlds\old\characteristics.bin">
+      <Filter>Resource Files\Worlds\old</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
