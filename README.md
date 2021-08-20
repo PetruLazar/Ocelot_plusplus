@@ -35,7 +35,8 @@ code for working with NBT tags
 
 fill out contents for following tags:
 
-- Blocks
+Blocks:
+
 	minecraft:enderman_holdable
 	minecraft:soul_fire_base_blocks
 	minecraft:infiniburn_nether
@@ -123,7 +124,8 @@ fill out contents for following tags:
 	minecraft:doors
 	minecraft:needs_iron_tool
 
-- Items
+Items:
+
 	minecraft:banners
 	minecraft:soul_fire_base_blocks
 	minecraft:stone_crafting_materials
@@ -193,7 +195,8 @@ fill out contents for following tags:
 	minecraft:doors
 	minecraft:cluster_max_harvestables
 
-- Entity Type:
+Entity Type:
+
 	minecraft:axolotl_always_hostiles,
 	minecraft:freeze_hurts_extra_types,
 	minecraft:freeze_immune_entity_types,
@@ -205,11 +208,12 @@ fill out contents for following tags:
 	minecraft:axolotl_hunt_targets,
 	minecraft:arrows
 
--Game Event
+Game Event:
 	minecraft:vibrations,
 	minecraft:ignore_vibrations_sneaking
 
 code related to the following packets (either implement the packet itself or code to ease the use of the packet or other infrastructure):
+
 	handshake::receive::standard
 	handshake::receive::legacy
 	status::send::response
