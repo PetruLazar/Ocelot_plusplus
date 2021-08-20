@@ -64,4 +64,7 @@ public:
 	static void unloadAll();
 	//initial spawn is in first world
 	static std::vector<World*> worlds;
+
+	//temporaty variable
+	static int spawnWorld;
 };

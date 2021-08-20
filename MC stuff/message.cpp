@@ -110,7 +110,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->uuid = new mcUUID(mcUUID::player);
 	p->username = username;
 	p->nextKeepAlive = clock() + p->keepAliveInterval;
-	p->world = World::worlds[1];
+	p->world = World::worlds[World::spawnWorld];
 	p->X = p->world->spawn.X;
 	p->Y = p->world->spawn.Y;
 	p->Z = p->world->spawn.Z;
@@ -120,7 +120,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	login::send::success(p, *p->uuid, username);
 
 	//mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[0]->characteristics, World::worlds[0]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, p->world->isFlat);
+	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, p->world->characteristics, p->world->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, p->world->isFlat);
 	//delete wlds;
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
@@ -554,7 +554,7 @@ void message::play::send::tags(Player* p)
 void message::play::send::tags(Player* p, varInt tagCategoryCount, Tags* tags)
 {
 	varInt id = (int)id::tags;
-	char* data = new char[1024*1024], * start = data;
+	char* data = new char[1024 * 1024], * start = data;
 
 	id.write(data);
 	tagCategoryCount.write(data);

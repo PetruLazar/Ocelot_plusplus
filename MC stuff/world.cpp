@@ -11,6 +11,7 @@ const int terrainHeightAmplitude = 35;
 const double noiseFactor_x = 0.0078125, noiseFactor_z = 1. / 128;
 
 std::vector<World*> World::worlds;
+int World::spawnWorld = 0;
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
 		new nbt_string("type","minecraft:dimension_type"),

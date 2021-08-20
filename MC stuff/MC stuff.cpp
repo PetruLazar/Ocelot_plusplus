@@ -79,11 +79,11 @@ int main()
 			//27 is escape
 			int key = _getch();
 			if (key == 27) break;
-			if (key == 's')
+			if (key == 'w')
 			{
-				Options::allowJoin = !Options::allowJoin;
-				if (Options::allowJoin) cout << "\nPlayers are now allowed to join.";
-				else cout << "\nPlayers are not allowed to join anymore.";
+				World::spawnWorld = -World::spawnWorld + 1;
+				if (World::spawnWorld) cout << "\nPlayers now spawn in world 1";
+				else cout << "\nPlayers now spawn in world 0";
 			}
 		}
 	}
