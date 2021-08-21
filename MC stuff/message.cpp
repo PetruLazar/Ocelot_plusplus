@@ -269,12 +269,9 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 	int sectionCount = worldHeight >> 4;
 
 	//primary bitmask length
-	varInt(((sectionCount - 1) >> 6) + 1).write(data);
+	varInt((int)chunk->sectionMask->getCompactedSize()).write(data);
 	//primary bitmask
-	BitStream bitmask(1);
-	for (int i = 0; i < sectionCount; i++)
-		bitmask << (bool)(chunk->sections[i].blockCount);
-	bitmask.write(data);
+	chunk->sectionMask->write(data);
 	//heightMaps
 	nbt_compound nbt_heightmap("", new nbt * [1]{
 		new nbt_long_array("MOTION_BLOCKING",*chunk->heightmaps)
@@ -288,9 +285,8 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 			for (int z = 0; z < 4; z++)
 				for (int x = 0; x < 4; x++)
 					chunk->sections[s].biomes[x][y][z].write(data);
-	//size
 
-	//data
+	//data preparation
 	char* dataBuffer = new char[1024024], * dataStart = dataBuffer;
 	for (int i = 0; i < sectionCount; i++)
 	{
@@ -309,12 +305,14 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 		}
 	}
 	uint size = (uint)(dataBuffer - dataStart);
+	//size
 	varInt(size).write(data);
+	//data
 	for (uint i = 0; i < size; i++) *(data++) = dataStart[i];
 	delete[] dataStart;
 
 	//nOfBlockEntities
-	varInt(0).write(data);
+	chunk->nOfBlockEntities.write(data);
 	//blockEntities
 
 	sendPacketData(p, start, data - start);
@@ -446,27 +444,54 @@ void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt ch
 }
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 {
-	blong* lightMask = new blong(0b11111111111111111111111111i64);
-	char* sectionLight = new char[2048]{  };
-	for (int i = 0; i < 2048; i++) sectionLight[i] = 0xffi8;
-	char** arrays = new char* [26]{ sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight,sectionLight };
-	for (int i = 0; i < 26; i++) sectionLight[i] = 0xffi8;
+	Chunk* chunk = p->world->get(cX, cZ);
+	int sectionCount = (int)chunk->lightData.size();
 
-	try
+	varInt id = (int)id::updateLight;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	cX.write(data);
+	cZ.write(data);
+	*(data++) = true;
+	//sky light mask length
+	varInt((int)chunk->skyLightMask->getCompactedSize()).write(data);
+	//sky light mask
+	chunk->skyLightMask->write(data);
+	//block light mask length
+	varInt((int)chunk->blockLightMask->getCompactedSize()).write(data);
+	//block light mask
+	chunk->blockLightMask->write(data);
+	//empty sky light mask length
+	varInt((int)chunk->emptySkyLightMask->getCompactedSize()).write(data);
+	//empty sky light mask
+	chunk->emptySkyLightMask->write(data);
+	//empty block light mask length
+	varInt((int)chunk->emptyBlockLightMask->getCompactedSize()).write(data);
+	//empty block light mask
+	chunk->emptyBlockLightMask->write(data);
+	//sky light array count
+	varInt c;
+	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i)) c++;
+	c.write(data);
+	//sky light arrays
+	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i))
 	{
-		play::send::updateLight(p, cX, cZ, true, 1, lightMask, 1, lightMask, 1, lightMask, 1, lightMask, 26, arrays, 26, arrays);
+		LightSection::lightArrayLength.write(data);
+		chunk->lightData[i].skyLight->write(data);
 	}
-	catch (...)
+	//block light array count
+	c = 0;
+	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i)) c++;
+	c.write(data);
+	//block light arrays
+	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i))
 	{
-		delete[] lightMask;
-		delete[] sectionLight;
-		delete[] arrays;
-		throw;
+		LightSection::lightArrayLength.write(data);
+		chunk->lightData[i].blockLight->write(data);
 	}
 
-	delete[] lightMask;
-	delete[] sectionLight;
-	delete[] arrays;
+	sendPacketData(p, start, data - start);
 }
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges,
 	varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask,

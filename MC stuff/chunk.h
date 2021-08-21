@@ -15,13 +15,21 @@ public:
 	//Chunk();
 	~Chunk();
 
-	static const int max_inflated_chunkSize = 64 * 1024;
-	static const int max_deflated_chunkSize = 128 * 1024;
+	//light data
 
+	//masks & empty masks
+	BitArray* skyLightMask;
+	BitArray* blockLightMask;
+	BitArray* emptySkyLightMask;
+	BitArray* emptyBlockLightMask;
+
+	//arrays
+	std::vector<LightSection> lightData;
+
+	//chunk data
 	ull loadCount; // 
 
-	//varInt sectionMaskLength;
-	//blong* sectionMask;
+	BitArray* sectionMask;
 
 	BitArray* heightmaps;
 
@@ -36,5 +44,8 @@ public:
 	//for loading/saving from/to file
 	void read(std::fstream&, int sectionCount);
 	void write(std::fstream&);
+
+	//includes data size field of the packet
+	void writeSectionData(char*&);
 };
 

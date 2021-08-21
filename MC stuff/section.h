@@ -17,3 +17,14 @@ public:
 	varInt dataLength;
 	BitArray* blockStates;
 };
+
+class LightSection
+{
+public:
+	~LightSection();
+
+	static const varInt lightArrayLength;
+
+	BitArray* skyLight,
+		* blockLight;
+};
