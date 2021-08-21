@@ -89,7 +89,6 @@ Blocks:
 	minecraft:wart_blocks
 	minecraft:planks
 	minecraft:soul_speed_blocks
-	minecraft:rails
 	minecraft:geode_invalid_blocks,
 	minecraft:non_flammable_wood
 	minecraft:leaves
@@ -108,7 +107,6 @@ Blocks:
 	minecraft:stone_pressure_plates
 	minecraft:lush_ground_replaceable
 	minecraft:impermeable
-	minecraft:sand
 	minecraft:nylium
 	minecraft:snow
 	minecraft:gold_ores
@@ -117,7 +115,6 @@ Blocks:
 	minecraft:logs_that_burn
 	minecraft:saplings
 	minecraft:mineable / hoe,
-	minecraft:dirt
 	minecraft:iron_ores
 	minecraft:oak_logs
 	minecraft:unstable_bottom_center
@@ -151,7 +148,6 @@ Items:
 	minecraft:logs
 	minecraft:stone_bricks
 	minecraft:creeper_drop_music_discs
-	minecraft:arrows,
 	minecraft:slabs
 	minecraft:wooden_doors
 	minecraft:warped_stems
@@ -167,7 +163,6 @@ Items:
 	minecraft:fox_food
 	minecraft:boats,
 	minecraft:dark_oak_logs
-	minecraft:rails
 	minecraft:diamond_ores
 	minecraft:non_flammable_wood
 	minecraft:leaves

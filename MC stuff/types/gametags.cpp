@@ -67,7 +67,12 @@ Tags* Tags::defaultTags = new Tags[5]{
 		Tag("minecraft:wart_blocks",0,nullptr),
 		Tag("minecraft:planks",0,nullptr),
 		Tag("minecraft:soul_speed_blocks",0,nullptr),
-		Tag("minecraft:rails",0,nullptr),
+		Tag("minecraft:rails",4,new varInt[4]{
+			(int)Block::minecraft_rail,
+			(int)Block::minecraft_powered_rail,
+			(int)Block::minecraft_detector_rail,
+			(int)Block::minecraft_activator_rail
+		}),
 		Tag("minecraft:geode_invalid_blocks",0,nullptr),
 		Tag("minecraft:non_flammable_wood",0,nullptr),
 		Tag("minecraft:leaves",0,nullptr),
@@ -86,7 +91,10 @@ Tags* Tags::defaultTags = new Tags[5]{
 		Tag("minecraft:stone_pressure_plates",0,nullptr),
 		Tag("minecraft:lush_ground_replaceable",0,nullptr),
 		Tag("minecraft:impermeable",0,nullptr),
-		Tag("minecraft:sand",0,nullptr),
+		Tag("minecraft:sand",2,new varInt[2]{
+			(int)Block::minecraft_sand,
+			(int)Block::minecraft_red_sand
+		}),
 		Tag("minecraft:nylium",0,nullptr),
 		Tag("minecraft:snow",0,nullptr),
 		Tag("minecraft:gold_ores",0,nullptr),
@@ -95,7 +103,15 @@ Tags* Tags::defaultTags = new Tags[5]{
 		Tag("minecraft:logs_that_burn",0,nullptr),
 		Tag("minecraft:saplings",0,nullptr),
 		Tag("minecraft:mineable/hoe",0,nullptr),
-		Tag("minecraft:dirt",0,nullptr),
+		Tag("minecraft:dirt",7,new varInt[7]{
+			(int)Block::minecraft_dirt,
+			(int)Block::minecraft_grass_block,
+			(int)Block::minecraft_podzol,
+			(int)Block::minecraft_coarse_dirt,
+			(int)Block::minecraft_mycelium,
+			(int)Block::minecraft_rooted_dirt,
+			(int)Block::minecraft_moss_block
+		}),
 		Tag("minecraft:iron_ores",0,nullptr),
 		Tag("minecraft:oak_logs",0,nullptr),
 		Tag("minecraft:unstable_bottom_center",0,nullptr),
@@ -106,7 +122,20 @@ Tags* Tags::defaultTags = new Tags[5]{
 		Tag("minecraft:mineable/shovel",0, nullptr),
 		Tag("minecraft:acacia_logs",0, nullptr),
 		Tag("minecraft:anvil",0, nullptr),
-		Tag("minecraft:bamboo_plantable_on",0, nullptr),
+		Tag("minecraft:bamboo_plantable_on", 12, new varInt[12]{
+			(int)Block::minecraft_sand,
+			(int)Block::minecraft_red_sand,
+			(int)Block::minecraft_dirt,
+			(int)Block::minecraft_grass_block,
+			(int)Block::minecraft_podzol,
+			(int)Block::minecraft_coarse_dirt,
+			(int)Block::minecraft_mycelium,
+			(int)Block::minecraft_rooted_dirt,
+			(int)Block::minecraft_moss_block,
+			(int)Block::minecraft_bamboo,
+			(int)Block::minecraft_bamboo_sapling,
+			(int)Block::minecraft_gravel
+		}),
 		Tag("minecraft:banners",0, nullptr),
 		Tag("minecraft:base_stone_nether",0, nullptr),
 		Tag("minecraft:base_stone_overworld",0, nullptr),
@@ -119,9 +148,24 @@ Tags* Tags::defaultTags = new Tags[5]{
 		Tag("minecraft:candle_cakes",0, nullptr),
 		Tag("minecraft:candles",0, nullptr),
 		Tag("minecraft:carpets",0, nullptr),
-		Tag("minecraft:cauldrons",0, nullptr),
+		Tag("minecraft:cauldrons", 4, new varInt[4]{
+			(int)Block::minecraft_cauldron,
+			(int)Block::minecraft_water_cauldron,
+			(int)Block::minecraft_lava_cauldron,
+			(int)Block::minecraft_powder_snow_cauldron
+		}),
 		Tag("minecraft:cave_vines",0, nullptr),
-		Tag("minecraft:climbable",0, nullptr),
+		Tag("minecraft:climbable", 9, new varInt[9]{
+			(int)Block::minecraft_ladder,
+			(int)Block::minecraft_vine,
+			(int)Block::minecraft_scaffolding,
+			(int)Block::minecraft_weeping_vines,
+			(int)Block::minecraft_weeping_vines_plant,
+			(int)Block::minecraft_twisting_vines,
+			(int)Block::minecraft_twisting_vines_plant,
+			(int)Block::minecraft_cave_vines,
+			(int)Block::minecraft_cave_vines_plant
+		}),
 		Tag("minecraft:coal_ores",0, nullptr),
 		Tag("minecraft:copper_ores",0, nullptr),
 		Tag("minecraft:corals",0, nullptr),
@@ -161,7 +205,11 @@ Tags* Tags::defaultTags = new Tags[5]{
 		Tag("minecraft:logs",0,nullptr),
 		Tag("minecraft:stone_bricks",0,nullptr),
 		Tag("minecraft:creeper_drop_music_discs",0,nullptr),
-		Tag("minecraft:arrows",0,nullptr),
+		Tag("minecraft:arrows",3,new varInt[3]{
+			(int)Item::minecraft_arrow,
+			(int)Item::minecraft_tipped_arrow,
+			(int)Item::minecraft_spectral_arrow
+		}),
 		Tag("minecraft:slabs",0,nullptr),
 		Tag("minecraft:wooden_doors",0,nullptr),
 		Tag("minecraft:warped_stems",0,nullptr),
@@ -177,7 +225,12 @@ Tags* Tags::defaultTags = new Tags[5]{
 		Tag("minecraft:fox_food",0,nullptr),
 		Tag("minecraft:boats",0,nullptr),
 		Tag("minecraft:dark_oak_logs",0,nullptr),
-		Tag("minecraft:rails",0,nullptr),
+		Tag("minecraft:rails",4,new varInt[4]{
+			(int)Item::minecraft_rail,
+			(int)Item::minecraft_powered_rail,
+			(int)Item::minecraft_detector_rail,
+			(int)Item::minecraft_activator_rail
+		}),
 		Tag("minecraft:diamond_ores",0,nullptr),
 		Tag("minecraft:non_flammable_wood",0,nullptr),
 		Tag("minecraft:leaves",0,nullptr),
