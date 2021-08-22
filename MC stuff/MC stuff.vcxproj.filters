@@ -46,6 +46,12 @@
     <Filter Include="Resource Files\Worlds\old\regions">
       <UniqueIdentifier>{65e86123-8cb3-49d8-bf5e-68965f4a7779}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\reports">
+      <UniqueIdentifier>{c5b49a31-f455-4a77-a8f9-8dabc26b22fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\reports\biomes">
+      <UniqueIdentifier>{fa47738d-4c61-4e19-8b04-4d4e06fd93c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MC stuff.cpp">
@@ -365,6 +371,9 @@
     <ClInclude Include="types\enums.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
+    <ClInclude Include="types\palette.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MC stuff.rc">
@@ -386,6 +395,258 @@
     </None>
     <None Include="worlds\old\characteristics.bin">
       <Filter>Resource Files\Worlds\old</Filter>
+    </None>
+    <None Include="..\reports\blocks.json">
+      <Filter>Resource Files\reports</Filter>
+    </None>
+    <None Include="..\reports\commands.json">
+      <Filter>Resource Files\reports</Filter>
+    </None>
+    <None Include="..\reports\registries.json">
+      <Filter>Resource Files\reports</Filter>
+    </None>
+    <None Include="..\reports\biomes\badlands.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\badlands_plateau.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\bamboo_jungle.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\bamboo_jungle_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\basalt_deltas.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\beach.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\birch_forest.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\birch_forest_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\cold_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\crimson_forest.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\dark_forest.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\dark_forest_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\deep_cold_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\deep_frozen_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\deep_lukewarm_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\deep_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\deep_warm_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\desert.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\desert_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\desert_lakes.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\dripstone_caves.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\end_barrens.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\end_highlands.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\end_midlands.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\eroded_badlands.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\flower_forest.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\forest.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\frozen_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\frozen_river.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\giant_spruce_taiga.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\giant_spruce_taiga_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\giant_tree_taiga.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\giant_tree_taiga_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\gravelly_mountains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\ice_spikes.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\jungle.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\jungle_edge.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\jungle_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\lukewarm_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\lush_caves.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\modified_badlands_plateau.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\modified_gravelly_mountains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\modified_jungle.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\modified_jungle_edge.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\modified_wooded_badlands_plateau.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\mountain_edge.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\mountains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\mushroom_field_shore.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\mushroom_fields.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\nether_wastes.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\plains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\river.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\savanna.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\savanna_plateau.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\shattered_savanna.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\shattered_savanna_plateau.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\small_end_islands.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\snowy_beach.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\snowy_mountains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\snowy_taiga.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\snowy_taiga_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\snowy_taiga_mountains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\snowy_tundra.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\soul_sand_valley.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\stone_shore.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\sunflower_plains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\swamp.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\swamp_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\taiga.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\taiga_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\taiga_mountains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\tall_birch_forest.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\tall_birch_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\the_end.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\the_void.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\warm_ocean.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\warped_forest.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\wooded_badlands_plateau.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\wooded_hills.json">
+      <Filter>Resource Files\reports\biomes</Filter>
+    </None>
+    <None Include="..\reports\biomes\wooded_mountains.json">
+      <Filter>Resource Files\reports\biomes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
