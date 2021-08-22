@@ -30,7 +30,7 @@ public:
 
 	//get the value of an int json object
 	virtual int& iValue();
-	//get tje va;ie pf an bool json object
+	//get the value of a bool json object
 	virtual bool& bValue();
 	//get the value of a string json object
 	virtual std::string& value();
