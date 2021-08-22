@@ -21,13 +21,15 @@ void Region::unload(World* parent, int relX, int relZ)
 	Chunk*& chunk = chunks[relX][relZ];
 	if (!(chunk))
 	{
-		std::cout << "Incorrect chunk unload at [" << rX + relX << ", " << rZ + relZ << "]\n";
+		std::cout << "Incorrect chunk unload at [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "]\n";
 		throw runtimeWarning("Tries to unload a chunk the was not loaded");
 	}
 	chunk->loadCount--;
+	std::cout << "Chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] unloaded (" << chunk->loadCount << ")\n";
 	if (!chunk->loadCount)
 	{
 		//write the chunk to file
+
 		delete chunk;
 		chunk = 0;
 	}
@@ -38,12 +40,12 @@ void Region::set(int relX, int relZ, Chunk* p)
 	p->loadCount = 1;
 }
 
-Chunk* Region::get(World* parent, int relX, int relZ)
+Chunk* Region::get(World* parent, int relX, int relZ, bool increaseLoadCount)
 {
 	Chunk*& chunk = chunks[relX][relZ];
 	if (chunk)
 	{
-		chunk->loadCount++;
+		if (increaseLoadCount) chunk->loadCount++;
 		return chunk;
 	}
 	//try to load it from file

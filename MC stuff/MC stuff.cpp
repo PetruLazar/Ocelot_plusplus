@@ -62,7 +62,7 @@ int main()
 		}
 		catch (protocolWarning obj)
 		{
-			cout << "\nProtocol warning: " << obj.msg;
+			log::txt() << "Protocol warning: " << obj.msg << '\n';
 		}
 		catch (const char* err_msg)
 		{

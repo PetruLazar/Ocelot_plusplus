@@ -4,13 +4,6 @@
 
 class Chunk
 {
-	enum class compressionMethod : byte
-	{
-		gzipCompression = 1,
-		zlibCompression,
-		none
-	};
-
 public:
 	//Chunk();
 	~Chunk();
@@ -42,8 +35,9 @@ public:
 	//block Entities
 
 	//for loading/saving from/to file
-	void read(std::fstream&, int sectionCount);
-	void write(std::fstream&);
+	void read(char*&, int sectionCount, int sectionOffset = 0);
+	void write(char*&);
+	//writing and reading from buffer after/before compression
 
 	//includes data size field of the packet
 	void writeSectionData(char*&);

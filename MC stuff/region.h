@@ -18,6 +18,6 @@ public:
 	void unload(World*);
 	void unload(World*, int relX, int relZ);
 	void set(int relX, int relZ, Chunk*);
-	Chunk* get(World* world, int relX, int relZ);
+	Chunk* get(World* world, int relX, int relZ,bool increaseLoadCount = false);
 };
 

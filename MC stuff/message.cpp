@@ -154,8 +154,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++)
 	{
-		play::send::updateLight(p, x, z);
-		play::send::chunkData(p, x, z);
+		play::send::sendFullChunk(p, x, z);
+		//play::send::updateLight(p, x, z);
+		//play::send::chunkData(p, x, z);
 	}
 
 	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, 0x0, false);
@@ -255,7 +256,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 
 	sendPacketData(p, start, data - start);
 }
-void message::play::send::chunkData(Player* p, bint cX, bint cZ)
+/*void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 {
 	varInt id = (int)id::chunkData;
 	char* data = new char[1024 * 1024], * start = data;
@@ -316,7 +317,7 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 	//blockEntities
 
 	sendPacketData(p, start, data - start);
-}
+}*/
 void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes,
 	varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities)
 {
@@ -442,7 +443,7 @@ void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt ch
 
 	sendPacketData(p, start, data - start);
 }
-void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
+/*void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 {
 	Chunk* chunk = p->world->get(cX, cZ);
 	int sectionCount = (int)chunk->lightData.size();
@@ -492,7 +493,7 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 	}
 
 	sendPacketData(p, start, data - start);
-}
+}*/
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges,
 	varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask,
 	varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask,
@@ -703,6 +704,121 @@ void message::play::send::respawn(Player* p, const nbt_compound& dimension, cons
 	sendPacketData(p, start, data - start);
 }
 
+void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
+{
+	Chunk* chunk = p->world->get(cX, cZ, true);
+
+	//update light
+	int sectionCount = (int)chunk->lightData.size();
+
+	varInt id = (int)id::updateLight;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	varInt(cX).write(data);
+	varInt(cZ).write(data);
+	*(data++) = true;
+	//sky light mask length
+	varInt((int)chunk->skyLightMask->getCompactedSize()).write(data);
+	//sky light mask
+	chunk->skyLightMask->write(data);
+	//block light mask length
+	varInt((int)chunk->blockLightMask->getCompactedSize()).write(data);
+	//block light mask
+	chunk->blockLightMask->write(data);
+	//empty sky light mask length
+	varInt((int)chunk->emptySkyLightMask->getCompactedSize()).write(data);
+	//empty sky light mask
+	chunk->emptySkyLightMask->write(data);
+	//empty block light mask length
+	varInt((int)chunk->emptyBlockLightMask->getCompactedSize()).write(data);
+	//empty block light mask
+	chunk->emptyBlockLightMask->write(data);
+	//sky light array count
+	varInt c;
+	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i)) c++;
+	c.write(data);
+	//sky light arrays
+	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i))
+	{
+		LightSection::lightArrayLength.write(data);
+		chunk->lightData[i].skyLight->write(data);
+	}
+	//block light array count
+	c = 0;
+	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i)) c++;
+	c.write(data);
+	//block light arrays
+	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i))
+	{
+		LightSection::lightArrayLength.write(data);
+		chunk->lightData[i].blockLight->write(data);
+	}
+
+	sendPacketData(p, start, data - start);
+
+	//chunk data
+	id = (int)id::chunkData;
+	data = new char[1024 * 1024]; start = data;
+
+	id.write(data);
+	bint(cX).write(data);
+	bint(cZ).write(data);
+
+	//Chunk* chunk = p->world->get(cX, cZ);
+	int worldHeight = p->world->height;
+	sectionCount = worldHeight >> 4;
+
+	//primary bitmask length
+	varInt((int)chunk->sectionMask->getCompactedSize()).write(data);
+	//primary bitmask
+	chunk->sectionMask->write(data);
+	//heightMaps
+	nbt_compound nbt_heightmap("", new nbt * [1]{
+		new nbt_long_array("MOTION_BLOCKING",*chunk->heightmaps)
+		}, 1);
+	nbt_heightmap.write(data);
+	//biomes length
+	varInt(uint(64 * chunk->sections.size())).write(data);
+	//biomes
+	for (int s = 0; s < chunk->sections.size(); s++)
+		for (int y = 0; y < 4; y++)
+			for (int z = 0; z < 4; z++)
+				for (int x = 0; x < 4; x++)
+					chunk->sections[s].biomes[x][y][z].write(data);
+
+	//data preparation
+	char* dataBuffer = new char[1024024], * dataStart = dataBuffer;
+	for (int i = 0; i < sectionCount; i++)
+	{
+		Section& section = chunk->sections[i];
+		if (section.blockCount)
+		{
+			section.blockCount.write(dataBuffer);
+			*(dataBuffer++) = section.bitsPerBlock;
+			if (!section.useGlobalPallete)
+			{
+				varInt((uint)section.pallete.size()).write(dataBuffer);
+				for (varInt val : section.pallete) val.write(dataBuffer);
+			}
+			varInt((uint)section.blockStates->getCompactedSize()).write(dataBuffer);
+			section.blockStates->write(dataBuffer);
+		}
+	}
+	uint size = (uint)(dataBuffer - dataStart);
+	//size
+	varInt(size).write(data);
+	//data
+	for (uint i = 0; i < size; i++) *(data++) = dataStart[i];
+	delete[] dataStart;
+
+	//nOfBlockEntities
+	chunk->nOfBlockEntities.write(data);
+	//blockEntities
+
+	sendPacketData(p, start, data - start);
+}
+
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 {
 	if (keepAlive_id == p->lastKeepAliveId) p->lastKeepAliveId = -1;
@@ -759,14 +875,16 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 			bint loadX = newChunkX - p->viewDistance;
 			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
 			{
-				send::updateLight(p, (int)loadX, (int)z);
-				send::chunkData(p, loadX, z);
+				send::sendFullChunk(p, (int)loadX, z);
+				//send::updateLight(p, (int)loadX, (int)z);
+				//send::chunkData(p, loadX, z);
 			}
 			bint loadZ = newChunkZ - p->viewDistance;
 			for (int x = newChunkX - p->viewDistance + 1; x <= newChunkX + p->viewDistance; x++)
 			{
-				send::updateLight(p, (int)x, (int)loadZ);
-				send::chunkData(p, x, loadZ);
+				send::sendFullChunk(p, x, (int)loadZ);
+				//send::updateLight(p, (int)x, (int)loadZ);
+				//send::chunkData(p, x, loadZ);
 			}
 		}
 		else if (newChunkX < p->chunkX)
@@ -781,14 +899,16 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 			bint loadX = newChunkX - p->viewDistance;
 			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
 			{
-				send::updateLight(p, (int)loadX, (int)z);
-				send::chunkData(p, loadX, z);
+				send::sendFullChunk(p, (int)loadX, z);
+				//send::updateLight(p, (int)loadX, (int)z);
+				//send::chunkData(p, loadX, z);
 			}
 			bint loadZ = newChunkZ + p->viewDistance;
 			for (int x = newChunkX - p->viewDistance + 1; x <= newChunkX + p->viewDistance; x++)
 			{
-				send::updateLight(p, (int)x, (int)loadZ);
-				send::chunkData(p, x, loadZ);
+				send::sendFullChunk(p, x, (int)loadZ);
+				//send::updateLight(p, (int)x, (int)loadZ);
+				//send::chunkData(p, x, loadZ);
 			}
 		}
 		else if (newChunkZ < p->chunkZ)
@@ -804,14 +924,16 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 			bint loadX = newChunkX + p->viewDistance;
 			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
 			{
-				send::updateLight(p, (int)loadX, (int)z);
-				send::chunkData(p, loadX, z);
+				send::sendFullChunk(p, (int)loadX, z);
+				//send::updateLight(p, (int)loadX, (int)z);
+				//send::chunkData(p, loadX, z);
 			}
 			bint loadZ = newChunkZ - p->viewDistance;
 			for (int x = newChunkX - p->viewDistance; x < newChunkX + p->viewDistance; x++)
 			{
-				send::updateLight(p, (int)x, (int)loadZ);
-				send::chunkData(p, x, loadZ);
+				send::sendFullChunk(p, x, (int)loadZ);
+				//send::updateLight(p, (int)x, (int)loadZ);
+				//send::chunkData(p, x, loadZ);
 			}
 		}
 		else
@@ -826,14 +948,16 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 			bint loadX = newChunkX + p->viewDistance;
 			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
 			{
-				send::updateLight(p, (int)loadX, (int)z);
-				send::chunkData(p, loadX, z);
+				send::sendFullChunk(p, (int)loadX, z);
+				//send::updateLight(p, (int)loadX, (int)z);
+				//send::chunkData(p, loadX, z);
 			}
 			bint loadZ = newChunkZ + p->viewDistance;
 			for (int x = newChunkX - p->viewDistance; x < newChunkX + p->viewDistance; x++)
 			{
-				send::updateLight(p, (int)x, (int)loadZ);
-				send::chunkData(p, x, loadZ);
+				send::sendFullChunk(p, x, (int)loadZ);
+				//send::updateLight(p, (int)x, (int)loadZ);
+				//send::chunkData(p, x, loadZ);
 			}
 		}
 	}
@@ -848,8 +972,9 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 			bint loadX = newChunkX - p->viewDistance;
 			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
 			{
-				send::updateLight(p, (int)loadX, (int)z);
-				send::chunkData(p, loadX, z);
+				send::sendFullChunk(p, (int)loadX, z);
+				//send::updateLight(p, (int)loadX, (int)z);
+				//send::chunkData(p, loadX, z);
 			}
 		}
 		else
@@ -860,8 +985,9 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 			bint loadX = newChunkX + p->viewDistance;
 			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
 			{
-				send::updateLight(p, (int)loadX, (int)z);
-				send::chunkData(p, loadX, z);
+				send::sendFullChunk(p, (int)loadX, z);
+				//send::updateLight(p, (int)loadX, (int)z);
+				//send::chunkData(p, loadX, z);
 			}
 		}
 	}
@@ -876,23 +1002,22 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 			bint loadZ = newChunkZ - p->viewDistance;
 			for (int x = newChunkX - p->viewDistance; x <= newChunkX + p->viewDistance; x++)
 			{
-				send::updateLight(p, (int)x, (int)loadZ);
-				send::chunkData(p, x, loadZ);
+				send::sendFullChunk(p, x, (int)loadZ);
+				//send::updateLight(p, (int)x, (int)loadZ);
+				//send::chunkData(p, x, loadZ);
 			}
 		}
 		else
 		{
 			//towards positive Z
 			bint unloadZ = p->chunkZ - p->viewDistance;
-			for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++)
+			for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
+			bint loadZ = newChunkZ + p->viewDistance;
+			for (int x = newChunkX - p->viewDistance; x <= newChunkX + p->viewDistance; x++)
 			{
-				send::unloadChunk(p, x, unloadZ);
-				bint loadZ = newChunkZ + p->viewDistance;
-				for (int x = newChunkX - p->viewDistance; x <= newChunkX + p->viewDistance; x++)
-				{
-					send::updateLight(p, (int)x, (int)loadZ);
-					send::chunkData(p, x, loadZ);
-				}
+				send::sendFullChunk(p, x, (int)loadZ);
+				//send::updateLight(p, (int)x, (int)loadZ);
+				//send::chunkData(p, x, loadZ);
 			}
 		}
 	}

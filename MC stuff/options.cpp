@@ -13,6 +13,8 @@ int Options::_max_players = 100;
 std::string Options::_level_name = "world", Options::_motd = "{\"text\":\"A Minecraft server.\"}";
 sf::IpAddress Options::_ip = sf::IpAddress::Any;
 byte Options::_viewDistance = 10;
+bool Options::_chunkCompression = false;
+short Options::_networkCompression = -1;
 
 Options Options::options;
 
@@ -105,6 +107,25 @@ int parseInt(const string& name, const string& value, ull linenumber)
 	}
 	return (int)v;
 }
+int parseShort(const string& name, const string& value, ull linenumber)
+{
+	int64 v;
+	try
+	{
+		v = parse(name, value, linenumber);
+		if (v > 0x7fffi64 || v < 0xffffffffffff8000i64) throw out_of_range(0);
+	}
+	catch (out_of_range)
+	{
+		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (...)
+	{
+		throw 0;
+	}
+	return (int)v;
+}
 byte parseByte(const string& name, const string& value, ull linenumber)
 {
 	ull v;
@@ -132,7 +153,7 @@ Options::Options()
 	{
 		cout << "File \"server.properties\" not found, so one has been generated.\n";
 		ofstream out(optionsFileName);
-		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#level-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10";
+		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#level-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10\n#chunk-compression=false\n#network-compression-threshold=-1";
 		out.close();
 		return;
 	}
@@ -158,7 +179,6 @@ Options::Options()
 			}
 			catch (...)
 			{
-				continue;
 			}
 		}
 		else if (name == "ip")
@@ -173,7 +193,6 @@ Options::Options()
 			}
 			catch (...)
 			{
-				continue;
 			}
 		}
 		else if (name == "motd")
@@ -188,7 +207,31 @@ Options::Options()
 			}
 			catch (...)
 			{
-				continue;
+			}
+		}
+		else if (name == "chunk-compression")
+		{
+			if (value == "true")
+			{
+				_chunkCompression = true;
+			}
+			else if (value == "false")
+			{
+				_chunkCompression = false;
+			}
+			else
+			{
+				cout << "Error on line " << linenumber << ": value " << value << " is invalid for \"" << name << "\".\n";
+			}
+		}
+		else if (name == "network-compression-threshold")
+		{
+			try
+			{
+				_networkCompression = parseShort(name, value, linenumber);
+			}
+			catch (...)
+			{
 			}
 		}
 		else
@@ -210,246 +253,5 @@ const string& Options::level_name() { return _level_name; }
 const string& Options::motd() { return _motd; }
 const sf::IpAddress& Options::ip() { return _ip; }
 byte Options::viewDistance() { return _viewDistance; }
-
-/*void Options::load()
-{
-	//WIP
-	ifstream options(optionsFileName);
-	string line, name, type;
-	while (getline(options, line))
-	{
-		stringstream stream(line);
-		stream >> name >> type;
-		string value;
-		getline(stream, value);
-		value.erase(0, value.find_first_not_of(' '));
-		void* ptr = nullptr;
-		if (type == "bool")
-		{
-			if (value == "true") ptr = new bool(true);
-			else if (value == "false") ptr = new bool(false);
-			else
-			{
-				cout << "Invalid bool value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "sbyte")
-		{
-			try
-			{
-				int v = stoi(value);
-				if (v < 0xffffff80i32 || v>0x7f) throw 0;
-				ptr = new char(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid sbyte value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "byte")
-		{
-			try
-			{
-				//long has the same size as int
-				uint v = stoul(value);
-				if (v > 0xff) throw 0;
-				ptr = new byte(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid byte value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "short")
-		{
-			try
-			{
-				int v = stoi(value);
-				if (v > 0x7fff || v < 0xffff8000i32) throw 0;
-				ptr = new short(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid short value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "ushort")
-		{
-			try
-			{
-				uint v = stoul(value);
-				if (v > 0xffff) throw 0;
-				ptr = new ush(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid ushort value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "int")
-		{
-			try
-			{
-				int v = stoi(value);
-				ptr = new int(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid int value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "uint")
-		{
-			try
-			{
-				uint v = stoul(value);
-				ptr = new uint(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid uint value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "long")
-		{
-			try
-			{
-				int64 v = stoll(value);
-				ptr = new int64(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid long value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "ulong")
-		{
-			try
-			{
-				ull v = stoull(value);
-				ptr = new ull(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid ulong value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "float")
-		{
-			try
-			{
-				float v = stof(value);
-				ptr = new float(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid float value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "double")
-		{
-			try
-			{
-				double v = stod(value);
-				ptr = new double(v);
-			}
-			catch (...)
-			{
-				cout << "Invalid double value: \"" << value << "\".\n";
-				continue;
-			}
-		}
-		else if (type == "string")
-		{
-			ptr = new string(value);
-		}
-		else
-		{
-			cout << "Unkown type \"" << type << "\".\n";
-			continue;
-		}
-
-		if (!properties.insert(pair<string, void*>(name, ptr)).second)
-		{
-			cout << "Could not add \"" << name << "\" as a setting.\n";
-		}
-	}
-	options.close();
-}
-void Options::free()
-{
-	for (pair<string, void*> p : properties)
-	{
-		delete p.second;
-	}
-	properties.clear();
-}
-
-const void* Options::find(const string& key)
-{
-	Properties::iterator itr = properties.find(key);
-	if (itr == properties.end())
-	{
-		throw elemNotFound;
-	}
-	return itr->second;
-}
-
-const bool& Options::getBool(const string& key)
-{
-	return *(bool*)find(key);
-}
-const byte& Options::getByte(const string& key)
-{
-	return *(byte*)find(key);
-}
-const char& Options::getSByte(const string& key)
-{
-	return *(char*)find(key);
-}
-const short& Options::getShort(const string& key)
-{
-	return *(short*)find(key);
-}
-const ush& Options::getUShort(const string& key)
-{
-	return *(ush*)find(key);
-}
-const int& Options::getInt(const string& key)
-{
-	return *(int*)find(key);
-}
-const uint& Options::getUInt(const string& key)
-{
-	return *(uint*)find(key);
-}
-const int64& Options::getLong(const string& key)
-{
-	return *(int64*)find(key);
-}
-const ull& Options::getULong(const string& key)
-{
-	return *(ull*)find(key);
-}
-const float& Options::getFloat(const string& key)
-{
-	return *(float*)find(key);
-}
-const double& Options::getDouble(const string& key)
-{
-	return *(double*)find(key);
-}
-const string& Options::getString(const string& key)
-{
-	return *(string*)find(key);
-}*/
+bool Options::chunkCompression() { return _chunkCompression; }
+short Options::networkCompression() { return _networkCompression; }

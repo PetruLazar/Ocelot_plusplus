@@ -53,7 +53,7 @@ public:
 	bool isFlat;
 
 	void unload(int x, int z);
-	Chunk* get(int x, int z);
+	Chunk* get(int x, int z, bool increaseLoadCount = false);
 
 	GeneratorFunction generatorFunction;
 

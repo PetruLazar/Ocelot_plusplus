@@ -10,6 +10,8 @@ class Options
 	static std::string _level_name, _motd;
 	static sf::IpAddress _ip;
 	static byte _viewDistance;
+	static bool _chunkCompression;
+	static short _networkCompression;
 
 	//private constructor to disallow object of this class
 	Options();
@@ -30,4 +32,6 @@ public:
 	static const std::string& motd();
 	static const sf::IpAddress& ip();
 	static byte viewDistance();
+	static bool chunkCompression();
+	static short networkCompression();
 };
