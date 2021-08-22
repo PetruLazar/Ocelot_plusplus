@@ -1,5 +1,6 @@
 #pragma once
 #include "../types/typedefs.h"
+#include "../types/error.h"
 
 class json
 {
@@ -18,6 +19,7 @@ public:
 	virtual ~json() = 0;
 
 	//virtual void parse(const std::string) = 0;
+	static json* parse(std::fstream&);
 
 	//get the name of a json object
 	std::string getName();
