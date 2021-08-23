@@ -56,7 +56,6 @@ Blocks:
 	minecraft:spruce_logs
 	minecraft:signs
 	minecraft:wool
-	minecraft:wooden_buttons
 	minecraft:stairs
 	minecraft:wither_summon_base_blocks
 	minecraft:logs
@@ -169,8 +168,6 @@ Items:
 	minecraft:walls
 	minecraft:piglin_food,
 	minecraft:wooden_pressure_plates
-	minecraft:acacia_logs
-	minecraft:anvil
 	minecraft:piglin_loved
 	minecraft:candles
 	minecraft:music_discs
