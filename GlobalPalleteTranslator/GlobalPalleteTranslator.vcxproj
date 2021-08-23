@@ -116,6 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\MC stuff\MC stuff\lib\zlib\include;D:\MC stuff\MC stuff\lib\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,6 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\MC stuff\MC stuff\lib\zlib\include;D:\MC stuff\MC stuff\lib\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +141,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\MC stuff\json\json_array.cpp" />
+    <ClCompile Include="..\MC stuff\json\json_base.cpp" />
+    <ClCompile Include="..\MC stuff\json\json_boolean.cpp" />
+    <ClCompile Include="..\MC stuff\json\json_compound.cpp" />
+    <ClCompile Include="..\MC stuff\json\json_int.cpp" />
+    <ClCompile Include="..\MC stuff\json\json_string.cpp" />
+    <ClCompile Include="..\MC stuff\types\error.cpp" />
+    <ClCompile Include="..\MC stuff\types\mcString.cpp" />
+    <ClCompile Include="..\MC stuff\types\varData.cpp" />
     <ClCompile Include="GlobalPalleteTranslator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

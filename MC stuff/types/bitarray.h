@@ -50,3 +50,36 @@ public:
 	void read(char*&);
 };
 
+class BitArrayReversed
+{
+	ull entryCount;
+	byte bitsPerEntry;
+	ull mask;
+	ull groupSize;
+
+	ull compactedSize;
+	blong* compactedData;
+public:
+	BitArrayReversed(ull entryCount, byte bitsPerEntry);
+	BitArrayReversed(ull entryCount, byte bitsPerEntry, ull* values);
+	BitArrayReversed(ull entryCount, byte bitsPerEntry, uint* values);
+	BitArrayReversed(ull entryCount, byte bitsPerEntry, byte* values);
+	~BitArrayReversed();
+
+	//maybe a getAll and a setAll for speed
+
+	ull getElement(ull);
+	void setElement(ull index, ull value);
+
+	ull getCompactedSize() const;
+	blong* getCompactedValues() const;
+	void changeSize(ull);
+	void changeBitsPerEntry(byte);
+
+	BitArrayElement operator[](ull);
+
+	void write(std::fstream&) const;
+	void write(char*&) const;
+	void read(std::fstream&);
+	void read(char*&);
+};
