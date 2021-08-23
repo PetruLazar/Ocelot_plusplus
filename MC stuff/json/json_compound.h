@@ -14,6 +14,8 @@ public:
 	void write(char*&) const;
 	void write(std::fstream&) const;
 
+	json& value(int i);
+	json& operator[](int i);
 	json& value(const std::string& i);
 	json& operator[](const std::string& i);
 

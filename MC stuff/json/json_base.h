@@ -50,7 +50,7 @@ public:
 	//convert a json object to a string (name + value)
 	virtual std::string to_string() const;
 
-	//get the size of an arrayor compound json object
+	//get the size of an array or compound json object
 	virtual ull getSize();
 	//resize an array json object
 	virtual void resize(ull);

@@ -32,6 +32,8 @@ void json_compound::write(std::fstream& is) const
 	mcString(stringValue()).write(is);
 }
 
+json& json_compound::value(int i) { return *v[i]; }
+json& json_compound::operator[](int i) { return *v[i]; }
 json& json_compound::value(const std::string& i)
 {
 	for (json* e : v) if (e->getName() == i) return *e;
