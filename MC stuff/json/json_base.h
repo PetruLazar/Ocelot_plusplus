@@ -19,7 +19,7 @@ public:
 	virtual ~json() = 0;
 
 	//virtual void parse(const std::string) = 0;
-	static json* parse(std::fstream&);
+	static json* parse(std::fstream&, bool canHaveName = true);
 
 	//get the name of a json object
 	std::string getName();

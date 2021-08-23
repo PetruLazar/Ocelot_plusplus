@@ -56,7 +56,7 @@ json* json::allocate(type tp)
 int skipInJsonFile(std::fstream& f)
 {
 	int ch = f.get();
-	while (ch == ' ' || ch == '\n')
+	while (ch == ' ' || ch == '\n' || ch == '\t')
 	{
 		ch = f.get();
 	}
@@ -65,11 +65,11 @@ int skipInJsonFile(std::fstream& f)
 
 const char invalidJson[] = "Invalid json file";
 
-json* json::parse(std::fstream& f)
+json* json::parse(std::fstream& f, bool canHaveName)
 {
 	int ch = skipInJsonFile(f);
 	std::string name;
-	if (ch == '"')
+	if (ch == '"' && canHaveName)
 	{
 		//name (optional)
 		while (true)
@@ -104,7 +104,7 @@ json* json::parse(std::fstream& f)
 		std::vector<json*> elems;
 		do
 		{
-			elems.push_back(parse(f));
+			elems.push_back(parse(f, false));
 			ch = skipInJsonFile(f);
 		} while (ch == ',');
 
