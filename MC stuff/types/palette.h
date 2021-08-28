@@ -2,6 +2,8 @@
 #include "typedefs.h"
 #include "mcString.h"
 
+//unused - discussions needed
+
 namespace globalPalette
 {
 	//just for reference
@@ -16,7 +18,12 @@ namespace globalPalette
 		minecraft_grass_block_snowy_false = 5, //snowy=false, even tho it is default
 		minecraft_grass_block = 5, //default
 
-		minecraft_oak_fence
+		minecraft_oak_fence,
+		minecraft_oak_fence_east_true_north_true_south_true_waterlogged_true_west_true,
+		minecraft_oak_fence_east_true_north_true_south_true_waterlogged_true_west_false,
+		minecraft_oak_fence_east_true_north_true_south_true_waterlogged_false_west_true
+		//...
+
 		//...
 	};
 
@@ -41,16 +48,38 @@ namespace globalPalette
 			//...
 		}
 	}
-	int from_string(mcString* blockAndStates)
+	int from_string(const mcString& name, mcString* states)
 	{
-		if (blockAndStates[0] == "air") return minecraft_air;
-		if (blockAndStates[0] == "stone") return minecraft_stone;
+		if (name == "air") return minecraft_air;
+		if (name == "stone") return minecraft_stone;
 		//...
-		if (blockAndStates[0] == "grass_block")
+		if (name == "grass_block")
 		{
-			int snowy = 0;
-			if (blockAndStates[snowy] == "true") return minecraft_grass_block_snowy_true;
-			if (blockAndStates[snowy] == "false") return minecraft_grass_block_snowy_false;
+			int snowy;
+			for (int i = 0; i < 1; i++)
+			{
+				if (states[i << 1] == "snowy") snowy = i << 1;
+			}
+			if (states[snowy] == "true") return minecraft_grass_block_snowy_true;
+			if (states[snowy] == "false") return minecraft_grass_block_snowy_false;
 		}
+		if (name == "oak_fence")
+		{
+			int east, west, north, south, waterlogged;
+			for (int i = 0; i < 5; i++)
+			{
+				if (states[i << 1] == "east") { east = i << 1; continue; }
+				if (states[i << 1] == "west") { west = i << 1; continue; }
+				if (states[i << 1] == "north") { north = i << 1; continue; }
+				if (states[i << 1] == "south") { south = i << 1; continue; }
+				if (states[i << 1] == "waterlogged") { waterlogged = i << 1; continue; }
+			}
+			//test every combination of block states and return the id;
+			if (states[east] == "true" && states[west] == "true" && states[south] == "true" && states[north] == "true" && states[waterlogged] == "true") return minecraft_oak_fence_east_true_north_true_south_true_waterlogged_true_west_true;
+			if (states[east] == "true" && states[west] == "false" && states[south] == "true" && states[north] == "true" && states[waterlogged] == "false") return minecraft_oak_fence_east_true_north_true_south_true_waterlogged_true_west_false;
+			if (states[east] == "true" && states[west] == "true" && states[south] == "true" && states[north] == "true" && states[waterlogged] == "false") return minecraft_oak_fence_east_true_north_true_south_true_waterlogged_false_west_true;
+			//...
+		}
+		//every block existent
 	}
 }
