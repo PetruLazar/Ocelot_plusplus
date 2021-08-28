@@ -15,8 +15,6 @@ classes for world/region/chunk (in progress)
 
 	- Save regions/chunks to file when needed
 
-	- Unload chunks when 	player leaves
-
 	- Unload a region when no loaded chunks are left in that region
 
 Increase code efficiency for world generation/load/unload/etc.
@@ -31,7 +29,7 @@ code for working with UUID
 
 code for working with Entity metadata
 
-code for working with NBT tags
+command processing system
 
 fill out contents for following tags:
 
@@ -186,23 +184,6 @@ Items:
 	minecraft:oak_logs
 	minecraft:doors
 	minecraft:cluster_max_harvestables
-
-Entity Type:
-
-	minecraft:axolotl_always_hostiles,
-	minecraft:freeze_hurts_extra_types,
-	minecraft:freeze_immune_entity_types,
-	minecraft:beehive_inhabitors,
-	minecraft:impact_projectiles, 
-	minecraft:skeletons,
-	minecraft:raiders,
-	minecraft:powder_snow_walkable_mobs,
-	minecraft:axolotl_hunt_targets,
-	minecraft:arrows
-
-Game Event:
-	minecraft:vibrations,
-	minecraft:ignore_vibrations_sneaking
 
 code related to the following packets (either implement the packet itself or code to ease the use of the packet or other infrastructure):
 

@@ -1,6 +1,6 @@
 #pragma once
 
-/*enum EntityType
+enum EntityType
 {
 	minecraft_area_effect_cloud = 0,
 	minecraft_armor_stand = 1,
@@ -115,4 +115,4 @@
 	minecraft_zombified_piglin = 110,
 	minecraft_player = 111,
 	minecraft_fishing_bobber = 112
-};*/
+};
