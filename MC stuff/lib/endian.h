@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include "typedefs.h"
 
 #define bshort bigEndian<short>

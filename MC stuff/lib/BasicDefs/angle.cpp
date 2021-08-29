@@ -1,4 +1,5 @@
 #include "angle.h"
+#include <math.h>
 
 Angle::Angle() : v(0) { }
 Angle::Angle(byte value) : v(value) { }

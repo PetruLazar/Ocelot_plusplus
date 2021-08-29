@@ -1,5 +1,7 @@
 #pragma once
-#include "endian.h"
+#include <fstream>
+#include "../typedefs.h"
+#include "apidef.h"
 
 class mcUUID
 {
@@ -12,7 +14,6 @@ class mcUUID
 	ush data3; //contains the version: most significant 4 bytes
 	ull data4;
 
-
 public:
 
 	//players: v3, entities, v2
@@ -22,10 +23,10 @@ public:
 		entity
 	};
 	
-	mcUUID(type uuidtype);
-	mcUUID(uint data1, ush data2, ush data3, ull data4);
+	BASICDEFS_API mcUUID(type uuidtype);
+	BASICDEFS_API mcUUID(uint data1, ush data2, ush data3, ull data4);
 
-	void write(std::fstream&) const;
-	void write(char*&) const;
+	BASICDEFS_API void write(std::fstream&) const;
+	BASICDEFS_API void write(char*&) const;
 };
 
