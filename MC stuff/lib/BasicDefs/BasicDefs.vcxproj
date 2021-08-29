@@ -135,6 +135,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ImportLibrary>$(ProjectDir)lib\$(TargetName)-d.lib</ImportLibrary>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,6 +159,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ImportLibrary>$(ProjectDir)lib\$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -164,8 +170,21 @@
     <ClInclude Include="basics.h" />
     <ClInclude Include="bitarray.h" />
     <ClInclude Include="bitstream.h" />
+    <ClInclude Include="block.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="enums.h" />
+    <ClInclude Include="error.h" />
+    <ClInclude Include="fixedPoint.h" />
+    <ClInclude Include="fluid.h" />
+    <ClInclude Include="gameevent.h" />
+    <ClInclude Include="gametags.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="mcString.h" />
+    <ClInclude Include="node.h" />
     <ClInclude Include="position.h" />
+    <ClInclude Include="queue.h" />
+    <ClInclude Include="slot.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="uuid.h" />
     <ClInclude Include="varData.h" />
   </ItemGroup>
@@ -174,8 +193,15 @@
     <ClCompile Include="bitarray.cpp" />
     <ClCompile Include="bitstream.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="fixedPoint.cpp" />
+    <ClCompile Include="gametags.cpp" />
     <ClCompile Include="mcString.cpp" />
+    <ClCompile Include="node.cpp" />
     <ClCompile Include="position.cpp" />
+    <ClCompile Include="queue.cpp" />
+    <ClCompile Include="slot.cpp" />
+    <ClCompile Include="utils.cpp" />
     <ClCompile Include="uuid.cpp" />
     <ClCompile Include="varData.cpp" />
   </ItemGroup>
