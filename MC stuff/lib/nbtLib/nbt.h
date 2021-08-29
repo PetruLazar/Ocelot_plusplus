@@ -1,17 +1,17 @@
 #pragma once
 
-#include "nbt/nbt_byte.h"
-#include "nbt/nbt_short.h"
-#include "nbt/nbt_int.h"
-#include "nbt/nbt_long.h"
-#include "nbt/nbt_float.h"
-#include "nbt/nbt_double.h"
-#include "nbt/nbt_list.h"
-#include "nbt/nbt_compound.h"
-#include "nbt/nbt_byte_array.h"
-#include "nbt/nbt_int_array.h"
-#include "nbt/nbt_long_array.h"
-#include "nbt/nbt_string.h"
+#include "nbt_byte.h"
+#include "nbt_short.h"
+#include "nbt_int.h"
+#include "nbt_long.h"
+#include "nbt_float.h"
+#include "nbt_double.h"
+#include "nbt_list.h"
+#include "nbt_compound.h"
+#include "nbt_byte_array.h"
+#include "nbt_int_array.h"
+#include "nbt_long_array.h"
+#include "nbt_string.h"
 
 //example of constructing an nbt compound tag in memory and editing it
 /*int main()

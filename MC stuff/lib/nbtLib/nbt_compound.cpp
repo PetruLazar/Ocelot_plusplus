@@ -9,7 +9,7 @@ nbt_compound::nbt_compound(const std::string& name, nbt** v, uint s) : nbt(Compo
 nbt_compound::~nbt_compound()
 {
 	for (nbt* e : values)
-		//possible error: do NOT use the same vector<> to construct multiple compound tags
+		//possible error: do NOT use the same vector<> or array to construct multiple compound tags
 		delete e;
 }
 
