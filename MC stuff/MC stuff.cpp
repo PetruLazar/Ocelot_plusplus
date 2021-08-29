@@ -18,6 +18,7 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
+	cout << "Starting server...";
 	srand((uint)time(nullptr));
 	log::initialize();
 	World::loadAll();
@@ -29,7 +30,7 @@ int main()
 		system("pause");
 		return 0;
 	}
-	cout << "Server started on " << Options::ip() << ':' << Options::port();
+	cout << "\nServer started on " << Options::ip() << ':' << Options::port();
 	listener.setBlocking(false);
 	bool keepAlive = true;
 	while (keepAlive)
@@ -62,7 +63,7 @@ int main()
 		}
 		catch (protocolWarning obj)
 		{
-			log::txt() << "Protocol warning: " << obj.msg << '\n';
+			log::txt() << "\nProtocol warning: " << obj.msg;
 		}
 		catch (const char* err_msg)
 		{
