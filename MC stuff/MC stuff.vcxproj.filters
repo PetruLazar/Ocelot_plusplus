@@ -13,18 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\nbt">
-      <UniqueIdentifier>{89ce9a9c-5507-46b1-9dbc-9cc6ece86ba3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\nbt">
-      <UniqueIdentifier>{6986cb71-29e0-402c-81e9-57913721b88d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\json">
-      <UniqueIdentifier>{08f966fb-a02a-4f48-a734-db8236e8a609}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\json">
-      <UniqueIdentifier>{e4bb7612-9b2c-4ba4-a3e8-dc20c9fb31c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\types">
       <UniqueIdentifier>{4cf13d90-6f43-4427-ad49-8206c2e8f3fb}</UniqueIdentifier>
     </Filter>
@@ -57,9 +45,6 @@
     <ClCompile Include="MC stuff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chunk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="basic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,128 +57,11 @@
     <ClCompile Include="message.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="nbt\nbt_base.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_byte.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_byte_array.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_compound.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_double.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_float.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_int.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_int_array.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_list.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_long.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_long_array.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_short.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt\nbt_string.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_base.cpp">
-      <Filter>Source Files\json</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_string.cpp">
-      <Filter>Source Files\json</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_array.cpp">
-      <Filter>Source Files\json</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_compound.cpp">
-      <Filter>Source Files\json</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_int.cpp">
-      <Filter>Source Files\json</Filter>
-    </ClCompile>
     <ClCompile Include="options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="log.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="region.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="world.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="types\angle.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\fixedPoint.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\mcString.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\position.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\uuid.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\varData.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="nbt.cpp">
-      <Filter>Source Files\nbt</Filter>
-    </ClCompile>
-    <ClCompile Include="types\chat.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\utils.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\error.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\queue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="section.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="types\bitstream.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\bitarray.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\slot.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_boolean.cpp">
-      <Filter>Source Files\json</Filter>
-    </ClCompile>
-    <ClCompile Include="noise.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="types\gametags.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\node.cpp">
-      <Filter>Source Files\types</Filter>
     </ClCompile>
     <ClCompile Include="command.cpp">
       <Filter>Source Files</Filter>
@@ -201,9 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="chunk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="message.h">
@@ -215,60 +80,6 @@
     <ClInclude Include="player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="nbt\nbt_base.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_byte.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_byte_array.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_compound.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_double.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_float.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_int.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_int_array.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_list.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_long.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_long_array.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_short.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt\nbt_string.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json_base.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json_array.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json_compound.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json_int.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json_string.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
     <ClInclude Include="options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -278,98 +89,11 @@
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="region.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="world.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="types\angle.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\endian.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\fixedPoint.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\mcString.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\position.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\uuid.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\varData.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
     <ClInclude Include="types.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\typedefs.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="json.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
-    <ClInclude Include="nbt.h">
-      <Filter>Header Files\nbt</Filter>
-    </ClInclude>
-    <ClInclude Include="types\chat.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\error.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\queue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="section.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="types\bitstream.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\bitarray.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="noise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="types\slot.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json_boolean.h">
-      <Filter>Header Files\json</Filter>
-    </ClInclude>
-    <ClInclude Include="types\gametags.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\item.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\fluid.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\block.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\entity.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\gameevent.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\node.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
     <ClInclude Include="command.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="types\enums.h">
-      <Filter>Header Files\types</Filter>
     </ClInclude>
     <ClInclude Include="types\palette.h">
       <Filter>Header Files\types</Filter>

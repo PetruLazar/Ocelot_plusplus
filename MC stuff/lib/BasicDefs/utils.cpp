@@ -1,5 +1,4 @@
-#include "../typedefs.h"
-#include <string>
+#include "utils.h"
 
 std::string to_hexstring(int value)
 {

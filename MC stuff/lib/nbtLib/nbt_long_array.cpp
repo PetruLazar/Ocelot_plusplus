@@ -1,4 +1,5 @@
 #include "nbt_long_array.h"
+
 nbt_long_array::nbt_long_array(const std::string& name, int64* v, int s) : nbt(LongArray, name), values((blong*)v), _size(s) { }
 nbt_long_array::nbt_long_array(const std::string& name, const BitArray& bitarray) :
 	nbt(LongArray, name),

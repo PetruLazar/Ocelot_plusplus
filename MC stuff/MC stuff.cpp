@@ -7,10 +7,7 @@
 #include "json.h"
 #include "log.h"
 #include "conio.h"
-
 #include "world.h"
-#include "region.h"
-#include "chunk.h"
 
 using namespace std;
 
