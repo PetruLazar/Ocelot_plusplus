@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\nbt">
+      <UniqueIdentifier>{74a25da2-f2cb-47e5-81ac-c7b11ce234bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\json">
+      <UniqueIdentifier>{84c033c9-7d36-44dc-a1fe-1ff49b4ff55a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\types">
+      <UniqueIdentifier>{b856f632-537b-4014-be5a-6e8019d67870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\world">
+      <UniqueIdentifier>{7cf26bc1-5eed-47d3-ba87-da3cce158fe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nbt">
+      <UniqueIdentifier>{4ebaa45c-4c07-4be9-995f-19d9f2c007e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\json">
+      <UniqueIdentifier>{00f5ecc7-5cad-48c0-b2e1-ce7a3cc1c7c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\world">
+      <UniqueIdentifier>{bb142c4e-3eae-4613-8f90-6127d7d967f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\types">
+      <UniqueIdentifier>{bcd037fc-572a-48d6-9639-c8d7e9f5343c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+</Project>
