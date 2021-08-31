@@ -2,6 +2,7 @@
 #include "player.h"
 #include "nbt.h"
 #include "json.h"
+#include "types.h"
 
 //A log of the vanilla client playing on a vanilla server:
 //S: join game - done

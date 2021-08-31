@@ -1,5 +1,5 @@
 #pragma once
-#include "basic.h"
+#include "types/varData.h"
 
 //unused at the moment
 //WIP

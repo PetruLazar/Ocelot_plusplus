@@ -1,7 +1,12 @@
 #include "message.h"
 #include "options.h"
-#include "world.h"
+#include "types/gametags.h"
+#include "types/chat.h"
+#include "types/error.h"
+#include "types/utils.h"
+#include "types/node.h"
 #include "command.h"
+#include "types/enums.h"
 
 playerInfo::Player::Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping) :uuid(uuid), name(name), gm((byte)gm), ping(ping) { }
 

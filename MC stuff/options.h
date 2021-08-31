@@ -1,5 +1,6 @@
 #pragma once
-#include "basic.h"
+#include "SFML/Network/IpAddress.hpp"
+#include "types/typedefs.h"
 
 class Options
 {

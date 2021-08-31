@@ -1,5 +1,8 @@
 #include "player.h"
 #include "message.h"
+#include "types/error.h"
+#include <iostream>
+#include "types/enums.h"
 
 const char* invalidPacketLengthError = "Invalid Packet Length";
 const char* socketError = "Socket error occured";

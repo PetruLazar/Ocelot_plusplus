@@ -1,5 +1,6 @@
 #pragma once
-#include "basic.h"
+#include "types/typedefs.h"
+#include <fstream>
 
 class log
 {

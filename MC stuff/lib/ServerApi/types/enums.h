@@ -50,3 +50,14 @@ namespace ChangeGameState
 		disable
 	};
 }
+
+enum class gamemode : byte
+{
+	survival,
+	creative,
+	adventure,
+	spectator,
+
+	//the 'previous gamemode' default value (-1)
+	none = 0xff
+};

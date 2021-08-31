@@ -187,6 +187,7 @@
     <ClInclude Include="nbt\nbt_long_array.h" />
     <ClInclude Include="nbt\nbt_short.h" />
     <ClInclude Include="nbt\nbt_string.h" />
+    <ClInclude Include="types.h" />
     <ClInclude Include="types\angle.h" />
     <ClInclude Include="types\apidef.h" />
     <ClInclude Include="types\basic.h" />

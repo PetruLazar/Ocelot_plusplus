@@ -6,8 +6,6 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>*/
 
-#define sockStat sf::Socket::Status
-
 //comment or decomment this define to switch between custom new operator and usual new operator
 //#define DEBUG_ALLOCATIONS
 #ifdef DEBUG_ALLOCATIONS
@@ -36,18 +34,6 @@ void operator delete[](void*, size_t);
 #define IF_REGION_DEBUG(x)
 #endif
 
-enum class gamemode : byte
-{
-	survival,
-	creative,
-	adventure,
-	spectator,
-
-	//the 'previous gamemode' default value (-1)
-	none = 0xff
-};
-
-typedef unsigned short Port;
 const int protocolVersionCurrent = 756; // 1.17.1
 
 /*struct vector2

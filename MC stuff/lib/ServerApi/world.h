@@ -2,6 +2,7 @@
 #include "world/region.h"
 #include "types/mcString.h"
 #include "types/position.h"
+#include "types/apidef.h"
 
 typedef Chunk* (*GeneratorFunction)(World*, int, int);
 
@@ -50,19 +51,19 @@ public:
 	int min_y;
 	bool isFlat;
 
-	void unload(int x, int z);
-	Chunk* get(int x, int z, bool increaseLoadCount = false);
+	SERVER_API void unload(int x, int z);
+	SERVER_API Chunk* get(int x, int z, bool increaseLoadCount = false);
 
 	GeneratorFunction generatorFunction;
 
 	//static members
-	static nbt_compound dimension_codec;
+	SERVER_API static nbt_compound dimension_codec;
 
-	static void loadAll();
-	static void unloadAll();
+	SERVER_API static void loadAll();
+	SERVER_API static void unloadAll();
 	//initial spawn is in first world
-	static std::vector<World*> worlds;
+	SERVER_API static std::vector<World*> worlds;
 
 	//temporaty variable
-	static int spawnWorld;
+	SERVER_API static int spawnWorld;
 };

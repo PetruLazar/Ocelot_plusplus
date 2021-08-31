@@ -1,6 +1,8 @@
 #pragma once
-#include "basic.h"
 #include "world.h"
+#include "types/uuid.h"
+#include "types/enums.h"
+#include "SFML/Network/TcpSocket.hpp"
 
 enum class ConnectionState : byte
 {

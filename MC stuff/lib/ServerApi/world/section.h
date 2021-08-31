@@ -26,7 +26,7 @@ class LightSection
 public:
 	~LightSection();
 
-	static const varInt lightArrayLength;
+	SERVER_API static const varInt lightArrayLength;
 
 	BitArray* skyLight,
 		* blockLight;

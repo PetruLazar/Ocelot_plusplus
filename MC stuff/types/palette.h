@@ -1,6 +1,6 @@
 #pragma once
-#include "typedefs.h"
-#include "mcString.h"
+#include "types\typedefs.h"
+#include "types\mcString.h"
 
 //unused - discussions needed
 
