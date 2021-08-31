@@ -6,7 +6,7 @@ class Chunk
 {
 public:
 	//Chunk();
-	~Chunk();
+	SERVER_API ~Chunk();
 
 	//light data
 
@@ -35,11 +35,11 @@ public:
 	//block Entities
 
 	//for loading/saving from/to file
-	void read(char*&, int sectionCount, int sectionOffset = 0);
-	void write(char*&);
+	SERVER_API void read(char*&, int sectionCount, int sectionOffset = 0);
+	SERVER_API void write(char*&);
 	//writing and reading from buffer after/before compression
 
 	//includes data size field of the packet
-	void writeSectionData(char*&);
+	SERVER_API void writeSectionData(char*&);
 };
 

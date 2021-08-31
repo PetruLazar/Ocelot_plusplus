@@ -11,14 +11,14 @@ class Region
 public:
 	int rX, rZ;
 
-	Region(int rX, int rZ);
-	~Region();
+	SERVER_API Region(int rX, int rZ);
+	SERVER_API ~Region();
 
-	Chunk* load(World*, int relX, int relZ);
-	void unload(World*);
-	void unload(World*, int relX, int relZ);
-	void set(int relX, int relZ, Chunk*);
-	Chunk* get(World* world, int relX, int relZ,bool increaseLoadCount = false);
-	bool hasChunksLoaded();
+	SERVER_API Chunk* load(World*, int relX, int relZ);
+	SERVER_API void unload(World*);
+	SERVER_API void unload(World*, int relX, int relZ);
+	SERVER_API void set(int relX, int relZ, Chunk*);
+	SERVER_API Chunk* get(World* world, int relX, int relZ,bool increaseLoadCount = false);
+	SERVER_API bool hasChunksLoaded();
 };
 

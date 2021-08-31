@@ -2,7 +2,6 @@
 #include "world/region.h"
 #include "types/mcString.h"
 #include "types/position.h"
-#include "types/apidef.h"
 
 typedef Chunk* (*GeneratorFunction)(World*, int, int);
 
