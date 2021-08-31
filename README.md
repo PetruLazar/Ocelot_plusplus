@@ -120,38 +120,11 @@ Blocks:
 
 Items:
 
-	minecraft:banners
-	minecraft:soul_fire_base_blocks
-	minecraft:stone_crafting_materials
-	minecraft:wooden_fences
-	minecraft:piglin_repellents
-	minecraft:beacon_payment_items,
-	minecraft:wooden_slabs
-	minecraft:coal_ores
-	minecraft:occludes_vibration_signals
-	minecraft:small_flowers
-	minecraft:wooden_trapdoors
-	minecraft:jungle_logs,
-	minecraft:lectern_books
-	minecraft:wooden_stairs
-	minecraft:spruce_logs
-	minecraft:signs
-	minecraft:axolotl_tempt_items
-	minecraft:carpets
-	minecraft:wool,
-	minecraft:wooden_buttons
-	minecraft:stairs
-	minecraft:fishes
-	minecraft:logs
-	minecraft:stone_bricks
-	minecraft:creeper_drop_music_discs
 	minecraft:slabs
 	minecraft:wooden_doors
-	minecraft:warped_stems
 	minecraft:emerald_ores
 	minecraft:trapdoors
 	minecraft:redstone_ores
-	minecraft:crimson_stems,
 	minecraft:ignored_by_piglin_babies
 	minecraft:buttons
 	minecraft:flowers
@@ -159,7 +132,6 @@ Items:
 	minecraft:planks
 	minecraft:fox_food
 	minecraft:boats,
-	minecraft:dark_oak_logs
 	minecraft:diamond_ores
 	minecraft:non_flammable_wood
 	minecraft:leaves
@@ -169,14 +141,12 @@ Items:
 	minecraft:piglin_loved
 	minecraft:candles
 	minecraft:music_discs
-	minecraft:birch_logs,
 	minecraft:tall_flowers
 	minecraft:lapis_ores
 	minecraft:sand
 	minecraft:copper_ores
 	minecraft:gold_ores
 	minecraft:freeze_immune_wearables
-	minecraft:logs_that_burn
 	minecraft:fences
 	minecraft:saplings
 	minecraft:beds
