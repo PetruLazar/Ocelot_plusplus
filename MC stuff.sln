@@ -12,6 +12,104 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GlobalPalleteTranslator", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerApi", "MC stuff\lib\ServerApi\ServerApi.vcxproj", "{C8242D08-0C84-488C-8115-BCA53460FA1B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "reports", "reports", "{82457F40-BCF0-424F-98FD-76DC3C2C0768}"
+	ProjectSection(SolutionItems) = preProject
+		reports\blocks.json = reports\blocks.json
+		reports\commands.json = reports\commands.json
+		reports\registries.json = reports\registries.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "biomes", "biomes", "{86701DF5-CB2B-4BC2-8F00-1A4076CA44B3}"
+	ProjectSection(SolutionItems) = preProject
+		reports\biomes\badlands.json = reports\biomes\badlands.json
+		reports\biomes\badlands_plateau.json = reports\biomes\badlands_plateau.json
+		reports\biomes\bamboo_jungle.json = reports\biomes\bamboo_jungle.json
+		reports\biomes\bamboo_jungle_hills.json = reports\biomes\bamboo_jungle_hills.json
+		reports\biomes\basalt_deltas.json = reports\biomes\basalt_deltas.json
+		reports\biomes\beach.json = reports\biomes\beach.json
+		reports\biomes\birch_forest.json = reports\biomes\birch_forest.json
+		reports\biomes\birch_forest_hills.json = reports\biomes\birch_forest_hills.json
+		reports\biomes\cold_ocean.json = reports\biomes\cold_ocean.json
+		reports\biomes\crimson_forest.json = reports\biomes\crimson_forest.json
+		reports\biomes\dark_forest.json = reports\biomes\dark_forest.json
+		reports\biomes\dark_forest_hills.json = reports\biomes\dark_forest_hills.json
+		reports\biomes\deep_cold_ocean.json = reports\biomes\deep_cold_ocean.json
+		reports\biomes\deep_frozen_ocean.json = reports\biomes\deep_frozen_ocean.json
+		reports\biomes\deep_lukewarm_ocean.json = reports\biomes\deep_lukewarm_ocean.json
+		reports\biomes\deep_ocean.json = reports\biomes\deep_ocean.json
+		reports\biomes\deep_warm_ocean.json = reports\biomes\deep_warm_ocean.json
+		reports\biomes\desert.json = reports\biomes\desert.json
+		reports\biomes\desert_hills.json = reports\biomes\desert_hills.json
+		reports\biomes\desert_lakes.json = reports\biomes\desert_lakes.json
+		reports\biomes\dripstone_caves.json = reports\biomes\dripstone_caves.json
+		reports\biomes\end_barrens.json = reports\biomes\end_barrens.json
+		reports\biomes\end_highlands.json = reports\biomes\end_highlands.json
+		reports\biomes\end_midlands.json = reports\biomes\end_midlands.json
+		reports\biomes\eroded_badlands.json = reports\biomes\eroded_badlands.json
+		reports\biomes\flower_forest.json = reports\biomes\flower_forest.json
+		reports\biomes\forest.json = reports\biomes\forest.json
+		reports\biomes\frozen_ocean.json = reports\biomes\frozen_ocean.json
+		reports\biomes\frozen_river.json = reports\biomes\frozen_river.json
+		reports\biomes\giant_spruce_taiga.json = reports\biomes\giant_spruce_taiga.json
+		reports\biomes\giant_spruce_taiga_hills.json = reports\biomes\giant_spruce_taiga_hills.json
+		reports\biomes\giant_tree_taiga.json = reports\biomes\giant_tree_taiga.json
+		reports\biomes\giant_tree_taiga_hills.json = reports\biomes\giant_tree_taiga_hills.json
+		reports\biomes\gravelly_mountains.json = reports\biomes\gravelly_mountains.json
+		reports\biomes\ice_spikes.json = reports\biomes\ice_spikes.json
+		reports\biomes\jungle.json = reports\biomes\jungle.json
+		reports\biomes\jungle_edge.json = reports\biomes\jungle_edge.json
+		reports\biomes\jungle_hills.json = reports\biomes\jungle_hills.json
+		reports\biomes\lukewarm_ocean.json = reports\biomes\lukewarm_ocean.json
+		reports\biomes\lush_caves.json = reports\biomes\lush_caves.json
+		reports\biomes\modified_badlands_plateau.json = reports\biomes\modified_badlands_plateau.json
+		reports\biomes\modified_gravelly_mountains.json = reports\biomes\modified_gravelly_mountains.json
+		reports\biomes\modified_jungle.json = reports\biomes\modified_jungle.json
+		reports\biomes\modified_jungle_edge.json = reports\biomes\modified_jungle_edge.json
+		reports\biomes\modified_wooded_badlands_plateau.json = reports\biomes\modified_wooded_badlands_plateau.json
+		reports\biomes\mountain_edge.json = reports\biomes\mountain_edge.json
+		reports\biomes\mountains.json = reports\biomes\mountains.json
+		reports\biomes\mushroom_field_shore.json = reports\biomes\mushroom_field_shore.json
+		reports\biomes\mushroom_fields.json = reports\biomes\mushroom_fields.json
+		reports\biomes\nether_wastes.json = reports\biomes\nether_wastes.json
+		reports\biomes\ocean.json = reports\biomes\ocean.json
+		reports\biomes\plains.json = reports\biomes\plains.json
+		reports\biomes\river.json = reports\biomes\river.json
+		reports\biomes\savanna.json = reports\biomes\savanna.json
+		reports\biomes\savanna_plateau.json = reports\biomes\savanna_plateau.json
+		reports\biomes\shattered_savanna.json = reports\biomes\shattered_savanna.json
+		reports\biomes\shattered_savanna_plateau.json = reports\biomes\shattered_savanna_plateau.json
+		reports\biomes\small_end_islands.json = reports\biomes\small_end_islands.json
+		reports\biomes\snowy_beach.json = reports\biomes\snowy_beach.json
+		reports\biomes\snowy_mountains.json = reports\biomes\snowy_mountains.json
+		reports\biomes\snowy_taiga.json = reports\biomes\snowy_taiga.json
+		reports\biomes\snowy_taiga_hills.json = reports\biomes\snowy_taiga_hills.json
+		reports\biomes\snowy_taiga_mountains.json = reports\biomes\snowy_taiga_mountains.json
+		reports\biomes\snowy_tundra.json = reports\biomes\snowy_tundra.json
+		reports\biomes\soul_sand_valley.json = reports\biomes\soul_sand_valley.json
+		reports\biomes\stone_shore.json = reports\biomes\stone_shore.json
+		reports\biomes\sunflower_plains.json = reports\biomes\sunflower_plains.json
+		reports\biomes\swamp.json = reports\biomes\swamp.json
+		reports\biomes\swamp_hills.json = reports\biomes\swamp_hills.json
+		reports\biomes\taiga.json = reports\biomes\taiga.json
+		reports\biomes\taiga_hills.json = reports\biomes\taiga_hills.json
+		reports\biomes\taiga_mountains.json = reports\biomes\taiga_mountains.json
+		reports\biomes\tall_birch_forest.json = reports\biomes\tall_birch_forest.json
+		reports\biomes\tall_birch_hills.json = reports\biomes\tall_birch_hills.json
+		reports\biomes\the_end.json = reports\biomes\the_end.json
+		reports\biomes\the_void.json = reports\biomes\the_void.json
+		reports\biomes\warm_ocean.json = reports\biomes\warm_ocean.json
+		reports\biomes\warped_forest.json = reports\biomes\warped_forest.json
+		reports\biomes\wooded_badlands_plateau.json = reports\biomes\wooded_badlands_plateau.json
+		reports\biomes\wooded_hills.json = reports\biomes\wooded_hills.json
+		reports\biomes\wooded_mountains.json = reports\biomes\wooded_mountains.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "git", "git", "{26F275AE-FB87-4DCF-AC3D-7302ABB5BA9F}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -45,6 +143,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{86701DF5-CB2B-4BC2-8F00-1A4076CA44B3} = {82457F40-BCF0-424F-98FD-76DC3C2C0768}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C59B9135-E5A6-4269-BFF0-B7F6C629E029}

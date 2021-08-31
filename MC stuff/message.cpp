@@ -58,7 +58,6 @@ void message::status::send::pong(Player* p, blong payload)
 	}
 }
 */
-
 void message::status::receive::request(Player* p)
 {
 	message::status::send::respose(p, "{" + Options::version + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"Tim\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
@@ -747,7 +746,12 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i))
 	{
 		LightSection::lightArrayLength.write(data);
-		chunk->lightData[i].skyLight->write(data);
+		ull size = chunk->lightData[i].skyLight->getCompactedSize();
+		blong* lightArray = chunk->lightData[i].skyLight->getCompactedValues();
+		for (ull i = 0; i < size; i++)
+		{
+			*(((ull*&)(data))++) = lightArray[i];
+		}
 	}
 	//block light array count
 	c = 0;
@@ -756,8 +760,13 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 	//block light arrays
 	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i))
 	{
-		LightSection::lightArrayLength.write(data);
-		chunk->lightData[i].blockLight->write(data);
+		LightSection::lightArrayLength.write(data); 
+		ull size = chunk->lightData[i].blockLight->getCompactedSize();
+		blong* lightArray = chunk->lightData[i].blockLight->getCompactedValues();
+		for (ull i = 0; i < size; i++)
+		{
+			*(((ull*&)(data))++) = lightArray[i];
+		}
 	}
 
 	sendPacketData(p, start, data - start);
