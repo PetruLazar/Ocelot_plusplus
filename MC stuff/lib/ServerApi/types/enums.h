@@ -51,6 +51,28 @@ namespace ChangeGameState
 	};
 }
 
+namespace ChatMessage\
+{
+	enum position : byte
+	{
+		normalMessage,
+		systemMessage,
+		gameInfo
+	};
+}
+
+namespace playerInfo
+{
+	enum action
+	{
+		addPlayer,
+		updateGamemode,
+		updateLatency,
+		updateDisplayName,
+		removePlayer
+	};
+}
+
 enum class gamemode : byte
 {
 	survival,

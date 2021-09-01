@@ -8,6 +8,8 @@
 #include <conio.h>
 #include <SFML/Network/TcpListener.hpp>
 
+#include <world/noise.h>
+
 using namespace std;
 
 const int mc_zlib_compression_level = 6;

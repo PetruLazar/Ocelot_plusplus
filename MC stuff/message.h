@@ -4,6 +4,16 @@
 #include "json.h"
 #include "types.h"
 
+//for Player::disconnect(), use broadcastMessageSafe
+#define broadcastMessage(msg_f_call) for (Player* player_macro : Player::players) ignoreExceptions(msg_f_call);
+//for Player::disconnect(), use broadcastMessageSafe
+#define broadcastMessageOmit(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr) ignoreExceptions(msg_f_call);
+
+//for outside the Player class, use broadcastMessage
+#define broadcastMessageSafe(msg_f_call) for (Player* player_macro : Player::players) if (player_macro->connected) ignoreExceptions(msg_f_call);
+//for outside the Player class, use broadcastMessage
+#define broadcastMessageOmitSafe(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr && player_macro->connected) ignoreExceptions(msg_f_call);
+
 //A log of the vanilla client playing on a vanilla server:
 //S: join game - done
 //S : plugin message - done
@@ -145,41 +155,6 @@ namespace painting
 	};
 }
 
-namespace playerInfo
-{
-	class Player
-	{
-	public:
-		mcUUID uuid;
-		mcString name;
-		varInt nOfProperties = 0;
-		class property
-		{
-			mcString name;
-			mcString value;
-			bool isSigned = false;
-			mcString signature;
-		} *properties = nullptr;
-		varInt gm;
-		varInt ping;
-		bool hasDisplayName = false;
-		//Chat displayName - optional
-
-		Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping);
-	};
-	enum action
-	{
-		addPlayer,
-		updateGm,
-		updateLatency,
-		updateDisplayName,
-		removePlayer
-	};
-}
-namespace playerPosAndLook
-{
-
-}
 namespace entityAnimation
 {
 	enum animation : byte
@@ -589,7 +564,7 @@ struct message
 			static void endCombatEvent(Player*, varInt duration, bint eid);
 			static void enterCombatEvent(Player*);
 			//static void deathCombatEvent(Player*, varInt playerId, bint eid, const Chat& message);
-			static void playerInfo(Player*, varInt action, varInt playerCount, playerInfo::Player*);
+			static void playerInfo(Player*, varInt action, varInt playerCount, Player**);
 			static void facePlayer(Player*, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot);
 			static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle);
 			static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, mcString* array1, varInt size2, mcString* array2);

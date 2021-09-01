@@ -11,7 +11,7 @@ const char invalidMainFile[] = "Invalid characteristics.bin file.";
 const char noAccesMainFile[] = "Could not open characteristics.bin file";
 const ull levelDatMaxSize = 1024 * 1024; //size after decompression
 
-const int terrainHeightAverage = 149;
+const int terrainHeightAverage = 85;
 const int terrainHeightAmplitude = 35;
 const double noiseFactor_x = 1. / 128, noiseFactor_z = 1. / 128;
 
@@ -383,7 +383,7 @@ Chunk* World::generate_def(World* world, int X, int Z)
 	}
 	//[z][x]
 	uint heightmaps[16][16]{};
-	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++) heightmaps[j][i] = int(simplex::get_orig(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + terrainHeightAverage);
+	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++) heightmaps[j][i] = int(simplex::get_orig(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + 85 - world->min_y);
 
 	//blocks
 	for (uint i = 0; i < sectionCount; i++)
@@ -460,7 +460,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 	//heightmap generation
 	int height = world->characteristics["height"].vInt();
 	chunk->heightmaps = new BitArray(256, bitCount(height));
-	for (int z0 = 0; z0 < 16; z0++) for (int x0 = 0; x0 < 16; x0++) chunk->heightmaps->setElement((ull)z0 * 16 + x0, 144);
+	for (int z0 = 0; z0 < 16; z0++) for (int x0 = 0; x0 < 16; x0++) chunk->heightmaps->setElement((ull)z0 * 16 + x0, ull(80 - world->min_y));
 
 	int biomeId = (x + z) % 10;
 	if (biomeId < 0) biomeId += 10;

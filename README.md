@@ -15,8 +15,6 @@ classes for world/region/chunk (in progress)
 
 	- Save regions/chunks to file when needed
 
-	- Unload a region when no loaded chunks are left in that region
-
 Increase code efficiency for world generation/load/unload/etc.
 
 Split logging into log.txt (normal log) and debug.txt (for protocol/runtime warnings and error)

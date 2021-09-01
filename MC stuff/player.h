@@ -3,6 +3,7 @@
 #include "types/uuid.h"
 #include "types/enums.h"
 #include "SFML/Network/TcpSocket.hpp"
+#include <types/chat.h>
 
 enum class ConnectionState : byte
 {
@@ -59,6 +60,11 @@ public:
 	int chunkX, chunkZ;
 	bool onGround;
 
+	//player info
+	varInt ping;
+	bool hasDisplayName;
+	Chat* displayName = nullptr;
+
 	gamemode gm;
 
 	int viewDistance;
@@ -81,4 +87,5 @@ public:
 
 	//clears the players list of disconnected players
 	static void clearDisconnectedPlayers();
+	static void broadcastChat(const Chat&, Player* ignore = nullptr);
 };

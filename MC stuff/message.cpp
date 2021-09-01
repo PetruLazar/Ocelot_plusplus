@@ -8,8 +8,6 @@
 #include "command.h"
 #include "types/enums.h"
 
-playerInfo::Player::Player(const mcUUID& uuid, const mcString& name, gamemode gm, int ping) :uuid(uuid), name(name), gm((byte)gm), ping(ping) { }
-
 #define disconnectAfter(p,f) try { f; } catch (...) { p->disconnect(); throw; } p->disconnect()
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
@@ -114,9 +112,12 @@ void message::login::receive::start(Player* p, const mcString& username)
 	}
 
 	//player initialization
+	//general fields
 	p->uuid = new mcUUID(mcUUID::player);
 	p->username = username;
-	p->nextKeepAlive = clock() + p->keepAliveInterval;
+	p->viewDistance = Options::viewDistance();
+	p->gm = gamemode::creative;
+	//position, rotation ad world
 	p->world = World::worlds[World::spawnWorld];
 	p->X = p->world->spawn.X;
 	p->Y = p->world->spawn.Y;
@@ -125,8 +126,11 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->chunkZ = p->world->spawn.ChunkZ;
 	p->yaw = p->world->spawn.Yaw;
 	p->pitch = p->world->spawn.Pitch;
-	p->viewDistance = Options::viewDistance();
-	p->gm = gamemode::creative;
+	//keepalive data
+	p->nextKeepAlive = clock() + p->keepAliveInterval;
+	//playerInfo data
+	p->ping = -1;
+	p->hasDisplayName = false;
 
 	login::send::success(p, *p->uuid, username);
 
@@ -142,9 +146,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::declareRecipes(p, 0);
 
-	playerInfo::Player* pl = new playerInfo::Player(*p->uuid, p->username, p->gm, 100);
-	play::send::playerInfo(p, playerInfo::addPlayer, 1, pl);
-	delete pl;
+	Player** playerInfoList = Player::players.data();
+	play::send::playerInfo(p, playerInfo::addPlayer, Player::players.size(), playerInfoList);
 
 	play::send::tags(p);
 
@@ -164,6 +167,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 	}
 
 	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, 0x0, false);
+
+	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
+	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p)
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -206,7 +212,7 @@ void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemod
 
 	sendPacketData(p, start, data - start);
 }
-void message::play::send::playerInfo(Player* p, varInt action, varInt playerCount, playerInfo::Player* players)
+void message::play::send::playerInfo(Player* p, varInt action, varInt playerCount, Player** players)
 {
 	varInt id = (int)id::playerInfo;
 	char* data = new char[1024 * 1024], * start = data;
@@ -219,41 +225,46 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 	case playerInfo::addPlayer:
 		for (int i = 0; i < playerCount; i++)
 		{
-			playerInfo::Player& player = players[i];
-			player.uuid.write(data);
-			player.name.write(data);
-			player.nOfProperties.write(data);
-			player.gm.write(data);
-			player.ping.write(data);
-			*(data++) = player.hasDisplayName;
+			Player*& player = players[i];
+			player->uuid->write(data);
+			player->username.write(data);
+			varInt(0).write(data);
+			varInt((byte)player->gm).write(data);
+			player->ping.write(data);
+			*(data++) = player->hasDisplayName;
+			if (p->hasDisplayName) p->displayName->write(data);
 		}
 		break;
-	case playerInfo::updateGm:
-		throw "WIP";
+	case playerInfo::updateGamemode:
 		for (int i = 0; i < playerCount; i++)
 		{
-
+			Player*& player = players[i];
+			player->uuid->write(data);
+			varInt((byte)player->gm).write(data);
 		}
 		break;
 	case playerInfo::updateLatency:
-		throw "WIP";
 		for (int i = 0; i < playerCount; i++)
 		{
-
+			Player*& player = players[i];
+			player->uuid->write(data);
+			player->ping.write(data);
 		}
 		break;
 	case playerInfo::updateDisplayName:
-		throw "WIP";
 		for (int i = 0; i < playerCount; i++)
 		{
-
+			Player*& player = players[i];
+			player->uuid->write(data);
+			*(data++) = player->hasDisplayName;
+			if (p->hasDisplayName) p->displayName->write(data);
 		}
 		break;
 	case playerInfo::removePlayer:
-		throw "WIP";
 		for (int i = 0; i < playerCount; i++)
 		{
-
+			Player*& player = players[i];
+			player->uuid->write(data);
 		}
 		break;
 	}
@@ -707,6 +718,22 @@ void message::play::send::respawn(Player* p, const nbt_compound& dimension, cons
 
 	sendPacketData(p, start, data - start);
 }
+void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch)
+{
+	varInt id = (int)id::spawnPlayer;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	eid.write(data);
+	uuid.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	*(data++) = (byte&)yaw;
+	*(data++) = (byte&)pitch;
+
+	sendPacketData(p, start, data - start);
+}
 
 void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 {
@@ -760,7 +787,7 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 	//block light arrays
 	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i))
 	{
-		LightSection::lightArrayLength.write(data); 
+		LightSection::lightArrayLength.write(data);
 		ull size = chunk->lightData[i].blockLight->getCompactedSize();
 		blong* lightArray = chunk->lightData[i].blockLight->getCompactedValues();
 		for (ull i = 0; i < size; i++)

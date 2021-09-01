@@ -1,8 +1,8 @@
 #include "player.h"
 #include "message.h"
-#include "types/error.h"
+#include <types/error.h>
 #include <iostream>
-#include "types/enums.h"
+#include <types/enums.h>
 
 const char* invalidPacketLengthError = "Invalid Packet Length";
 const char* socketError = "Socket error occured";
@@ -61,10 +61,15 @@ void Player::changeWorld(const mcString& worldName)
 
 void Player::disconnect()
 {
-
-	if (state == ConnectionState::play) for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) world->unload(x, z);
 	socket->disconnect();
 	connected = false;
+	if (state == ConnectionState::play)
+	{
+		for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) world->unload(x, z);
+		broadcastChat(Chat((username + " left the game").c_str(), Chat::yellow), this);
+		Player* p = this;
+		broadcastMessageOmitSafe(message::play::send::playerInfo(player_macro, playerInfo::removePlayer, 1, &p), this)
+	}
 }
 void Player::updateNet(clock_t time)
 {
@@ -214,4 +219,8 @@ void Player::clearDisconnectedPlayers()
 		players.pop_back();
 		size--;
 	}
+}
+void Player::broadcastChat(const Chat& msg, Player* ignore)
+{
+	for (Player* p : players) if (p != ignore && p->connected) ignoreExceptions(message::play::send::chatMessage(p, msg, ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)));
 }

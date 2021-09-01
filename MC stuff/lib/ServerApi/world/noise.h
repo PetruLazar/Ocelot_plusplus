@@ -10,8 +10,8 @@ namespace perlin
 
 namespace simplex
 {
-	SERVER_API const double F2 = (sqrt(3) - 1) / 2;
-	SERVER_API const double G2 = (3. - sqrt(3)) / 6;
+	const double F2 = (sqrt(3) - 1) / 2;
+	const double G2 = (3. - sqrt(3)) / 6;
 
 	SERVER_API double get_orig(double, double);
 	SERVER_API double get(double, double);

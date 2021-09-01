@@ -35,6 +35,7 @@ void operator delete[](void*, size_t);
 #endif
 
 const int protocolVersionCurrent = 756; // 1.17.1
+#define ignoreExceptions(x) try {x;} catch (...){}
 
 /*struct vector2
 {
