@@ -13,6 +13,9 @@ std::vector<Player*> Player::players;
 Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket)
 {
 	socket->setBlocking(false);
+
+	//player initializations
+	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
 }
 Player::~Player()
 {
@@ -71,17 +74,17 @@ void Player::disconnect()
 		broadcastMessageOmitSafe(message::play::send::playerInfo(player_macro, playerInfo::removePlayer, 1, &p), this)
 	}
 }
-void Player::updateNet(clock_t time)
+void Player::updateNet()
 {
 	if (!connected) return;
-	if (time > nextKeepAlive && lastKeepAliveId == -1)
+	if (cycleTime > nextKeepAlive && lastKeepAliveId == -1 && state == ConnectionState::play)
 	{
-		nextKeepAlive = time + keepAliveInterval;
-		keepAliveTimeoutPoint = time + keepAliveTimeoutAfter;
-		lastKeepAliveId = time;
+		nextKeepAlive = cycleTime + keepAliveInterval;
+		keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
+		lastKeepAliveId = cycleTime;
 		message::play::send::keepAlive(this, lastKeepAliveId);
 	}
-	else if (lastKeepAliveId != -1 && time > keepAliveTimeoutPoint)
+	else if ((lastKeepAliveId != -1 || state != ConnectionState::play) && cycleTime > keepAliveTimeoutPoint)
 	{
 		disconnect();
 		std::cout << '\n' << username << " was timed out.";

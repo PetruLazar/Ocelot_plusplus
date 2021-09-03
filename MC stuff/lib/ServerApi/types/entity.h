@@ -1,4 +1,7 @@
 #pragma once
+#include "mcString.h"
+#include "varData.h"
+#include "endian.h"
 
 enum EntityType
 {
@@ -115,4 +118,15 @@ enum EntityType
 	minecraft_zombified_piglin = 110,
 	minecraft_player = 111,
 	minecraft_fishing_bobber = 112
+};
+
+class EntityProperty
+{
+public:
+	mcString key;
+	bdouble value;
+	varInt nOfModifiers = 0;
+	//modifier array
+
+	SERVER_API EntityProperty(const mcString& key, double value);
 };

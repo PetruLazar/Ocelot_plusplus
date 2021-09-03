@@ -58,18 +58,26 @@ namespace Command
 			message::play::send::chatMessage(p, Chat(("You are in world \\\"" + p->world->name + "\\\"").c_str()), 1, mcUUID(0, 0, 0, 0));
 			return;
 		}
+		if (comm == "/ping")
+		{
+			message::play::send::chatMessage(p, Chat(("Your ping is " + std::to_string((int)p->ping)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			return;
+		}
 		if (comm == "/test")
 		{
-			Player* temp = new Player(new sf::TcpSocket);
+			EntityProperty* props = new EntityProperty("uab.domsa", 40);
+			message::play::send::entityProperties(p, p->eid, 1, props);
+			//message::play::send::updateHp(p, 0, 10, 0.f);
+			delete props;
+			/*Player* temp = new Player(new sf::TcpSocket);
 			temp->uuid = new mcUUID(mcUUID::type::player);
-			temp->username = "DnaMata";
+			temp->username = "Dna Ma-ta";
 			temp->gm = gamemode::creative;
 			temp->ping = -1;
 			temp->hasDisplayName = false;
 			message::play::send::playerInfo(p, playerInfo::addPlayer, 1, &temp);
 			message::play::send::spawnPlayer(p, 0x27, *temp->uuid, p->X, p->Y + 2, p->Z, (float)p->yaw, (float)p->pitch);
-			//unused
-			delete temp;
+			delete temp;*/
 			return;
 		}
 		message::play::send::chatMessage(p, Chat("Ba da atata esti de prost de nici nu stii sa scrii o comanda...", Chat::red), 1, mcUUID(0, 0, 0, 0));

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../types/typedefs.h"
+#include "apidef.h"
+#include <ctime>
 /*#include <Windows.h>
 
 #define _CRTDBG_MAP_ALLOC
@@ -36,6 +38,8 @@ void operator delete[](void*, size_t);
 
 const int protocolVersionCurrent = 756; // 1.17.1
 #define ignoreExceptions(x) try {x;} catch (...){}
+
+extern SERVER_API clock_t cycleTime;
 
 /*struct vector2
 {

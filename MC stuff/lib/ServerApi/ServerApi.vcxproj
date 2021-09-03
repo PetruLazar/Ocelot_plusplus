@@ -249,6 +249,7 @@
     <ClCompile Include="types\bitarray.cpp" />
     <ClCompile Include="types\bitstream.cpp" />
     <ClCompile Include="types\chat.cpp" />
+    <ClCompile Include="types\entity.cpp" />
     <ClCompile Include="types\error.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
     <ClCompile Include="types\gametags.cpp" />

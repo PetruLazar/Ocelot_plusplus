@@ -117,6 +117,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->username = username;
 	p->viewDistance = Options::viewDistance();
 	p->gm = gamemode::creative;
+	p->eid = 0x17;
 	//position, rotation ad world
 	p->world = World::worlds[World::spawnWorld];
 	p->X = p->world->spawn.X;
@@ -126,17 +127,14 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->chunkZ = p->world->spawn.ChunkZ;
 	p->yaw = p->world->spawn.Yaw;
 	p->pitch = p->world->spawn.Pitch;
-	//keepalive data
-	p->nextKeepAlive = clock() + p->keepAliveInterval;
 	//playerInfo data
 	p->ping = -1;
-	p->hasDisplayName = false;
+	p->hasDisplayName = true;
+	p->displayName = new Chat(("[Tester]" + username).c_str());
 
 	login::send::success(p, *p->uuid, username);
 
-	//mcString* wlds = new mcString("world");
-	play::send::joinGame(p, 0x17, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, p->world->characteristics, p->world->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, p->world->isFlat);
-	//delete wlds;
+	play::send::joinGame(p, (int)p->eid, true, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, p->world->characteristics, p->world->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, p->world->isFlat);
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
@@ -147,7 +145,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	play::send::declareRecipes(p, 0);
 
 	Player** playerInfoList = Player::players.data();
-	play::send::playerInfo(p, playerInfo::addPlayer, Player::players.size(), playerInfoList);
+	play::send::playerInfo(p, playerInfo::addPlayer, (int)Player::players.size(), playerInfoList);
 
 	play::send::tags(p);
 
@@ -232,7 +230,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 			varInt((byte)player->gm).write(data);
 			player->ping.write(data);
 			*(data++) = player->hasDisplayName;
-			if (p->hasDisplayName) p->displayName->write(data);
+			if (player->hasDisplayName) player->displayName->write(data);
 		}
 		break;
 	case playerInfo::updateGamemode:
@@ -734,6 +732,36 @@ void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid,
 
 	sendPacketData(p, start, data - start);
 }
+void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProperties, EntityProperty* properties)
+{
+	varInt id = (int)id::entityProperties;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	eid.write(data);
+	nOfProperties.write(data);
+	for (int i = 0; i < nOfProperties; i++)
+	{
+		EntityProperty& prop = properties[i];
+		prop.key.write(data);
+		prop.value.write(data);
+		varInt(0).write(data);
+	}
+
+	sendPacketData(p, start, data - start);
+}
+void message::play::send::updateHp(Player* p, bfloat hp, varInt food, bfloat saturation)
+{
+	varInt id = (int)id::updateHp;
+	char* data = new char[1024 * 1024], * start = data;
+
+	id.write(data);
+	hp.write(data);
+	food.write(data);
+	saturation.write(data);
+
+	sendPacketData(p, start, data - start);
+}
 
 void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 {
@@ -862,6 +890,8 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 {
+	p->ping = (int)((int64)cycleTime - (int64)keepAlive_id);
+	broadcastMessage(send::playerInfo(player_macro, playerInfo::updateLatency, 1, &p));
 	if (keepAlive_id == p->lastKeepAliveId) p->lastKeepAliveId = -1;
 }
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)

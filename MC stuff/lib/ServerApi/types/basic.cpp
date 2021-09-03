@@ -1,4 +1,6 @@
-//#include "basic.h"
+#include "basic.h"
+
+clock_t cycleTime;
 
 /*#define Z_DEFAULT_MEMLEVEL 8
 #define Z_GZIP_HEADER 16

@@ -609,7 +609,7 @@ struct message
 			static void collectItem(Player*, varInt collectedEid, varInt collectorEid, varInt pickupCount);
 			static void entityTeleport(Player*, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround);
 			//static void advancements(Player*, bool reset,)
-			//static void entityProperties(Player*, varInt eid, varInt nOfProperties, Property* properties);
+			static void entityProperties(Player*, varInt eid, varInt nOfProperties, EntityProperty* properties);
 			static void entityEffect(Player*, varInt entityId, byte effectId, char amplifier, varInt duration, byte flags);
 			static void declareRecipes(Player*, varInt nOfRecipes);
 			static void tags(Player*);
