@@ -116,43 +116,6 @@ Blocks:
 	minecraft:doors
 	minecraft:needs_iron_tool
 
-Items:
-
-	minecraft:slabs
-	minecraft:wooden_doors
-	minecraft:emerald_ores
-	minecraft:trapdoors
-	minecraft:redstone_ores
-	minecraft:ignored_by_piglin_babies
-	minecraft:buttons
-	minecraft:flowers
-	minecraft:stone_tool_materials
-	minecraft:planks
-	minecraft:fox_food
-	minecraft:boats,
-	minecraft:diamond_ores
-	minecraft:non_flammable_wood
-	minecraft:leaves
-	minecraft:walls
-	minecraft:piglin_food,
-	minecraft:wooden_pressure_plates
-	minecraft:piglin_loved
-	minecraft:candles
-	minecraft:music_discs
-	minecraft:tall_flowers
-	minecraft:lapis_ores
-	minecraft:sand
-	minecraft:copper_ores
-	minecraft:gold_ores
-	minecraft:freeze_immune_wearables
-	minecraft:fences
-	minecraft:saplings
-	minecraft:beds
-	minecraft:iron_ores
-	minecraft:oak_logs
-	minecraft:doors
-	minecraft:cluster_max_harvestables
-
 code related to the following packets (either implement the packet itself or code to ease the use of the packet or other infrastructure):
 
 	handshake::receive::standard

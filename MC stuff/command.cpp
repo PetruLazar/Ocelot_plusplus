@@ -65,10 +65,10 @@ namespace Command
 		}
 		if (comm == "/test")
 		{
-			EntityProperty* props = new EntityProperty("uab.domsa", 40);
-			message::play::send::entityProperties(p, p->eid, 1, props);
-			//message::play::send::updateHp(p, 0, 10, 0.f);
-			delete props;
+			//EntityProperty* props = new EntityProperty("uab.domsa", 40);
+			//message::play::send::entityProperties(p, p->eid, 1, props);
+			message::play::send::updateHp(p, 0, 20, 0.f);
+			//delete props;
 			/*Player* temp = new Player(new sf::TcpSocket);
 			temp->uuid = new mcUUID(mcUUID::type::player);
 			temp->username = "Dna Ma-ta";

@@ -403,11 +403,11 @@ Tags* Tags::defaultTags = new Tags[5]{
 		}),
 	}),
 	Tags(69, "minecraft:item", new Tag[69]{
-		Tag("minecraft:coals",0,new varInt[]{
+		Tag("minecraft:coals",2,new varInt[2]{
 			(int)Item::minecraft_coal,
 			(int)Item::minecraft_charcoal
 		}),
-		Tag("minecraft:banners",0,new varInt[]{
+		Tag("minecraft:banners",16,new varInt[16]{
 			(int)Item::minecraft_white_banner,
 			(int)Item::minecraft_orange_banner,
 			(int)Item::minecraft_magenta_banner,
@@ -425,16 +425,16 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_red_banner,
 			(int)Item::minecraft_black_banner
 		}),
-		Tag("minecraft:soul_fire_base_blocks",0,new varInt[]{
+		Tag("minecraft:soul_fire_base_blocks",2,new varInt[2]{
 			(int)Item::minecraft_soul_sand,
 			(int)Item::minecraft_soul_soil
 		}),
-		Tag("minecraft:stone_crafting_materials",0,new varInt[]{
+		Tag("minecraft:stone_crafting_materials",3,new varInt[3]{
 			(int)Item::minecraft_cobblestone,
 			(int)Item::minecraft_blackstone,
 			(int)Item::minecraft_cobbled_deepslate
 		}),
-		Tag("minecraft:wooden_fences",0,new varInt[]{
+		Tag("minecraft:wooden_fences",8,new varInt[8]{
 			(int)Item::minecraft_oak_fence,
 			(int)Item::minecraft_acacia_fence,
 			(int)Item::minecraft_dark_oak_fence,
@@ -444,19 +444,19 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_crimson_fence,
 			(int)Item::minecraft_warped_fence
 		}),
-		Tag("minecraft:piglin_repellents",0,new varInt[]{
+		Tag("minecraft:piglin_repellents",3,new varInt[3]{
 			(int)Item::minecraft_soul_torch,
 			(int)Item::minecraft_soul_lantern,
 			(int)Item::minecraft_soul_campfire
 		}),
-		Tag("minecraft:beacon_payment_items",0,new varInt[]{
+		Tag("minecraft:beacon_payment_items",5,new varInt[5]{
 			(int)Item::minecraft_netherite_ingot,
 			(int)Item::minecraft_emerald,
 			(int)Item::minecraft_diamond,
 			(int)Item::minecraft_gold_ingot,
 			(int)Item::minecraft_iron_ingot
 		}),
-		Tag("minecraft:wooden_slabs",0,new varInt[]{
+		Tag("minecraft:wooden_slabs",8,new varInt[8]{
 			(int)Item::minecraft_oak_slab,
 			(int)Item::minecraft_spruce_slab,
 			(int)Item::minecraft_birch_slab,
@@ -466,11 +466,11 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_crimson_slab,
 			(int)Item::minecraft_warped_slab
 		}),
-		Tag("minecraft:coal_ores",0,new varInt[]{
+		Tag("minecraft:coal_ores",2,new varInt[2]{
 			(int)Item::minecraft_coal_ore,
 			(int)Item::minecraft_deepslate_coal_ore
 		}),
-		Tag("minecraft:occludes_vibration_signals",0,new varInt[]{
+		Tag("minecraft:occludes_vibration_signals",16,new varInt[16]{
 			(int)Item::minecraft_white_wool,
 			(int)Item::minecraft_orange_wool,
 			(int)Item::minecraft_magenta_wool,
@@ -488,7 +488,7 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_red_wool,
 			(int)Item::minecraft_black_wool
 		}),
-		Tag("minecraft:small_flowers",0,new varInt[]{
+		Tag("minecraft:small_flowers",13,new varInt[13]{
 			(int)Item::minecraft_dandelion,
 			(int)Item::minecraft_poppy,
 			(int)Item::minecraft_blue_orchid,
@@ -503,7 +503,7 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_lily_of_the_valley,
 			(int)Item::minecraft_wither_rose
 		}),
-		Tag("minecraft:wooden_trapdoors",0,new varInt[]{
+		Tag("minecraft:wooden_trapdoors",8,new varInt[8]{
 			(int)Item::minecraft_acacia_trapdoor,
 			(int)Item::minecraft_birch_trapdoor,
 			(int)Item::minecraft_dark_oak_trapdoor,
@@ -513,17 +513,17 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_crimson_trapdoor,
 			(int)Item::minecraft_warped_trapdoor
 		}),
-		Tag("minecraft:jungle_logs",0,new varInt[]{
+		Tag("minecraft:jungle_logs",4,new varInt[4]{
 			(int)Item::minecraft_jungle_log,
 			(int)Item::minecraft_jungle_wood,
 			(int)Item::minecraft_stripped_jungle_log,
 			(int)Item::minecraft_stripped_jungle_wood
 		}),
-		Tag("minecraft:lectern_books",0,new varInt[]{
+		Tag("minecraft:lectern_books",2,new varInt[2]{
 			(int)Item::minecraft_written_book,
 			(int)Item::minecraft_writable_book
 		}),
-		Tag("minecraft:wooden_stairs",0,new varInt[]{
+		Tag("minecraft:wooden_stairs",8,new varInt[8]{
 			(int)Item::minecraft_oak_stairs,
 			(int)Item::minecraft_spruce_stairs,
 			(int)Item::minecraft_birch_stairs,
@@ -533,13 +533,13 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_crimson_stairs,
 			(int)Item::minecraft_warped_stairs
 		}),
-		Tag("minecraft:spruce_logs",0,new varInt[]{
+		Tag("minecraft:spruce_logs",4,new varInt[4]{
 			(int)Item::minecraft_spruce_log,
 			(int)Item::minecraft_spruce_wood,
 			(int)Item::minecraft_stripped_spruce_log,
 			(int)Item::minecraft_stripped_spruce_wood
 		}),
-		Tag("minecraft:signs",0,new varInt[]{
+		Tag("minecraft:signs",8,new varInt[8]{
 			(int)Item::minecraft_oak_sign,
 			(int)Item::minecraft_spruce_sign,
 			(int)Item::minecraft_birch_sign,
@@ -549,10 +549,10 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_crimson_sign,
 			(int)Item::minecraft_warped_sign
 		}),
-		Tag("minecraft:axolotl_tempt_items",0,new varInt[]{
+		Tag("minecraft:axolotl_tempt_items",1,new varInt[1]{
 			(int)Item::minecraft_tropical_fish_bucket
 		}),
-		Tag("minecraft:carpets",0,new varInt[]{
+		Tag("minecraft:carpets",16,new varInt[16]{
 			(int)Item::minecraft_white_carpet,
 			(int)Item::minecraft_orange_carpet,
 			(int)Item::minecraft_magenta_carpet,
@@ -570,7 +570,7 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_red_carpet,
 			(int)Item::minecraft_black_carpet
 		}),
-		Tag("minecraft:wool",0,new varInt[]{
+		Tag("minecraft:wool",16,new varInt[16]{
 			(int)Item::minecraft_white_wool,
 			(int)Item::minecraft_orange_wool,
 			(int)Item::minecraft_magenta_wool,
@@ -588,7 +588,7 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_red_wool,
 			(int)Item::minecraft_black_wool
 		}),
-		Tag("minecraft:wooden_buttons",0,new varInt[]{
+		Tag("minecraft:wooden_buttons",8,new varInt[8]{
 			(int)Item::minecraft_oak_button,
 			(int)Item::minecraft_spruce_button,
 			(int)Item::minecraft_birch_button,
@@ -598,7 +598,7 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_crimson_button,
 			(int)Item::minecraft_warped_button
 		}),
-		Tag("minecraft:stairs",0,new varInt[]{
+		Tag("minecraft:stairs",48,new varInt[48]{
 			(int)Item::minecraft_cobblestone_stairs,
 			(int)Item::minecraft_sandstone_stairs,
 			(int)Item::minecraft_nether_brick_stairs,
@@ -648,7 +648,7 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_crimson_stairs,
 			(int)Item::minecraft_warped_stairs
 		}),
-		Tag("minecraft:fishes",0,new varInt[]{
+		Tag("minecraft:fishes",6,new varInt[6]{
 			(int)Item::minecraft_cod,
 			(int)Item::minecraft_cooked_cod,
 			(int)Item::minecraft_salmon,
@@ -656,7 +656,7 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_pufferfish,
 			(int)Item::minecraft_tropical_fish
 		}),
-		Tag("minecraft:logs",0,new varInt[]{
+		Tag("minecraft:logs",32,new varInt[32]{
 			(int)Item::minecraft_crimson_stem,
 			(int)Item::minecraft_stripped_crimson_stem,
 			(int)Item::minecraft_crimson_hyphae,
@@ -690,13 +690,13 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_stripped_acacia_log,
 			(int)Item::minecraft_stripped_acacia_wood
 		}),
-		Tag("minecraft:stone_bricks",0,new varInt[]{
+		Tag("minecraft:stone_bricks",4,new varInt[4]{
 			(int)Item::minecraft_stone_bricks,
 			(int)Item::minecraft_mossy_stone_bricks,
 			(int)Item::minecraft_cracked_stone_bricks,
 			(int)Item::minecraft_chiseled_stone_bricks
 		}),
-		Tag("minecraft:creeper_drop_music_discs",0,new varInt[]{
+		Tag("minecraft:creeper_drop_music_discs",12,new varInt[12]{
 			(int)Item::minecraft_music_disc_13,
 			(int)Item::minecraft_music_disc_cat,
 			(int)Item::minecraft_music_disc_blocks,
@@ -715,31 +715,165 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_tipped_arrow,
 			(int)Item::minecraft_spectral_arrow
 		}),
-		Tag("minecraft:slabs",0,nullptr),
-		Tag("minecraft:wooden_doors",0,nullptr),
-		Tag("minecraft:warped_stems",0,new varInt[]{
+		Tag("minecraft:slabs", 0, new varInt[]{
+			(int)Item::minecraft_stone_slab,
+			(int)Item::minecraft_smooth_stone_slab,
+			(int)Item::minecraft_stone_brick_slab,
+			(int)Item::minecraft_sandstone_slab,
+			(int)Item::minecraft_purpur_slab,
+			(int)Item::minecraft_quartz_slab,
+			(int)Item::minecraft_red_sandstone_slab,
+			(int)Item::minecraft_brick_slab,
+			(int)Item::minecraft_cobblestone_slab,
+			(int)Item::minecraft_nether_brick_slab,
+			(int)Item::minecraft_petrified_oak_slab,
+			(int)Item::minecraft_prismarine_slab,
+			(int)Item::minecraft_prismarine_brick_slab,
+			(int)Item::minecraft_dark_prismarine_slab,
+			(int)Item::minecraft_polished_granite_slab,
+			(int)Item::minecraft_smooth_red_sandstone_slab,
+			(int)Item::minecraft_mossy_stone_brick_slab,
+			(int)Item::minecraft_polished_diorite_slab,
+			(int)Item::minecraft_mossy_cobblestone_slab,
+			(int)Item::minecraft_end_stone_brick_slab,
+			(int)Item::minecraft_smooth_sandstone_slab,
+			(int)Item::minecraft_smooth_quartz_slab,
+			(int)Item::minecraft_granite_slab,
+			(int)Item::minecraft_andesite_slab,
+			(int)Item::minecraft_red_nether_brick_slab,
+			(int)Item::minecraft_polished_andesite_slab,
+			(int)Item::minecraft_diorite_slab,
+			(int)Item::minecraft_cut_sandstone_slab,
+			(int)Item::minecraft_cut_red_sandstone_slab,
+			(int)Item::minecraft_blackstone_slab,
+			(int)Item::minecraft_polished_blackstone_brick_slab,
+			(int)Item::minecraft_polished_blackstone_slab,
+			(int)Item::minecraft_cobbled_deepslate_slab,
+			(int)Item::minecraft_polished_deepslate_slab,
+			(int)Item::minecraft_deepslate_tile_slab,
+			(int)Item::minecraft_deepslate_brick_slab,
+			(int)Item::minecraft_waxed_weathered_cut_copper_slab,
+			(int)Item::minecraft_waxed_exposed_cut_copper_slab,
+			(int)Item::minecraft_waxed_cut_copper_slab,
+			(int)Item::minecraft_oxidized_cut_copper_slab,
+			(int)Item::minecraft_weathered_cut_copper_slab,
+			(int)Item::minecraft_exposed_cut_copper_slab,
+			(int)Item::minecraft_cut_copper_slab,
+			(int)Item::minecraft_waxed_oxidized_cut_copper_slab,
+			(int)Item::minecraft_oak_slab,
+			(int)Item::minecraft_spruce_slab,
+			(int)Item::minecraft_birch_slab,
+			(int)Item::minecraft_jungle_slab,
+			(int)Item::minecraft_acacia_slab,
+			(int)Item::minecraft_dark_oak_slab,
+			(int)Item::minecraft_crimson_slab,
+			(int)Item::minecraft_warped_slab
+		}),
+		Tag("minecraft:wooden_doors",0, new varInt[]{
+			(int)Item::minecraft_oak_door,
+			(int)Item::minecraft_spruce_door,
+			(int)Item::minecraft_birch_door,
+			(int)Item::minecraft_jungle_door,
+			(int)Item::minecraft_acacia_door,
+			(int)Item::minecraft_dark_oak_door,
+			(int)Item::minecraft_crimson_door,
+			(int)Item::minecraft_warped_door
+		}),
+		Tag("minecraft:warped_stems",4,new varInt[4]{
 			(int)Item::minecraft_warped_stem,
 			(int)Item::minecraft_stripped_warped_stem,
 			(int)Item::minecraft_warped_hyphae,
 			(int)Item::minecraft_stripped_warped_hyphae
 		}),
-		Tag("minecraft:emerald_ores",0,nullptr),
-		Tag("minecraft:trapdoors",0,nullptr),
-		Tag("minecraft:redstone_ores",0,nullptr),
-		Tag("minecraft:crimson_stems",0,new varInt[]{
+		Tag("minecraft:emerald_ores",0, new varInt[]{
+			(int)Item::minecraft_emerald_ore,
+			(int)Item::minecraft_deepslate_emerald_ore
+		}),
+		Tag("minecraft:trapdoors",0, new varInt[]{
+			(int)Item::minecraft_iron_trapdoor,
+			(int)Item::minecraft_acacia_trapdoor,
+			(int)Item::minecraft_birch_trapdoor,
+			(int)Item::minecraft_dark_oak_trapdoor,
+			(int)Item::minecraft_jungle_trapdoor,
+			(int)Item::minecraft_oak_trapdoor,
+			(int)Item::minecraft_spruce_trapdoor,
+			(int)Item::minecraft_crimson_trapdoor,
+			(int)Item::minecraft_warped_trapdoor
+		}),
+		Tag("minecraft:redstone_ores",0, new varInt[]{
+			(int)Item::minecraft_redstone_ore,
+			(int)Item::minecraft_deepslate_redstone_ore
+		}),
+		Tag("minecraft:crimson_stems",4,new varInt[4]{
 			(int)Item::minecraft_crimson_stem,
 			(int)Item::minecraft_stripped_crimson_stem,
 			(int)Item::minecraft_crimson_hyphae,
 			(int)Item::minecraft_stripped_crimson_hyphae
 		}),
-		Tag("minecraft:ignored_by_piglin_babies",0,nullptr),
-		Tag("minecraft:buttons",0,nullptr),
-		Tag("minecraft:flowers",0,nullptr),
-		Tag("minecraft:stone_tool_materials",0,nullptr),
-		Tag("minecraft:planks",0,nullptr),
-		Tag("minecraft:fox_food",0,nullptr),
-		Tag("minecraft:boats",0,nullptr),
-		Tag("minecraft:dark_oak_logs",0,new varInt[]{
+		Tag("minecraft:ignored_by_piglin_babies",0,new varInt[]{
+			(int)Item::minecraft_leather
+		}),
+		Tag("minecraft:buttons",0,new varInt[]{
+			(int)Item::minecraft_stone_button,
+			(int)Item::minecraft_polished_blackstone_button,
+			(int)Item::minecraft_oak_button,
+			(int)Item::minecraft_spruce_button,
+			(int)Item::minecraft_birch_button,
+			(int)Item::minecraft_jungle_button,
+			(int)Item::minecraft_acacia_button,
+			(int)Item::minecraft_dark_oak_button,
+			(int)Item::minecraft_crimson_button,
+			(int)Item::minecraft_warped_button
+		}),
+		Tag("minecraft:flowers",0,new varInt[]{
+			(int)Item::minecraft_flowering_azalea_leaves,
+			(int)Item::minecraft_flowering_azalea,
+			(int)Item::minecraft_sunflower,
+			(int)Item::minecraft_lilac,
+			(int)Item::minecraft_peony,
+			(int)Item::minecraft_rose_bush,
+			(int)Item::minecraft_dandelion,
+			(int)Item::minecraft_poppy,
+			(int)Item::minecraft_blue_orchid,
+			(int)Item::minecraft_allium,
+			(int)Item::minecraft_azure_bluet,
+			(int)Item::minecraft_red_tulip,
+			(int)Item::minecraft_orange_tulip,
+			(int)Item::minecraft_white_tulip,
+			(int)Item::minecraft_pink_tulip,
+			(int)Item::minecraft_oxeye_daisy,
+			(int)Item::minecraft_cornflower,
+			(int)Item::minecraft_lily_of_the_valley,
+			(int)Item::minecraft_wither_rose
+		}),
+		Tag("minecraft:stone_tool_materials",0,new varInt[]{
+			(int)Item::minecraft_cobblestone,
+			(int)Item::minecraft_blackstone,
+			(int)Item::minecraft_cobbled_deepslate
+		}),
+		Tag("minecraft:planks",0,new varInt[]{
+			(int)Item::minecraft_oak_planks,
+			(int)Item::minecraft_spruce_planks,
+			(int)Item::minecraft_birch_planks,
+			(int)Item::minecraft_jungle_planks,
+			(int)Item::minecraft_acacia_planks,
+			(int)Item::minecraft_dark_oak_planks,
+			(int)Item::minecraft_crimson_planks,
+			(int)Item::minecraft_warped_planks
+		}),
+		Tag("minecraft:fox_food",0,new varInt[]{
+			(int)Item::minecraft_sweet_berries,
+			(int)Item::minecraft_glow_berries
+		}),
+		Tag("minecraft:boats",0,new varInt[]{
+			(int)Item::minecraft_oak_boat,
+			(int)Item::minecraft_spruce_boat,
+			(int)Item::minecraft_birch_boat,
+			(int)Item::minecraft_jungle_boat,
+			(int)Item::minecraft_acacia_boat,
+			(int)Item::minecraft_dark_oak_boat
+		}),
+		Tag("minecraft:dark_oak_logs",4,new varInt[4]{
 			(int)Item::minecraft_dark_oak_log,
 			(int)Item::minecraft_dark_oak_wood,
 			(int)Item::minecraft_stripped_dark_oak_log,
@@ -751,12 +885,87 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_detector_rail,
 			(int)Item::minecraft_activator_rail
 		}),
-		Tag("minecraft:diamond_ores",0,nullptr),
-		Tag("minecraft:non_flammable_wood",0,nullptr),
-		Tag("minecraft:leaves",0,nullptr),
-		Tag("minecraft:walls",0,nullptr),
-		Tag("minecraft:piglin_food",0,nullptr),
-		Tag("minecraft:wooden_pressure_plates",0,nullptr),
+		Tag("minecraft:diamond_ores",0,new varInt[]{
+			(int)Item::minecraft_diamond_ore,
+			(int)Item::minecraft_deepslate_diamond_ore
+		}),
+		Tag("minecraft:non_flammable_wood",0,new varInt[]{
+			(int)Item::minecraft_warped_stem,
+			(int)Item::minecraft_stripped_warped_stem,
+			(int)Item::minecraft_warped_hyphae,
+			(int)Item::minecraft_stripped_warped_hyphae,
+			(int)Item::minecraft_crimson_stem,
+			(int)Item::minecraft_stripped_crimson_stem,
+			(int)Item::minecraft_crimson_hyphae,
+			(int)Item::minecraft_stripped_crimson_hyphae,
+			(int)Item::minecraft_crimson_planks,
+			(int)Item::minecraft_warped_planks,
+			(int)Item::minecraft_crimson_slab,
+			(int)Item::minecraft_warped_slab,
+			(int)Item::minecraft_crimson_pressure_plate,
+			(int)Item::minecraft_warped_pressure_plate,
+			(int)Item::minecraft_crimson_fence,
+			(int)Item::minecraft_warped_fence,
+			(int)Item::minecraft_crimson_trapdoor,
+			(int)Item::minecraft_warped_trapdoor,
+			(int)Item::minecraft_crimson_fence_gate,
+			(int)Item::minecraft_warped_fence_gate,
+			(int)Item::minecraft_crimson_stairs,
+			(int)Item::minecraft_warped_stairs,
+			(int)Item::minecraft_crimson_button,
+			(int)Item::minecraft_warped_button,
+			(int)Item::minecraft_crimson_door,
+			(int)Item::minecraft_warped_door,
+			(int)Item::minecraft_crimson_sign,
+			(int)Item::minecraft_warped_sign
+		}),
+		Tag("minecraft:leaves",0,new varInt[]{
+			(int)Item::minecraft_jungle_leaves,
+			(int)Item::minecraft_oak_leaves,
+			(int)Item::minecraft_spruce_leaves,
+			(int)Item::minecraft_dark_oak_leaves,
+			(int)Item::minecraft_acacia_leaves,
+			(int)Item::minecraft_birch_leaves,
+			(int)Item::minecraft_azalea_leaves,
+			(int)Item::minecraft_flowering_azalea_leaves
+		}),
+		Tag("minecraft:walls",0,new varInt[]{
+			(int)Item::minecraft_cobblestone_wall,
+			(int)Item::minecraft_mossy_cobblestone_wall,
+			(int)Item::minecraft_brick_wall,
+			(int)Item::minecraft_prismarine_wall,
+			(int)Item::minecraft_red_sandstone_wall,
+			(int)Item::minecraft_mossy_stone_brick_wall,
+			(int)Item::minecraft_granite_wall,
+			(int)Item::minecraft_stone_brick_wall,
+			(int)Item::minecraft_nether_brick_wall,
+			(int)Item::minecraft_andesite_wall,
+			(int)Item::minecraft_red_nether_brick_wall,
+			(int)Item::minecraft_sandstone_wall,
+			(int)Item::minecraft_end_stone_brick_wall,
+			(int)Item::minecraft_diorite_wall,
+			(int)Item::minecraft_blackstone_wall,
+			(int)Item::minecraft_polished_blackstone_brick_wall,
+			(int)Item::minecraft_polished_blackstone_wall,
+			(int)Item::minecraft_cobbled_deepslate_wall,
+			(int)Item::minecraft_polished_deepslate_wall,
+			(int)Item::minecraft_deepslate_tile_wall,
+			(int)Item::minecraft_deepslate_brick_wall
+		}),
+		Tag("minecraft:piglin_food",0,new varInt[]{
+			(int)Item::minecraft_porkchop,
+			(int)Item::minecraft_cooked_porkchop
+		}),
+		Tag("minecraft:wooden_pressure_plates",0,new varInt[]{
+			(int)Item::minecraft_oak_pressure_plate,
+			(int)Item::minecraft_spruce_pressure_plate,
+			(int)Item::minecraft_birch_pressure_plate,
+			(int)Item::minecraft_jungle_pressure_plate,
+			(int)Item::minecraft_acacia_pressure_plate,
+			(int)Item::minecraft_dark_oak_pressure_plate,
+			(int)Item::minecraft_crimson_pressure_plate,
+			(int)Item::minecraft_warped_pressure_plate
+		}),
 		Tag("minecraft:acacia_logs",4,new varInt[4]{
 			(int)Item::minecraft_acacia_log,
 			(int)Item::minecraft_acacia_wood,
@@ -768,22 +977,104 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_chipped_anvil,
 			(int)Item::minecraft_damaged_anvil
 		}),
-		Tag("minecraft:piglin_loved",0,nullptr),
-		Tag("minecraft:candles",0,nullptr),
-		Tag("minecraft:music_discs",0,nullptr),
-		Tag("minecraft:birch_logs",0, new varInt[]{
+		Tag("minecraft:piglin_loved",0,new varInt[]{
+			(int)Item::minecraft_gold_block,
+			(int)Item::minecraft_gilded_blackstone,
+			(int)Item::minecraft_light_weighted_pressure_plate,
+			(int)Item::minecraft_gold_ingot,
+			(int)Item::minecraft_bell,
+			(int)Item::minecraft_clock,
+			(int)Item::minecraft_golden_carrot,
+			(int)Item::minecraft_glistering_melon_slice,
+			(int)Item::minecraft_golden_apple,
+			(int)Item::minecraft_enchanted_golden_apple,
+			(int)Item::minecraft_golden_helmet,
+			(int)Item::minecraft_golden_chestplate,
+			(int)Item::minecraft_golden_leggings,
+			(int)Item::minecraft_golden_boots,
+			(int)Item::minecraft_golden_horse_armor,
+			(int)Item::minecraft_golden_sword,
+			(int)Item::minecraft_golden_pickaxe,
+			(int)Item::minecraft_golden_shovel,
+			(int)Item::minecraft_golden_axe,
+			(int)Item::minecraft_golden_hoe,
+			(int)Item::minecraft_raw_gold,
+			(int)Item::minecraft_raw_gold_block,
+			(int)Item::minecraft_gold_ore,
+			(int)Item::minecraft_nether_gold_ore,
+			(int)Item::minecraft_deepslate_gold_ore
+		}),
+		Tag("minecraft:candles",0,new varInt[]{
+			(int)Item::minecraft_candle,
+			(int)Item::minecraft_white_candle,
+			(int)Item::minecraft_orange_candle,
+			(int)Item::minecraft_magenta_candle,
+			(int)Item::minecraft_light_blue_candle,
+			(int)Item::minecraft_yellow_candle,
+			(int)Item::minecraft_lime_candle,
+			(int)Item::minecraft_pink_candle,
+			(int)Item::minecraft_gray_candle,
+			(int)Item::minecraft_light_gray_candle,
+			(int)Item::minecraft_cyan_candle,
+			(int)Item::minecraft_purple_candle,
+			(int)Item::minecraft_blue_candle,
+			(int)Item::minecraft_brown_candle,
+			(int)Item::minecraft_green_candle,
+			(int)Item::minecraft_red_candle,
+			(int)Item::minecraft_black_candle
+		}),
+		Tag("minecraft:music_discs",0,new varInt[]{
+			(int)Item::minecraft_music_disc_pigstep,
+			(int)Item::minecraft_music_disc_13,
+			(int)Item::minecraft_music_disc_cat,
+			(int)Item::minecraft_music_disc_blocks,
+			(int)Item::minecraft_music_disc_chirp,
+			(int)Item::minecraft_music_disc_far,
+			(int)Item::minecraft_music_disc_mall,
+			(int)Item::minecraft_music_disc_mellohi,
+			(int)Item::minecraft_music_disc_stal,
+			(int)Item::minecraft_music_disc_strad,
+			(int)Item::minecraft_music_disc_ward,
+			(int)Item::minecraft_music_disc_11,
+			(int)Item::minecraft_music_disc_wait
+		}),
+		Tag("minecraft:birch_logs",4, new varInt[4]{
 			(int)Item::minecraft_birch_log,
 			(int)Item::minecraft_birch_wood,
 			(int)Item::minecraft_stripped_birch_log,
 			(int)Item::minecraft_stripped_birch_wood,
 			}),
-		Tag("minecraft:tall_flowers",0,nullptr),
-		Tag("minecraft:lapis_ores",0,nullptr),
-		Tag("minecraft:sand",0,nullptr),
-		Tag("minecraft:copper_ores",0,nullptr),
-		Tag("minecraft:gold_ores",0,nullptr),
-		Tag("minecraft:freeze_immune_wearables",0,nullptr),
-		Tag("minecraft:logs_that_burn", 0, new varInt[]{
+		Tag("minecraft:tall_flowers",0,new varInt[]{
+			(int)Item::minecraft_sunflower,
+			(int)Item::minecraft_lilac,
+			(int)Item::minecraft_peony,
+			(int)Item::minecraft_rose_bush
+		}),
+		Tag("minecraft:lapis_ores",0,new varInt[]{
+			(int)Item::minecraft_lapis_ore,
+			(int)Item::minecraft_deepslate_lapis_ore
+		}),
+		Tag("minecraft:sand",0,new varInt[]{
+			(int)Item::minecraft_sand,
+			(int)Item::minecraft_red_sand
+		}),
+		Tag("minecraft:copper_ores",0,new varInt[]{
+			(int)Item::minecraft_copper_ore,
+			(int)Item::minecraft_deepslate_copper_ore
+		}),
+		Tag("minecraft:gold_ores",0,new varInt[]{
+			(int)Item::minecraft_gold_ore,
+			(int)Item::minecraft_nether_gold_ore,
+			(int)Item::minecraft_deepslate_gold_ore
+		}),
+		Tag("minecraft:freeze_immune_wearables",0,new varInt[]{
+			(int)Item::minecraft_leather_boots,
+			(int)Item::minecraft_leather_leggings,
+			(int)Item::minecraft_leather_chestplate,
+			(int)Item::minecraft_leather_helmet,
+			(int)Item::minecraft_leather_horse_armor
+		}),
+		Tag("minecraft:logs_that_burn", 24, new varInt[24]{
 			(int)Item::minecraft_oak_log,
 			(int)Item::minecraft_oak_wood,
 			(int)Item::minecraft_stripped_oak_log,
@@ -809,18 +1100,74 @@ Tags* Tags::defaultTags = new Tags[5]{
 			(int)Item::minecraft_stripped_acacia_log,
 			(int)Item::minecraft_stripped_acacia_wood
 		}),
-		Tag("minecraft:fences",0,nullptr),
-		Tag("minecraft:saplings",0,nullptr),
-		Tag("minecraft:beds",0,nullptr),
-		Tag("minecraft:iron_ores",0,nullptr),
-		Tag("minecraft:oak_logs",0, new varInt[]{
+		Tag("minecraft:fences",0,new varInt[]{
+			(int)Item::minecraft_nether_brick_fence,
+			(int)Item::minecraft_oak_fence,
+			(int)Item::minecraft_acacia_fence,
+			(int)Item::minecraft_dark_oak_fence,
+			(int)Item::minecraft_spruce_fence,
+			(int)Item::minecraft_birch_fence,
+			(int)Item::minecraft_jungle_fence,
+			(int)Item::minecraft_crimson_fence,
+			(int)Item::minecraft_warped_fence
+		}),
+		Tag("minecraft:saplings",0,new varInt[]{
+			(int)Item::minecraft_oak_sapling,
+			(int)Item::minecraft_spruce_sapling,
+			(int)Item::minecraft_birch_sapling,
+			(int)Item::minecraft_jungle_sapling,
+			(int)Item::minecraft_acacia_sapling,
+			(int)Item::minecraft_dark_oak_sapling,
+			(int)Item::minecraft_azalea,
+			(int)Item::minecraft_flowering_azalea
+		}),
+		Tag("minecraft:beds",0,new varInt[]{
+			(int)Item::minecraft_red_bed,
+			(int)Item::minecraft_black_bed,
+			(int)Item::minecraft_blue_bed,
+			(int)Item::minecraft_brown_bed,
+			(int)Item::minecraft_cyan_bed,
+			(int)Item::minecraft_gray_bed,
+			(int)Item::minecraft_green_bed,
+			(int)Item::minecraft_light_blue_bed,
+			(int)Item::minecraft_light_gray_bed,
+			(int)Item::minecraft_lime_bed,
+			(int)Item::minecraft_magenta_bed,
+			(int)Item::minecraft_orange_bed,
+			(int)Item::minecraft_pink_bed,
+			(int)Item::minecraft_purple_bed,
+			(int)Item::minecraft_white_bed,
+			(int)Item::minecraft_yellow_bed
+		}),
+		Tag("minecraft:iron_ores",0,new varInt[]{
+			(int)Item::minecraft_iron_ore,
+			(int)Item::minecraft_deepslate_iron_ore
+		}),
+		Tag("minecraft:oak_logs",4, new varInt[4]{
 			(int)Item::minecraft_oak_log,
 			(int)Item::minecraft_oak_wood,
 			(int)Item::minecraft_stripped_oak_log,
 			(int)Item::minecraft_stripped_oak_wood,
 			}),
-		Tag("minecraft:doors",0,nullptr),
-		Tag("minecraft:cluster_max_harvestables",0,nullptr)
+		Tag("minecraft:doors",0,new varInt[]{
+			(int)Item::minecraft_iron_door,
+			(int)Item::minecraft_oak_door,
+			(int)Item::minecraft_spruce_door,
+			(int)Item::minecraft_birch_door,
+			(int)Item::minecraft_jungle_door,
+			(int)Item::minecraft_acacia_door,
+			(int)Item::minecraft_dark_oak_door,
+			(int)Item::minecraft_crimson_door,
+			(int)Item::minecraft_warped_door
+		}),
+		Tag("minecraft:cluster_max_harvestables",0,new varInt[]{
+			(int)Item::minecraft_diamond_pickaxe,
+			(int)Item::minecraft_golden_pickaxe,
+			(int)Item::minecraft_iron_pickaxe,
+			(int)Item::minecraft_netherite_pickaxe,
+			(int)Item::minecraft_stone_pickaxe,
+			(int)Item::minecraft_wooden_pickaxe
+		})
 	}),
 	Tags(2, "minecraft:fluid", new Tag[2]{
 		Tag("minecraft:water",2,new varInt[2]{
