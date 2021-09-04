@@ -324,7 +324,7 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	worldMain.read((char*)&isFlat, 1);
 
 	if (name == "world") generatorFunction = generate_def;
-	else generatorFunction = generate_flat;
+	else generatorFunction = generate_void;
 
 	cout << "\nLoading spawn area...";
 	for (int x = spawn.ChunkX - 3; x <= spawn.ChunkX + 3; x++) for (int z = spawn.ChunkZ - 3; z <= spawn.ChunkZ + 3; z++) get(x, z);
@@ -830,6 +830,81 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		lightSection.blockLight = new BitArray(4096, 4, (byte*)blockLight);
 		lightSection.skyLight = new BitArray(4096, 4, (byte*)skyLight);
 		delete[] blocks;
+	}
+
+	return chunk;
+}
+Chunk* World::generate_void(World* world, int x, int z)
+{
+	Chunk* chunk = new Chunk;
+
+	//heightmap generation
+	int height = world->characteristics["height"].vInt();
+	chunk->heightmaps = new BitArray(256, bitCount(height));
+
+	int biomeId = 7;
+
+	uint sectionCount = height >> 4;
+	chunk->sections.resize(sectionCount);
+
+	//light data initialization
+	chunk->lightData.resize((ull)sectionCount + 2);
+	chunk->skyLightMask = new BitArray(sectionCount + 2, 1);
+	chunk->blockLightMask = new BitArray(sectionCount + 2, 1);
+	chunk->emptySkyLightMask = new BitArray(sectionCount + 2, 1);
+	chunk->emptyBlockLightMask = new BitArray(sectionCount + 2, 1);
+	//-1 and +1
+	{
+		BitArray* lightData = new BitArray(4096, 4);
+		blong* temp = lightData->getCompactedValues();
+		for (int i = 0; i < 256; i++) temp[i] = 0xffffffffffffffff;
+		//the section below the world
+		chunk->skyLightMask->setElement(0, 1);
+		chunk->emptyBlockLightMask->setElement(0, 1);
+		chunk->lightData[0].skyLight = lightData;;
+		chunk->lightData[0].blockLight = new BitArray(4096, 4);
+	}
+	{
+		//the section above the world
+		BitArray* lightData = new BitArray(4096, 4);
+		blong* temp = lightData->getCompactedValues();
+		for (int i = 0; i < 256; i++) temp[i] = 0xffffffffffffffff;
+		chunk->emptyBlockLightMask->setElement((ull)sectionCount + 1, 1);
+		chunk->skyLightMask->setElement((ull)sectionCount + 1, 1);
+		chunk->lightData[(ull)sectionCount + 1].skyLight = lightData;
+		chunk->lightData[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
+	}
+
+	//primary mask initialization
+	chunk->sectionMask = new BitArray(sectionCount, 1);
+
+	for (uint i = 0; i < sectionCount; i++)
+	{
+		Section& section = chunk->sections[i];
+		LightSection& lightSection = chunk->lightData[(ull)i + 1];
+
+		//biomes
+		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+
+		//[y][z][x]
+		byte skyLight[16][16][16]{};
+
+		//data
+		section.blockCount = 0x0;
+		section.bitsPerBlock = 4;
+		section.useGlobalPallete = false;
+		section.pallete.push_back(0);
+		for (int j = 0; j < 4096; j++)
+		{
+			skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
+		}
+		section.blockStates = new BitArray(4096, 4);
+
+		chunk->skyLightMask->setElement((ull)i + 1, 1);
+		chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
+
+		lightSection.blockLight = new BitArray(4096, 4);
+		lightSection.skyLight = new BitArray(4096, 4, (byte*)skyLight);
 	}
 
 	return chunk;

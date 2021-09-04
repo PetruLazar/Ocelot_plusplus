@@ -11,6 +11,7 @@ class World
 
 	static Chunk* generate_def(World*, int x, int z);
 	static Chunk* generate_flat(World*, int x, int z);
+	static Chunk* generate_void(World*, int x, int z);
 
 public:
 	World(const char* name);

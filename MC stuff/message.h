@@ -5,13 +5,17 @@
 #include "types.h"
 
 //for Player::disconnect(), use broadcastMessageSafe
+//broadcasting destionation is "player_macro"
 #define broadcastMessage(msg_f_call) for (Player* player_macro : Player::players) ignoreExceptions(msg_f_call);
 //for Player::disconnect(), use broadcastMessageSafe
+//broadcasting destionation is "player_macro"
 #define broadcastMessageOmit(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr) ignoreExceptions(msg_f_call);
 
 //for outside the Player class, use broadcastMessage
+//broadcasting destionation is "player_macro"
 #define broadcastMessageSafe(msg_f_call) for (Player* player_macro : Player::players) if (player_macro->connected) ignoreExceptions(msg_f_call);
 //for outside the Player class, use broadcastMessage
+//broadcasting destionation is "player_macro"
 #define broadcastMessageOmitSafe(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr && player_macro->connected) ignoreExceptions(msg_f_call);
 
 //A log of the vanilla client playing on a vanilla server:
