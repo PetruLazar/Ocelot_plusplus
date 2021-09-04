@@ -324,7 +324,7 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	worldMain.read((char*)&isFlat, 1);
 
 	if (name == "world") generatorFunction = generate_def;
-	else generatorFunction = generate_void;
+	else generatorFunction = generate_flat;
 
 	cout << "\nLoading spawn area...";
 	for (int x = spawn.ChunkX - 3; x <= spawn.ChunkX + 3; x++) for (int z = spawn.ChunkZ - 3; z <= spawn.ChunkZ + 3; z++) get(x, z);

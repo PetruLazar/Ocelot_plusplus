@@ -130,7 +130,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	//playerInfo data
 	p->ping = -1;
 	p->hasDisplayName = true;
-	p->displayName = new Chat(("[Tester]" + username).c_str());
+	p->displayName = new Chat(("[Tester] " + username).c_str());
 
 	login::send::success(p, *p->uuid, username);
 
@@ -144,8 +144,10 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::declareRecipes(p, 0);
 
-	Player** playerInfoList = Player::players.data();
-	play::send::playerInfo(p, playerInfo::addPlayer, (int)Player::players.size(), playerInfoList);
+	std::vector<Player*> inGamePlayers;
+	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.push_back(player);
+	Player** playerInfoList = inGamePlayers.data();
+	play::send::playerInfo(p, playerInfo::addPlayer, inGamePlayers.size(), playerInfoList);
 
 	play::send::tags(p);
 

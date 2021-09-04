@@ -207,10 +207,7 @@ void Player::send(char* buffer, ull size)
 	}
 }
 
-bool Player::operator==(sf::TcpSocket* s)
-{
-	return socket == s;
-}
+bool Player::Connected() { return connected; }
 
 void Player::clearDisconnectedPlayers()
 {

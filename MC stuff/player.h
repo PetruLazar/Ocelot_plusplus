@@ -82,7 +82,7 @@ public:
 	//send data to player
 	void send(char* data, ull data_length);
 
-	bool operator==(sf::TcpSocket*);
+	bool Connected();
 
 	static std::vector<Player*> players;
 
