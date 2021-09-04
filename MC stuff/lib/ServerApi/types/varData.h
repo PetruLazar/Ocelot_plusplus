@@ -17,7 +17,8 @@ public:
 	void SERVER_API operator=(int);
 
 	//check if there is a valid varInt in memory with the maximum size of 'max' bytes
-	static bool SERVER_API valid(char*, size_t max);
+	SERVER_API static bool valid(char*, size_t max);
+	SERVER_API static ull size(int);
 };
 
 class varLong
@@ -34,5 +35,6 @@ public:
 	void SERVER_API operator=(int64);
 
 	//check if there is a valid varLong in memory with the maximum size of 'max' bytes
-	static bool SERVER_API valid(char*, size_t max);
+	SERVER_API static bool valid(char*, size_t max);
+	SERVER_API static ull size(int64);
 };

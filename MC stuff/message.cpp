@@ -9,6 +9,9 @@
 #include "types/enums.h"
 
 #define disconnectAfter(p,f) try { f; } catch (...) { p->disconnect(); throw; } p->disconnect()
+#define prepareSendMacro(x) char* data = new char[x] + 3, *start = data
+#define prepareSendMacroNoDecl(x) data = new char[x] + 3; start = data
+#define finishSendMacro sendPacketData(p, start, data - start)
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
@@ -23,22 +26,22 @@ void message::handshake::receive::legacy(Player* p, byte payload)
 void message::status::send::respose(Player* p, const mcString& jsonResponse)
 {
 	varInt id_ = (int)id::response;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id_.write(data);
 	jsonResponse.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::status::send::pong(Player* p, blong payload)
 {
 	varInt id = (int)id::pong;
-	char* data = new char[9], * start = data;
+	prepareSendMacro(25);
 
 	id.write(data);
 	payload.write(data);
 
-	disconnectAfter(p, sendPacketData(p, start, data - start));
+	disconnectAfter(p, finishSendMacro);
 }
 
 /*
@@ -68,12 +71,12 @@ void message::status::receive::ping(Player* p, blong payload)
 void message::login::send::disconnect(Player* p, const mcString& reason)
 {
 	varInt id = (int)id::disconnect;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	reason.write(data);
 
-	disconnectAfter(p, sendPacketData(p, start, data - start));
+	disconnectAfter(p, finishSendMacro);
 }
 void message::login::send::encryptionRequest(Player*, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -89,13 +92,13 @@ void message::login::send::success(Player* p, const mcUUID& uuid, const mcString
 	p->state = ConnectionState::play;
 
 	varInt id = (int)id::success;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	uuid.write(data);
 	username.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 
 void message::login::receive::start(Player* p, const mcString& username)
@@ -129,25 +132,25 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->pitch = p->world->spawn.Pitch;
 	//playerInfo data
 	p->ping = -1;
-	p->hasDisplayName = true;
-	p->displayName = new Chat(("[Tester] " + username).c_str());
+	p->hasDisplayName = false;
+	//p->displayName = new Chat(("[Tester] " + username).c_str());
 
 	login::send::success(p, *p->uuid, username);
 
-	play::send::joinGame(p, (int)p->eid, true, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, p->world->characteristics, p->world->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, true, false, p->world->isFlat);
+	play::send::joinGame(p, (int)p->eid, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, p->world->characteristics, p->world->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, p->world->isFlat);
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
 	play::send::serverDifficulty(p, 2, false);
 
-	play::send::playerAbilities(p, false, true, true, false, 0.05f, 0.1f);
+	play::send::playerAbilities(p, true, true, true, p->gm == gamemode::creative, 0.05f, 0.1f);
 
 	play::send::declareRecipes(p, 0);
 
 	std::vector<Player*> inGamePlayers;
 	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.push_back(player);
 	Player** playerInfoList = inGamePlayers.data();
-	play::send::playerInfo(p, playerInfo::addPlayer, inGamePlayers.size(), playerInfoList);
+	play::send::playerInfo(p, playerInfo::addPlayer, (int)inGamePlayers.size(), playerInfoList);
 
 	play::send::tags(p);
 
@@ -179,18 +182,18 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 void message::play::send::keepAlive(Player* p, blong keepAlive_id)
 {
 	varInt id = (int)id::keepAlive_clientbound;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	keepAlive_id.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec,
 	const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat)
 {
 	varInt id = (int)id::joinGame;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	eid.write(data);
@@ -210,12 +213,12 @@ void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemod
 	*(data++) = isDebug;
 	*(data++) = isFlat;
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::playerInfo(Player* p, varInt action, varInt playerCount, Player** players)
 {
 	varInt id = (int)id::playerInfo;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	action.write(data);
@@ -269,12 +272,12 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		break;
 	}
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 /*void message::play::send::chunkData(Player* p, bint cX, bint cZ)
 {
 	varInt id = (int)id::chunkData;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024*1024);
 
 	id.write(data);
 	cX.write(data);
@@ -331,13 +334,13 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 	chunk->nOfBlockEntities.write(data);
 	//blockEntities
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }*/
 void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes,
 	varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities)
 {
 	varInt id = (int)id::chunkData;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	cX.write(data);
@@ -352,12 +355,12 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 	nOfBlockEntities.write(data);
 	for (int i = 0; i < nOfBlockEntities; i++) blockEntities[i].write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	x.write(data);
@@ -369,94 +372,94 @@ void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEn
 	teleportId.write(data);
 	*(data++) = dismountVehicle;
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::playerAbilities(Player* p, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier)
 {
 	varInt id = (int)id::playerAbilities_clientbound;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	*(data++) = char(byte(invulnerable) | (byte(flying) << 1) | (byte(allowFlying) << 2) | (byte(creative) << 3));
 	flyingSpeed.write(data);
 	fovModifier.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 {
 	varInt id = (int)id::timeUpdate;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	worldAge.write(data);
 	timeOfDay.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::pluginMessage(Player* p, const mcString& channel, ull byteCount, const char* bytes)
 {
 	varInt id = (int)id::pluginMessage_clientbound;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	channel.write(data);
 	for (ull i = 0; i < byteCount; i++) *(data++) = bytes[i];
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::heldItemChange(Player* p, byte slot)
 {
 	varInt id = (int)id::heldItemChange_clientbound;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	*(data++) = slot;
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::serverDifficulty(Player* p, byte difficulty, bool isLocked)
 {
 	varInt id = (int)id::serverDifficulty;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	*(data++) = difficulty;
 	*(data++) = isLocked;
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::spawnPosition(Player* p, Position location, bfloat angle)
 {
 	varInt id = (int)id::spawnPosition;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	location.write(data);
 	angle.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
 {
 	varInt id = (int)id::declareRecipes;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	nOfRecipes.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt chunkZ)
 {
 	varInt id = (int)id::updateViewPosition;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	chunkX.write(data);
 	chunkZ.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 /*void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 {
@@ -464,7 +467,7 @@ void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt ch
 	int sectionCount = (int)chunk->lightData.size();
 
 	varInt id = (int)id::updateLight;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024*1024);
 
 	id.write(data);
 	cX.write(data);
@@ -507,7 +510,7 @@ void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt ch
 		chunk->lightData[i].blockLight->write(data);
 	}
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }*/
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges,
 	varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask,
@@ -515,7 +518,7 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 	varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays)
 {
 	varInt id = (int)id::updateLight;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	cX.write(data);
@@ -549,45 +552,45 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 		}
 	}
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::disconnect(Player* p, const Chat& reason)
 {
 	varInt id = (int)id::disconnect;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	reason.write(data);
 
-	disconnectAfter(p, sendPacketData(p, start, data - start));
+	disconnectAfter(p, finishSendMacro);
 }
 void message::play::send::chatMessage(Player* p, const Chat& msg, byte position, const mcUUID& sender)
 {
 	varInt id = (int)id::chatMessage_clientbound;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	msg.write(data);
 	*(data++) = position;
 	sender.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::changeGameState(Player* p, byte reason, bfloat value)
 {
 	varInt id = (int)id::changeGameState;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	*(data++) = reason;
 	value.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::unloadChunk(Player* p, bint x, bint z)
 {
 	varInt id = (int)id::unloadChunk;
-	char* data = new char[1024], * start = data;
+	prepareSendMacro(1024);
 
 	id.write(data);
 	x.write(data);
@@ -595,7 +598,7 @@ void message::play::send::unloadChunk(Player* p, bint x, bint z)
 
 	p->world->unload(x, z);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::tags(Player* p)
 {
@@ -604,7 +607,7 @@ void message::play::send::tags(Player* p)
 void message::play::send::tags(Player* p, varInt tagCategoryCount, Tags* tags)
 {
 	varInt id = (int)id::tags;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	tagCategoryCount.write(data);
@@ -622,7 +625,7 @@ void message::play::send::tags(Player* p, varInt tagCategoryCount, Tags* tags)
 		}
 	}
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::declareCommands(Player* p)
 {
@@ -631,7 +634,7 @@ void message::play::send::declareCommands(Player* p)
 void message::play::send::declareCommands(Player* p, varInt count, Node* nodes, varInt root)
 {
 	varInt id = (int)id::declareCommands;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	count.write(data);
@@ -699,12 +702,12 @@ void message::play::send::declareCommands(Player* p, varInt count, Node* nodes, 
 	}
 	root.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::respawn(Player* p, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata)
 {
 	varInt id = (int)id::respawn;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	dimension.write(data);
@@ -716,12 +719,12 @@ void message::play::send::respawn(Player* p, const nbt_compound& dimension, cons
 	*(data++) = isFlat;
 	*(data++) = copyMetadata;
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch)
 {
 	varInt id = (int)id::spawnPlayer;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	eid.write(data);
@@ -732,12 +735,12 @@ void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid,
 	*(data++) = (byte&)yaw;
 	*(data++) = (byte&)pitch;
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProperties, EntityProperty* properties)
 {
 	varInt id = (int)id::entityProperties;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	eid.write(data);
@@ -750,19 +753,19 @@ void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProp
 		varInt(0).write(data);
 	}
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 void message::play::send::updateHp(Player* p, bfloat hp, varInt food, bfloat saturation)
 {
 	varInt id = (int)id::updateHp;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	hp.write(data);
 	food.write(data);
 	saturation.write(data);
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 
 void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
@@ -773,7 +776,7 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 	int sectionCount = (int)chunk->lightData.size();
 
 	varInt id = (int)id::updateLight;
-	char* data = new char[1024 * 1024], * start = data;
+	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	varInt(cX).write(data);
@@ -826,11 +829,11 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 		}
 	}
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 
 	//chunk data
 	id = (int)id::chunkData;
-	data = new char[1024 * 1024]; start = data;
+	prepareSendMacroNoDecl(1024 * 1024);
 
 	id.write(data);
 	bint(cX).write(data);
@@ -887,7 +890,7 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 	chunk->nOfBlockEntities.write(data);
 	//blockEntities
 
-	sendPacketData(p, start, data - start);
+	finishSendMacro;
 }
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
@@ -1116,26 +1119,28 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 
 void message::sendPacketData(Player* p, char* data, ull size)
 {
-	varInt len = (int)(uint)size;
-	char* lendata = new char[3], * buffer = lendata;
-	len.write(buffer);
+	//append size of packet before the data
+	uint iSize = (int)(uint)size;
+	int sizeSize = varInt::size(iSize);
+	char* toDelete = data - 3;
+	data -= sizeSize;
+	char* buffer = data;
+	size += sizeSize;
+	varInt(iSize).write(buffer);
 
 	//suport for compression
 
 	try
 	{
-		p->send(lendata, buffer - lendata);
 		p->send(data, size);
 	}
 	catch (...)
 	{
-		delete[] lendata;
-		delete[] data;
+		delete[] toDelete;
 		throw;
 	}
 
-	delete[] lendata;
-	delete[] data;
+	delete[] toDelete;
 }
 void message::dispatch(Player* p, char* data, size_t size)
 {

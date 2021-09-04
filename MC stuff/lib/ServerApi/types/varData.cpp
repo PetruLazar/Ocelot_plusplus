@@ -128,9 +128,23 @@ bool varInt::valid(char* buffer, size_t max)
 	while (*(buffer++) & 0x80) if (++size > max) return false;
 	return true;
 }
+ull varInt::size(int value)
+{
+	ull ret = 0;
+	uint v = (uint)value;
+	do ret++; while (v >>= 7);
+	return ret;
+}
 bool varLong::valid(char* buffer, size_t max)
 {
 	ull size = 1;
 	while (*(buffer++) & 0x80) if (++size > max) return false;
 	return true;
+}
+ull varLong::size(int64 value)
+{
+	ull ret = 0;
+	ull v = (ull)value;
+	do ret++; while (v >>= 7);
+	return ret;
 }

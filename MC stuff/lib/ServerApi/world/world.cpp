@@ -323,6 +323,8 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 
 	worldMain.read((char*)&isFlat, 1);
 
+	//load custom generator
+
 	if (name == "world") generatorFunction = generate_def;
 	else generatorFunction = generate_flat;
 
