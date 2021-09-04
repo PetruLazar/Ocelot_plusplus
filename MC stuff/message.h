@@ -676,5 +676,6 @@ struct message
 
 	//dispatch a message from a player
 	static void sendPacketData(Player*, char*, ull);
-	static void dispatch(Player*, char*, size_t);
+	static void dispatch(Player*, char* data, uint compressedSize, uint decompressedSize);
+	static void dispatch(Player*, char* data, uint size);
 };

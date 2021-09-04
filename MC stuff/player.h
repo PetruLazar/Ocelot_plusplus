@@ -20,7 +20,8 @@ public:
 	enum mask : byte
 	{
 		bufferingLength = 0x01,
-		bufferingMessage = 0x02
+		bufferingMessage = 0x02,
+		bufferingCompressedLength = 0x04
 	};
 
 private:
@@ -65,6 +66,11 @@ public:
 	varInt ping;
 	bool hasDisplayName;
 	Chat* displayName = nullptr;
+
+	//set compression
+	uint compressionThreshold = (uint)(-1);
+	bool compressionEnabled = false;
+	varInt compressedLength;
 
 	gamemode gm;
 

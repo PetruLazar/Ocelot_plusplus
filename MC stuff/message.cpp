@@ -9,8 +9,8 @@
 #include "types/enums.h"
 
 #define disconnectAfter(p,f) try { f; } catch (...) { p->disconnect(); throw; } p->disconnect()
-#define prepareSendMacro(x) char* data = new char[x] + 3, *start = data
-#define prepareSendMacroNoDecl(x) data = new char[x] + 3; start = data
+#define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
+#define prepareSendMacroNoDecl(x) data = new char[x] + 6; start = data
 #define finishSendMacro sendPacketData(p, start, data - start)
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
@@ -36,7 +36,7 @@ void message::status::send::respose(Player* p, const mcString& jsonResponse)
 void message::status::send::pong(Player* p, blong payload)
 {
 	varInt id = (int)id::pong;
-	prepareSendMacro(25);
+	prepareSendMacro(64);
 
 	id.write(data);
 	payload.write(data);
@@ -1119,16 +1119,31 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 
 void message::sendPacketData(Player* p, char* data, ull size)
 {
+	//compress data if it's the case
+	if (p->compressionEnabled)
+	{
+		//test thershold
+		if (size < p->compressionThreshold)
+		{
+			//do not compress
+		}
+		else
+		{
+			//compress
+		}
+	}
+
 	//append size of packet before the data
-	uint iSize = (int)(uint)size;
-	int sizeSize = varInt::size(iSize);
+	int iSize = (int)(uint)size;
+	int sizeSize = (int)(uint)varInt::size(iSize);
 	char* toDelete = data - 3;
 	data -= sizeSize;
 	char* buffer = data;
 	size += sizeSize;
 	varInt(iSize).write(buffer);
 
-	//suport for compression
+	//append compressed size when compressed
+
 
 	try
 	{
@@ -1142,7 +1157,30 @@ void message::sendPacketData(Player* p, char* data, ull size)
 
 	delete[] toDelete;
 }
-void message::dispatch(Player* p, char* data, size_t size)
+void message::dispatch(Player* p, char* data, uint compressedSize, uint decompressedSize)
+{
+	if (decompressedSize)
+	{
+		//decompress
+		char* compressedData = data;
+		zlibDecompress(compressedData, compressedSize - varInt::size(decompressedSize), data, decompressedSize);
+		try
+		{
+			dispatch(p, data, decompressedSize);
+		}
+		catch (...)
+		{
+			delete[] data;
+			throw;
+		}
+		delete[] data;
+	}
+	else
+	{
+		dispatch(p, data, compressedSize - 1);
+	}
+}
+void message::dispatch(Player* p, char* data, uint size)
 {
 	varInt id;
 	id.read(data);

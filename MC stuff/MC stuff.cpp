@@ -90,7 +90,7 @@ int main()
 	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
 	{
 		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
-		delete Player::players[i];
+		Player::players[i]->disconnect();
 	}
 	catch (runtimeError obj)
 	{
@@ -116,6 +116,8 @@ int main()
 	{
 		cout << "\nUnknown error.";
 	}
+
+	for (int64 i = 0; i < (int64)Player::players.size(); i++) delete Player::players[i];
 
 	//fill an existing chunk with stone
 	/*try

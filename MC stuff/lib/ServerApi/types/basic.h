@@ -2,6 +2,7 @@
 
 #include "../types/typedefs.h"
 #include "apidef.h"
+#include "../../zlib/include/zlib.h"
 #include <ctime>
 /*#include <Windows.h>
 
@@ -50,18 +51,16 @@ struct vector3
 	int x, y, z;
 };*/
 
-/*
 //compress/defalte data using zlib
 //return true for success, false otherwise
-bool zlibCompress(char* src, uint size, char* dest, uint maxSize, uint & trueSize, int level = 6, int flush = Z_FINISH);
+SERVER_API bool zlibCompress(char* decompressedData, uint decompressedSize, char*& compressedData, uint &compressedSize, int level = 6, int flush = Z_FINISH);
 //decompress/inflate data using zlib
 //return true for success, false otherwise
-bool zlibDecompress(char* src, uint size, char* dest, uint maxSize, uint& trueSize, int flush = Z_FINISH);
+SERVER_API bool zlibDecompress(char* compressedData, uint compressedSize, char*& decompressedData, uint decompressedSize, int flush = Z_FINISH);
 
 //compress/deflate data using gzip
 //return true for success, false otherwise
-bool gzipCompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int level = 6, int flush = Z_FINISH);
+SERVER_API bool gzipCompress(char* decompressedData, uint decompressedSize, char*& compressedData, uint &compressedSize, int level = 6, int flush = Z_FINISH);
 //decompress/inflate data using gzip
 //return true for success, false otherwise
-bool gzipDecompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int flush = Z_FINISH);
-*/
+SERVER_API bool gzipDecompress(char* compressedData, uint compressedSize, char*& decompressedData, uint decompressedSize, int flush = Z_FINISH);

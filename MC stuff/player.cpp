@@ -101,6 +101,11 @@ void Player::updateNet()
 			{
 				char* b = lengthBuffer;
 				len.read(b);
+				if (!len)
+				{
+					if (compressionEnabled) len = compressedLength;
+					else throw protocolError(invalidPacketLengthError);
+				}
 				buffer = new char[len];
 				current = buffer;
 				info = mask(info & ~bufferingLength | bufferingMessage);
@@ -131,7 +136,8 @@ void Player::updateNet()
 
 				try
 				{
-					message::dispatch(this, buffer, len);
+					if (compressionEnabled) message::dispatch(this, buffer, len, compressedLength);
+					else message::dispatch(this, buffer, len);
 				}
 				catch (...)
 				{
@@ -156,6 +162,60 @@ void Player::updateNet()
 			throw protocolError(socketDisconnected);
 		}
 	}
+	else if (info & bufferingCompressedLength)
+	{
+		ull oldReceived = current - lengthBuffer;
+		switch (socket->receive(current, 1, received))
+		{
+		case sockStat::Done:
+			if (compressedLength.valid(lengthBuffer, received + oldReceived))
+			{
+				char* b = lengthBuffer;
+				compressedLength.read(b);
+				current = lengthBuffer;
+				info = mask(info & ~bufferingCompressedLength | bufferingLength);
+			}
+			else
+			{
+				if (received + oldReceived == 3) throw invalidPacketLengthError;
+				current += received;
+			}
+			break;
+		case sockStat::Error:
+			disconnect();
+			throw protocolError(socketError);
+		case sockStat::Disconnected:
+			disconnect();
+			throw protocolError(socketDisconnected);
+		}
+	}
+	else if (compressionEnabled)
+	{
+		switch (socket->receive(lengthBuffer, 1, received))
+		{
+		case sockStat::Done:
+			if (compressedLength.valid(lengthBuffer, received))
+			{
+				char* b = lengthBuffer;
+				compressedLength.read(b);
+				current = lengthBuffer;
+				info = mask(info | bufferingLength);
+			}
+			else
+			{
+				if (received == 3) throw invalidPacketLengthError;
+				info = mask(info | bufferingCompressedLength);
+				current = lengthBuffer + received;
+			}
+			break;
+		case sockStat::Error:
+			disconnect();
+			throw protocolError(socketError);
+		case sockStat::Disconnected:
+			disconnect();
+			throw protocolError(socketDisconnected);
+		}
+	}
 	else
 	{
 		switch (socket->receive(lengthBuffer, 1, received))
@@ -165,6 +225,11 @@ void Player::updateNet()
 			{
 				char* b = lengthBuffer;
 				len.read(b);
+				if (!len)
+				{
+					if (compressionEnabled) len = compressedLength;
+					else throw protocolError(invalidPacketLengthError);
+				}
 				buffer = new char[len];
 				current = buffer;
 				info = mask(info | bufferingMessage);

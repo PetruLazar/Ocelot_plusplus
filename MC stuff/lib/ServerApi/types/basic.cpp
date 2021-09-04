@@ -2,8 +2,7 @@
 
 clock_t cycleTime;
 
-/*#define Z_DEFAULT_MEMLEVEL 8
-#define Z_GZIP_HEADER 16
+const int Z_DEFAULT_MEMLEVEL = 8, Z_GZIP_HEADER = 16;
 
 void initStream(z_streamp str, char* src, uint srcSize, char* dest, uint destSize)
 {
@@ -17,56 +16,58 @@ void initStream(z_streamp str, char* src, uint srcSize, char* dest, uint destSiz
 	str->avail_out = destSize;
 }
 
-bool zlibCompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int level, int flush)
+bool zlibCompress(char* decompressedData, uint decompressedSize, char*& compressedData, uint& compressedSize, int level, int flush)
 {
+	compressedData = new char[decompressedSize];
 	z_streamp str = new z_stream;
-	initStream(str, src, srcSize, dest, destSize);
+	initStream(str, decompressedData, decompressedSize, compressedData, compressedSize);
 
 	deflateInit(str, level);
 	int status = deflate(str, flush);
 	deflateEnd(str);
 
-	trueSize = uint((char*)str->next_out - dest);
+	compressedSize = str->total_out;
 	delete str;
 	return status == Z_STREAM_END;
 }
-bool zlibDecompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int flush)
+bool zlibDecompress(char* compressedData, uint compressedSize, char*& decompressedData, uint decompressedSize, int flush)
 {
+	decompressedData = new char[decompressedSize];
 	z_streamp str = new z_stream;
-	initStream(str, src, srcSize, dest, destSize);
+	initStream(str, compressedData, compressedSize, decompressedData, decompressedSize);
 
 	inflateInit(str);
 	int status = inflate(str, flush);
 	inflateEnd(str);
 
-	trueSize = uint((char*)str->next_out - dest);
 	delete str;
 	return status == Z_STREAM_END;
 }
 
-bool gzipCompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int level, int flush)
+bool gzipCompress(char* decompressedData, uint decompressedSize, char*& compressedData, uint& compressedSize, int level, int flush)
 {
+	compressedData = new char[decompressedSize];
 	z_streamp str = new z_stream;
-	initStream(str, src, srcSize, dest, destSize);
+	initStream(str, decompressedData, decompressedSize, compressedData, compressedSize);
 
 	deflateInit2(str, level, Z_DEFLATED, 15 | Z_GZIP_HEADER, Z_DEFAULT_MEMLEVEL, Z_DEFAULT_STRATEGY);
 	int	status = deflate(str, flush);
 	deflateEnd(str);
 
-	trueSize = str->total_out;
+	compressedSize = str->total_out;
 	delete str;
 	return status == Z_STREAM_END;
 }
-bool gzipDecompress(char* src, uint srcSize, char* dest, uint destSize, uint& trueSize, int flush)
+bool gzipDecompress(char* compressedData, uint compressedSize, char*& decompressedData, uint decompressedSize, int flush)
 {
+	decompressedData = new char[decompressedSize];
 	z_streamp str = new z_stream;
-	initStream(str, src, srcSize, dest, destSize);
+	initStream(str, compressedData, compressedSize, decompressedData, decompressedSize);
 
-	int status0 = inflateInit2(str, MAX_WBITS | Z_GZIP_HEADER);
-	int status = inflate(str, Z_NO_FLUSH);
-	int status2 = inflateEnd(str);
+	inflateInit2(str, MAX_WBITS | Z_GZIP_HEADER);
+	int status = inflate(str, flush);
+	inflateEnd(str);
 
-	trueSize = str->total_out;
 	delete str;
 	return status == Z_STREAM_END;
-}*/
+}
