@@ -7,6 +7,7 @@
 #include "types/node.h"
 #include "command.h"
 #include "types/enums.h"
+#include <types/basic.h>
 
 #define disconnectAfter(p,f) try { f; } catch (...) { p->disconnect(); throw; } p->disconnect()
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
@@ -78,14 +79,22 @@ void message::login::send::disconnect(Player* p, const mcString& reason)
 
 	disconnectAfter(p, finishSendMacro);
 }
-void message::login::send::encryptionRequest(Player*, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken)
+void message::login::send::encryptionRequest(Player* p, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken)
 {
 	throw "Encryption not supported";
 }
-void message::login::send::setCompression(Player*, varInt threshold)
+void message::login::send::setCompression(Player* p, varInt threshold)
 {
-	//support for compression
-	throw protocolError("compression not supported");
+	varInt id = (int)id::setCompression;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	threshold.write(data);
+
+	finishSendMacro;
+
+	p->compressionEnabled = true;
+	p->compressionThreshold = threshold;
 }
 void message::login::send::success(Player* p, const mcUUID& uuid, const mcString& username)
 {
@@ -134,6 +143,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->ping = -1;
 	p->hasDisplayName = false;
 	//p->displayName = new Chat(("[Tester] " + username).c_str());
+
+	login::send::setCompression(p, 128);
 
 	login::send::success(p, *p->uuid, username);
 
@@ -1119,6 +1130,8 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 
 void message::sendPacketData(Player* p, char* data, ull size)
 {
+	char* toDelete = data - 6;
+
 	//compress data if it's the case
 	if (p->compressionEnabled)
 	{
@@ -1126,24 +1139,46 @@ void message::sendPacketData(Player* p, char* data, ull size)
 		if (size < p->compressionThreshold)
 		{
 			//do not compress
+			//append 0
+			(data--)[-1] = 0;
+			size++;
+
+			//append size before data outside the if
 		}
 		else
 		{
+			//prepare for compression
+			char* toDeleteUnc = toDelete;
+			toDelete = new char[size + 6];
+			char* uncompressedData = data;
+			data = toDelete + 6;
+
 			//compress
+			uint uncompressedSize = size;
+			if (!zlibCompressNoAlloc(uncompressedData, uncompressedSize, data, (uint&)size)) throw runtimeError("Zlib compression failed");
+			delete[] toDeleteUnc;
+
+			//append uncompressedSize
+			int append = (int)(uint)uncompressedSize;
+			int appendSize = (int)(uint)varInt::size(append);
+			data -= appendSize;
+			char* buffer = data;
+			size += appendSize;
+			varInt(append).write(buffer);
+
+			//append compressed size before data outside the if
 		}
 	}
 
-	//append size of packet before the data
-	int iSize = (int)(uint)size;
-	int sizeSize = (int)(uint)varInt::size(iSize);
-	char* toDelete = data - 3;
-	data -= sizeSize;
+	//append size before data
+	int append = (int)(uint)size;
+	int appendSize = (int)(uint)varInt::size(append);
+	data -= appendSize;
 	char* buffer = data;
-	size += sizeSize;
-	varInt(iSize).write(buffer);
+	size += appendSize;
+	varInt(append).write(buffer);
 
 	//append compressed size when compressed
-
 
 	try
 	{
@@ -1163,7 +1198,8 @@ void message::dispatch(Player* p, char* data, uint compressedSize, uint decompre
 	{
 		//decompress
 		char* compressedData = data;
-		zlibDecompress(compressedData, compressedSize - varInt::size(decompressedSize), data, decompressedSize);
+		if (!zlibDecompress(compressedData, compressedSize, data, decompressedSize)) throw runtimeError("Zlib decompression failed");
+		//if (!zlibDecompress(compressedData, compressedSize - varInt::size(decompressedSize), data, decompressedSize)) throw runtimeError("Zlib decompression failed");
 		try
 		{
 			dispatch(p, data, decompressedSize);
@@ -1177,7 +1213,8 @@ void message::dispatch(Player* p, char* data, uint compressedSize, uint decompre
 	}
 	else
 	{
-		dispatch(p, data, compressedSize - 1);
+		dispatch(p, data, compressedSize);
+		//dispatch(p, data, compressedSize - 1);
 	}
 }
 void message::dispatch(Player* p, char* data, uint size)

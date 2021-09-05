@@ -54,9 +54,11 @@ struct vector3
 //compress/defalte data using zlib
 //return true for success, false otherwise
 SERVER_API bool zlibCompress(char* decompressedData, uint decompressedSize, char*& compressedData, uint &compressedSize, int level = 6, int flush = Z_FINISH);
+SERVER_API bool zlibCompressNoAlloc(char* decompressedData, uint decompressedSize, char* compressedData, uint& compressedSize, int level = 6, int flush = Z_FINISH);
 //decompress/inflate data using zlib
 //return true for success, false otherwise
 SERVER_API bool zlibDecompress(char* compressedData, uint compressedSize, char*& decompressedData, uint decompressedSize, int flush = Z_FINISH);
+SERVER_API bool zlibDecompressNoAlloc(char* compressedData, uint compressedSize, char* decompressedData, uint decompressedSize, int flush = Z_FINISH);
 
 //compress/deflate data using gzip
 //return true for success, false otherwise

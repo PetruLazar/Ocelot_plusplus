@@ -30,9 +30,34 @@ bool zlibCompress(char* decompressedData, uint decompressedSize, char*& compress
 	delete str;
 	return status == Z_STREAM_END;
 }
+bool zlibCompressNoAlloc(char* decompressedData, uint decompressedSize, char* compressedData, uint& compressedSize, int level, int flush)
+{
+	z_streamp str = new z_stream;
+	initStream(str, decompressedData, decompressedSize, compressedData, compressedSize);
+
+	deflateInit(str, level);
+	int status = deflate(str, flush);
+	deflateEnd(str);
+
+	compressedSize = str->total_out;
+	delete str;
+	return status == Z_STREAM_END;
+}
 bool zlibDecompress(char* compressedData, uint compressedSize, char*& decompressedData, uint decompressedSize, int flush)
 {
 	decompressedData = new char[decompressedSize];
+	z_streamp str = new z_stream;
+	initStream(str, compressedData, compressedSize, decompressedData, decompressedSize);
+
+	inflateInit(str);
+	int status = inflate(str, flush);
+	inflateEnd(str);
+
+	delete str;
+	return status == Z_STREAM_END;
+}
+bool zlibDecompressNoAlloc(char* compressedData, uint compressedSize, char* decompressedData, uint decompressedSize, int flush)
+{
 	z_streamp str = new z_stream;
 	initStream(str, compressedData, compressedSize, decompressedData, decompressedSize);
 
