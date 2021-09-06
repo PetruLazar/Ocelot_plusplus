@@ -4,6 +4,7 @@
 #include "../types/enums.h"
 #include "SFML/Network/TcpSocket.hpp"
 #include "../types/chat.h"
+#include "../types/queue.h"
 
 enum class ConnectionState : byte
 {
@@ -39,6 +40,8 @@ private:
 		* buffer = 0,
 		//current position of any of the receiving buffers
 		* current;
+
+	MessageBuffer sendBuffer;
 
 public:
 	mcString username;
@@ -86,7 +89,7 @@ public:
 	//check for incoming data on the socket
 	SERVER_API void updateNet();
 	//send data to player
-	SERVER_API void send(char* data, ull data_length);
+	SERVER_API void send(char* data, ull data_length, char* toDelete);
 
 	SERVER_API bool Connected();
 

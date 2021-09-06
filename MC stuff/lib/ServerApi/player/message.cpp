@@ -1182,15 +1182,15 @@ void message::sendPacketData(Player* p, char* data, ull size)
 
 	try
 	{
-		p->send(data, size);
+		p->send(data, size, toDelete);
 	}
 	catch (...)
 	{
-		delete[] toDelete;
+		//delete[] toDelete;
 		throw;
 	}
 
-	delete[] toDelete;
+	//delete[] toDelete;
 }
 void message::dispatch(Player* p, char* data, uint compressedSize, uint decompressedSize)
 {

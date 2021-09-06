@@ -2,7 +2,7 @@
 #include "types/apidef.h"
 
 //comment or decomment this define to switch between custom new operator and usual new operator
-#define DEBUG_ALLOCATIONS
+//#define DEBUG_ALLOCATIONS
 #ifdef DEBUG_ALLOCATIONS
 
 void* operator new(size_t s);

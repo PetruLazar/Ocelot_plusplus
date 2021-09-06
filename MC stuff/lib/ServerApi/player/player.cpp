@@ -76,6 +76,7 @@ void Player::disconnect()
 }
 void Player::updateNet()
 {
+	//check for keepAlive interval
 	if (!connected) return;
 	if (cycleTime > nextKeepAlive && lastKeepAliveId == -1 && state == ConnectionState::play)
 	{
@@ -90,6 +91,31 @@ void Player::updateNet()
 		std::cout << '\n' << username << " was timed out.";
 		return;
 	}
+
+	//send data
+	if (!sendBuffer.empty())
+	{
+		MessageBuffer::Iterator::Value& val = sendBuffer.first->data;
+		ull sent;
+		switch (socket->send(val.buffer, val.bufferSize, sent))
+		{
+		case sockStat::Disconnected:
+			disconnect();
+			throw protocolError(socketDisconnected);
+		case sockStat::Error:
+			disconnect();
+			throw protocolError(socketError);
+		case sockStat::Done:
+			sendBuffer.pop();
+			break;
+		case sockStat::Partial:
+			val.buffer += sent;
+			val.bufferSize -= sent;
+			break;
+		}
+	}
+
+	//receive data
 	ull received = 0;
 	if (compressionEnabled)
 		received = 0;
@@ -259,9 +285,10 @@ void Player::updateNet()
 		}
 	}
 }
-void Player::send(char* buffer, ull size)
+void Player::send(char* buffer, ull size, char* toDelete)
 {
-	ull sent;
+	sendBuffer.push(buffer, size, toDelete);
+	/*ull sent;
 	sockStat stat = sockStat::Error;
 	do
 	{
@@ -278,7 +305,7 @@ void Player::send(char* buffer, ull size)
 	case sockStat::Error:
 		disconnect();
 		throw protocolError(socketError);
-	}
+	}*/
 }
 
 bool Player::Connected() { return connected; }
