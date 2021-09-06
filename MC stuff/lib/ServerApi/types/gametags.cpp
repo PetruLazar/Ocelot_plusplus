@@ -19,7 +19,7 @@ Tags::~Tags()
 }
 
 const varInt Tags::defaltTagsLengthCount = 5;
-Tags* Tags::defaultTags = new Tags[5]{
+Tags Tags::defaultTags[5] = {
 	Tags(118, "minecraft:block", new Tag[118]{
 		Tag("minecraft:enderman_holdable",0,nullptr),
 		Tag("minecraft:soul_fire_base_blocks",0,nullptr),

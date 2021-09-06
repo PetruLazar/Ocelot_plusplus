@@ -1,23 +1,33 @@
 #pragma once
 #include "apidef.h"
+#include "typedefs.h"
 
 class MessageBuffer
 {
 public:
-	struct Iterator
+	class Iterator
 	{
-		struct Value
+	public:
+		class Value
 		{
-			char* msg;
-			size_t size;
-		} element;
-		Iterator* next, * prev;
+		public:
+			char* msg, * buffer;
+			size_t bufferSize;
+
+			Value(char* msg, size_t size);
+			~Value();
+		} data;
+		Iterator* next;
+
+		Iterator(char* msg, size_t size, Iterator* next = nullptr);
 	};
 
-private:
 	Iterator* first, * last;
 
-public:
 	SERVER_API MessageBuffer();
+	SERVER_API ~MessageBuffer();
+	SERVER_API void pop();
+	SERVER_API void push(char* msg, size_t size);
+	SERVER_API bool empty();
 };
 

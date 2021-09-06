@@ -1,13 +1,13 @@
 #include "message.h"
-#include "options.h"
-#include "types/gametags.h"
-#include "types/chat.h"
-#include "types/error.h"
-#include "types/utils.h"
-#include "types/node.h"
+#include "../server/options.h"
+#include "../types/gametags.h"
+#include "../types/chat.h"
+#include "../types/error.h"
+#include "../types/utils.h"
+#include "../types/node.h"
 #include "command.h"
-#include "types/enums.h"
-#include <types/basic.h>
+#include "../types/enums.h"
+#include "../types/basic.h"
 
 #define disconnectAfter(p,f) try { f; } catch (...) { p->disconnect(); throw; } p->disconnect()
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
@@ -1154,7 +1154,7 @@ void message::sendPacketData(Player* p, char* data, ull size)
 			data = toDelete + 6;
 
 			//compress
-			uint uncompressedSize = size;
+			uint uncompressedSize = (uint)size;
 			if (!zlibCompressNoAlloc(uncompressedData, uncompressedSize, data, (uint&)size)) throw runtimeError("Zlib compression failed");
 			delete[] toDeleteUnc;
 

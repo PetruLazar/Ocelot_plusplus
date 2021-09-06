@@ -1,6 +1,7 @@
-/*#include "types/winLeanMean.h"
+#include "types/winLeanMean.h"
+#include "server/log.h"
 
-BOOL APIENTRY DllMain( HMODULE hModule,
+/*BOOL APIENTRY DllMain(HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
                      )
@@ -15,3 +16,17 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
     return TRUE;
 }*/
+
+//#include <Windows.h>
+
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+
+class MemoryLeakDetection
+{
+public:
+    ~MemoryLeakDetection()
+    {
+        _CrtDumpMemoryLeaks();
+    }
+} memoryLeakDetection;

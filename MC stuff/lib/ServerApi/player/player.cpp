@@ -1,8 +1,8 @@
 #include "player.h"
 #include "message.h"
-#include <types/error.h>
+#include "../types/error.h"
 #include <iostream>
-#include <types/enums.h>
+#include "../types/enums.h"
 
 const char* invalidPacketLengthError = "Invalid Packet Length";
 const char* socketError = "Socket error occured";
@@ -105,7 +105,7 @@ void Player::updateNet()
 				len.read(b);
 				if (compressionEnabled)
 				{
-					compressedLength -= varInt::size(len);
+					compressedLength -= (int)varInt::size(len);
 					buffer = new char[compressedLength];
 				}
 				else

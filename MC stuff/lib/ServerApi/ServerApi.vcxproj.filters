@@ -37,8 +37,23 @@
     <Filter Include="Source Files\types">
       <UniqueIdentifier>{bcd037fc-572a-48d6-9639-c8d7e9f5343c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\player">
+      <UniqueIdentifier>{7f75f783-778a-479d-b639-20c6924576fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\server">
+      <UniqueIdentifier>{53f24ab3-bb5d-4cfa-852c-44f511cab0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\player">
+      <UniqueIdentifier>{5d2ec704-ec9b-4610-a178-65a9e7ef0838}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\server">
+      <UniqueIdentifier>{fab0a595-7279-4fb0-b570-49cfa2a0f752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\debug">
+      <UniqueIdentifier>{a4ba93c0-b305-4211-8f17-f2fba9ef1866}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\debug">
-      <UniqueIdentifier>{311b5be9-e5bf-408e-a305-cd4a4ec962a0}</UniqueIdentifier>
+      <UniqueIdentifier>{861dd252-a16f-4729-b784-27b15e1fb44d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +216,24 @@
     <ClInclude Include="types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="server\log.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="server\options.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="player\command.h">
+      <Filter>Header Files\player</Filter>
+    </ClInclude>
+    <ClInclude Include="player\message.h">
+      <Filter>Header Files\player</Filter>
+    </ClInclude>
+    <ClInclude Include="player\player.h">
+      <Filter>Header Files\player</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.h">
+      <Filter>Header Files\debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -331,6 +364,24 @@
     </ClCompile>
     <ClCompile Include="types\entity.cpp">
       <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="player\command.cpp">
+      <Filter>Source Files\player</Filter>
+    </ClCompile>
+    <ClCompile Include="player\message.cpp">
+      <Filter>Source Files\player</Filter>
+    </ClCompile>
+    <ClCompile Include="player\player.cpp">
+      <Filter>Source Files\player</Filter>
+    </ClCompile>
+    <ClCompile Include="server\log.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="server\options.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="debug.cpp">
+      <Filter>Source Files\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -137,8 +137,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ImportLibrary>$(ProjectDir)lib\$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>../zlib/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlibwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../zlib/lib;../SFML/lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlibwapi.lib;sfml-network-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -161,11 +161,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ImportLibrary>$(ProjectDir)lib\$(TargetName).lib</ImportLibrary>
-      <AdditionalLibraryDirectories>../zlib/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlibwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../zlib/lib;../SFML/lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlibwapi.lib;sfml-network.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="debug.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="json\json_array.h" />
     <ClInclude Include="json\json_base.h" />
@@ -187,6 +188,11 @@
     <ClInclude Include="nbt\nbt_long_array.h" />
     <ClInclude Include="nbt\nbt_short.h" />
     <ClInclude Include="nbt\nbt_string.h" />
+    <ClInclude Include="player\command.h" />
+    <ClInclude Include="player\message.h" />
+    <ClInclude Include="player\player.h" />
+    <ClInclude Include="server\log.h" />
+    <ClInclude Include="server\options.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="types\angle.h" />
     <ClInclude Include="types\apidef.h" />
@@ -221,6 +227,7 @@
     <ClInclude Include="world\section.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="debug.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="json\json_array.cpp" />
     <ClCompile Include="json\json_base.cpp" />
@@ -242,6 +249,11 @@
     <ClCompile Include="nbt\nbt_long_array.cpp" />
     <ClCompile Include="nbt\nbt_short.cpp" />
     <ClCompile Include="nbt\nbt_string.cpp" />
+    <ClCompile Include="player\command.cpp" />
+    <ClCompile Include="player\message.cpp" />
+    <ClCompile Include="player\player.cpp" />
+    <ClCompile Include="server\log.cpp" />
+    <ClCompile Include="server\options.cpp" />
     <ClCompile Include="types\angle.cpp" />
     <ClCompile Include="types\basic.cpp" />
     <ClCompile Include="types\bitarray.cpp" />

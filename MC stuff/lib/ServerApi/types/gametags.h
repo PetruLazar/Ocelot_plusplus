@@ -25,5 +25,5 @@ public:
 	SERVER_API ~Tags();
 
 	SERVER_API static const varInt defaltTagsLengthCount;
-	SERVER_API static Tags* defaultTags;
+	SERVER_API static Tags defaultTags[];
 };

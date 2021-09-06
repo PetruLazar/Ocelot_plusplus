@@ -1,9 +1,9 @@
 #pragma once
-#include "world.h"
-#include "types/uuid.h"
-#include "types/enums.h"
+#include "../world.h"
+#include "../types/uuid.h"
+#include "../types/enums.h"
 #include "SFML/Network/TcpSocket.hpp"
-#include <types/chat.h>
+#include "../types/chat.h"
 
 enum class ConnectionState : byte
 {
@@ -76,23 +76,23 @@ public:
 
 	int viewDistance;
 
-	Player(sf::TcpSocket*);
-	~Player();
+	SERVER_API Player(sf::TcpSocket*);
+	SERVER_API ~Player();
 
-	void changeWorld(World* newWorld);
-	void changeWorld(const mcString& worldName);
+	SERVER_API void changeWorld(World* newWorld);
+	SERVER_API void changeWorld(const mcString& worldName);
 
-	void disconnect();
+	SERVER_API void disconnect();
 	//check for incoming data on the socket
-	void updateNet();
+	SERVER_API void updateNet();
 	//send data to player
-	void send(char* data, ull data_length);
+	SERVER_API void send(char* data, ull data_length);
 
-	bool Connected();
+	SERVER_API bool Connected();
 
-	static std::vector<Player*> players;
+	SERVER_API static std::vector<Player*> players;
 
 	//clears the players list of disconnected players
-	static void clearDisconnectedPlayers();
-	static void broadcastChat(const Chat&, Player* ignore = nullptr);
+	SERVER_API static void clearDisconnectedPlayers();
+	SERVER_API static void broadcastChat(const Chat&, Player* ignore = nullptr);
 };

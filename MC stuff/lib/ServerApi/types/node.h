@@ -174,7 +174,9 @@ public:
 		varInt childrenCount, varInt* children,
 		varInt redirectNode, mcString* name, mcString* parser, mcString* suggestionsType);
 
+	SERVER_API ~Node();
+
 	SERVER_API static varInt defaultCommandsCount;
-	SERVER_API static Node* defaultCommands;
+	SERVER_API static Node defaultCommands[];
 	SERVER_API static varInt defaultCommandsRootIndex;
 };

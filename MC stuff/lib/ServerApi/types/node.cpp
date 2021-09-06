@@ -66,13 +66,21 @@ Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestio
 	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
 	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType) { }
 
+Node::~Node()
+{
+	if (children) delete[] children;
+	if (name) delete name;
+	if (parser) delete parser;
+	if (suggestionsType) delete suggestionsType;
+}
+
 byte Node::flags()
 {
 	return (hasSuggestionsType << 4) | (hasRedirect << 3) | (isExecutable << 2) | type;
 }
 
 varInt Node::defaultCommandsCount = 8;
-Node* Node::defaultCommands = new Node[8]{
+Node Node::defaultCommands[] = {
 	Node(Node::literal,true,false,false,0,nullptr,0,new mcString("creative"),nullptr,nullptr),
 	Node(Node::literal,true,false,false,0,nullptr,0,new mcString("survival"),nullptr,nullptr),
 	Node(Node::literal,true,false,false,0,nullptr,0,new mcString("spectator"),nullptr,nullptr),

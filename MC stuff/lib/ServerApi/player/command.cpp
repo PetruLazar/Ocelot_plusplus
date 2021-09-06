@@ -1,7 +1,7 @@
 #include "command.h"
-#include "types/enums.h"
+#include "../types/enums.h"
 #include "message.h"
-#include "types/chat.h"
+#include "../types/chat.h"
 
 namespace Command
 {

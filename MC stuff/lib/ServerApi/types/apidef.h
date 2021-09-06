@@ -5,3 +5,5 @@
 #else
 #define SERVER_API _declspec(dllimport)
 #endif
+
+#include "../debug.h"

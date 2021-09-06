@@ -88,21 +88,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="command.cpp" />
-    <ClCompile Include="log.cpp" />
     <ClCompile Include="MC stuff.cpp" />
-    <ClCompile Include="message.cpp" />
-    <ClCompile Include="options.cpp" />
     <ClCompile Include="particle.cpp" />
-    <ClCompile Include="player.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="command.h" />
-    <ClInclude Include="log.h" />
-    <ClInclude Include="message.h" />
-    <ClInclude Include="options.h" />
     <ClInclude Include="particle.h" />
-    <ClInclude Include="player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="types\palette.h" />
   </ItemGroup>

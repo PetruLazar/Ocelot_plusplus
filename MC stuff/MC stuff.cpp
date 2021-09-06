@@ -1,14 +1,16 @@
-#include "player.h"
-#include "options.h"
-#include "log.h"
+#include "player/player.h"
+#include "server/options.h"
+#include "server/log.h"
 #include "types/error.h"
-#include "message.h"
+#include "player/message.h"
 #include <iostream>
 #include "types/chat.h"
 #include <conio.h>
 #include <SFML/Network/TcpListener.hpp>
 
 #include <world/noise.h>
+
+#include <debug.cpp>
 
 using namespace std;
 
@@ -18,7 +20,6 @@ int main()
 {
 	cout << "Starting server...";
 	srand((uint)time(nullptr));
-	log::initialize();
 	World::loadAll();
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	sf::TcpListener listener;
@@ -244,11 +245,11 @@ int main()
 	return 0;
 }
 
-class MemoryLeakDetection
+/*class MemoryLeakDetection
 {
 public:
 	~MemoryLeakDetection()
 	{
 		_CrtDumpMemoryLeaks();
 	}
-} memoryLeakDetection;
+} memoryLeakDetection;*/
