@@ -95,22 +95,33 @@ void Player::updateNet()
 	//send data
 	if (!sendBuffer.empty())
 	{
-		MessageBuffer::Iterator::Value& val = sendBuffer.first->data;
-		ull sent;
-		switch (socket->send(val.buffer, val.bufferSize, sent))
+		MessageBuffer::Iterator& it = *sendBuffer.first;
+		switch (it.msgType)
 		{
-		case sockStat::Disconnected:
-			disconnect();
-			throw protocolError(socketDisconnected);
-		case sockStat::Error:
-			disconnect();
-			throw protocolError(socketError);
-		case sockStat::Done:
-			sendBuffer.pop();
-			break;
-		case sockStat::Partial:
-			val.buffer += sent;
-			val.bufferSize -= sent;
+		case MessageBuffer::chunk:
+		case MessageBuffer::raw:
+		{
+			ull sent;
+			MessageBuffer::Iterator::Value::Raw& val = it.data.raw;
+			switch (socket->send(val.buffer, val.bufferSize, sent))
+			{
+			case sockStat::Disconnected:
+				disconnect();
+				throw protocolError(socketDisconnected);
+			case sockStat::Error:
+				disconnect();
+				throw protocolError(socketError);
+			case sockStat::Done:
+				sendBuffer.pop();
+				break;
+			case sockStat::Partial:
+				val.buffer += sent;
+				val.bufferSize -= sent;
+				break;
+			}
+		}
+		break;
+		case MessageBuffer::disconnect:
 			break;
 		}
 	}

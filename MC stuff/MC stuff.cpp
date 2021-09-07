@@ -18,19 +18,27 @@ const int mc_zlib_compression_level = 6;
 
 int main()
 {
-	cout << "Starting server...";
-	srand((uint)time(nullptr));
-	World::loadAll();
-	sf::TcpSocket* buffer = new sf::TcpSocket;
-	sf::TcpListener listener;
+	log::initialize();
 
+	//rand seeding
+	srand((uint)time(nullptr));
+
+	//listen on port
+	sf::TcpListener listener;
 	if (listener.listen(Options::port(), Options::ip()) != sockStat::Done)
 	{
 		system("pause");
 		return 0;
 	}
-	cout << "\nServer started on " << Options::ip() << ':' << Options::port();
+	cout << "Starting server on " << Options::ip() << ':' << Options::port();
 	listener.setBlocking(false);
+
+	cout << "\nLoading worlds...";
+	World::loadAll();
+	sf::TcpSocket* buffer = new sf::TcpSocket;
+	cout << "\nLoad complete.";
+
+	//main loop
 	bool keepAlive = true;
 	while (keepAlive)
 	{
