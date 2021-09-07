@@ -27,7 +27,8 @@ public:
 
 private:
 	sf::TcpSocket* socket;
-	bool connected = true;
+	bool connected = true,
+		scheduledDisconnect = false;
 	//info about buffering (bit mask)
 	//	bit 0 - buffering packet length
 	//  bit 1 - buffering packet
@@ -54,6 +55,7 @@ public:
 	//data for keep alive messages
 	static const clock_t keepAliveInterval = 1000; // how often to send keep alive packets
 	static const clock_t keepAliveTimeoutAfter = 30000; // kick the client if it doesn't respond for this many ms
+	static const clock_t keepAliveTimeoutPointAfterScheduledDisconnect = 5000;
 	clock_t nextKeepAlive = 0x80000000; //when to send the next keep alive message
 	clock_t keepAliveTimeoutPoint; //when will the keep alive timeout end?
 	int64 lastKeepAliveId = -1; //the expected id for which a keep alive is pending or -1 if there is no pending response
@@ -89,9 +91,10 @@ public:
 	//check for incoming data on the socket
 	SERVER_API void updateNet();
 	//send data to player
-	SERVER_API void send(char* data, ull data_length, char* toDelete);
+	SERVER_API void send(char* data, ull data_length, char* toDelete, bool disconnectAfter = false);
 
 	SERVER_API bool Connected();
+	SERVER_API bool ScheduledDisconnect();
 
 	SERVER_API static std::vector<Player*> players;
 

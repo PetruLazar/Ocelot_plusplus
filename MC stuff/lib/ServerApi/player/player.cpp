@@ -122,11 +122,13 @@ void Player::updateNet()
 		}
 		break;
 		case MessageBuffer::disconnect:
+			disconnect();
 			break;
 		}
 	}
 
 	//receive data
+	if (scheduledDisconnect) return;
 	ull received = 0;
 	if (compressionEnabled)
 		received = 0;
@@ -296,9 +298,16 @@ void Player::updateNet()
 		}
 	}
 }
-void Player::send(char* buffer, ull size, char* toDelete)
+void Player::send(char* buffer, ull size, char* toDelete, bool disconnectAfter)
 {
+	if (scheduledDisconnect) return;
 	sendBuffer.push(buffer, size, toDelete);
+	if (disconnectAfter)
+	{
+		sendBuffer.push();
+		scheduledDisconnect = true;
+		keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutPointAfterScheduledDisconnect;
+	}
 	/*ull sent;
 	sockStat stat = sockStat::Error;
 	do
@@ -320,6 +329,7 @@ void Player::send(char* buffer, ull size, char* toDelete)
 }
 
 bool Player::Connected() { return connected; }
+bool Player::ScheduledDisconnect() { return scheduledDisconnect; }
 
 void Player::clearDisconnectedPlayers()
 {
@@ -334,5 +344,5 @@ void Player::clearDisconnectedPlayers()
 }
 void Player::broadcastChat(const Chat& msg, Player* ignore)
 {
-	for (Player* p : players) if (p != ignore && p->connected) ignoreExceptions(message::play::send::chatMessage(p, msg, ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)));
+	for (Player* p : players) if (p != ignore && !p->scheduledDisconnect) ignoreExceptions(message::play::send::chatMessage(p, msg, ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)));
 }

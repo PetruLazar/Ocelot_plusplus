@@ -9,10 +9,10 @@
 #include "../types/enums.h"
 #include "../types/basic.h"
 
-#define disconnectAfter(p,f) try { f; } catch (...) { p->disconnect(); throw; } p->disconnect()
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
 #define prepareSendMacroNoDecl(x) data = new char[x] + 6; start = data
 #define finishSendMacro sendPacketData(p, start, data - start)
+#define finishSendAndDisconnect sendPacketData(p, start, data - start, true)
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
@@ -42,7 +42,7 @@ void message::status::send::pong(Player* p, blong payload)
 	id.write(data);
 	payload.write(data);
 
-	disconnectAfter(p, finishSendMacro);
+	finishSendAndDisconnect;
 }
 
 /*
@@ -77,7 +77,7 @@ void message::login::send::disconnect(Player* p, const mcString& reason)
 	id.write(data);
 	reason.write(data);
 
-	disconnectAfter(p, finishSendMacro);
+	finishSendAndDisconnect;
 }
 void message::login::send::encryptionRequest(Player* p, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -573,7 +573,7 @@ void message::play::send::disconnect(Player* p, const Chat& reason)
 	id.write(data);
 	reason.write(data);
 
-	disconnectAfter(p, finishSendMacro);
+	finishSendAndDisconnect;
 }
 void message::play::send::chatMessage(Player* p, const Chat& msg, byte position, const mcUUID& sender)
 {
@@ -1128,7 +1128,7 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 	p->onGround = onGround;
 }
 
-void message::sendPacketData(Player* p, char* data, ull size)
+void message::sendPacketData(Player* p, char* data, ull size, bool disconnectAfter)
 {
 	char* toDelete = data - 6;
 
@@ -1180,17 +1180,7 @@ void message::sendPacketData(Player* p, char* data, ull size)
 
 	//append compressed size when compressed
 
-	try
-	{
-		p->send(data, size, toDelete);
-	}
-	catch (...)
-	{
-		//delete[] toDelete;
-		throw;
-	}
-
-	//delete[] toDelete;
+	p->send(data, size, toDelete, disconnectAfter);
 }
 void message::dispatch(Player* p, char* data, uint compressedSize, uint decompressedSize)
 {

@@ -364,7 +364,7 @@ FodyWeavers.xsd
 
 Build
 NetConsole/tcp
-MC stuff/server.*
+MC stuff/server.properties
 MC stuff/debug.txt
 MC stuff/lib/ServerApi/lib/
 MC stuff/lib/ServerApi/Build/

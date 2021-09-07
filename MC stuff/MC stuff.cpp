@@ -96,10 +96,11 @@ int main()
 		}
 	}
 
+	cout << "\nKicking players...";
 	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
 	{
 		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
-		Player::players[i]->disconnect();
+		//Player::players[i]->disconnect();
 	}
 	catch (runtimeError obj)
 	{
@@ -115,7 +116,7 @@ int main()
 	}
 	catch (protocolWarning obj)
 	{
-		cout << "\nProtocol warning: " << obj.msg;
+		log::txt() << "\nProtocol warning: " << obj.msg;
 	}
 	catch (const char* err_msg)
 	{
@@ -126,7 +127,11 @@ int main()
 		cout << "\nUnknown error.";
 	}
 
-	for (int64 i = 0; i < (int64)Player::players.size(); i++) delete Player::players[i];
+	for (int64 i = 0; i < (int64)Player::players.size(); i++)
+	{
+		while (Player::players[i]->Connected()) Player::players[i]->updateNet();
+		delete Player::players[i];
+	}
 
 	//fill an existing chunk with stone
 	/*try
@@ -231,6 +236,7 @@ int main()
 	delete buffer;
 	try
 	{
+		cout << "\nUnloading worlds...";
 		World::unloadAll();
 	}
 	catch (runtimeError obj)
