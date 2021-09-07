@@ -362,6 +362,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+Build
 NetConsole/tcp
-MC stuff/server.properties
+MC stuff/server.*
 MC stuff/debug.txt
+MC stuff/lib/ServerApi/lib/
+MC stuff/lib/ServerApi/Build/
