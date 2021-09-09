@@ -132,6 +132,7 @@ void Player::updateNet()
 	ull received = 0;
 	if (compressionEnabled)
 		received = 0;
+	//length or uncompressedLength (if compression is enabled)
 	if (info & bufferingLength)
 	{
 		ull oldReceived = current - lengthBuffer;
@@ -149,8 +150,8 @@ void Player::updateNet()
 				}
 				else
 				{
-					buffer = new char[len];
 					if (!len) throw protocolError(invalidPacketLengthError);
+					buffer = new char[len];
 				}
 				current = buffer;
 				info = mask(info & ~bufferingLength | bufferingMessage);
@@ -172,13 +173,14 @@ void Player::updateNet()
 	else if (info & bufferingMessage)
 	{
 		ull oldReceived = current - buffer;
-		int expectedLength = (len == 0 ? compressedLength : len);
+		int expectedLength = (compressionEnabled ? compressedLength : len);
 		switch (socket->receive(current, expectedLength - oldReceived, received))
 		{
 		case sockStat::Done:
 			if (expectedLength == oldReceived + received)
 			{
 				info = mask(info & ~bufferingMessage);
+				//if (compressionEnabled) info = mask(info | buffering)
 
 				try
 				{
@@ -273,11 +275,7 @@ void Player::updateNet()
 			{
 				char* b = lengthBuffer;
 				len.read(b);
-				if (!len)
-				{
-					if (compressionEnabled) len = compressedLength;
-					else throw protocolError(invalidPacketLengthError);
-				}
+				if (!len) throw protocolError(invalidPacketLengthError);
 				buffer = new char[len];
 				current = buffer;
 				info = mask(info | bufferingMessage);

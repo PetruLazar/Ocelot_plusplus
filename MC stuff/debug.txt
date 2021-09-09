@@ -9,392 +9,28 @@ Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: advancement tab
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: chat message
+Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player abilities
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player digging
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: animation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: player abilities
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player abilities
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -404,180 +40,32 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Unhandled packet: entity action
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player digging
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -592,188 +80,23 @@ Protocol warning: Partially handled packet: chat message
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: chat message
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: chat message
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: chat message
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -786,23 +109,13 @@ Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player abilities
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -815,9 +128,6 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -829,121 +139,552 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: close window
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: chat message
 Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: chat message
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: chat message
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: tab complete
+Protocol warning: Unhandled packet: tab complete
+Protocol warning: Unhandled packet: tab complete
+Protocol warning: Unhandled packet: tab complete
+Protocol warning: Partially handled packet: chat message
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: player digging
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: player digging
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: player digging
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: animation
+Protocol warning: Unhandled packet: client status
+Protocol warning: Unhandled packet: player digging
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: teleport confirm
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player movement
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: player abilities
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: entity action
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: player abilities
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: entity action
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: player abilities
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: entity action
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
@@ -968,23 +709,57 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: entity action
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: click window
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Unhandled packet: close window
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: entity action
+Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -996,33 +771,6 @@ Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
@@ -1043,29 +791,17 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -1074,15 +810,6 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
@@ -1105,35 +832,21 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: player abilities
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
@@ -1164,25 +877,23 @@ Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: creative inventoty action
+Protocol warning: Unhandled packet: close window
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player rotation
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
@@ -1190,869 +901,441 @@ Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: entity action
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: entity action
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player digging
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Unhandled packet: animation
-Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
 Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
-Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Unhandled packet: animation
-Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
 Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Unhandled packet: player digging
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: held item change
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: use item
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: use item
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
+Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
 Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player position and rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Partially handled packet: player rotation
+Protocol warning: Unhandled packet: player block placement
 Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: animation
-Protocol warning: Unhandled packet: animation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: animation
-Protocol warning: Unhandled packet: player digging
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Unhandled packet: entity action
 Protocol warning: Partially handled packet: player position and rotation
 Protocol warning: Partially handled packet: player position and rotation
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Unhandled packet: entity action
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
-Protocol warning: Partially handled packet: player position
+Protocol warning: Partially handled packet: player rotation
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
 Protocol warning: Partially handled packet: player position
