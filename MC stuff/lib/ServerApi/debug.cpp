@@ -6,7 +6,7 @@
 #include <iostream>
 
 //decomment this and select a block id if needed, or comment if you are not targeting a specific id
-#define TARGET_MEMORY_BLOCK 1078
+//#define TARGET_MEMORY_BLOCK 1078
 
 void* operator new(size_t s)
 {
@@ -16,10 +16,7 @@ void* operator new(size_t s)
 	if (bid == TARGET_MEMORY_BLOCK)
 		std::cout << "";
 #endif
-	//if (!log::txt().is_open())  
-	//	log::initialize();
-	//log::txt() << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")\n";
-	//else std::cout << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (log::txt().is_open()) log::txt() << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")\n";
 	return p;
 }
 void* operator new[](size_t s)
@@ -30,10 +27,7 @@ void* operator new[](size_t s)
 	if (bid == TARGET_MEMORY_BLOCK)
 		std::cout << "";
 #endif
-	//if (!log::txt().is_open())  
-	//	log::initialize();
-	//log::txt() << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")\n";
-	//else std::cout << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (log::txt().is_open()) log::txt() << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")\n";
 	return p;
 }
 
@@ -45,9 +39,7 @@ void operator delete(void* p, size_t s)
 		std::cout << "";
 #endif
 	free(p);
-	//if (!log::txt().is_open())  
-	//	log::initialize();
-	//log::txt() << "Freed object at:     " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (log::txt().is_open()) log::txt() << "Freed object at:     " << p << " (size " << s << ", block id " << bid << ")\n";
 }
 void operator delete[](void* p, size_t s)
 {
@@ -57,9 +49,7 @@ void operator delete[](void* p, size_t s)
 		std::cout << "";
 #endif
 	free(p);
-	//if (!log::txt().is_open())  
-	//	log::initialize();
-	//log::txt() << "Freed block at:      " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (log::txt().is_open()) log::txt() << "Freed block at:      " << p << " (size " << s << ", block id " << bid << ")\n";
 }
 
 #endif

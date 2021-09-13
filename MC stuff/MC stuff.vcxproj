@@ -62,7 +62,7 @@
       <AdditionalIncludeDirectories>lib\zlib\include;lib\SFML\include;lib\ServerApi</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>zlibwapi.lib;ServerApi-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\zlib\lib;lib\SFML\lib;lib\ServerApi\lib</AdditionalLibraryDirectories>
@@ -79,7 +79,7 @@
       <AdditionalIncludeDirectories>lib\zlib\include;lib\SFML\include;lib\ServerApi</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>

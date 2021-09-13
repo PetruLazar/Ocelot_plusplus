@@ -51,7 +51,7 @@ namespace ChangeGameState
 	};
 }
 
-namespace ChatMessage\
+namespace ChatMessage
 {
 	enum position : byte
 	{

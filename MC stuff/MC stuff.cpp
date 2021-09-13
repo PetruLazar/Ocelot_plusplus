@@ -5,8 +5,10 @@
 #include "player/message.h"
 #include <iostream>
 #include "types/chat.h"
+#include <server/console.h>
 #include <conio.h>
 #include <SFML/Network/TcpListener.hpp>
+#include <Windows.h>
 
 #include <world/noise.h>
 
@@ -16,9 +18,10 @@ using namespace std;
 
 const int mc_zlib_compression_level = 6;
 
-int main()
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
 {
 	log::initialize();
+	ServerConsole::AllocCosole();
 
 	//rand seeding
 	srand((uint)time(nullptr));
@@ -133,106 +136,6 @@ int main()
 		delete Player::players[i];
 	}
 
-	//fill an existing chunk with stone
-	/*try
-	{
-		int cX, cZ, rX, rZ;
-		cout << "Chunk X and Z: "; cin >> cX >> cZ;
-		rX = cX >> 5; rZ = cZ >> 5;
-
-		nbt_compound chunkNbt;
-		chunk::loadChunk(chunkNbt, cX, cZ);
-
-		//modifying chunk
-		try
-		{
-			for (uint i = 1; i <= 16; i++)
-			{
-				nbt& section = chunkNbt["Level"].vTag("Sections").vTag(i),
-					& palette = section.vTag("Palette"),
-					& states = section.vTag("BlockStates");
-
-				palette.resize(1);
-				palette.vTag(0).vTag("Name").vString() = "minecraft:stone";
-
-				states.resize(256);
-				for (uint i = 0; i < 256; i++) states.vLong(i) = 0;
-			}
-		}
-		catch (...)
-		{
-			throw 5;
-		}
-
-		//compressing chunk data
-		char* modifiedChunkData = new char[chunk::max_inflated_chunkSize];
-		char* compressedData = new char[chunk::max_deflated_chunkSize];
-		char* modifiedChunkDataEnd = modifiedChunkData;
-		chunkNbt.write(modifiedChunkDataEnd);
-
-		z_stream zstr{};
-		zstr.opaque = Z_NULL;
-		zstr.zalloc = Z_NULL;
-		zstr.zfree = Z_NULL;
-
-		zstr.next_in = (byte*)modifiedChunkData;
-		zstr.avail_in = (uint)(modifiedChunkDataEnd - modifiedChunkData);
-		zstr.next_out = (byte*)compressedData;
-		zstr.avail_out = chunk::max_deflated_chunkSize;
-
-		deflateInit(&zstr, mc_zlib_compression_level);
-		int status = deflate(&zstr, 4);
-		deflateEnd(&zstr);
-
-		if (status != Z_STREAM_END) throw 6;
-
-		//update chunk in region file
-		fstream regFileOut("r." + to_string(rX) + '.' + to_string(rZ) + ".mca", ios::binary | ios::ate | ios::in | ios::out);
-		bint newSize = (int)((char*)zstr.next_out - compressedData + 1);
-		byte _4kSize = (newSize - 1) / 4096 + 1;
-
-		buint offset;
-		regFileOut.seekp((cX & 31 << 5 | cZ & 31) << 2);
-		char* s = new char[4];
-		regFileOut.read(s, 4);
-		offset.read(s);
-		offset >>= 8;
-		offset <<= 12;
-		regFileOut.seekp((uint)offset);
-		newSize.write(regFileOut);
-		regFileOut.write("\002", 1);
-		regFileOut.write(compressedData, (streamsize)newSize - 1);
-
-		regFileOut.close();
-
-		delete[] modifiedChunkData;
-		delete[] compressedData;
-	}
-	catch (int e)
-	{
-		switch (e)
-		{
-		case 1:
-			cout << "Chunk not present";
-			break;
-		case 2:
-			cout << "Chunk not compressed with zlib";
-			break;
-		case 3:
-			cout << "Error occured while inflating";
-			break;
-		case 4:
-			cout << "Invalid tag";
-			break;
-		case 5:
-			cout << "Error occured while modifying chunk data";
-			break;
-		case 6:
-			cout << "Error occured during compression";
-			break;
-		}
-	}*/
-
 	delete buffer;
 	try
 	{
@@ -256,14 +159,6 @@ int main()
 		cout << "\nProtocol warning: " << obj.msg;
 	}
 
+	ServerConsole::FreeConsole();
 	return 0;
 }
-
-/*class MemoryLeakDetection
-{
-public:
-	~MemoryLeakDetection()
-	{
-		_CrtDumpMemoryLeaks();
-	}
-} memoryLeakDetection;*/

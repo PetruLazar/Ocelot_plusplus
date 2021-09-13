@@ -1,17 +1,8 @@
 #pragma once
 #include "types/apidef.h"
 
-//comment or decomment this define to switch between custom new operator and usual new operator (not functional for now)
+//comment or decomment this define to switch between custom new operator and usual new operator
 //#define DEBUG_ALLOCATIONS
-#ifdef DEBUG_ALLOCATIONS
-
-void* operator new(size_t s);
-void* operator new[](size_t s);
-
-void operator delete(void*, size_t);
-void operator delete[](void*, size_t);
-
-#endif
 
 //comment or decomment this define to turn on or off chunk debug
 //#define CHUNK_DEBUG
@@ -23,10 +14,20 @@ void operator delete[](void*, size_t);
 //#define PROTOCOL_WARNINGS
 
 //comment or decomment this define to turn on or off the monitoring and logging of the amounts of data sent/received over the network
-//#define MONITOR_CONNECTIONS
+//#define NETWORK_TRAFFIC_DEBUG
 
 //comment or decomment this define to turn on or off the logging of the outgoing message buffering
-//#define LOG_MESSAGE_BUFFER
+//#define LOG_PACKET_IDS
+
+#ifdef DEBUG_ALLOCATIONS
+
+void* operator new(size_t s);
+void* operator new[](size_t s);
+
+void operator delete(void*, size_t);
+void operator delete[](void*, size_t);
+
+#endif
 
 #ifdef CHUNK_DEBUG
 #define IF_CHUNK_DEBUG(x) x
@@ -40,16 +41,16 @@ void operator delete[](void*, size_t);
 #define IF_REGION_DEBUG(x)
 #endif
 
-#ifdef UNHANDLED_PACKETS
-#define IF_LOG_UNHANDLED(x) x
+#ifdef PROTOCOL_WARNINGS
+#define IF_PROTOCOL_WARNINGS(x) x
 #else
-#define IF_LOG_UNHANDLED(x)
+#define IF_PROTOCOL_WARNINGS(x)
 #endif
 
-#ifdef MONITOR_CONNECTIONS
-#define IF_MONITOR_CONNECTIONS(x) x
+#ifdef NETWORK_TRAFFIC_DEBUG
+#define IF_NETWORK_TRAFFIC_DEBUG(x) x
 #else
-#define IF_MONITOR_CONNECTIONS(x)
+#define IF_NETWORK_TRAFFIC_DEBUG(x)
 #endif
 
 #ifdef LOG_MESSAGE_BUFFER

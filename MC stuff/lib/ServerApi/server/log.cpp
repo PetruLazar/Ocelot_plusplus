@@ -7,6 +7,8 @@ ofstream log::binFile, log::txtFile;
 
 void log::initialize()
 {
+	//binFile = malloc(sizeof(ofstream));
+	//binFile->basic_ofstream();
 	binFile.open(binFileName, /*ios::app |*/ ios::binary);
 	txtFile.open(txtFileName /*,ios::app*/);
 }

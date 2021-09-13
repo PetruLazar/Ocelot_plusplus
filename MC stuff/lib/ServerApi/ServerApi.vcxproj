@@ -191,6 +191,7 @@
     <ClInclude Include="player\command.h" />
     <ClInclude Include="player\message.h" />
     <ClInclude Include="player\player.h" />
+    <ClInclude Include="server\console.h" />
     <ClInclude Include="server\log.h" />
     <ClInclude Include="server\options.h" />
     <ClInclude Include="types.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="player\command.cpp" />
     <ClCompile Include="player\message.cpp" />
     <ClCompile Include="player\player.cpp" />
+    <ClCompile Include="server\console.cpp" />
     <ClCompile Include="server\log.cpp" />
     <ClCompile Include="server\options.cpp" />
     <ClCompile Include="types\angle.cpp" />

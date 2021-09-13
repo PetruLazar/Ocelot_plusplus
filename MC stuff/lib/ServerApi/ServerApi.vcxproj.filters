@@ -234,6 +234,9 @@
     <ClInclude Include="debug.h">
       <Filter>Header Files\debug</Filter>
     </ClInclude>
+    <ClInclude Include="server\console.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -382,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="debug.cpp">
       <Filter>Source Files\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="server\console.cpp">
+      <Filter>Source Files\server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
