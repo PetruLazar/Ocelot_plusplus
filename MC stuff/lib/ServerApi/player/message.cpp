@@ -11,8 +11,15 @@
 
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
 #define prepareSendMacroNoDecl(x) data = new char[x] + 6; start = data
-#define finishSendMacro sendPacketData(p, start, data - start)
-#define finishSendAndDisconnect sendPacketData(p, start, data - start, true)
+#define finishSendMacro ull size = data - start;		\
+	preparePacket(p, start, size, data);				\
+	p->schedulePacket(start, size, data);
+#define finishSendMacroNoDecl size = data - start;		\
+	preparePacket(p, start, size, data);				\
+	p->schedulePacket(start, size, data);
+#define finishSendAndDisconnect ull size = data - start;	\
+	preparePacket(p, start, size, data);					\
+	p->schedulePacket(start, size, data,true);
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
@@ -890,18 +897,18 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 			section.blockStates->write(dataBuffer);
 		}
 	}
-	uint size = (uint)(dataBuffer - dataStart);
+	uint dataSize = (uint)(dataBuffer - dataStart);
 	//size
-	varInt(size).write(data);
+	varInt(dataSize).write(data);
 	//data
-	for (uint i = 0; i < size; i++) *(data++) = dataStart[i];
+	for (uint i = 0; i < dataSize; i++) *(data++) = dataStart[i];
 	delete[] dataStart;
 
 	//nOfBlockEntities
 	chunk->nOfBlockEntities.write(data);
 	//blockEntities
 
-	finishSendMacro;
+	finishSendMacroNoDecl;
 }
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
@@ -1128,7 +1135,57 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 	p->onGround = onGround;
 }
 
-void message::sendPacketData(Player* p, char* data, ull size, bool disconnectAfter)
+void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
+{
+	toDelete = data - 6;
+
+	//compress data if it's the case
+	if (p->compressionEnabled)
+	{
+		//test thershold
+		if (size < p->compressionThreshold)
+		{
+			//do not compress
+			//append 0
+			(data--)[-1] = 0;
+			size++;
+
+			//append size before data outside the if
+		}
+		else
+		{
+			//prepare for compression
+			char* toDeleteUnc = toDelete;
+			toDelete = new char[size + 6];
+			char* uncompressedData = data;
+			data = toDelete + 6;
+
+			//compress
+			uint uncompressedSize = (uint)size;
+			if (!zlibCompressNoAlloc(uncompressedData, uncompressedSize, data, (uint&)size)) throw runtimeError("Zlib compression failed");
+			delete[] toDeleteUnc;
+
+			//append uncompressedSize
+			int append = (int)(uint)uncompressedSize;
+			int appendSize = (int)(uint)varInt::size(append);
+			data -= appendSize;
+			char* buffer = data;
+			size += appendSize;
+			varInt(append).write(buffer);
+
+			//append compressed size before data outside the if
+		}
+	}
+
+	//append size before data
+	int append = (int)(uint)size;
+	int appendSize = (int)(uint)varInt::size(append);
+	data -= appendSize;
+	char* buffer = data;
+	size += appendSize;
+	varInt(append).write(buffer);
+}
+/*void message::sendPacketData(Player* p, char* data, ull size, bool disconnectAfter)
 {
 	char* toDelete = data - 6;
 
@@ -1180,8 +1237,8 @@ void message::sendPacketData(Player* p, char* data, ull size, bool disconnectAft
 
 	//append compressed size when compressed
 
-	p->send(data, size, toDelete, disconnectAfter);
-}
+	p->schedulePacket(data, size, toDelete, disconnectAfter);
+}*/
 void message::dispatch(Player* p, char* data, uint compressedSize, uint decompressedSize)
 {
 	if (decompressedSize)

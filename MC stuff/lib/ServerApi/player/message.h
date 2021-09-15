@@ -667,7 +667,8 @@ struct message
 	};
 
 	//dispatch a message from a player
-	SERVER_API static void sendPacketData(Player*, char*, ull, bool disconnectAfter = false);
+	SERVER_API static void preparePacket(Player*, char*& data, ull& size, char*& toDelete);
+	//SERVER_API static void sendPacketData(Player*, char*, ull, bool disconnectAfter = false);
 	SERVER_API static void dispatch(Player*, char* data, uint compressedSize, uint decompressedSize);
 	SERVER_API static void dispatch(Player*, char* data, uint size);
 };

@@ -45,6 +45,13 @@ void MessageBuffer::push(int chunkX, int chunkZ)
 	if (!first) first = it;
 	else last->next = it;
 	last = it;
+
+	it = new Iterator(chunkX, chunkZ);
+	it->msgType = MessageType::light;
+
+	if (!first) first = it;
+	else last->next = it;
+	last = it;
 }
 void MessageBuffer::push()
 {

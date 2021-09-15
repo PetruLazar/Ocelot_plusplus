@@ -91,7 +91,7 @@ public:
 	//check for incoming data on the socket
 	SERVER_API void updateNet();
 	//send data to player
-	SERVER_API void send(char* data, ull data_length, char* toDelete, bool disconnectAfter = false);
+	SERVER_API void schedulePacket(char* data, ull data_length, char* toDelete, bool disconnectAfter = false);
 
 	SERVER_API bool Connected();
 	SERVER_API bool ScheduledDisconnect();

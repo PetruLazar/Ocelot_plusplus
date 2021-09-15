@@ -8,6 +8,7 @@ public:
 	enum MessageType
 	{
 		raw,
+		light,
 		chunk,
 		disconnect
 	};

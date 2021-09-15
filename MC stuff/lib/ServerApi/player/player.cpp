@@ -296,7 +296,7 @@ void Player::updateNet()
 		}
 	}
 }
-void Player::send(char* buffer, ull size, char* toDelete, bool disconnectAfter)
+void Player::schedulePacket(char* buffer, ull size, char* toDelete, bool disconnectAfter)
 {
 	if (scheduledDisconnect) return;
 	sendBuffer.push(buffer, size, toDelete);
@@ -325,6 +325,7 @@ void Player::send(char* buffer, ull size, char* toDelete, bool disconnectAfter)
 		throw protocolError(socketError);
 	}*/
 }
+
 
 bool Player::Connected() { return connected; }
 bool Player::ScheduledDisconnect() { return scheduledDisconnect; }
