@@ -55,7 +55,7 @@ void Player::changeWorld(World* newWorld)
 		//message::play::send::chunkData(this, x, z);
 	}
 
-	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, 0x0, false);
+	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
 }
 void Player::changeWorld(const mcString& worldName)
 {

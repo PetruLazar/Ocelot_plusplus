@@ -562,7 +562,7 @@ struct message
 			//SERVER_API static void deathCombatEvent(Player*, varInt playerId, bint eid, const Chat& message);
 			SERVER_API static void playerInfo(Player*, varInt action, varInt playerCount, Player**);
 			SERVER_API static void facePlayer(Player*, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot);
-			SERVER_API static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle);
+			SERVER_API static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, bool dismountVehicle);
 			SERVER_API static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, mcString* array1, varInt size2, mcString* array2);
 			SERVER_API static void destroyEntities(Player*, varInt count, varInt* eids);
 			SERVER_API static void removeEntityEffect(Player*, varInt eid, byte effectId);

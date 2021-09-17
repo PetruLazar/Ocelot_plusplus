@@ -187,7 +187,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 		//play::send::chunkData(p, x, z);
 	}
 
-	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, 0x0, false);
+	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, false);
 
 	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
 	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p)
@@ -375,7 +375,8 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 
 	finishSendMacro;
 }
-void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, varInt teleportId, bool dismountVehicle)
+
+void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
 	prepareSendMacro(1024 * 1024);
@@ -387,7 +388,8 @@ void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEn
 	yaw.write(data);
 	pitch.write(data);
 	*(data++) = flags;
-	teleportId.write(data);
+	p->pendingTpId = p->nextTpId++;
+	p->pendingTpId.write(data);
 	*(data++) = dismountVehicle;
 
 	finishSendMacro;
@@ -919,7 +921,7 @@ void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 }
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
-
+	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
 }
 void message::play::receive::clientSettings(Player* p, const mcString& locale, byte viewDistance, varInt chatMode, bool chatColors, byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
 {
@@ -951,6 +953,8 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 }
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
 {
+	if (p->pendingTpId != -1) return;
+
 	int newChunkX = fastfloor(X) >> 4,
 		newChunkZ = fastfloor(Z) >> 4;
 

@@ -77,6 +77,10 @@ public:
 	bool compressionEnabled = false;
 	varInt compressedLength;
 
+	//teleport/teleport confirm
+	varInt pendingTpId = -1;
+	int nextTpId = 0;
+
 	gamemode gm;
 
 	int viewDistance;
