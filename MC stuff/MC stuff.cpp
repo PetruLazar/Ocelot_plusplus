@@ -20,7 +20,7 @@ const int mc_zlib_compression_level = 6;
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
 {
-	log::initialize();
+	Log::initialize();
 	ServerConsole::AllocCosole();
 
 	//rand seeding
@@ -73,7 +73,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		}
 		catch (protocolWarning obj)
 		{
-			log::txt() << "\nProtocol warning: " << obj.msg;
+			Log::txt() << "\nProtocol warning: " << obj.msg;
 		}
 		catch (const char* err_msg)
 		{
@@ -119,7 +119,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 	catch (protocolWarning obj)
 	{
-		log::txt() << "\nProtocol warning: " << obj.msg;
+		Log::txt() << "\nProtocol warning: " << obj.msg;
 	}
 	catch (const char* err_msg)
 	{

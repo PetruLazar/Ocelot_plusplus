@@ -67,9 +67,9 @@ namespace Command
 		{
 			//EntityProperty* props = new EntityProperty("uab.domsa", 40);
 			//message::play::send::entityProperties(p, p->eid, 1, props);
-			message::play::send::updateHp(p, 0, 20, 0.f);
+			//message::play::send::updateHp(p, 0, 20, 0.f);
 			//delete props;
-			/*Player* temp = new Player(new sf::TcpSocket);
+			Player* temp = new Player(new sf::TcpSocket);
 			temp->uuid = new mcUUID(mcUUID::type::player);
 			temp->username = "Dna Ma-ta";
 			temp->gm = gamemode::creative;
@@ -77,7 +77,8 @@ namespace Command
 			temp->hasDisplayName = false;
 			message::play::send::playerInfo(p, playerInfo::addPlayer, 1, &temp);
 			message::play::send::spawnPlayer(p, 0x27, *temp->uuid, p->X, p->Y + 2, p->Z, (float)p->yaw, (float)p->pitch);
-			delete temp;*/
+			message::play::send::entityHeadLook(p, 0x27, (double)p->yaw);
+			delete temp;
 			return;
 		}
 		message::play::send::chatMessage(p, Chat("Ba da atata esti de prost de nici nu stii sa scrii o comanda...", Chat::red), 1, mcUUID(0, 0, 0, 0));

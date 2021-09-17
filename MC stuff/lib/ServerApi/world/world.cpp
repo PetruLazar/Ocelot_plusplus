@@ -934,7 +934,7 @@ void World::unload(int x, int z)
 	}
 
 	std::cout << "\nIncorrect chunk unload at [" << x << ", " << z << "]";
-	throw runtimeWarning("Tries to unload a chunk in an unloaded region");
+	throw runtimeWarning("Tried to unload a chunk in an unloaded region");
 }
 Chunk* World::get(int x, int z, bool increaseLoadCount)
 {

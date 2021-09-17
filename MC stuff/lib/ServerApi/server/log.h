@@ -20,7 +20,7 @@ public:
 	SERVER_API DebugStream& operator<<(const char* n);
 };
 
-class log
+class Log
 {
 	SERVER_API static const char binFileName[], txtFileName[];
 	SERVER_API static std::ofstream binFile, txtFile;
