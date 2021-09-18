@@ -368,23 +368,24 @@ World::~World()
 
 Chunk* World::generate_def(World* world, int X, int Z)
 {
-	Chunk* chunk = new Chunk;
+	int height = world->height;
+	Chunk* chunk = new Chunk(height);
+
+	uint sectionCount = world->height / 16;
+	//chunk->sections.resize(sectionCount);
 
 	//biome and section creation
 	int biomeId = 0;
 
-	uint sectionCount = world->height / 16;
-	chunk->sections.resize(sectionCount);
-
 	//sectionMask
-	chunk->sectionMask = new BitArray(sectionCount, 1);
+	//chunk->sectionMask = new BitArray(sectionCount, 1);
 
 	//light data
-	chunk->lightData.resize((ull)sectionCount + 2);
-	chunk->skyLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->blockLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->emptySkyLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->emptyBlockLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->lightData.resize((ull)sectionCount + 2);
+	//chunk->skyLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->blockLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->emptySkyLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->emptyBlockLightMask = new BitArray(sectionCount + 2, 1);
 	//section below the world
 	{
 		//the section below the world
@@ -406,7 +407,11 @@ Chunk* World::generate_def(World* world, int X, int Z)
 	}
 	//[z][x]
 	uint heightmaps[16][16]{};
-	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++) heightmaps[j][i] = int(simplex::get_orig(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + 85 - world->min_y);
+	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++)
+	{
+		heightmaps[j][i] = int(simplex::get_orig(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + 85 - world->min_y);
+		chunk->heightmaps->setElement(j >> 4 | i, heightmaps[j][i]);
+	}
 
 	//blocks
 	for (uint i = 0; i < sectionCount; i++)
@@ -471,32 +476,32 @@ Chunk* World::generate_def(World* world, int X, int Z)
 	}
 
 	//heightmap generation
-	chunk->heightmaps = new BitArray(256, bitCount(world->height), (uint*)heightmaps);
+	//chunk->heightmaps = new BitArray(256, bitCount(world->height), (uint*)heightmaps);
 	//for (int z = 0; z < 16; z++) for (int x = 0; x < 16; x++) chunk->heightmaps->setElement((ull)z * 16 + x, 144);
 
 	return chunk;
 }
 Chunk* World::generate_flat(World* world, int x, int z)
 {
-	Chunk* chunk = new Chunk;
 
 	//heightmap generation
-	int height = world->characteristics["height"].vInt();
-	chunk->heightmaps = new BitArray(256, bitCount(height));
+	int height = world->height;
+	Chunk* chunk = new Chunk(height);
+	//chunk->heightmaps = new BitArray(256, bitCount(height));
 	for (int z0 = 0; z0 < 16; z0++) for (int x0 = 0; x0 < 16; x0++) chunk->heightmaps->setElement((ull)z0 * 16 + x0, ull(80 - world->min_y));
 
 	int biomeId = (x + z) % 10;
 	if (biomeId < 0) biomeId += 10;
 
 	uint sectionCount = height >> 4;
-	chunk->sections.resize(sectionCount);
+	//chunk->sections.resize(sectionCount);
 
 	//light data initialization
-	chunk->lightData.resize((ull)sectionCount + 2);
-	chunk->skyLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->blockLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->emptySkyLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->emptyBlockLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->lightData.resize((ull)sectionCount + 2);
+	//chunk->skyLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->blockLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->emptySkyLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->emptyBlockLightMask = new BitArray(sectionCount + 2, 1);
 	//-1 and +1
 	{
 		//the section below the world
@@ -859,9 +864,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 }
 Chunk* World::generate_void(World* world, int x, int z)
 {
-
 	//heightmap generation
-	int height = world->characteristics["height"].vInt();
+	int height = world->height;
 	Chunk* chunk = new Chunk((uint)height);
 	//chunk->heightmaps = new BitArray(256, bitCount(height));
 
