@@ -17,7 +17,7 @@
 //#define NETWORK_TRAFFIC_DEBUG
 
 //comment or decomment this define to turn on or off the logging of the outgoing message buffering
-//#define LOG_PACKET_IDS
+//#define LOG_PACKETS
 
 #ifdef DEBUG_ALLOCATIONS
 

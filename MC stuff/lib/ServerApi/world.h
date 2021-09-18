@@ -19,14 +19,6 @@ public:
 
 	mcString name;
 
-	struct {
-		Position Absolute;
-
-		bdouble X, Y, Z;
-		bfloat Yaw, Pitch;
-		int ChunkX, ChunkZ;
-	} spawn;
-
 	/*Contents of nbt_compound characteristics
 	*
 	* piglin safe - byte
@@ -47,9 +39,24 @@ public:
 	* has_ceiling - byte
 	*/
 	nbt_compound characteristics;
+	struct {
+		Position Absolute;
+
+		bdouble X, Y, Z;
+		bfloat Yaw, Pitch;
+		int ChunkX, ChunkZ;
+	} spawn;
+	bool isFlat;
+	enum GeneratorType : byte
+	{
+		customWorld = 'c',
+		voidWorld = 'v',
+		flatWorld = 'f',
+		defaultWorld = 'd'
+	} generatorType;
+
 	int height;
 	int min_y;
-	bool isFlat;
 
 	SERVER_API void unload(int x, int z);
 	SERVER_API Chunk* get(int x, int z, bool increaseLoadCount = false);

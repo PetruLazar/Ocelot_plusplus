@@ -4,6 +4,8 @@
 #include "noise.h"
 #include "../types/error.h"
 #include "../types/basic.h"
+#include "../server/log.h"
+#include "../server/options.h"
 
 using namespace std;
 
@@ -322,14 +324,33 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	spawn.Absolute = sf::Vector3i(int(floor(spawn.X)), int(floor(spawn.Y)), int(floor(spawn.Z)));
 
 	worldMain.read((char*)&isFlat, 1);
+	worldMain.read((char*)&generatorType, 1);
 
-	//load custom generator
+	//generator selection
+	switch (generatorType)
+	{
+	case voidWorld:
+		generatorFunction = generate_void;
+		break;
+	case flatWorld:
+		generatorFunction = generate_flat;
+		break;
+	case defaultWorld:
+		generatorFunction = generate_def;
+		break;
+	case customWorld:
+		//load custom generator
+		Log::txt() << "\nWorld \"" << c_name << "\" tried to use a custom world generator, using default world generator instead.";
+		generatorFunction = generate_def;
+	}
 
 	if (name == "world") generatorFunction = generate_def;
 	else generatorFunction = generate_flat;
 
 	cout << "\nLoading spawn area...";
-	for (int x = spawn.ChunkX - 3; x <= spawn.ChunkX + 3; x++) for (int z = spawn.ChunkZ - 3; z <= spawn.ChunkZ + 3; z++) get(x, z);
+	for (int x = spawn.ChunkX - Options::viewDistance(); x <= spawn.ChunkX + Options::viewDistance(); x++)
+		for (int z = spawn.ChunkZ - Options::viewDistance(); z <= spawn.ChunkZ + Options::viewDistance(); z++)
+			get(x, z);
 
 	spawn.Y = double(characteristics["min_y"].vInt()) + get(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
 	cout << "\nDone!";
@@ -838,23 +859,23 @@ Chunk* World::generate_flat(World* world, int x, int z)
 }
 Chunk* World::generate_void(World* world, int x, int z)
 {
-	Chunk* chunk = new Chunk;
 
 	//heightmap generation
 	int height = world->characteristics["height"].vInt();
-	chunk->heightmaps = new BitArray(256, bitCount(height));
+	Chunk* chunk = new Chunk((uint)height);
+	//chunk->heightmaps = new BitArray(256, bitCount(height));
 
 	int biomeId = 7;
 
 	uint sectionCount = height >> 4;
-	chunk->sections.resize(sectionCount);
+	//chunk->sections.resize(sectionCount);
 
 	//light data initialization
-	chunk->lightData.resize((ull)sectionCount + 2);
-	chunk->skyLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->blockLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->emptySkyLightMask = new BitArray(sectionCount + 2, 1);
-	chunk->emptyBlockLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->lightData.resize((ull)sectionCount + 2);
+	//chunk->skyLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->blockLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->emptySkyLightMask = new BitArray(sectionCount + 2, 1);
+	//chunk->emptyBlockLightMask = new BitArray(sectionCount + 2, 1);
 	//-1 and +1
 	{
 		BitArray* lightData = new BitArray(4096, 4);
@@ -863,7 +884,7 @@ Chunk* World::generate_void(World* world, int x, int z)
 		//the section below the world
 		chunk->skyLightMask->setElement(0, 1);
 		chunk->emptyBlockLightMask->setElement(0, 1);
-		chunk->lightData[0].skyLight = lightData;;
+		chunk->lightData[0].skyLight = lightData;
 		chunk->lightData[0].blockLight = new BitArray(4096, 4);
 	}
 	{
@@ -878,7 +899,7 @@ Chunk* World::generate_void(World* world, int x, int z)
 	}
 
 	//primary mask initialization
-	chunk->sectionMask = new BitArray(sectionCount, 1);
+	//chunk->sectionMask = new BitArray(sectionCount, 1);
 
 	for (uint i = 0; i < sectionCount; i++)
 	{
