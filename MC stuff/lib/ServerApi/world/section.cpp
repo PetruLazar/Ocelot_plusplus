@@ -1,5 +1,6 @@
 #include "section.h"
 
+Section::Section() { }
 Section::~Section()
 {
 	delete blockStates;

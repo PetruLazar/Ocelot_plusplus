@@ -8,7 +8,9 @@
 class Section
 {
 public:
-	~Section();
+	SERVER_API Section();
+	//SERVER_API Section();
+	SERVER_API ~Section();
 
 	varInt biomes[4][4][4];
 
@@ -25,7 +27,7 @@ public:
 class LightSection
 {
 public:
-	~LightSection();
+	SERVER_API ~LightSection();
 
 	SERVER_API static const varInt lightArrayLength;
 
