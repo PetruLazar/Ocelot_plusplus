@@ -53,6 +53,16 @@ namespace Command
 			message::play::send::chatMessage(p, Chat("Ba cplm, tu nu vezi ca deja esti in lumea aia?"), 1, mcUUID(0, 0, 0, 0));
 			return;
 		}
+		if (comm == "/world experimental")
+		{
+			if (p->world != World::worlds[2])
+			{
+				p->changeWorld(World::worlds[2]);
+				return;
+			}
+			message::play::send::chatMessage(p, Chat("Ba cplm, tu nu vezi ca deja esti in lumea aia?"), 1, mcUUID(0, 0, 0, 0));
+			return;
+		}
 		if (comm == "/world")
 		{
 			message::play::send::chatMessage(p, Chat(("You are in world \\\"" + p->world->name + "\\\"").c_str()), 1, mcUUID(0, 0, 0, 0));
