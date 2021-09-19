@@ -17,6 +17,10 @@ classes for world/region/chunk (in progress)
 
 Increase code efficiency for world generation/load/unload/etc.
 
+Better commands system
+
+Better Tags system
+
 Split logging into log.txt (normal log) and debug.txt (for protocol/runtime warnings and error)
 
 finish message.h : statistics::custom and create header/source files for it
@@ -118,25 +122,14 @@ Blocks:
 
 code related to the following packets (either implement the packet itself or code to ease the use of the packet or other infrastructure):
 
-	handshake::receive::standard
 	handshake::receive::legacy
-	status::send::response
-	status::send::pong
-	status::receive::request
-	status::receive::ping
-	login::send::disconnect
 	login::send::encryptionRequest
-	login::send::success
-	login::send::setCompression
 	login::send::loginPluginRequest
 	login::receive::start
 	login::receive::encryptionResponse
 	login::receive::loginPluginResponse
 	play::send::spawnEntity
-	play::send::spawnXPorb
-	play::send::spawnLivingEntity
 	play::send::spawnPainting
-	play::send::spawnPlayer
 	play::send::sculkVibrationSignal
 	play::send::entityAnimation
 	play::send::statistics

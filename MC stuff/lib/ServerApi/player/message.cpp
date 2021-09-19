@@ -198,6 +198,93 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 	throw protocolError("Encryption not supported");
 }
 
+void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, EntityType type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
+{
+	varInt id = (int)id::spawnEntity;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	uuid.write(data);
+	varInt(type).write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	*(data++) = (char&)pitch;
+	*(data++) = (char&)yaw;
+	Data.write(data);
+	velocityX.write(data);
+	velocityY.write(data);
+	velocityZ.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::spawnXPorb(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, bigEndian<short> xpCount)
+{
+	varInt id = (int)id::spawnXPorb;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	xpCount.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID& uuid, EntityType type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ)
+{
+	varInt id = (int)id::spawnLivingEntity;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	uuid.write(data);
+	varInt(type).write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	*(data++) = (char&)yaw;
+	*(data++) = (char&)pitch;
+	*(data++) = (char&)headPitch;
+	velocityX.write(data);
+	velocityY.write(data);
+	velocityZ.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, PaintingMotive motive, Position location, painting::direction direction)
+{
+	varInt id = (int)id::spawnPainting;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	uuid.write(data);
+	varInt(motive).write(data);
+	location.write(data);
+	*(data++) = direction;
+
+	finishSendMacro;
+}
+void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch)
+{
+	varInt id = (int)id::spawnPlayer;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	uuid.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	*(data++) = (char&)yaw;
+	*(data++) = (char&)pitch;
+
+	finishSendMacro;
+}
+
 void message::play::send::keepAlive(Player* p, blong keepAlive_id)
 {
 	varInt id = (int)id::keepAlive_clientbound;
@@ -376,7 +463,6 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 
 	finishSendMacro;
 }
-
 void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
@@ -742,22 +828,6 @@ void message::play::send::respawn(Player* p, const nbt_compound& dimension, cons
 
 	finishSendMacro;
 }
-void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch)
-{
-	varInt id = (int)id::spawnPlayer;
-	prepareSendMacro(1024 * 1024);
-
-	id.write(data);
-	eid.write(data);
-	uuid.write(data);
-	x.write(data);
-	y.write(data);
-	z.write(data);
-	*(data++) = (byte&)yaw;
-	*(data++) = (byte&)pitch;
-
-	finishSendMacro;
-}
 void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProperties, EntityProperty* properties)
 {
 	varInt id = (int)id::entityProperties;
@@ -800,6 +870,14 @@ void message::play::send::entityHeadLook(Player* p, varInt eid, Angle headYaw)
 	finishSendMacro;
 }
 
+/*void message::translateChunk()
+{
+
+}
+void message::translateLight()
+{
+
+}*/
 void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 {
 	Chunk* chunk = p->world->get(cX, cZ, true);

@@ -29,7 +29,14 @@ void Player::changeWorld(World* newWorld)
 	message::play::send::respawn(this, newWorld->characteristics, newWorld->name, 0x5f19a34be6c9129a, gm, gamemode::none, false, newWorld->isFlat, true);
 
 	//unload chunks
-	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) world->unload(x, z);
+	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++)
+	{
+		try
+		{
+			world->unload(x, z);
+		}
+		catch (...) { }
+	}
 
 	//change dimension
 	world = newWorld;

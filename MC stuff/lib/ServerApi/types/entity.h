@@ -120,6 +120,36 @@ enum EntityType
 	minecraft_fishing_bobber = 112
 };
 
+enum PaintingMotive
+{
+	kebab,
+	aztec,
+	alban,
+	aztec2,
+	bomb,
+	plant,
+	wasteland,
+	pool,
+	courbet,
+	sea,
+	sunset,
+	creebet,
+	wanderer,
+	graham,
+	match,
+	bust,
+	stage,
+	void_,
+	skull_and_roses,
+	wither,
+	fighters,
+	pointer,
+	pigscene,
+	burning_skull,
+	skeleton,
+	donkey_kong
+};
+
 class EntityProperty
 {
 public:
