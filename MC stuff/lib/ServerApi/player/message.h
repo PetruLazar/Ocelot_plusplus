@@ -119,30 +119,6 @@
 //window Items?
 //spawnPosition? - done
 
-namespace painting
-{
-	enum direction : byte
-	{
-		south,
-		west,
-		north,
-		east
-	};
-}
-
-namespace entityAnimation
-{
-	enum animation : byte
-	{
-		swingMainArm,
-		takeDamage,
-		leaveBed,
-		swingOffhand,
-		criticalEffect,
-		magicCriticalEffect
-	};
-}
-
 namespace blockEntityData
 {
 	enum action
@@ -479,10 +455,11 @@ struct message
 			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, EntityType type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint data, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void spawnXPorb(Player*, varInt eid, bdouble x, bdouble y, bdouble z, bigEndian<short> xpCount);
 			SERVER_API static void spawnLivingEntity(Player*, varInt eid, const mcUUID& uuid, EntityType type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ);
-			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, PaintingMotive motive, Position location, painting::direction direction);
+			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, Painting::motive motive, Position location, Painting::direction direction);
 			SERVER_API static void spawnPlayer(Player*, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch);
-			//SERVER_API static void sculkVibrationSignal(Player*, Position source, const mcString& destinationIdentifier);
-			SERVER_API static void entityAnimation(Player*, varInt eid, entityAnimation::animation animation);
+			SERVER_API static void sculkVibrationSignal(Player*, Position source, Sculk::destinationType destinationType, Sculk::destination destination, varInt arrivalTicks);
+			SERVER_API static void entityAnimation(Player*, varInt eid, Animation animation);
+
 			SERVER_API static void statistics(Player*, varInt count, statistic* stats);
 			SERVER_API static void acknowledgePlayerDigging(Player*, Position location, varInt block, varInt status, bool successful);
 			SERVER_API static void blockBreakAnimation(Player*, varInt eid, Position location, byte destroyStage);
@@ -581,7 +558,7 @@ struct message
 			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes);
 			SERVER_API static void tags(Player*);
 			SERVER_API static void tags(Player*, varInt tagCategoryCount, Tags* tags);
-			
+
 			//SERVER_API static void scheduleFullChunk(Player* p, int cX, int cZ);
 			SERVER_API static void sendFullChunk(Player*, int cX, int cZ);
 		};
@@ -645,7 +622,7 @@ struct message
 	//prepare packet for sending (compress or append size, depending on the needs)
 	SERVER_API static void preparePacket(Player*, char*& data, ull& size, char*& toDelete);
 	//SERVER_API static void sendPacketData(Player*, char*, ull, bool disconnectAfter = false);
-	
+
 	//dispatch a message from a player
 	SERVER_API static void dispatch(Player*, char* data, uint compressedSize, uint decompressedSize);
 	SERVER_API static void dispatch(Player*, char* data, uint size);

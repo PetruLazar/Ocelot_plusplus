@@ -139,14 +139,14 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->gm = gamemode::creative;
 	p->eid = 0x17;
 	//position, rotation ad world
-	p->world = World::worlds[World::spawnWorld];
-	p->X = p->world->spawn.X;
-	p->Y = p->world->spawn.Y;
-	p->Z = p->world->spawn.Z;
-	p->chunkX = p->world->spawn.ChunkX;
-	p->chunkZ = p->world->spawn.ChunkZ;
-	p->yaw = p->world->spawn.Yaw;
-	p->pitch = p->world->spawn.Pitch;
+	//p->world = World::worlds[World::spawnWorld];
+	//p->X = p->world->spawn.X;
+	//p->Y = p->world->spawn.Y;
+	//p->Z = p->world->spawn.Z;
+	//p->chunkX = p->world->spawn.ChunkX;
+	//p->chunkZ = p->world->spawn.ChunkZ;
+	//p->yaw = p->world->spawn.Yaw;
+	//p->pitch = p->world->spawn.Pitch;
 	//playerInfo data
 	p->ping = -1;
 	p->hasDisplayName = false;
@@ -156,7 +156,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	login::send::success(p, *p->uuid, username);
 
-	play::send::joinGame(p, (int)p->eid, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, p->world->characteristics, p->world->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, p->world->isFlat);
+	play::send::joinGame(p, (int)p->eid, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[World::spawnWorld]->characteristics, World::worlds[World::spawnWorld]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, World::worlds[World::spawnWorld]->isFlat);
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
@@ -175,7 +175,12 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::declareCommands(p);
 
-	play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
+	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
+	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p)
+
+	p->setWorld(World::worlds[World::spawnWorld]);
+
+	/*play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
 
 	play::send::timeUpdate(p, 6000i64, 6000i64);
 
@@ -188,10 +193,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 		//play::send::chunkData(p, x, z);
 	}
 
-	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, false);
+	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, false);*/
 
-	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
-	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p)
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -254,7 +257,7 @@ void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID&
 
 	finishSendMacro;
 }
-void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, PaintingMotive motive, Position location, painting::direction direction)
+void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, Painting::motive motive, Position location, Painting::direction direction)
 {
 	varInt id = (int)id::spawnPainting;
 	prepareSendMacro(1024 * 1024);
@@ -281,6 +284,38 @@ void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid,
 	z.write(data);
 	*(data++) = (char&)yaw;
 	*(data++) = (char&)pitch;
+
+	finishSendMacro;
+}
+void message::play::send::sculkVibrationSignal(Player* p, Position source, Sculk::destinationType destinationType, Sculk::destination destination, varInt arrivalTime)
+{
+	varInt id = (int)id::sculkVibrationSignal;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	source.write(data);
+	if (destinationType == Sculk::block)
+	{
+		mcString("block").write(data);
+		destination.position.write(data);
+	}
+	else
+	{
+		mcString("entity").write(data);
+		destination.eid.write(data);
+	}
+	arrivalTime.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::entityAnimation(Player* p, varInt eid, Animation animation)
+{
+	varInt id = (int)id::entityAnimation;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	*(data++) = (byte&)animation;
 
 	finishSendMacro;
 }
@@ -866,6 +901,17 @@ void message::play::send::entityHeadLook(Player* p, varInt eid, Angle headYaw)
 	id.write(data);
 	eid.write(data);
 	*(data++) = (char&)headYaw;
+
+	finishSendMacro;
+}
+void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
+{
+	varInt id = (int)id::destroyEntities;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	count.write(data);
+	for (int i = 0; i < count; i++) eids[i].write(data);
 
 	finishSendMacro;
 }
