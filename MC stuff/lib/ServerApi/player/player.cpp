@@ -3,6 +3,7 @@
 #include "../types/error.h"
 #include <iostream>
 #include "../types/enums.h"
+#include "../server/log.h"
 
 const char* invalidPacketLengthError = "Invalid Packet Length";
 const char* socketError = "Socket error occured";
@@ -24,22 +25,10 @@ Player::~Player()
 	if (uuid) delete uuid;
 }
 
-void Player::changeWorld(World* newWorld)
+void Player::setWorld(World* world)
 {
-	message::play::send::respawn(this, newWorld->characteristics, newWorld->name, 0x5f19a34be6c9129a, gm, gamemode::none, false, newWorld->isFlat, true);
-
-	//unload chunks
-	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++)
-	{
-		try
-		{
-			world->unload(x, z);
-		}
-		catch (...) { }
-	}
-
-	//change dimension
-	world = newWorld;
+	//set world and position
+	Player::world = world;
 	X = world->spawn.X;
 	Y = world->spawn.Y;
 	Z = world->spawn.Z;
@@ -48,7 +37,7 @@ void Player::changeWorld(World* newWorld)
 	yaw = world->spawn.Yaw;
 	pitch = world->spawn.Pitch;
 
-	//finish dimension change
+	//send necessary packets
 	message::play::send::updateViewPosition(this, chunkX, chunkZ);
 
 	message::play::send::timeUpdate(this, 6000i64, 6000i64);
@@ -63,10 +52,59 @@ void Player::changeWorld(World* newWorld)
 	}
 
 	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
+
+	//include the player in the world's player list and check for players in sight
+	for (Player* otherP : world->players)
+	{
+		if (otherP->state == ConnectionState::play && abs(otherP->chunkX - chunkX) <= viewDistance && abs(otherP->chunkZ - chunkZ) <= viewDistance)
+		{
+			enterSight(otherP);
+			otherP->enterSight(this);
+		}
+	}
+	world->players.push_back(this);
+}
+void Player::changeWorld(World* newWorld)
+{
+	message::play::send::respawn(this, newWorld->characteristics, newWorld->name, 0x5f19a34be6c9129a, gm, gamemode::none, false, newWorld->isFlat, true);
+
+	//unload chunks
+	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++)
+	{
+		try
+		{
+			world->unload(x, z);
+		}
+		catch (...) {}
+	}
+
+	setWorld(newWorld);
 }
 void Player::changeWorld(const mcString& worldName)
 {
 	for (uint i = 0; i < World::worlds.size(); i++) if (World::worlds[i]->name == worldName) changeWorld(World::worlds[i]);
+}
+
+void Player::enterSight(Player* other)
+{
+	message::play::send::spawnPlayer(this, other->eid + 1, *other->uuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch);
+	message::play::send::entityHeadLook(this, other->eid + 1, (float)other->yaw);
+	seenBy.push_back(other);
+	//Log::txt() << "\nSight event.";
+}
+void Player::exitSight(Player* other)
+{
+	ull size = seenBy.size();
+	for (ull i = 0; i < size; i++) if (seenBy[i] == other)
+	{
+		exitSight(i);
+		return;
+	}
+}
+void Player::exitSight(ull otherI)
+{
+	message::play::send::destroyEntities(this, 1, &seenBy[otherI]->eid);
+	seenBy.erase(seenBy.begin() + otherI);
 }
 
 void Player::disconnect()
@@ -332,7 +370,6 @@ void Player::schedulePacket(char* buffer, ull size, char* toDelete, bool disconn
 		throw protocolError(socketError);
 	}*/
 }
-
 
 bool Player::Connected() { return connected; }
 bool Player::ScheduledDisconnect() { return scheduledDisconnect; }

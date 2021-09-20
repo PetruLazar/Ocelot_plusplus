@@ -81,6 +81,12 @@ public:
 	varInt pendingTpId = -1;
 	int nextTpId = 0;
 
+	//other players visibility
+	std::vector<Player*> seenBy;
+	void enterSight(Player*);
+	void exitSight(Player*);
+	void exitSight(ull);
+
 	gamemode gm;
 
 	int viewDistance;
@@ -88,6 +94,7 @@ public:
 	SERVER_API Player(sf::TcpSocket*);
 	SERVER_API ~Player();
 
+	SERVER_API void setWorld(World* world);
 	SERVER_API void changeWorld(World* newWorld);
 	SERVER_API void changeWorld(const mcString& worldName);
 

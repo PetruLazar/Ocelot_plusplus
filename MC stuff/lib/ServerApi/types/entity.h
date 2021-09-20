@@ -2,6 +2,7 @@
 #include "mcString.h"
 #include "varData.h"
 #include "endian.h"
+#include "position.h"
 
 enum EntityType
 {
@@ -120,35 +121,68 @@ enum EntityType
 	minecraft_fishing_bobber = 112
 };
 
-enum PaintingMotive
+namespace Painting
 {
-	kebab,
-	aztec,
-	alban,
-	aztec2,
-	bomb,
-	plant,
-	wasteland,
-	pool,
-	courbet,
-	sea,
-	sunset,
-	creebet,
-	wanderer,
-	graham,
-	match,
-	bust,
-	stage,
-	void_,
-	skull_and_roses,
-	wither,
-	fighters,
-	pointer,
-	pigscene,
-	burning_skull,
-	skeleton,
-	donkey_kong
+	enum motive
+	{
+		kebab,
+		aztec,
+		alban,
+		aztec2,
+		bomb,
+		plant,
+		wasteland,
+		pool,
+		courbet,
+		sea,
+		sunset,
+		creebet,
+		wanderer,
+		graham,
+		match,
+		bust,
+		stage,
+		void_,
+		skull_and_roses,
+		wither,
+		fighters,
+		pointer,
+		pigscene,
+		burning_skull,
+		skeleton,
+		donkey_kong
+	};
+	enum direction : byte
+	{
+		south,
+		west,
+		north,
+		east
+	};
+}
+namespace Sculk
+{
+	enum destinationType
+	{
+		block,
+		entity
+	};
+	union destination
+	{
+		varInt eid;
+		Position position;
+	};
+}
+enum class Animation : byte
+{
+	swingMainArm,
+	takeDamage,
+	leaveBed,
+	swingOffhand,
+	criticalEffect,
+	magicCriticalEffect
 };
+
 
 class EntityProperty
 {

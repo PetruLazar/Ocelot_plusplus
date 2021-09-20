@@ -3,6 +3,9 @@
 #include "types/mcString.h"
 #include "types/position.h"
 
+class Player;
+#include "player/player.h"
+
 typedef Chunk* (*GeneratorFunction)(World*, int, int);
 
 class World
@@ -18,6 +21,7 @@ public:
 	~World();
 
 	mcString name;
+	std::vector<Player*> players;
 
 	/*Contents of nbt_compound characteristics
 	*

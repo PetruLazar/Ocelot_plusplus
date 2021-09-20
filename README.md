@@ -17,6 +17,8 @@ classes for world/region/chunk (in progress)
 
 Increase code efficiency for world generation/load/unload/etc.
 
+System for assigning entity ids
+
 Better commands system
 
 Better Tags system
@@ -129,9 +131,6 @@ code related to the following packets (either implement the packet itself or cod
 	login::receive::encryptionResponse
 	login::receive::loginPluginResponse
 	play::send::spawnEntity
-	play::send::spawnPainting
-	play::send::sculkVibrationSignal
-	play::send::entityAnimation
 	play::send::statistics
 	play::send::acknowledge	playerDigging
 	play::send::blockBreakAnimation
@@ -182,7 +181,6 @@ code related to the following packets (either implement the packet itself or cod
 	play::send::faceplayer
 	play::send::playerPosAndLook
 	play::send::unlockRecipes
-	play::send::destroyEntities
 	play::send::removeEntityEffect
 	play::send::resourcePackSend
 	play::send::respawn
