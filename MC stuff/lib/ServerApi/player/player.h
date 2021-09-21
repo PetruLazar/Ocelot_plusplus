@@ -6,7 +6,7 @@
 #include "../types/chat.h"
 #include "../types/queue.h"
 
-enum class ConnectionState : byte
+enum class ConnectionState : Byte
 {
 	handshake,
 	status,
@@ -18,7 +18,7 @@ class Player
 {
 public:
 
-	enum mask : byte
+	enum mask : Byte
 	{
 		bufferingLength = 0x01,
 		bufferingMessage = 0x02,

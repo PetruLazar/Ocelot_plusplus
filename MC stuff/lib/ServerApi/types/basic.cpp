@@ -10,9 +10,9 @@ void initStream(z_streamp str, char* src, uint srcSize, char* dest, uint destSiz
 	str->zalloc = Z_NULL;
 	str->zfree = Z_NULL;
 
-	str->next_in = (byte*)src;
+	str->next_in = (Byte*)src;
 	str->avail_in = srcSize;
-	str->next_out = (byte*)dest;
+	str->next_out = (Byte*)dest;
 	str->avail_out = destSize;
 }
 

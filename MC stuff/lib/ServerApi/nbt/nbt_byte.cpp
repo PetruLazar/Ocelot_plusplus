@@ -1,8 +1,8 @@
-#include "nbt_byte.h"
+#include "nbt_Byte.h"
 
-nbt_byte::nbt_byte(const std::string& name, char v) : nbt(Byte, name), value(v) { }
+nbt_Byte::nbt_Byte(const std::string& name, char v) : nbt(Byte, name), value(v) { }
 
-void nbt_byte::write(std::fstream& os, bool iNT) const
+void nbt_Byte::write(std::fstream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -13,7 +13,7 @@ void nbt_byte::write(std::fstream& os, bool iNT) const
 
 	os.write(&value, sizeof(value));
 }
-void nbt_byte::read(std::fstream& is, const std::string& name)
+void nbt_Byte::read(std::fstream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg(), end;
 
@@ -22,7 +22,7 @@ void nbt_byte::read(std::fstream& is, const std::string& name)
 
 	is.read(&value, 1);
 }
-void nbt_byte::write(char*& buffer, bool iNT) const
+void nbt_Byte::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
@@ -33,7 +33,7 @@ void nbt_byte::write(char*& buffer, bool iNT) const
 
 	*(buffer++) = value;
 }
-void nbt_byte::read(char*& end, const std::string& name)
+void nbt_Byte::read(char*& end, const std::string& name)
 {
 	char* buffer = end;
 	if (name == "") readName(end);
@@ -41,14 +41,14 @@ void nbt_byte::read(char*& end, const std::string& name)
 
 	value = *(end++);
 }
-std::string nbt_byte::getStringValue() const
+std::string nbt_Byte::getStringValue() const
 {
 	return std::to_string(value) + 'b';
 }
-/*std::string nbt_byte::to_string()
+/*std::string nbt_Byte::to_string()
 {
 
 }*/
-char& nbt_byte::vByte() { return value; }
-nbt_byte::operator char& () { return value; }
-void nbt_byte::operator=(char v) { value = v; }
+char& nbt_Byte::vByte() { return value; }
+nbt_Byte::operator char& () { return value; }
+void nbt_Byte::operator=(char v) { value = v; }

@@ -7,8 +7,8 @@
 class Node
 {
 public:
-	//byte flags
-	enum NodeType : byte
+	//Byte flags
+	enum NodeType : Byte
 	{
 		root,
 		literal,
@@ -17,7 +17,7 @@ public:
 	bool isExecutable;
 	bool hasRedirect;
 	bool hasSuggestionsType;
-	SERVER_API byte flags();
+	SERVER_API Byte flags();
 
 	//children array
 	varInt childrenCount;
@@ -38,7 +38,7 @@ public:
 		class DoubleProperties
 		{
 		public:
-			enum Flags : byte
+			enum Flags : Byte
 			{
 				none = 0x00,
 				hasMin = 0x01,
@@ -50,7 +50,7 @@ public:
 		class FloatProperties
 		{
 		public:
-			enum Flags : byte
+			enum Flags : Byte
 			{
 				none = 0x00,
 				hasMin = 0x01,
@@ -62,7 +62,7 @@ public:
 		class IntegerProperties
 		{
 		public:
-			enum Flags : byte
+			enum Flags : Byte
 			{
 				none = 0x00,
 				hasMin = 0x01,
@@ -74,7 +74,7 @@ public:
 		class LongProperties
 		{
 		public:
-			enum Flags : byte
+			enum Flags : Byte
 			{
 				none = 0x00,
 				hasMin = 0x01,
@@ -86,7 +86,7 @@ public:
 		class StringProperties
 		{
 		public:
-			enum Flags : byte
+			enum Flags : Byte
 			{
 				SINGLE_WORD,
 				QUOTABLE_PHRASE,
@@ -101,7 +101,7 @@ public:
 		public:
 			//0x01 - single entity/player
 			//0x02 - players
-			enum Flags : byte
+			enum Flags : Byte
 			{
 				none = 0x00,
 				singleTarget = 0x01,
@@ -112,7 +112,7 @@ public:
 		{
 		public:
 			//0x01 - allows multiple
-			enum Flags : byte
+			enum Flags : Byte
 			{
 				none = 0x00,
 				allowsMultiple = 0x01

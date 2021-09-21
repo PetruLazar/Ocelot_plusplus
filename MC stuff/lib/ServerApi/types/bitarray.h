@@ -21,17 +21,17 @@ public:
 class BitArray
 {
 	ull entryCount;
-	byte bitsPerEntry;
+	Byte bitsPerEntry;
 	ull mask;
 	ull groupSize;
 
 	ull compactedSize;
 	blong* compactedData;
 public:
-	SERVER_API BitArray(ull entryCount, byte bitsPerEntry);
-	SERVER_API BitArray(ull entryCount, byte bitsPerEntry, ull* values);
-	SERVER_API BitArray(ull entryCount, byte bitsPerEntry, uint* values);
-	SERVER_API BitArray(ull entryCount, byte bitsPerEntry, byte* values);
+	SERVER_API BitArray(ull entryCount, Byte bitsPerEntry);
+	SERVER_API BitArray(ull entryCount, Byte bitsPerEntry, ull* values);
+	SERVER_API BitArray(ull entryCount, Byte bitsPerEntry, uint* values);
+	SERVER_API BitArray(ull entryCount, Byte bitsPerEntry, Byte* values);
 	SERVER_API ~BitArray();
 
 	//maybe a getAll and a setAll for speed
@@ -42,7 +42,7 @@ public:
 	SERVER_API ull getCompactedSize() const;
 	SERVER_API blong* getCompactedValues() const;
 	SERVER_API void changeSize(ull);
-	SERVER_API void changeBitsPerEntry(byte);
+	SERVER_API void changeBitsPerEntry(Byte);
 
 	SERVER_API BitArrayElement operator[](ull);
 
@@ -55,17 +55,17 @@ public:
 class BitArrayReversed
 {
 	ull entryCount;
-	byte bitsPerEntry;
+	Byte bitsPerEntry;
 	ull mask;
 	ull groupSize;
 
 	ull compactedSize;
 	blong* compactedData;
 public:
-	SERVER_API BitArrayReversed(ull entryCount, byte bitsPerEntry);
-	SERVER_API BitArrayReversed(ull entryCount, byte bitsPerEntry, ull* values);
-	SERVER_API BitArrayReversed(ull entryCount, byte bitsPerEntry, uint* values);
-	SERVER_API BitArrayReversed(ull entryCount, byte bitsPerEntry, byte* values);
+	SERVER_API BitArrayReversed(ull entryCount, Byte bitsPerEntry);
+	SERVER_API BitArrayReversed(ull entryCount, Byte bitsPerEntry, ull* values);
+	SERVER_API BitArrayReversed(ull entryCount, Byte bitsPerEntry, uint* values);
+	SERVER_API BitArrayReversed(ull entryCount, Byte bitsPerEntry, Byte* values);
 	SERVER_API ~BitArrayReversed();
 
 	//maybe a getAll and a setAll for speed
@@ -76,7 +76,7 @@ public:
 	SERVER_API ull getCompactedSize() const;
 	SERVER_API blong* getCompactedValues() const;
 	SERVER_API void changeSize(ull);
-	SERVER_API void changeBitsPerEntry(byte);
+	SERVER_API void changeBitsPerEntry(Byte);
 
 	SERVER_API BitArrayElement operator[](ull);
 

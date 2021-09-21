@@ -1,7 +1,6 @@
 #pragma once
 
-typedef unsigned char byte;
-
+typedef unsigned char Byte;
 typedef unsigned short ush;
 typedef unsigned int uint;
 typedef unsigned long long ull;

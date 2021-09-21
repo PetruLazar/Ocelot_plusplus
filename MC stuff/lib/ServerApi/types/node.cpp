@@ -74,7 +74,7 @@ Node::~Node()
 	if (suggestionsType) delete suggestionsType;
 }
 
-byte Node::flags()
+Byte Node::flags()
 {
 	return (hasSuggestionsType << 4) | (hasRedirect << 3) | (isExecutable << 2) | type;
 }

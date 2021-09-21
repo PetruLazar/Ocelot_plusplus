@@ -16,7 +16,7 @@ public:
 	SERVER_API operator int& ();
 	void SERVER_API operator=(int);
 
-	//check if there is a valid varInt in memory with the maximum size of 'max' bytes
+	//check if there is a valid varInt in memory with the maximum size of 'max' Bytes
 	SERVER_API static bool valid(char*, size_t max);
 	SERVER_API static ull size(int);
 };
@@ -34,7 +34,7 @@ public:
 	SERVER_API operator long long& ();
 	void SERVER_API operator=(int64);
 
-	//check if there is a valid varLong in memory with the maximum size of 'max' bytes
+	//check if there is a valid varLong in memory with the maximum size of 'max' Bytes
 	SERVER_API static bool valid(char*, size_t max);
 	SERVER_API static ull size(int64);
 };

@@ -1,14 +1,14 @@
 #pragma once
 #include "nbt_base.h"
 
-class nbt_byte_array : public nbt
+class nbt_Byte_array : public nbt
 {
 	char* values;
 	buint _size;
 
 public:
-	SERVER_API nbt_byte_array(const std::string& name = "", char* values = nullptr, int size = 0);
-	SERVER_API ~nbt_byte_array();
+	SERVER_API nbt_Byte_array(const std::string& name = "", char* values = nullptr, int size = 0);
+	SERVER_API ~nbt_Byte_array();
 
 	SERVER_API void write(std::fstream&, bool includeNameAndType = true) const;
 	SERVER_API void read(std::fstream&, const std::string& name = "");

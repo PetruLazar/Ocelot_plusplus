@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nbt/nbt_byte.h"
+#include "nbt/nbt_Byte.h"
 #include "nbt/nbt_short.h"
 #include "nbt/nbt_int.h"
 #include "nbt/nbt_long.h"
@@ -8,7 +8,7 @@
 #include "nbt/nbt_double.h"
 #include "nbt/nbt_list.h"
 #include "nbt/nbt_compound.h"
-#include "nbt/nbt_byte_array.h"
+#include "nbt/nbt_Byte_array.h"
 #include "nbt/nbt_int_array.h"
 #include "nbt/nbt_long_array.h"
 #include "nbt/nbt_string.h"
@@ -17,14 +17,14 @@
 /*int main()
 {
 	nbt_compound c("", new nbt * [12]{
-			new nbt_byte("Byte",4),
+			new nbt_Byte("Byte",4),
 			new nbt_short("Short",-3),
 			new nbt_int("Int",48),
 			new nbt_long("Long",-849),
 			new nbt_string("String","salutari"),
 			new nbt_double("Double",15.75),
 			new nbt_float("Float",6.25) ,
-			new nbt_byte_array("ByteArray",new char[3]{45,16,-7},3),
+			new nbt_Byte_array("ByteArray",new char[3]{45,16,-7},3),
 			new nbt_int_array("IntArray",new int[3]{
 				0x4f9c645a,
 				0x080fcd5a,

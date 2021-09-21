@@ -20,12 +20,12 @@ public:
 	bigEndian(T value) : v(value) { }
 	void write(std::fstream& os) const
 	{
-		//write the bytes in reverse
+		//write the Bytes in reverse
 		for (int i = sizeof(T) - 1; i >= 0; i--) os.write((char*)&v + i, 1);
 	}
 	void read(std::fstream& is)
 	{
-		//read the bytes in reverse
+		//read the Bytes in reverse
 		for (int i = sizeof(T) - 1; i >= 0; i--) is.read((char*)&v + i, 1);
 	}
 	void write(char*& buffer) const
@@ -38,7 +38,7 @@ public:
 		for (int i = sizeof(T) - 1; i >= 0; i--) ((char*)&v)[i] = buffer[sizeof(T) - 1 - i];
 		buffer += sizeof(T);
 	}
-	//obtain the bytes of the variable as a const char*
+	//obtain the Bytes of the variable as a const char*
 	const char* c_str()
 	{
 		char* p = new char[sizeof(T)];

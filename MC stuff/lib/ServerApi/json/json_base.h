@@ -6,7 +6,7 @@
 class json
 {
 public:
-	enum type : byte
+	enum type : Byte
 	{
 		none,
 		integer,

@@ -9,12 +9,12 @@ class BitStream
 {
 	ull mask;
 	bool rightPadded;
-	byte lastEntry;
-	byte bitsPerEntry;
+	Byte lastEntry;
+	Byte bitsPerEntry;
 	std::vector<bulong> entries;
 	ull sz;
 public:
-	SERVER_API BitStream(byte bitsPerEntry, bool rightPadded = false);
+	SERVER_API BitStream(Byte bitsPerEntry, bool rightPadded = false);
 
 	//clear the bit stream
 	SERVER_API void clear();

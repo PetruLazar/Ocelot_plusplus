@@ -5,12 +5,12 @@
 
 class Angle
 {
-	byte v;
+	Byte v;
 
 public:
 	
 	SERVER_API Angle();
-	SERVER_API Angle(byte);
+	SERVER_API Angle(Byte);
 	SERVER_API Angle(double);
 
 	SERVER_API operator double();

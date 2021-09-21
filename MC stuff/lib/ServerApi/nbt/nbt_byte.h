@@ -1,12 +1,12 @@
 #pragma once
 #include "nbt_base.h"
 
-class nbt_byte : public nbt
+class nbt_Byte : public nbt
 {
 	char value;
 
 public:
-	SERVER_API nbt_byte(const std::string& name = "", char value = 0);
+	SERVER_API nbt_Byte(const std::string& name = "", char value = 0);
 
 	SERVER_API void write(std::fstream&, bool includeNameAndType = true) const;
 	SERVER_API void read(std::fstream&, const std::string& name = "");

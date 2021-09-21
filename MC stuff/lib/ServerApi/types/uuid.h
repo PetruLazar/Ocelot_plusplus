@@ -11,7 +11,7 @@ class mcUUID
 	// bbbiibbb bbbiibbb bbbiibbb bbbiibbb - bbbiibbb bbbiibbb - vvvvbiib bbbiibbb - bbbiibbb bbbiibbb - bbbiibbb bbbiibbb bbbiibbb bbbiibbb bbbiibbb bbbiibbb
 	uint data1;
 	ush data2;
-	ush data3; //contains the version: most significant 4 bytes
+	ush data3; //contains the version: most significant 4 Bytes
 	ull data4;
 
 public:

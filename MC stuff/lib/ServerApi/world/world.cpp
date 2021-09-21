@@ -27,42 +27,42 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 				new nbt_string("name","minecraft:overworld"),
 				new nbt_int("id",0),
 				new nbt_compound("element",new nbt * [15]{
-					new nbt_byte("piglin_safe",0),
-					new nbt_byte("natural",1),
+					new nbt_Byte("piglin_safe",0),
+					new nbt_Byte("natural",1),
 					new nbt_float("ambient_light",0.f),
 					new nbt_string("infiniburn","minecraft:infiniburn_overworld"),
-					new nbt_byte("respawn_anchor_works",0),
-					new nbt_byte("has_skylight",1),
-					new nbt_byte("bed_works",1),
+					new nbt_Byte("respawn_anchor_works",0),
+					new nbt_Byte("has_skylight",1),
+					new nbt_Byte("bed_works",1),
 					new nbt_string("effects","minecraft:overworld"),
-					new nbt_byte("has_raids",1),
+					new nbt_Byte("has_raids",1),
 					new nbt_int("min_y",0),
 					new nbt_int("height",256),
 					new nbt_int("logical_height",256),
 					new nbt_float("coordinate_scale",1.f),
-					new nbt_byte("ultrawarm",0),
-					new nbt_byte("has_ceiling",0)
+					new nbt_Byte("ultrawarm",0),
+					new nbt_Byte("has_ceiling",0)
 				},15)
 			},3),
 			new nbt_compound("",new nbt * [3]{
 				new nbt_string("name","minecraft:fakeworld"),
 				new nbt_int("id",1),
 				new nbt_compound("element",new nbt * [15]{
-					new nbt_byte("piglin_safe",1),
-					new nbt_byte("natural",0),
+					new nbt_Byte("piglin_safe",1),
+					new nbt_Byte("natural",0),
 					new nbt_float("ambient_light",1.f),
 					new nbt_string("infiniburn",""),
-					new nbt_byte("respawn_anchor_works",0),
-					new nbt_byte("has_skylight",1),
-					new nbt_byte("bed_works",0),
+					new nbt_Byte("respawn_anchor_works",0),
+					new nbt_Byte("has_skylight",1),
+					new nbt_Byte("bed_works",0),
 					new nbt_string("effects","minecraft:the_end"),
-					new nbt_byte("has_raids",0),
+					new nbt_Byte("has_raids",0),
 					new nbt_int("min_y",0),
 					new nbt_int("height",256),
 					new nbt_int("logical_height",256),
 					new nbt_float("coordinate_scale",1.f),
-					new nbt_byte("ultrawarm",0),
-					new nbt_byte("has_ceiling",0)
+					new nbt_Byte("ultrawarm",0),
+					new nbt_Byte("has_ceiling",0)
 				},15)
 			},3)
 
@@ -279,21 +279,21 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 	},2)
 	}, 2);
 /*nbt_compound World::dimension("", new nbt* [15]{
-						new nbt_byte("piglin_safe",0),
-						new nbt_byte("natural",1),
+						new nbt_Byte("piglin_safe",0),
+						new nbt_Byte("natural",1),
 						new nbt_float("ambient_light",0.f),
 						new nbt_string("infiniburn","minecraft:infiniburn_overworld"),
-						new nbt_byte("respawn_anchor_works",0),
-						new nbt_byte("has_skylight",1),
-						new nbt_byte("bed_works",1),
+						new nbt_Byte("respawn_anchor_works",0),
+						new nbt_Byte("has_skylight",1),
+						new nbt_Byte("bed_works",1),
 						new nbt_string("effects","minecraft:overworld"),
-						new nbt_byte("has_raids",1),
+						new nbt_Byte("has_raids",1),
 						new nbt_int("min_y",-64),
 						new nbt_int("height",384),
 						new nbt_int("logical_height",256),
 						new nbt_float("coordinate_scale",1.f),
-						new nbt_byte("ultrawarm",0),
-						new nbt_byte("has_ceiling",0)
+						new nbt_Byte("ultrawarm",0),
+						new nbt_Byte("has_ceiling",0)
 	}, 15);*/
 
 World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
@@ -404,7 +404,7 @@ Chunk* World::generate_def(World* world, int X, int Z)
 	}
 	//[z][x]
 	uint heightmaps[16][16]{};
-	for (byte i = 0; i < 16; i++) for (byte j = 0; j < 16; j++)
+	for (Byte i = 0; i < 16; i++) for (Byte j = 0; j < 16; j++)
 	{
 		heightmaps[j][i] = int(simplex::get_orig(((X << 4) + i) * noiseFactor_x, ((Z << 4) + j) * noiseFactor_z) * terrainHeightAmplitude + 85 - world->min_y);
 		chunk->heightmaps->setElement(j >> 4 | i, heightmaps[j][i]);
@@ -422,7 +422,7 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		//block data
 		int section_base = (i << 4);
 		//[y][z][x]
-		byte blocks[16][16][16]{};
+		Byte blocks[16][16][16]{};
 		section.blockCount = 0;
 		section.bitsPerBlock = 4;
 		section.useGlobalPallete = false;
@@ -430,7 +430,7 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		//[y][z][x]
 		bool hasSkyLight = false,
 			hasBlockLight = false;
-		byte skyLight[16][16][16]{},
+		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
 
 		section.pallete.push_back(0);
@@ -462,14 +462,14 @@ Chunk* World::generate_def(World* world, int X, int Z)
 				}
 			}
 
-		section.blockStates = new BitArray(0x1000, 4, (byte*)blocks);
+		section.blockStates = new BitArray(0x1000, 4, (Byte*)blocks);
 		if (section.blockCount) chunk->sectionMask->setElement(i, 1);
 		if (hasSkyLight) chunk->skyLightMask->setElement((ull)i + 1, 1);
 		else chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
 		if (hasBlockLight) chunk->blockLightMask->setElement((ull)i + 1, 1);
 		else chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
-		lightSection.blockLight = new BitArray(4096, 4, (byte*)blockLight);
-		lightSection.skyLight = new BitArray(4096, 4, (byte*)skyLight);
+		lightSection.blockLight = new BitArray(4096, 4, (Byte*)blockLight);
+		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
 	}
 
 	//heightmap generation
@@ -530,9 +530,9 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		//biomes
 		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
 
-		byte* blocks = new byte[16 * 16 * 16];
+		Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
-		byte skyLight[16][16][16]{},
+		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
 
 		//data
@@ -618,8 +618,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
 		}
 
-		lightSection.blockLight = new BitArray(4096, 4, (byte*)blockLight);
-		lightSection.skyLight = new BitArray(4096, 4, (byte*)skyLight);
+		lightSection.blockLight = new BitArray(4096, 4, (Byte*)blockLight);
+		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
 		delete[] blocks;
 	}
 	else if (rand() < 100) for (uint i = 0; i < sectionCount; i++)
@@ -631,9 +631,9 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		//biomes
 		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
 
-		byte* blocks = new byte[16 * 16 * 16];
+		Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
-		byte skyLight[16][16][16]{},
+		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
 
 		//data
@@ -736,8 +736,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
 		}
 
-		lightSection.blockLight = new BitArray(4096, 4, (byte*)blockLight);
-		lightSection.skyLight = new BitArray(4096, 4, (byte*)skyLight);
+		lightSection.blockLight = new BitArray(4096, 4, (Byte*)blockLight);
+		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
 		delete[] blocks;
 	}
 	else for (uint i = 0; i < sectionCount; i++)
@@ -749,9 +749,9 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		//biomes
 		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
 
-		byte* blocks = new byte[16 * 16 * 16];
+		Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
-		byte skyLight[16][16][16]{},
+		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
 
 		//data
@@ -852,8 +852,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
 		}
 
-		lightSection.blockLight = new BitArray(4096, 4, (byte*)blockLight);
-		lightSection.skyLight = new BitArray(4096, 4, (byte*)skyLight);
+		lightSection.blockLight = new BitArray(4096, 4, (Byte*)blockLight);
+		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
 		delete[] blocks;
 	}
 
@@ -911,7 +911,7 @@ Chunk* World::generate_void(World* world, int x, int z)
 		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
 
 		//[y][z][x]
-		byte skyLight[16][16][16]{};
+		Byte skyLight[16][16][16]{};
 
 		//data
 		section.blockCount = 0x0;
@@ -928,7 +928,7 @@ Chunk* World::generate_void(World* world, int x, int z)
 		chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
 
 		lightSection.blockLight = new BitArray(4096, 4);
-		lightSection.skyLight = new BitArray(4096, 4, (byte*)skyLight);
+		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
 	}
 
 	return chunk;

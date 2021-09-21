@@ -152,7 +152,7 @@ namespace Painting
 		skeleton,
 		donkey_kong
 	};
-	enum direction : byte
+	enum direction : Byte
 	{
 		south,
 		west,
@@ -173,7 +173,7 @@ namespace Sculk
 		Position position;
 	};
 }
-enum class Animation : byte
+enum class Animation : Byte
 {
 	swingMainArm,
 	takeDamage,

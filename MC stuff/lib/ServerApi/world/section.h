@@ -15,7 +15,7 @@ public:
 	varInt biomes[4][4][4];
 
 	bshort blockCount;
-	byte bitsPerBlock;
+	Byte bitsPerBlock;
 
 	bool useGlobalPallete;
 	std::vector<varInt> pallete;

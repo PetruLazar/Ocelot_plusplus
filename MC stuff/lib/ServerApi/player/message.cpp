@@ -27,7 +27,7 @@ void message::handshake::receive::standard(Player* p, varInt protocolVersion, co
 	p->protocolVersion = protocolVersion;
 	p->state = (ConnectionState)(int)nextState;
 }
-void message::handshake::receive::legacy(Player* p, byte payload)
+void message::handshake::receive::legacy(Player* p, Byte payload)
 {
 	throw "Legacy handshake not yet implemented";
 }
@@ -87,7 +87,7 @@ void message::login::send::disconnect(Player* p, const mcString& reason)
 
 	finishSendAndDisconnect;
 }
-void message::login::send::encryptionRequest(Player* p, varInt publicKeyLength, byte* publicKey, varInt verifyTokenLength, byte* verifyToken)
+void message::login::send::encryptionRequest(Player* p, varInt publicKeyLength, Byte* publicKey, varInt verifyTokenLength, Byte* verifyToken)
 {
 	throw "Encryption not supported";
 }
@@ -195,7 +195,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, false);*/
 }
-void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
+void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, Byte* sharedSecret, varInt verifyTokenLength, Byte* verifyToken)
 {
 	throw protocolError("Encryption not supported");
 }
@@ -314,7 +314,7 @@ void message::play::send::entityAnimation(Player* p, varInt eid, Animation anima
 
 	id.write(data);
 	eid.write(data);
-	*(data++) = (byte&)animation;
+	*(data++) = (Byte&)animation;
 
 	finishSendMacro;
 }
@@ -372,7 +372,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 			player->uuid->write(data);
 			player->username.write(data);
 			varInt(0).write(data);
-			varInt((byte)player->gm).write(data);
+			varInt((Byte)player->gm).write(data);
 			player->ping.write(data);
 			*(data++) = player->hasDisplayName;
 			if (player->hasDisplayName) player->displayName->write(data);
@@ -383,7 +383,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		{
 			Player*& player = players[i];
 			player->uuid->write(data);
-			varInt((byte)player->gm).write(data);
+			varInt((Byte)player->gm).write(data);
 		}
 		break;
 	case playerInfo::updateLatency:
@@ -497,7 +497,7 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 
 	finishSendMacro;
 }
-void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, byte flags, bool dismountVehicle)
+void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, Byte flags, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
 	prepareSendMacro(1024 * 1024);
@@ -521,7 +521,7 @@ void message::play::send::playerAbilities(Player* p, bool invulnerable, bool fly
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
-	*(data++) = char(byte(invulnerable) | (byte(flying) << 1) | (byte(allowFlying) << 2) | (byte(creative) << 3));
+	*(data++) = char(Byte(invulnerable) | (Byte(flying) << 1) | (Byte(allowFlying) << 2) | (Byte(creative) << 3));
 	flyingSpeed.write(data);
 	fovModifier.write(data);
 
@@ -538,18 +538,18 @@ void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 
 	finishSendMacro;
 }
-void message::play::send::pluginMessage(Player* p, const mcString& channel, ull byteCount, const char* bytes)
+void message::play::send::pluginMessage(Player* p, const mcString& channel, ull ByteCount, const char* Bytes)
 {
 	varInt id = (int)id::pluginMessage_clientbound;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	channel.write(data);
-	for (ull i = 0; i < byteCount; i++) *(data++) = bytes[i];
+	for (ull i = 0; i < ByteCount; i++) *(data++) = Bytes[i];
 
 	finishSendMacro;
 }
-void message::play::send::heldItemChange(Player* p, byte slot)
+void message::play::send::heldItemChange(Player* p, Byte slot)
 {
 	varInt id = (int)id::heldItemChange_clientbound;
 	prepareSendMacro(1024 * 1024);
@@ -559,7 +559,7 @@ void message::play::send::heldItemChange(Player* p, byte slot)
 
 	finishSendMacro;
 }
-void message::play::send::serverDifficulty(Player* p, byte difficulty, bool isLocked)
+void message::play::send::serverDifficulty(Player* p, Byte difficulty, bool isLocked)
 {
 	varInt id = (int)id::serverDifficulty;
 	prepareSendMacro(1024 * 1024);
@@ -705,7 +705,7 @@ void message::play::send::disconnect(Player* p, const Chat& reason)
 
 	finishSendAndDisconnect;
 }
-void message::play::send::chatMessage(Player* p, const Chat& msg, byte position, const mcUUID& sender)
+void message::play::send::chatMessage(Player* p, const Chat& msg, Byte position, const mcUUID& sender)
 {
 	varInt id = (int)id::chatMessage_clientbound;
 	prepareSendMacro(1024 * 1024);
@@ -717,7 +717,7 @@ void message::play::send::chatMessage(Player* p, const Chat& msg, byte position,
 
 	finishSendMacro;
 }
-void message::play::send::changeGameState(Player* p, byte reason, bfloat value)
+void message::play::send::changeGameState(Player* p, Byte reason, bfloat value)
 {
 	varInt id = (int)id::changeGameState;
 	prepareSendMacro(1024 * 1024);
@@ -854,8 +854,8 @@ void message::play::send::respawn(Player* p, const nbt_compound& dimension, cons
 	dimension.write(data);
 	worldName.write(data);
 	hashedSeed.write(data);
-	*(data++) = (byte)gm;
-	*(data++) = (byte)prev_gm;
+	*(data++) = (Byte)gm;
+	*(data++) = (Byte)prev_gm;
 	*(data++) = isDebug;
 	*(data++) = isFlat;
 	*(data++) = copyMetadata;
@@ -1102,7 +1102,7 @@ void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
 	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
 }
-void message::play::receive::clientSettings(Player* p, const mcString& locale, byte viewDistance, varInt chatMode, bool chatColors, byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
+void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, varInt chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
 {
 
 }
@@ -1402,7 +1402,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		{
 			{
 				mcString locale;
-				byte viewDistance, displayedSkinParts;
+				Byte viewDistance, displayedSkinParts;
 				varInt chatMode, mainHand;
 				bool chatColors, disableTextFiltering;
 

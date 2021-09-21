@@ -13,7 +13,7 @@ ush Options::_port = 25565;
 int Options::_max_players = 100;
 std::string Options::_level_name = "world", Options::_motd = "{\"text\":\"A Minecraft server.\"}";
 sf::IpAddress Options::_ip = sf::IpAddress::Any;
-byte Options::_viewDistance = 10;
+Byte Options::_viewDistance = 10;
 bool Options::_chunkCompression = false;
 short Options::_networkCompression = -1;
 
@@ -127,7 +127,7 @@ int parseShort(const string& name, const string& value, ull linenumber)
 	}
 	return (int)v;
 }
-byte parseByte(const string& name, const string& value, ull linenumber)
+Byte parseByte(const string& name, const string& value, ull linenumber)
 {
 	ull v;
 	try
@@ -144,7 +144,7 @@ byte parseByte(const string& name, const string& value, ull linenumber)
 	{
 		throw 0;
 	}
-	return (byte)v;
+	return (Byte)v;
 }
 
 Options::Options()
@@ -253,6 +253,6 @@ int Options::max_players() { return _max_players; }
 const string& Options::level_name() { return _level_name; }
 const string& Options::motd() { return _motd; }
 const sf::IpAddress& Options::ip() { return _ip; }
-byte Options::viewDistance() { return _viewDistance; }
+Byte Options::viewDistance() { return _viewDistance; }
 bool Options::chunkCompression() { return _chunkCompression; }
 short Options::networkCompression() { return _networkCompression; }

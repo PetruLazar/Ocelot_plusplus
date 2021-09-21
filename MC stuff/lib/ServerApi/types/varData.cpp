@@ -17,7 +17,7 @@ void varInt::read(std::fstream& is)
 void varInt::write(std::fstream& os) const
 {
 	uint c = (uint)v;
-	byte b;
+	Byte b;
 	do
 	{
 		b = c & 0x7f;
@@ -30,7 +30,7 @@ void varInt::read(char*& buffer)
 {
 	v = 0;
 	int offset = 0;
-	byte b = 0;
+	Byte b = 0;
 	do
 	{
 		b = *(buffer++);
@@ -41,7 +41,7 @@ void varInt::read(char*& buffer)
 void varInt::write(char*& buffer) const
 {
 	uint c = (uint)v;
-	byte b;
+	Byte b;
 	do
 	{
 		b = c & 0x7f;
@@ -72,7 +72,7 @@ void varLong::read(std::fstream& is)
 
 	/*v = 0;
 	int offset = 0;
-	byte b;
+	Byte b;
 	do
 	{
 		is.read((char*)&b, 1);
@@ -83,7 +83,7 @@ void varLong::read(std::fstream& is)
 void varLong::write(std::fstream& os) const
 {
 	ull c = (ull)v;
-	byte b;
+	Byte b;
 	do
 	{
 		b = c & 0x7f;
@@ -96,7 +96,7 @@ void varLong::read(char*& buffer)
 {
 	v = 0;
 	int offset = 0;
-	byte b = 0;
+	Byte b = 0;
 	do
 	{
 		b = *(buffer++);
@@ -107,7 +107,7 @@ void varLong::read(char*& buffer)
 void varLong::write(char*& buffer) const
 {
 	ull c = (ull)v;
-	byte b;
+	Byte b;
 	do
 	{
 		b = c & 0x7f;

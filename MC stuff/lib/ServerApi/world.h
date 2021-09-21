@@ -25,22 +25,22 @@ public:
 
 	/*Contents of nbt_compound characteristics
 	*
-	* piglin safe - byte
-	* natural - byte
+	* piglin safe - Byte
+	* natural - Byte
 	* ambient_light - float (0 - 1)
 	* fixed_time - optional long (0 - 24 000)
 	* infiniburn - string
-	* respawn_anchor_works - byte
-	* has_skylight - byte
-	* bed_works - byte
+	* respawn_anchor_works - Byte
+	* has_skylight - Byte
+	* bed_works - Byte
 	* effects - string
-	* has_raids - byte
+	* has_raids - Byte
 	* min_y - int
 	* height - int
 	* logical_height - int (0 - 256)
 	* coordinate_scale - float (0.00001 (1e-5) - 30000000 (3e7))
-	* ultrawarm - byte
-	* has_ceiling - byte
+	* ultrawarm - Byte
+	* has_ceiling - Byte
 	*/
 	nbt_compound characteristics;
 	struct {
@@ -51,7 +51,7 @@ public:
 		int ChunkX, ChunkZ;
 	} spawn;
 	bool isFlat;
-	enum GeneratorType : byte
+	enum GeneratorType : Byte
 	{
 		customWorld = 'c',
 		voidWorld = 'v',

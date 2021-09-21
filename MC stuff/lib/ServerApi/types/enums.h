@@ -3,7 +3,7 @@
 
 namespace ChangeGameState
 {
-	enum Reason : byte
+	enum Reason : Byte
 	{
 		no_respawn_block_available,
 		end_raining,
@@ -53,7 +53,7 @@ namespace ChangeGameState
 
 namespace ChatMessage
 {
-	enum position : byte
+	enum position : Byte
 	{
 		normalMessage,
 		systemMessage,
@@ -73,7 +73,7 @@ namespace playerInfo
 	};
 }
 
-enum class gamemode : byte
+enum class gamemode : Byte
 {
 	survival,
 	creative,

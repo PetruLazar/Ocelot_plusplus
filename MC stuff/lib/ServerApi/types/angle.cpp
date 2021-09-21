@@ -2,8 +2,8 @@
 #include <math.h>
 
 Angle::Angle() : v(0) { }
-Angle::Angle(byte value) : v(value) { }
-Angle::Angle(double value) : v(byte(fmod(value, 360) / 360 * 256)) { }
+Angle::Angle(Byte value) : v(value) { }
+Angle::Angle(double value) : v(Byte(fmod(value, 360) / 360 * 256)) { }
 
 Angle::operator double()
 {
@@ -11,5 +11,5 @@ Angle::operator double()
 }
 void Angle::operator=(double value)
 {
-	v = byte((fmod(value, 360) / 360 * 256));
+	v = Byte((fmod(value, 360) / 360 * 256));
 }

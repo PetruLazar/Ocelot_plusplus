@@ -8,7 +8,7 @@ nbt* nbt::getTagP(tag t)
 	case End:
 		return nullptr;
 	case Byte:
-		return new nbt_byte;
+		return new nbt_Byte;
 	case Short:
 		return new nbt_short;
 	case Int:
@@ -20,7 +20,7 @@ nbt* nbt::getTagP(tag t)
 	case Double:
 		return new nbt_double;
 	case ByteArray:
-		return new nbt_byte_array;
+		return new nbt_Byte_array;
 	case String:
 		return new nbt_string;
 	case List:
@@ -41,7 +41,7 @@ nbt* nbt::getTagP(tag t)
 	case End:
 		return nullptr;
 	case Byte:
-		return new nbt_byte * [s];
+		return new nbt_Byte * [s];
 	case Short:
 		return new nbt_short*[s];
 	case Int:
@@ -53,7 +53,7 @@ nbt* nbt::getTagP(tag t)
 	case Double:
 		return new nbt_double*[s];
 	case ByteArray:
-		return new nbt_byte_array*[s];
+		return new nbt_Byte_array*[s];
 	case String:
 		return new nbt_string*[s];
 	case List:

@@ -3,7 +3,7 @@
 const char errorInvalidBitsPerEntry[] = "Invalid \"bitsPerEntry\" provided to BitStream constructor.";
 const char errorEmptyStream[] = "Cannot extract data from empty stream.";
 
-BitStream::BitStream(byte bitsPerEntry, bool rightPadded) : rightPadded(rightPadded), bitsPerEntry(bitsPerEntry), lastEntry(0), entries(1, 0), sz(1), mask(0xffffffffffffffff << (64 - bitsPerEntry) >> (64 - bitsPerEntry))
+BitStream::BitStream(Byte bitsPerEntry, bool rightPadded) : rightPadded(rightPadded), bitsPerEntry(bitsPerEntry), lastEntry(0), entries(1, 0), sz(1), mask(0xffffffffffffffff << (64 - bitsPerEntry) >> (64 - bitsPerEntry))
 {
 	if (bitsPerEntry > 64 || !bitsPerEntry)
 	{

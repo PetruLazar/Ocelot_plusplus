@@ -14,7 +14,7 @@ uint mcUUID::entityId = 0;
 mcUUID::mcUUID(type uuidtype)
 {
 	//ull half1, half2;
-	for (int i = 0; i < 16; i++) *(char*)this = byte(rand() & 0xff);
+	for (int i = 0; i < 16; i++) *(char*)this = Byte(rand() & 0xff);
 	data3 &= 0xff0f;
 	data3 |= 0x30;
 	/*half1 &= 0xe709e7e7e7e7e7e7;

@@ -11,7 +11,7 @@ extern const char* searchFailedError;
 class nbt
 {
 public:
-	enum tag : byte
+	enum tag : Byte
 	{
 		End,
 		Byte,
@@ -42,10 +42,10 @@ public:
 	SERVER_API virtual ~nbt() = 0;
 
 	SERVER_API virtual void write(std::fstream&, bool includeNameAndType = true) const = 0;
-	//make sure to either use checkTag() or skip a byte manually
+	//make sure to either use checkTag() or skip a Byte manually
 	SERVER_API virtual void read(std::fstream&, const std::string& name = "") = 0;
 	SERVER_API virtual void write(char*&, bool includeNameAndType = true) const = 0;
-	//make sure to either use checkTag() or skip a byte manually
+	//make sure to either use checkTag() or skip a Byte manually
 	SERVER_API virtual void read(char*&, const std::string& name = "") = 0;
 	SERVER_API std::string getName();
 	SERVER_API tag getType();
@@ -54,7 +54,7 @@ public:
 	SERVER_API virtual std::string getStringValue() const = 0;
 	//convert the tag to string (name + value)
 	SERVER_API std::string to_string() const;
-	//get the value of a byte tag
+	//get the value of a Byte tag
 	SERVER_API virtual char& vByte();
 	//get the value of a short tag
 	SERVER_API virtual short& vShort();
@@ -66,7 +66,7 @@ public:
 	SERVER_API virtual float& vFloat();
 	//get the value of a double tag
 	SERVER_API virtual double& vDouble();
-	//get a value of a byte array tag
+	//get a value of a Byte array tag
 	SERVER_API virtual char& vByte(uint);
 	//get the value of a string tag
 	SERVER_API virtual std::string& vString();
