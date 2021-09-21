@@ -207,7 +207,7 @@ void Player::setWorld(World* world)
 
 	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
 
-	//include the player in the world's player list and check for players in sight
+	//check for players in sight
 	for (Player* otherP : world->players)
 	{
 		if (otherP->state == ConnectionState::play && abs(otherP->chunkX - chunkX) <= viewDistance && abs(otherP->chunkZ - chunkZ) <= viewDistance)
@@ -216,21 +216,35 @@ void Player::setWorld(World* world)
 			otherP->enterSight(this);
 		}
 	}
+	//add the player to the world's player list
 	world->players.push_back(this);
+}
+void Player::leaveWorld(World* world)
+{
+	//unload chunks in the world
+	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) ignoreExceptions(world->unload(x, z));
+
+	//destroy the player entity for the palyers who see this player
+	ull size = seenBy.size();
+	for (ull i = 0; i < size--; i++)
+	{
+		seenBy[i]->exitSight(this);
+		exitSight(i--);
+	}
+
+	//remove the player from the world's palyer list
+	size = world->players.size();
+	for (ull i = 0; i < size; i++) if (world->players[i])
+	{
+		world->players.erase(world->players.begin() + i);
+		break;
+	}
 }
 void Player::changeWorld(World* newWorld)
 {
 	message::play::send::respawn(this, newWorld->characteristics, newWorld->name, 0x5f19a34be6c9129a, gm, gamemode::none, false, newWorld->isFlat, true);
 
-	//unload chunks
-	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++)
-	{
-		try
-		{
-			world->unload(x, z);
-		}
-		catch (...) {}
-	}
+	leaveWorld(world);
 
 	setWorld(newWorld);
 }
@@ -241,8 +255,8 @@ void Player::changeWorld(const mcString& worldName)
 
 void Player::enterSight(Player* other)
 {
-	message::play::send::spawnPlayer(this, other->eid + 1, *other->uuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch);
-	message::play::send::entityHeadLook(this, other->eid + 1, (float)other->yaw);
+	ignoreExceptions(message::play::send::spawnPlayer(this, other->eid + 1, *other->uuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
+	ignoreExceptions(message::play::send::entityHeadLook(this, other->eid + 1, (float)other->yaw));
 	seenBy.push_back(other);
 	//Log::txt() << "\nSight event.";
 }
@@ -257,7 +271,9 @@ void Player::exitSight(Player* other)
 }
 void Player::exitSight(ull otherI)
 {
-	message::play::send::destroyEntities(this, 1, &seenBy[otherI]->eid);
+	varInt* eids = new varInt[1]{ seenBy[otherI]->eid + 1 };
+	ignoreExceptions(message::play::send::destroyEntities(this, 1, eids));
+	delete[] eids;
 	seenBy.erase(seenBy.begin() + otherI);
 }
 
@@ -267,7 +283,7 @@ void Player::disconnect()
 	connected = false;
 	if (state == ConnectionState::play)
 	{
-		for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) world->unload(x, z);
+		leaveWorld(world);
 		broadcastChat(Chat((username + " left the game").c_str(), Chat::yellow), this);
 		Player* p = this;
 		broadcastMessageOmitSafe(message::play::send::playerInfo(player_macro, playerInfo::removePlayer, 1, &p), this)

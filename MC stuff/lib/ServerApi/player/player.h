@@ -97,6 +97,7 @@ public:
 	SERVER_API ~Player();
 
 	SERVER_API void setWorld(World* world);
+	SERVER_API void leaveWorld(World* world);
 	SERVER_API void changeWorld(World* newWorld);
 	SERVER_API void changeWorld(const mcString& worldName);
 

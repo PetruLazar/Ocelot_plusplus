@@ -1144,14 +1144,22 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->eid + 1, short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
+	for (Player* seener : p->seenBy)
+	{
+		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->eid + 1, short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid + 1, (float)p->yaw));
+	}
 	p->updatePosition(X, Y, Z);
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
 }
 void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch, bool onGround)
 {
-	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityRotation(seener, p->eid + 1, (float)yaw, (float)pitch, onGround));
+	for (Player* seener : p->seenBy)
+	{
+		ignoreExceptions(message::play::send::entityRotation(seener, p->eid + 1, (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid + 1, (float)p->yaw));
+	}
 
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
