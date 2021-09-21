@@ -338,7 +338,7 @@ struct message
 			mapData,
 			tradeList,
 			entityPosition,
-			entitypositionAndRotation,
+			entityPositionAndRotation,
 			entityRotation,
 			vehicleMove_clientbound,
 			openBook,

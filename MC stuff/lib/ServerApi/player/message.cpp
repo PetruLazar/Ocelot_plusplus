@@ -178,7 +178,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
 	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p)
 
-	p->setWorld(World::worlds[World::spawnWorld]);
+		p->setWorld(World::worlds[World::spawnWorld]);
 
 	/*play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
 
@@ -194,7 +194,6 @@ void message::login::receive::start(Player* p, const mcString& username)
 	}
 
 	play::send::playerPosAndLook(p, p->X, p->Y, p->Z, p->yaw, p->pitch, 0, false);*/
-
 }
 void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLength, byte* sharedSecret, varInt verifyTokenLength, byte* verifyToken)
 {
@@ -915,6 +914,49 @@ void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 
 	finishSendMacro;
 }
+void message::play::send::entityPosition(Player* p, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, bool onGround)
+{
+	varInt id = (int)id::entityPosition;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	deltaX.write(data);
+	deltaY.write(data);
+	deltaZ.write(data);
+	*(data++) = onGround;
+
+	finishSendMacro;
+}
+void message::play::send::entityRotation(Player* p, varInt eid, Angle yaw, Angle pitch, bool onGround)
+{
+	varInt id = (int)id::entityRotation;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	*(data++) = (char&)yaw;
+	*(data++) = (char&)pitch;
+	*(data++) = onGround;
+
+	finishSendMacro;
+}
+void message::play::send::entityPositionAndRotation(Player* p, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, Angle yaw, Angle pitch, bool onGround)
+{
+	varInt id = (int)id::entityPositionAndRotation;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	deltaX.write(data);
+	deltaY.write(data);
+	deltaZ.write(data);
+	*(data++) = (char&)yaw;
+	*(data++) = (char&)pitch;
+	*(data++) = onGround;
+
+	finishSendMacro;
+}
 
 /*void message::translateChunk()
 {
@@ -1093,187 +1135,25 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	if (p->pendingTpId != -1)
 		return;
 
-	int newChunkX = fastfloor(X) >> 4,
-		newChunkZ = fastfloor(Z) >> 4;
-
-	if (newChunkX != p->chunkX && newChunkZ != p->chunkZ)
-	{
-		send::updateViewPosition(p, newChunkX, newChunkZ);
-		if (newChunkX < p->chunkX && newChunkZ < p->chunkZ)
-		{
-			//towards negative X
-			//towards negative Z
-			bint unloadX = p->chunkX + p->viewDistance;
-			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
-			bint unloadZ = p->chunkZ + p->viewDistance;
-			for (int x = p->chunkX - p->viewDistance; x < p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
-
-			bint loadX = newChunkX - p->viewDistance;
-			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
-			{
-				send::sendFullChunk(p, (int)loadX, z);
-				//send::updateLight(p, (int)loadX, (int)z);
-				//send::chunkData(p, loadX, z);
-			}
-			bint loadZ = newChunkZ - p->viewDistance;
-			for (int x = newChunkX - p->viewDistance + 1; x <= newChunkX + p->viewDistance; x++)
-			{
-				send::sendFullChunk(p, x, (int)loadZ);
-				//send::updateLight(p, (int)x, (int)loadZ);
-				//send::chunkData(p, x, loadZ);
-			}
-		}
-		else if (newChunkX < p->chunkX)
-		{
-			//towards negative X
-			//towards positive Z
-			bint unloadX = p->chunkX + p->viewDistance;
-			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
-			bint unloadZ = p->chunkZ - p->viewDistance;
-			for (int x = p->chunkX - p->viewDistance; x < p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
-
-			bint loadX = newChunkX - p->viewDistance;
-			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
-			{
-				send::sendFullChunk(p, (int)loadX, z);
-				//send::updateLight(p, (int)loadX, (int)z);
-				//send::chunkData(p, loadX, z);
-			}
-			bint loadZ = newChunkZ + p->viewDistance;
-			for (int x = newChunkX - p->viewDistance + 1; x <= newChunkX + p->viewDistance; x++)
-			{
-				send::sendFullChunk(p, x, (int)loadZ);
-				//send::updateLight(p, (int)x, (int)loadZ);
-				//send::chunkData(p, x, loadZ);
-			}
-		}
-		else if (newChunkZ < p->chunkZ)
-		{
-			//???
-			//towards positive X
-			//towards negative Z
-			bint unloadX = p->chunkX - p->viewDistance;
-			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
-			bint unloadZ = p->chunkZ + p->viewDistance;
-			for (int x = p->chunkX - p->viewDistance + 1; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
-
-			bint loadX = newChunkX + p->viewDistance;
-			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
-			{
-				send::sendFullChunk(p, (int)loadX, z);
-				//send::updateLight(p, (int)loadX, (int)z);
-				//send::chunkData(p, loadX, z);
-			}
-			bint loadZ = newChunkZ - p->viewDistance;
-			for (int x = newChunkX - p->viewDistance; x < newChunkX + p->viewDistance; x++)
-			{
-				send::sendFullChunk(p, x, (int)loadZ);
-				//send::updateLight(p, (int)x, (int)loadZ);
-				//send::chunkData(p, x, loadZ);
-			}
-		}
-		else
-		{
-			//towards positive X
-			//towards positive Z
-			bint unloadX = p->chunkX - p->viewDistance;
-			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
-			bint unloadZ = p->chunkZ - p->viewDistance;
-			for (int x = p->chunkX - p->viewDistance + 1; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
-
-			bint loadX = newChunkX + p->viewDistance;
-			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
-			{
-				send::sendFullChunk(p, (int)loadX, z);
-				//send::updateLight(p, (int)loadX, (int)z);
-				//send::chunkData(p, loadX, z);
-			}
-			bint loadZ = newChunkZ + p->viewDistance;
-			for (int x = newChunkX - p->viewDistance; x < newChunkX + p->viewDistance; x++)
-			{
-				send::sendFullChunk(p, x, (int)loadZ);
-				//send::updateLight(p, (int)x, (int)loadZ);
-				//send::chunkData(p, x, loadZ);
-			}
-		}
-	}
-	else if (newChunkX != p->chunkX)
-	{
-		send::updateViewPosition(p, newChunkX, newChunkZ);
-		if (newChunkX < p->chunkX)
-		{
-			//towards negative X
-			bint unloadX = p->chunkX + p->viewDistance;
-			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
-			bint loadX = newChunkX - p->viewDistance;
-			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
-			{
-				send::sendFullChunk(p, (int)loadX, z);
-				//send::updateLight(p, (int)loadX, (int)z);
-				//send::chunkData(p, loadX, z);
-			}
-		}
-		else
-		{
-			//towards positive X
-			bint unloadX = p->chunkX - p->viewDistance;
-			for (int z = p->chunkZ - p->viewDistance; z <= p->chunkZ + p->viewDistance; z++) send::unloadChunk(p, unloadX, z);
-			bint loadX = newChunkX + p->viewDistance;
-			for (int z = newChunkZ - p->viewDistance; z <= newChunkZ + p->viewDistance; z++)
-			{
-				send::sendFullChunk(p, (int)loadX, z);
-				//send::updateLight(p, (int)loadX, (int)z);
-				//send::chunkData(p, loadX, z);
-			}
-		}
-	}
-	else if (newChunkZ != p->chunkZ)
-	{
-		send::updateViewPosition(p, newChunkX, newChunkZ);
-		if (newChunkZ < p->chunkZ)
-		{
-			//towards negative Z
-			bint unloadZ = p->chunkZ + p->viewDistance;
-			for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
-			bint loadZ = newChunkZ - p->viewDistance;
-			for (int x = newChunkX - p->viewDistance; x <= newChunkX + p->viewDistance; x++)
-			{
-				send::sendFullChunk(p, x, (int)loadZ);
-				//send::updateLight(p, (int)x, (int)loadZ);
-				//send::chunkData(p, x, loadZ);
-			}
-		}
-		else
-		{
-			//towards positive Z
-			bint unloadZ = p->chunkZ - p->viewDistance;
-			for (int x = p->chunkX - p->viewDistance; x <= p->chunkX + p->viewDistance; x++) send::unloadChunk(p, x, unloadZ);
-			bint loadZ = newChunkZ + p->viewDistance;
-			for (int x = newChunkX - p->viewDistance; x <= newChunkX + p->viewDistance; x++)
-			{
-				send::sendFullChunk(p, x, (int)loadZ);
-				//send::updateLight(p, (int)x, (int)loadZ);
-				//send::chunkData(p, x, loadZ);
-			}
-		}
-	}
-
-	p->X = X;
-	p->Y = feetY;
-	p->Z = Z;
+	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPosition(seener, p->eid + 1, short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
-	p->chunkX = newChunkX;
-	p->chunkZ = newChunkZ;
 }
 void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdouble Y, bdouble Z, bfloat yaw, bfloat pitch, bool onGround)
 {
-	playerRotation(p, yaw, pitch, onGround);
-	playerPosition(p, X, Y, Z, onGround);
+	if (p->pendingTpId != -1)
+		return;
+
+	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->eid + 1, short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
+	p->updatePosition(X, Y, Z);
+	p->updateRotation(yaw, pitch);
+	p->onGround = onGround;
 }
 void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch, bool onGround)
 {
-	p->yaw = yaw;
-	p->pitch = pitch;
+	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityRotation(seener, p->eid + 1, (float)yaw, (float)pitch, onGround));
+
+	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
 }
 

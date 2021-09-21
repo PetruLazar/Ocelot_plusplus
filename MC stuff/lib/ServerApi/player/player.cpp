@@ -25,6 +25,160 @@ Player::~Player()
 	if (uuid) delete uuid;
 }
 
+void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
+{
+	int newChunkX = fastfloor(X) >> 4,
+		newChunkZ = fastfloor(Z) >> 4;
+
+	if (newChunkX != chunkX && newChunkZ != chunkZ)
+	{
+		message::play::send::updateViewPosition(this, newChunkX, newChunkZ);
+		if (newChunkX < chunkX && newChunkZ < chunkZ)
+		{
+			//towards negative X
+			//towards negative Z
+			bint unloadX = chunkX + viewDistance;
+			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
+			bint unloadZ = chunkZ + viewDistance;
+			for (int x = chunkX - viewDistance; x < chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
+
+			bint loadX = newChunkX - viewDistance;
+			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
+			{
+				message::play::send::sendFullChunk(this, (int)loadX, z);
+			}
+			bint loadZ = newChunkZ - viewDistance;
+			for (int x = newChunkX - viewDistance + 1; x <= newChunkX + viewDistance; x++)
+			{
+				message::play::send::sendFullChunk(this, x, (int)loadZ);
+			}
+		}
+		else if (newChunkX < chunkX)
+		{
+			//towards negative X
+			//towards positive Z
+			bint unloadX = chunkX + viewDistance;
+			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
+			bint unloadZ = chunkZ - viewDistance;
+			for (int x = chunkX - viewDistance; x < chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
+
+			bint loadX = newChunkX - viewDistance;
+			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
+			{
+				message::play::send::sendFullChunk(this, (int)loadX, z);
+			}
+			bint loadZ = newChunkZ + viewDistance;
+			for (int x = newChunkX - viewDistance + 1; x <= newChunkX + viewDistance; x++)
+			{
+				message::play::send::sendFullChunk(this, x, (int)loadZ);
+			}
+		}
+		else if (newChunkZ < chunkZ)
+		{
+			//towards positive X
+			//towards negative Z
+			bint unloadX = chunkX - viewDistance;
+			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
+			bint unloadZ = chunkZ + viewDistance;
+			for (int x = chunkX - viewDistance + 1; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
+
+			bint loadX = newChunkX + viewDistance;
+			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
+			{
+				message::play::send::sendFullChunk(this, (int)loadX, z);
+			}
+			bint loadZ = newChunkZ - viewDistance;
+			for (int x = newChunkX - viewDistance; x < newChunkX + viewDistance; x++)
+			{
+				message::play::send::sendFullChunk(this, x, (int)loadZ);
+			}
+		}
+		else
+		{
+			//towards positive X
+			//towards positive Z
+			bint unloadX = chunkX - viewDistance;
+			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
+			bint unloadZ = chunkZ - viewDistance;
+			for (int x = chunkX - viewDistance + 1; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
+
+			bint loadX = newChunkX + viewDistance;
+			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
+			{
+				message::play::send::sendFullChunk(this, (int)loadX, z);
+			}
+			bint loadZ = newChunkZ + viewDistance;
+			for (int x = newChunkX - viewDistance; x < newChunkX + viewDistance; x++)
+			{
+				message::play::send::sendFullChunk(this, x, (int)loadZ);
+			}
+		}
+	}
+	else if (newChunkX != chunkX)
+	{
+		message::play::send::updateViewPosition(this, newChunkX, newChunkZ);
+		if (newChunkX < chunkX)
+		{
+			//towards negative X
+			bint unloadX = chunkX + viewDistance;
+			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
+			bint loadX = newChunkX - viewDistance;
+			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
+			{
+				message::play::send::sendFullChunk(this, (int)loadX, z);
+			}
+		}
+		else
+		{
+			//towards positive X
+			bint unloadX = chunkX - viewDistance;
+			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
+			bint loadX = newChunkX + viewDistance;
+			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
+			{
+				message::play::send::sendFullChunk(this, (int)loadX, z);
+			}
+		}
+	}
+	else if (newChunkZ != chunkZ)
+	{
+		message::play::send::updateViewPosition(this, newChunkX, newChunkZ);
+		if (newChunkZ < chunkZ)
+		{
+			//towards negative Z
+			bint unloadZ = chunkZ + viewDistance;
+			for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
+			bint loadZ = newChunkZ - viewDistance;
+			for (int x = newChunkX - viewDistance; x <= newChunkX + viewDistance; x++)
+			{
+				message::play::send::sendFullChunk(this, x, (int)loadZ);
+			}
+		}
+		else
+		{
+			//towards positive Z
+			bint unloadZ = chunkZ - viewDistance;
+			for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
+			bint loadZ = newChunkZ + viewDistance;
+			for (int x = newChunkX - viewDistance; x <= newChunkX + viewDistance; x++)
+			{
+				message::play::send::sendFullChunk(this, x, (int)loadZ);
+			}
+		}
+	}
+
+	Player::X = X;
+	Player::Y = Y;
+	Player::Z = Z;
+	Player::chunkX = newChunkX;
+	Player::chunkZ = newChunkZ;
+}
+void Player::updateRotation(bfloat yaw, bfloat pitch)
+{
+	Player::yaw = yaw;
+	Player::pitch = pitch;
+}
+
 void Player::setWorld(World* world)
 {
 	//set world and position
