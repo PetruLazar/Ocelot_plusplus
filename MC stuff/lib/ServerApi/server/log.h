@@ -18,6 +18,8 @@ public:
 	SERVER_API DebugStream& operator<<(const long long n);
 	SERVER_API DebugStream& operator<<(const unsigned long long n);
 	SERVER_API DebugStream& operator<<(const char* n);
+	SERVER_API DebugStream& operator<<(const void* n);
+	SERVER_API DebugStream& operator<<(const std::string& n);
 };
 
 class Log

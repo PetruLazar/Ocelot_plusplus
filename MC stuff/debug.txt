@@ -1,0 +1,329 @@
+
+00000205D0B782A0 is entering world world
+Player list for world is now 1
+00000205D0B78F60 is entering world world
+Player 00000205D0B782A0 entering sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 1
+Player 00000205D0B78F60 entering sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 1
+Player list for world is now 2
+Player 00000205D0B78F60 is leaving world world
+Player 00000205D0B78F60 exiting sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 0
+Player 00000205D0B782A0 exiting sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 0
+Player list of world is now 1
+00000205D0B78F60 is entering world old
+Player list for old is now 1
+Player 00000205D0B78F60 is leaving world old
+Player list of old is now 0
+00000205D0B78F60 is entering world world
+Player 00000205D0B782A0 entering sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 1
+Player 00000205D0B78F60 entering sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 1
+Player list for world is now 2
+Player 00000205D0B78F60 is leaving world world
+Player 00000205D0B78F60 exiting sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 0
+Player 00000205D0B782A0 exiting sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 0
+Player list of world is now 1
+00000205D0B78F60 is entering world old
+Player list for old is now 1
+Player 00000205D0B78F60 is leaving world old
+Player list of old is now 0
+00000205D0B78F60 is entering world world
+Player 00000205D0B782A0 entering sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 1
+Player 00000205D0B78F60 entering sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 1
+Player list for world is now 2
+Player 00000205D0B78F60 is leaving world world
+Player 00000205D0B78F60 exiting sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 0
+Player 00000205D0B782A0 exiting sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 0
+Player list of world is now 1
+00000205D0B78F60 is entering world old
+Player list for old is now 1
+Player 00000205D0B78F60 is leaving world old
+Player list of old is now 0
+00000205D0B78F60 is entering world world
+Player 00000205D0B782A0 entering sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 1
+Player 00000205D0B78F60 entering sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 1
+Player list for world is now 2
+Player 00000205D0B78F60 is leaving world world
+Player 00000205D0B78F60 exiting sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 0
+Player 00000205D0B782A0 exiting sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 0
+Player list of world is now 1
+00000205D0B78F60 is entering world old
+Player list for old is now 1
+Player 00000205D0B78F60 is leaving world old
+Player list of old is now 0
+00000205D0B78F60 is entering world world
+Player 00000205D0B782A0 entering sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 1
+Player 00000205D0B78F60 entering sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 1
+Player list for world is now 2
+Player 00000205D0B782A0 is leaving world world
+Player 00000205D0B782A0 exiting sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 0
+Player 00000205D0B78F60 exiting sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 0
+Player list of world is now 1
+00000205D0B782A0 is entering world old
+Player list for old is now 1
+Player 00000205D0B782A0 is leaving world old
+Player list of old is now 0
+00000205D0B782A0 is entering world world
+Player 00000205D0B78F60 entering sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 1
+Player 00000205D0B782A0 entering sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 1
+Player list for world is now 2
+Player 00000205D0B782A0 is leaving world world
+Player 00000205D0B782A0 exiting sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 0
+Player 00000205D0B78F60 exiting sight of 00000205D0B782A0
+Sight of 00000205D0B782A0 is now 0
+Player list of world is now 1
+00000205D0B78190 is entering world world
+Player 00000205D0B78F60 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player 00000205D0B78190 entering sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 1
+Player list for world is now 2
+Player 00000205D0B78F60 is leaving world world
+Player 00000205D0B78F60 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B78F60
+Sight of 00000205D0B78F60 is now 0
+Player list of world is now 1
+00000205D0B785D0 is entering world world
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player list for world is now 2
+Player 00000205D0B785D0 is leaving world world
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player list of world is now 1
+Player 00000205D0B78190 is leaving world world
+Player list of world is now 0
+00000205D0B78B20 is entering world world
+Player list for world is now 1
+00000205D0B78190 is entering world world
+Player 00000205D0B78B20 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player 00000205D0B78190 entering sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 1
+Player list for world is now 2
+Player 00000205D0B78B20 is leaving world world
+Player 00000205D0B78B20 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 0
+Player list of world is now 1
+00000205D0B78B20 is entering world world
+Player 00000205D0B78190 entering sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 1
+Player 00000205D0B78B20 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player list for world is now 2
+Player 00000205D0B78B20 is leaving world world
+Player 00000205D0B78B20 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 0
+Player list of world is now 1
+Player 00000205D0B78190 is leaving world world
+Player list of world is now 0
+00000205D0B785D0 is entering world world
+Player list for world is now 1
+Player 00000205D0B785D0 is leaving world world
+Player list of world is now 0
+00000205D0B78B20 is entering world world
+Player list for world is now 1
+00000205D0B78190 is entering world world
+Player 00000205D0B78B20 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player 00000205D0B78190 entering sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 1
+Player list for world is now 2
+Player 00000205D0B78190 is leaving world world
+Player 00000205D0B78190 exiting sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 0
+Player 00000205D0B78B20 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player list of world is now 1
+00000205D0B78190 is entering world world
+Player 00000205D0B78B20 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player 00000205D0B78190 entering sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 1
+Player list for world is now 2
+Player 00000205D0B78B20 is leaving world world
+Player 00000205D0B78B20 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 0
+Player list of world is now 1
+00000205D0B785D0 is entering world world
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player list for world is now 2
+Player 00000205D0B78190 is leaving world world
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player list of world is now 1
+00000205D0B78190 is entering world old
+Player list for old is now 1
+Player 00000205D0B78190 is leaving world old
+Player list of old is now 0
+00000205D0B78190 is entering world world
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player list for world is now 2
+Player 00000205D0B78190 is leaving world world
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player list of world is now 1
+00000205D0B78190 is entering world old
+Player list for old is now 1
+Player 00000205D0B78190 is leaving world old
+Player list of old is now 0
+00000205D0B78190 is entering world world
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player list for world is now 2
+Player 00000205D0B78190 is leaving world world
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player list of world is now 1
+00000205D0B78190 is entering world old
+Player list for old is now 1
+Player 00000205D0B78190 is leaving world old
+Player list of old is now 0
+00000205D0B78190 is entering world world
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player list for world is now 2
+Player 00000205D0B785D0 is leaving world world
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player list of world is now 1
+00000205D0B785D0 is entering world old
+Player list for old is now 1
+Player 00000205D0B785D0 is leaving world old
+Player list of old is now 0
+00000205D0B785D0 is entering world world
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player list for world is now 2
+Player 00000205D0B785D0 is leaving world world
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player list of world is now 1
+00000205D0B785D0 is entering world old
+Player list for old is now 1
+Player 00000205D0B785D0 is leaving world old
+Player list of old is now 0
+00000205D0B785D0 is entering world world
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player list for world is now 2
+Player 00000205D0B785D0 is leaving world world
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player list of world is now 1
+00000205D0B78B20 is entering world world
+Player 00000205D0B78190 entering sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 1
+Player 00000205D0B78B20 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player list for world is now 2
+Player 00000205D0B78B20 is leaving world world
+Player 00000205D0B78B20 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player 00000205D0B78190 exiting sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 0
+Player list of world is now 1
+Player 00000205D0B78190 is leaving world world
+Player list of world is now 0
+00000205D0B78B20 is entering world world
+Player list for world is now 1
+00000205D0B785D0 is entering world world
+Player 00000205D0B78B20 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player 00000205D0B785D0 entering sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 1
+Player list for world is now 2
+Player 00000205D0B78B20 is leaving world world
+Player 00000205D0B78B20 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player 00000205D0B785D0 exiting sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 0
+Player list of world is now 1
+Player 00000205D0B785D0 is leaving world world
+Player list of world is now 0
+00000205D0B78190 is entering world world
+Player list for world is now 1
+00000205D0B785D0 is entering world world
+Player 00000205D0B78190 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player 00000205D0B785D0 entering sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 1
+Player list for world is now 2
+Player 00000205D0B78190 is leaving world world
+Player 00000205D0B78190 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player 00000205D0B785D0 exiting sight of 00000205D0B78190
+Sight of 00000205D0B78190 is now 0
+Player list of world is now 1
+00000205D0B78B20 is entering world world
+Player 00000205D0B785D0 entering sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 1
+Player 00000205D0B78B20 entering sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 1
+Player list for world is now 2
+Player 00000205D0B785D0 is leaving world world
+Player 00000205D0B785D0 exiting sight of 00000205D0B78B20
+Sight of 00000205D0B78B20 is now 0
+Player 00000205D0B78B20 exiting sight of 00000205D0B785D0
+Sight of 00000205D0B785D0 is now 0
+Player list of world is now 1
+Player 00000205D0B78B20 is leaving world world
+Player list of world is now 0

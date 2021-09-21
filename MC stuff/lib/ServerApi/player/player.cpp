@@ -181,6 +181,7 @@ void Player::updateRotation(bfloat yaw, bfloat pitch)
 
 void Player::setWorld(World* world)
 {
+	IF_DEBUG_SIGHT(Log::txt() << '\n' << this << " is entering world " << world->name);
 	//set world and position
 	Player::world = world;
 	X = world->spawn.X;
@@ -218,13 +219,15 @@ void Player::setWorld(World* world)
 	}
 	//add the player to the world's player list
 	world->players.push_back(this);
+	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer list for " << world->name << " is now " << world->players.size());
 }
 void Player::leaveWorld(World* world)
 {
+	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << this << " is leaving world " << world->name);
 	//unload chunks in the world
 	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) ignoreExceptions(world->unload(x, z));
 
-	//destroy the player entity for the palyers who see this player
+	//destroy the player entity for the players who see this player
 	ull size = seenBy.size();
 	for (ull i = 0; i < size--; i++)
 	{
@@ -232,13 +235,14 @@ void Player::leaveWorld(World* world)
 		exitSight(i--);
 	}
 
-	//remove the player from the world's palyer list
+	//remove the player from the world's player list
 	size = world->players.size();
-	for (ull i = 0; i < size; i++) if (world->players[i])
+	for (ull i = 0; i < size; i++) if (world->players[i] == this)
 	{
 		world->players.erase(world->players.begin() + i);
 		break;
 	}
+	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer list of " << world->name << " is now " << world->players.size());
 }
 void Player::changeWorld(World* newWorld)
 {
@@ -255,10 +259,11 @@ void Player::changeWorld(const mcString& worldName)
 
 void Player::enterSight(Player* other)
 {
+	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << other << " entering sight of " << this);
 	ignoreExceptions(message::play::send::spawnPlayer(this, other->eid + 1, *other->uuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
 	ignoreExceptions(message::play::send::entityHeadLook(this, other->eid + 1, (float)other->yaw));
 	seenBy.push_back(other);
-	//Log::txt() << "\nSight event.";
+	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
 }
 void Player::exitSight(Player* other)
 {
@@ -271,10 +276,12 @@ void Player::exitSight(Player* other)
 }
 void Player::exitSight(ull otherI)
 {
+	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << seenBy[otherI] << " exiting sight of " << this);
 	varInt* eids = new varInt[1]{ seenBy[otherI]->eid + 1 };
 	ignoreExceptions(message::play::send::destroyEntities(this, 1, eids));
 	delete[] eids;
 	seenBy.erase(seenBy.begin() + otherI);
+	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
 }
 
 void Player::disconnect()

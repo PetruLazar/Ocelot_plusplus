@@ -176,9 +176,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 	play::send::declareCommands(p);
 
 	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
-	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p)
+	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p);
 
-		p->setWorld(World::worlds[World::spawnWorld]);
+	p->setWorld(World::worlds[World::spawnWorld]);
 
 	/*play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
 

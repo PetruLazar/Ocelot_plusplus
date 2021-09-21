@@ -19,6 +19,9 @@
 //comment or decomment this define to turn on or off the logging of the outgoing message buffering
 //#define LOG_PACKETS
 
+//comment or decomment this define to turn on or off the debugging of player sightings
+#define DEBUG_SIGHT
+
 #ifdef DEBUG_ALLOCATIONS
 
 void* operator new(size_t s);
@@ -57,4 +60,10 @@ void operator delete[](void*, size_t);
 #define IF_LOG_MESSAGE_BUFFER(x) x
 #else
 #define IF_LOG_MESSAGE_BUFFER(x)
+#endif
+
+#ifdef DEBUG_SIGHT
+#define IF_DEBUG_SIGHT(x) x
+#else
+#define IF_DEBUG_SIGHT(x)
 #endif
