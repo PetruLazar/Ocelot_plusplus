@@ -608,7 +608,7 @@ struct message
 			SERVER_API static void updateJigsawBlock(Player*, Position location, const mcString& name, const mcString& target, const mcString& pool, const mcString& finalState, const mcString& jointType);
 			SERVER_API static void updateStructureBlock(Player*, Position location, varInt action, varInt mode, const mcString& name, char offsetX, char offsetY, char offsetZ, Byte sizeX, Byte sizeY, Byte sizeZ, varInt mirror, varInt rotation, const mcString& metadata, bfloat integrity, varLong seed, Byte flags);
 			SERVER_API static void updateSign(Player*, Position location, const mcString& line1, const mcString& line2, const mcString& line3, const mcString& line4);
-			SERVER_API static void animation(Player*, varInt hand);
+			SERVER_API static void animation(Player*, Hand hand);
 			SERVER_API static void spectate(Player*, const mcUUID& target);
 			SERVER_API static void playerBlockPlacement(Player*, varInt hand, Position location, varInt face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
 			SERVER_API static void useItem(Player*, varInt hand);

@@ -1164,6 +1164,14 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
 }
+void message::play::receive::animation(Player* p, Hand hand)
+{
+	Animation animation = hand == Hand::main ? Animation::swingMainArm : Animation::swingOffhand;
+	for (Player* seener : p->seenBy)
+	{
+		ignoreExceptions(message::play::send::entityAnimation(seener, p->eid, animation));
+	}
+}
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
 {
@@ -1633,7 +1641,9 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::animation_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: animation");
+			varInt hand;
+			hand.read(data);
+			play::receive::animation(p, (Hand)(int)hand);
 		}
 		break;
 		case play::id::spectate:

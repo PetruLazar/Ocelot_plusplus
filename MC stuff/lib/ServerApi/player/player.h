@@ -14,6 +14,11 @@ enum class ConnectionState : Byte
 	login,
 	play
 };
+enum class Hand
+{
+	main,
+	offhand
+};
 
 class Player
 {
