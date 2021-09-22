@@ -260,8 +260,8 @@ void Player::changeWorld(const mcString& worldName)
 void Player::enterSight(Player* other)
 {
 	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << other << " entering sight of " << this);
-	ignoreExceptions(message::play::send::spawnPlayer(this, other->eid + 1, *other->uuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
-	ignoreExceptions(message::play::send::entityHeadLook(this, other->eid + 1, (float)other->yaw));
+	ignoreExceptions(message::play::send::spawnPlayer(this, other->eid, *other->uuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
+	ignoreExceptions(message::play::send::entityHeadLook(this, other->eid, (float)other->yaw));
 	seenBy.push_back(other);
 	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
 }
@@ -277,9 +277,7 @@ void Player::exitSight(Player* other)
 void Player::exitSight(ull otherI)
 {
 	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << seenBy[otherI] << " exiting sight of " << this);
-	varInt* eids = new varInt[1]{ seenBy[otherI]->eid + 1 };
-	ignoreExceptions(message::play::send::destroyEntities(this, 1, eids));
-	delete[] eids;
+	ignoreExceptions(message::play::send::destroyEntities(this, 1, &seenBy[otherI]->eid));
 	seenBy.erase(seenBy.begin() + otherI);
 	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
 }
@@ -291,6 +289,7 @@ void Player::disconnect()
 	if (state == ConnectionState::play)
 	{
 		leaveWorld(world);
+		Player::eidDispenser.Free(eid);
 		broadcastChat(Chat((username + " left the game").c_str(), Chat::yellow), this);
 		Player* p = this;
 		broadcastMessageOmitSafe(message::play::send::playerInfo(player_macro, playerInfo::removePlayer, 1, &p), this)
@@ -550,6 +549,8 @@ void Player::schedulePacket(char* buffer, ull size, char* toDelete, bool disconn
 
 bool Player::Connected() { return connected; }
 bool Player::ScheduledDisconnect() { return scheduledDisconnect; }
+
+EidDispenser::Player Player::eidDispenser;
 
 void Player::clearDisconnectedPlayers()
 {

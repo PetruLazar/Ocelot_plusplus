@@ -137,7 +137,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->username = username;
 	p->viewDistance = Options::viewDistance();
 	p->gm = gamemode::creative;
-	p->eid = 0x17;
+	p->eid = Player::eidDispenser.Alloc();
 	//position, rotation ad world
 	//p->world = World::worlds[World::spawnWorld];
 	//p->X = p->world->spawn.X;
@@ -1135,7 +1135,7 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPosition(seener, p->eid + 1, short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPosition(seener, p->eid, short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
 }
@@ -1146,8 +1146,8 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 
 	for (Player* seener : p->seenBy)
 	{
-		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->eid + 1, short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
-		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid + 1, (float)p->yaw));
+		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->eid, short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid, (float)p->yaw));
 	}
 	p->updatePosition(X, Y, Z);
 	p->updateRotation(yaw, pitch);
@@ -1157,8 +1157,8 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 {
 	for (Player* seener : p->seenBy)
 	{
-		ignoreExceptions(message::play::send::entityRotation(seener, p->eid + 1, (float)yaw, (float)pitch, onGround));
-		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid + 1, (float)p->yaw));
+		ignoreExceptions(message::play::send::entityRotation(seener, p->eid, (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid, (float)p->yaw));
 	}
 
 	p->updateRotation(yaw, pitch);

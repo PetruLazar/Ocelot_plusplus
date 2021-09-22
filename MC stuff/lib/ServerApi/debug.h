@@ -20,7 +20,7 @@
 //#define LOG_PACKETS
 
 //comment or decomment this define to turn on or off the debugging of player sightings
-#define DEBUG_SIGHT
+//#define DEBUG_SIGHT
 
 #ifdef DEBUG_ALLOCATIONS
 

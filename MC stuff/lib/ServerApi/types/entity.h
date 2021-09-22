@@ -183,6 +183,45 @@ enum class Animation : Byte
 	magicCriticalEffect
 };
 
+namespace EidDispenser
+{
+	enum type
+	{
+		player = -2,
+		entity = -1
+	};
+	class General
+	{
+		class Iterator
+		{
+		public:
+			int eid;
+			Iterator* next;
+
+			Iterator(int eid, Iterator* next = 0);
+		} *first;
+
+		void clear(Iterator*);
+
+	public:
+		SERVER_API General(type dispenserType);
+		SERVER_API ~General();
+
+		SERVER_API int Alloc();
+		SERVER_API void Free(int);
+	};
+
+	class Player : public General
+	{
+	public:
+		SERVER_API Player();
+	};
+	class Entity : public General
+	{
+	public:
+		SERVER_API Entity();
+	};
+}
 
 class EntityProperty
 {

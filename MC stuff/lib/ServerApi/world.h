@@ -2,6 +2,7 @@
 #include "world/region.h"
 #include "types/mcString.h"
 #include "types/position.h"
+#include "types/entity.h"
 
 class Player;
 #include "player/player.h"
@@ -70,11 +71,13 @@ public:
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
 
+	SERVER_API static EidDispenser::Entity eidDispenser;
+
 	SERVER_API static void loadAll();
 	SERVER_API static void unloadAll();
-	//initial spawn is in first world
+
 	SERVER_API static std::vector<World*> worlds;
 
-	//temporaty variable
+	//temporary variable
 	SERVER_API static int spawnWorld;
 };
