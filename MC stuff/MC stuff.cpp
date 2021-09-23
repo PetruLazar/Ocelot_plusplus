@@ -9,14 +9,12 @@
 #include <conio.h>
 #include <SFML/Network/TcpListener.hpp>
 #include <Windows.h>
-
 #include <world/noise.h>
-
 #include <debug.cpp>
-
 #include <filesystem>
+#include "types/registry.h"
 
-//using std::filesystem::directory_iterator;
+namespace fs = std::filesystem;
 using namespace std;
 
 const int mc_zlib_compression_level = 6;
@@ -38,6 +36,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 	cout << "Starting server on " << Options::ip() << ':' << Options::port();
 	listener.setBlocking(false);
+
+	//loading registries...
+	//Registry::loadRegistry();
+	
+	//loading vanilla tags
+	//TagGroup::loadVanillaTags();
 
 	cout << "\nLoading worlds...";
 	World::loadAll();

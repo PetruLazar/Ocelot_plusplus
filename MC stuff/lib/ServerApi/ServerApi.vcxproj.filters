@@ -237,6 +237,12 @@
     <ClInclude Include="server\console.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\types\registry.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\registry.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -388,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="server\console.cpp">
       <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="types\registry.cpp">
+      <Filter>Source Files\types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

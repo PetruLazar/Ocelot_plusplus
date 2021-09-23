@@ -5,19 +5,38 @@
 #include "fluid.h"
 #include "entity.h"
 #include "gameevent.h"
+#include "registry.h"
 
-Tags::Tag::Tag(const mcString& name, varInt entryCount, varInt* entries) : name(name), entryCount(entryCount), entries(entries) { }
-Tags::Tag::~Tag()
+#include <filesystem>
+using namespace std::filesystem;
+
+std::vector<TagGroup> defaultTags;
+
+void TagGroup::loadVanillaTags()
 {
-	if (entries) delete[] entries;
+	directory_iterator tagsDir("data/tags");
+	
+	//take all folders in data/tags directory
+	for (const directory_entry& tagGroup : tagsDir)
+	{
+		if (!tagGroup.is_directory()) continue;
+
+		//create the tag group
+		TagGroup group;
+		group.tagType = "minecraft:" + tagGroup.path().stem().string();
+		defaultTags.push_back(group);
+
+		directory_iterator tagGroupDir(tagGroup);
+
+		//take each tag file in the tag group
+		for (const directory_entry& tagFile : tagGroupDir)
+		{
+			//load the tag
+		}
+	}
 }
 
-Tags::Tags(varInt tagCount, const mcString& tagType, Tag* tags) : tagCount(tagCount), tagType(tagType), tags(tags) { }
-Tags::~Tags()
-{
-	if (tags) delete[] tags;
-}
-
+/*previous tag implementation
 const varInt Tags::defaltTagsLengthCount = 5;
 Tags Tags::defaultTags[5] = {
 	Tags(118, "minecraft:block", new Tag[118]{
@@ -1297,4 +1316,4 @@ Tags Tags::defaultTags[5] = {
 			(int)GameEvent::minecraft_swim
 		})
 	})
-};
+};*/

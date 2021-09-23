@@ -3,27 +3,22 @@
 #include "mcString.h"
 #include "varData.h"
 #include "apidef.h"
+#include <vector>
 
-class Tags
+class TagGroup
 {
 public:
-	varInt tagCount;
 	//the name of the category: minecraft:blocks, minecraft:item, minecraft:fluid...
 	mcString tagType;
 	class Tag
 	{
 	public:
 		mcString name;
-		varInt entryCount;
-		varInt* entries;
+		std::vector<varInt> entries;
+	};
+	std::vector<Tag> tags;
 
-		SERVER_API Tag(const mcString& name, varInt entryCount, varInt* entries);
-		SERVER_API ~Tag();
-	}*tags;
+	SERVER_API static std::vector<TagGroup> defaultTags;
 
-	SERVER_API Tags(varInt tagCount, const mcString& tagType, Tag* tags);
-	SERVER_API ~Tags();
-
-	SERVER_API static const varInt defaltTagsLengthCount;
-	SERVER_API static Tags defaultTags[];
+	SERVER_API static void loadVanillaTags();
 };
