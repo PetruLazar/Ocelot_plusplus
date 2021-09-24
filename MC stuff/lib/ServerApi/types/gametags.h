@@ -20,5 +20,9 @@ public:
 
 	SERVER_API static std::vector<TagGroup> defaultTags;
 
+	//get a pointer to a loaded tag (nullptr if the tag is not loaded)
+	SERVER_API const Tag* getTag(const std::string& category, const std::string& tag);
+	SERVER_API void loadTag(const std::string& tag);
+
 	SERVER_API static void loadVanillaTags();
 };

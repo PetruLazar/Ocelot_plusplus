@@ -23,7 +23,6 @@ namespace EidDispenser
 		Iterator* i;
 		for (i = first; i->next && i->eid == i->next->eid - 2; i = i->next);
 		i->next = new Iterator(i->eid + 2, i->next);
-		Log::txt() << "\nAllocated eid " << i->next->eid;
 		return i->next->eid;
 	}
 	void General::Free(int eid)
@@ -33,7 +32,6 @@ namespace EidDispenser
 			Iterator* i2 = i->next;
 			i->next = i->next->next;
 			delete i2;
-			Log::txt() << "\nFreed eid " << eid;
 			return;
 		}
 	}

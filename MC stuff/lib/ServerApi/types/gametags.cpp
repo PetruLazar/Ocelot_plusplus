@@ -10,28 +10,89 @@
 #include <filesystem>
 using namespace std::filesystem;
 
-std::vector<TagGroup> defaultTags;
+std::vector<TagGroup> TagGroup::defaultTags;
+
+const TagGroup::Tag* TagGroup::getTag(const std::string& category, const std::string& name)
+{
+	for (const TagGroup& tagGroup : TagGroup::defaultTags) if (tagGroup.tagType == category)
+	{
+		for (const Tag& tag : tagGroup.tags) if (tag.name == name) return &tag;
+		return nullptr;
+	}
+	return nullptr;
+}
+void TagGroup::loadTag(const std::string& tagName)
+{
+	//if the tag is already loaded, exit
+	if (getTag(tagType, tagName)) return;
+
+	//open file and parse it
+	std::fstream tagFile("data/tags/" + std::string((tagType.c_str() + sizeof("minecraft"))) + "s/" + tagName + ".json", std::ios::in);
+	if (!tagFile.is_open())
+		throw;
+	json& jsonTag = *json::parse(tagFile);
+
+	//create the tag
+	Tag tag;
+	tag.name = "minecraft:" + tagName;
+
+	//registry that the values will be from
+	//std::string registry = tagType;
+	//registry.pop_back();
+
+	//take each entry of "values"
+	json& values = jsonTag["values"];
+	ull size = values.getSize();
+	for (ull i = 0; i < size; i++)
+	{
+		std::string value = values[(int)i].value();
+		if (value[0] == '#')
+		{
+			//value si reference to another tag
+			loadTag(value.c_str() + sizeof("minecraft:"));
+			const Tag* refTag = getTag(tagType, (value.c_str() + 1));
+			if (!&refTag)
+				throw;
+			for (const varInt& v : refTag->entries) tag.entries.push_back(v);
+		}
+		else
+		{
+			//value is literal, add it to the tag
+			tag.entries.push_back(Registry::getId(tagType, value));
+		}
+	}
+
+	//add the tag to the TagGroup
+	tags.push_back(tag);
+}
 
 void TagGroup::loadVanillaTags()
 {
 	directory_iterator tagsDir("data/tags");
-	
+
 	//take all folders in data/tags directory
 	for (const directory_entry& tagGroup : tagsDir)
 	{
+		//ignore files that are not directories
 		if (!tagGroup.is_directory()) continue;
 
 		//create the tag group
-		TagGroup group;
+		defaultTags.push_back(TagGroup());
+		TagGroup& group = defaultTags.back();
 		group.tagType = "minecraft:" + tagGroup.path().stem().string();
-		defaultTags.push_back(group);
+		group.tagType.pop_back();
 
-		directory_iterator tagGroupDir(tagGroup);
+		recursive_directory_iterator tagGroupDir(tagGroup);
 
 		//take each tag file in the tag group
 		for (const directory_entry& tagFile : tagGroupDir)
 		{
-			//load the tag
+			//ignore files that are not regular files
+			if (!tagFile.is_regular_file()) continue;
+
+			std::string tagName = relative(tagFile.path(), tagGroup.path()).replace_extension().string();
+			std::replace(tagName.begin(), tagName.end(), '\\', '/');
+			group.loadTag(tagName);
 		}
 	}
 }

@@ -2,6 +2,8 @@
 #include <fstream>
 #include "error.h"
 
+json* Registry::registry;
+
 int Registry::getId(const std::string& category, const std::string& item)
 {
 	return (*registry)[category]["entries"][item]["protocol_id"].iValue();

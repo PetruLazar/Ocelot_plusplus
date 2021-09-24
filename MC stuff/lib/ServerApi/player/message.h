@@ -557,7 +557,7 @@ struct message
 			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
 			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes);
 			SERVER_API static void tags(Player*);
-			SERVER_API static void tags(Player*, varInt tagCategoryCount, Tags* tags);
+			SERVER_API static void tags(Player*, varInt tagCategoryCount, TagGroup* tags);
 
 			//SERVER_API static void scheduleFullChunk(Player* p, int cX, int cZ);
 			SERVER_API static void sendFullChunk(Player*, int cX, int cZ);

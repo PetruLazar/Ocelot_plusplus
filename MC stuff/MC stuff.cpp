@@ -34,19 +34,21 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		system("pause");
 		return 0;
 	}
-	cout << "Starting server on " << Options::ip() << ':' << Options::port();
+	Log::txt() << "Starting server on " << Options::ip().toString() << ':' << Options::port();
 	listener.setBlocking(false);
 
 	//loading registries...
-	//Registry::loadRegistry();
-	
-	//loading vanilla tags
-	//TagGroup::loadVanillaTags();
+	Log::txt() << "\nLoading registries...";
+	Registry::loadRegistry();
 
-	cout << "\nLoading worlds...";
+	//loading vanilla tags
+	Log::txt() << "\nLoading vanilla tags...";
+	TagGroup::loadVanillaTags();
+
+	Log::txt() << "\nLoading worlds...";
 	World::loadAll();
 	sf::TcpSocket* buffer = new sf::TcpSocket;
-	cout << "\nLoad complete.";
+	Log::txt() << "\nLoad complete.";
 
 	//main loop
 	bool keepAlive = true;

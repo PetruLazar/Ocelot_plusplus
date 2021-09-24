@@ -743,9 +743,9 @@ void message::play::send::unloadChunk(Player* p, bint x, bint z)
 }
 void message::play::send::tags(Player* p)
 {
-	tags(p, Tags::defaltTagsLengthCount, Tags::defaultTags);
+	tags(p, (int)TagGroup::defaultTags.size(), TagGroup::defaultTags.data());
 }
-void message::play::send::tags(Player* p, varInt tagCategoryCount, Tags* tags)
+void message::play::send::tags(Player* p, varInt tagCategoryCount, TagGroup* tags)
 {
 	varInt id = (int)id::tags;
 	prepareSendMacro(1024 * 1024);
@@ -755,14 +755,16 @@ void message::play::send::tags(Player* p, varInt tagCategoryCount, Tags* tags)
 	for (int i = 0; i < tagCategoryCount; i++)
 	{
 		tags[i].tagType.write(data);
-		tags[i].tagCount.write(data);
-		int& count = tags[i].tagCount;
+		int count = (int)tags[i].tags.size();
+		varInt(count).write(data);
+		//tags[i].tagCount.write(data);
 		for (int j = 0; j < count; j++)
 		{
-			Tags::Tag& tag = tags[i].tags[j];
+			TagGroup::Tag& tag = tags[i].tags[j];
 			tag.name.write(data);
-			tag.entryCount.write(data);
-			for (int k = 0; k < tag.entryCount; k++) tag.entries[k].write(data);
+			int entryCount = (int)tag.entries.size();
+			varInt(entryCount).write(data);
+			for (int k = 0; k < entryCount; k++) tag.entries[k].write(data);
 		}
 	}
 
