@@ -227,6 +227,7 @@
     <ClInclude Include="types\winLeanMean.h" />
     <ClInclude Include="world.h" />
     <ClInclude Include="world\chunk.h" />
+    <ClInclude Include="world\customGen.h" />
     <ClInclude Include="world\noise.h" />
     <ClInclude Include="world\region.h" />
     <ClInclude Include="world\section.h" />

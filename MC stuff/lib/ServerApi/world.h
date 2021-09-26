@@ -3,6 +3,7 @@
 #include "types/mcString.h"
 #include "types/position.h"
 #include "types/entity.h"
+#include <Windows.h>
 
 class Player;
 #include "player/player.h"
@@ -66,7 +67,9 @@ public:
 	SERVER_API void unload(int x, int z);
 	SERVER_API Chunk* get(int x, int z, bool increaseLoadCount = false);
 
-	GeneratorFunction generatorFunction;
+	//generator
+	GeneratorFunction generatorFunction = 0;
+	HMODULE generatorModule = 0;
 
 	//static members
 	SERVER_API static nbt_compound dimension_codec;

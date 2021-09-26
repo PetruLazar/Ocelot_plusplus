@@ -341,9 +341,26 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 		generatorFunction = generate_def;
 		break;
 	case customWorld:
-		//load custom generator
-		Log::txt() << "\nWorld \"" << c_name << "\" tried to use a custom world generator, using default world generator instead." << Log::flush;
-		generatorFunction = generate_def;
+		try
+		{
+			//loading generator module
+			generatorModule = LoadLibraryA(("worlds\\" + name + "\\generator.dll").c_str());
+			if (!generatorModule) throw 0;
+			//get address of proc for custom generator
+			generatorFunction = (GeneratorFunction)GetProcAddress(generatorModule, "generate");
+			if (!generatorFunction)
+			{
+				FreeLibrary(generatorModule);
+				generatorModule = 0;
+				throw 0;
+			}
+		}
+		catch (...)
+		{
+			Log::txt() << "\nCould not load custom generator for world \"" << c_name << "\", using default instead." << Log::flush;
+			generatorFunction = generate_def;
+		}
+		break;
 	}
 
 	Log::txt() << "\nLoading spawn area..." << Log::flush;
@@ -357,11 +374,15 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 
 World::~World()
 {
+	//unload regions (and chunks, implicitly)
 	for (Region* r : regions)
 	{
 		r->unload(this);
 		delete r;
 	}
+	//unload custom generator module if present
+	if (generatorModule) FreeLibrary(generatorModule);
+
 	//update characteristics.bin
 }
 

@@ -243,6 +243,9 @@
     <ClInclude Include="types\registry.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
+    <ClInclude Include="world\customGen.h">
+      <Filter>Header Files\world</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

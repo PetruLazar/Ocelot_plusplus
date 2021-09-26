@@ -6,7 +6,7 @@ class Chunk
 {
 public:
 	SERVER_API Chunk();
-	SERVER_API Chunk(ull heightInSections);
+	SERVER_API Chunk(ull heightInBlocks);
 	SERVER_API ~Chunk();
 
 	//light data
