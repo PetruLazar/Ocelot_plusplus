@@ -34,21 +34,21 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		system("pause");
 		return 0;
 	}
-	Log::txt() << "Starting server on " << Options::ip().toString() << ':' << Options::port();
+	Log::txt() << "Starting server on " << Options::ip() << ':' << Options::port() << Log::flush;
 	listener.setBlocking(false);
 
 	//loading registries...
-	Log::txt() << "\nLoading registries...";
+	Log::txt() << "\nLoading registries..." << Log::flush;
 	Registry::loadRegistry();
 
 	//loading vanilla tags
-	Log::txt() << "\nLoading vanilla tags...";
+	Log::txt() << "\nLoading vanilla tags..." << Log::flush;
 	TagGroup::loadVanillaTags();
 
-	Log::txt() << "\nLoading worlds...";
+	Log::txt() << "\nLoading worlds..." << Log::flush;
 	World::loadAll();
 	sf::TcpSocket* buffer = new sf::TcpSocket;
-	Log::txt() << "\nLoad complete.";
+	Log::txt() << "\nLoad complete." << Log::flush;
 
 	//main loop
 	bool keepAlive = true;
@@ -59,7 +59,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
 			Player::players.push_back(new Player(buffer));
-			cout << '\n' << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.";
+			Log::txt() << '\n' << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.";
 			buffer = new sf::TcpSocket;
 		}
 
@@ -106,6 +106,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 				else cout << "\nPlayers now spawn in world 0";
 			}
 		}
+
+		Log::Flush();
 	}
 
 	cout << "\nKicking players...";

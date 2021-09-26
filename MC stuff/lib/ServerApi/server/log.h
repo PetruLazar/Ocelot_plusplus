@@ -2,6 +2,9 @@
 #include "../types/typedefs.h"
 #include <fstream>
 #include "../types/apidef.h"
+#include "SFML/Network/IpAddress.hpp"
+
+class DebugStreamFlush { };
 
 class DebugStream
 {
@@ -20,6 +23,9 @@ public:
 	SERVER_API DebugStream& operator<<(const char* n);
 	SERVER_API DebugStream& operator<<(const void* n);
 	SERVER_API DebugStream& operator<<(const std::string& n);
+	SERVER_API DebugStream& operator<<(const sf::IpAddress& n);
+
+	SERVER_API DebugStream& operator<<(const DebugStreamFlush fs);
 };
 
 class Log
@@ -32,6 +38,8 @@ public:
 	SERVER_API static bool Initialized();
 	SERVER_API static DebugStream& txt();
 	SERVER_API static void bin(const char*, const ull);
+	SERVER_API static void Flush();
+	SERVER_API static DebugStreamFlush flush;
 
 	friend DebugStream;
 };

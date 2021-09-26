@@ -300,16 +300,16 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 
 World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 {
-	cout << "\nLoading world \"" << c_name << "\"...";
+	Log::txt() << "\nLoading world \"" << c_name << "\"..." << Log::flush;
 	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::in);
 	if (!worldMain.is_open())
 	{
-		cout << "Error: cannot open charactestics.bin\n";
+		Log::txt() << "Error: cannot open charactestics.bin\n" << Log::flush;
 		throw 0;
 	}
 	if (!nbt::checkTag(worldMain))
 	{
-		cout << "Error: charactestics.bin has an invalid format\n";
+		Log::txt() << "Error: charactestics.bin has an invalid format\n" << Log::flush;
 		throw 0;
 	}
 	characteristics.read(worldMain);
@@ -342,17 +342,17 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 		break;
 	case customWorld:
 		//load custom generator
-		Log::txt() << "\nWorld \"" << c_name << "\" tried to use a custom world generator, using default world generator instead.";
+		Log::txt() << "\nWorld \"" << c_name << "\" tried to use a custom world generator, using default world generator instead." << Log::flush;
 		generatorFunction = generate_def;
 	}
 
-	cout << "\nLoading spawn area...";
+	Log::txt() << "\nLoading spawn area..." << Log::flush;
 	for (int x = spawn.ChunkX - Options::viewDistance(); x <= spawn.ChunkX + Options::viewDistance(); x++)
 		for (int z = spawn.ChunkZ - Options::viewDistance(); z <= spawn.ChunkZ + Options::viewDistance(); z++)
-			get(x, z);
+			get(x, z, true);
 
 	spawn.Y = double(characteristics["min_y"].vInt()) + get(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
-	cout << "\nDone!";
+	Log::txt() << "\nDone!" << Log::flush;
 }
 
 World::~World()
