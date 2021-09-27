@@ -21,7 +21,13 @@ System for assigning entity ids
 
 Better commands system
 
-Better Tags system
+Better exceptions system - based on std::exception
+
+System for recipes
+
+Better system for biomes, so that custom generators can have custom biomes
+
+Fix spelling mistake in Section: pallete -> palette
 
 Split logging into log.txt (normal log) and debug.txt (for protocol/runtime warnings and error)
 
@@ -34,93 +40,6 @@ code for working with UUID
 code for working with Entity metadata
 
 command processing system
-
-fill out contents for following tags:
-
-Blocks:
-
-	minecraft:enderman_holdable
-	minecraft:soul_fire_base_blocks
-	minecraft:infiniburn_nether
-	minecraft:flower_pots
-	minecraft:infiniburn_overworld,
-	minecraft:wooden_fences
-	minecraft:piglin_repellents
-	minecraft:wall_post_override
-	minecraft:wooden_slabs
-	minecraft:portals
-	minecraft:occludes_vibration_signals,
-	minecraft:small_flowers
-	minecraft:wooden_trapdoors
-	minecraft:pressure_plates
-	minecraft:jungle_logs
-	minecraft:wooden_stairs
-	minecraft:spruce_logs
-	minecraft:signs
-	minecraft:wool
-	minecraft:stairs
-	minecraft:wither_summon_base_blocks
-	minecraft:logs
-	minecraft:dripstone_replaceable_blocks
-	minecraft:stone_bricks
-	minecraft:hoglin_repellents
-	minecraft:fire
-	minecraft:lava_pool_stone_replaceables
-	minecraft:ice
-	minecraft:needs_diamond_tool
-	minecraft:dragon_immune
-	minecraft:wall_signs
-	minecraft:features_cannot_replace
-	minecraft:slabs
-	minecraft:valid_spawn
-	minecraft:mushroom_grow_block,
-	minecraft:guarded_by_piglins
-	minecraft:wooden_doors
-	minecraft:warped_stems
-	minecraft:standing_signs
-	minecraft:infiniburn_end
-	minecraft:emerald_ores,
-	minecraft:stone_ore_replaceables
-	minecraft:trapdoors
-	minecraft:redstone_ores
-	minecraft:needs_stone_tool
-	minecraft:inside_step_sound_blocks
-	minecraft:flowers
-	minecraft:prevent_mob_spawning_inside
-	minecraft:wart_blocks
-	minecraft:planks
-	minecraft:soul_speed_blocks
-	minecraft:geode_invalid_blocks,
-	minecraft:non_flammable_wood
-	minecraft:leaves
-	minecraft:walls
-	minecraft:strider_warm_blocks
-	minecraft:fence_gates
-	minecraft:shulker_boxes
-	minecraft:bee_growables
-	minecraft:wooden_pressure_plates
-	minecraft:wither_immune
-	minecraft:tall_flowers
-	minecraft:lapis_ores
-	minecraft:moss_replaceable
-	minecraft:wall_corals
-	minecraft:underwater_bonemeals
-	minecraft:stone_pressure_plates
-	minecraft:lush_ground_replaceable
-	minecraft:impermeable
-	minecraft:nylium
-	minecraft:snow
-	minecraft:gold_ores
-	minecraft:small_dripleaf_placeable
-	minecraft:fences
-	minecraft:logs_that_burn
-	minecraft:saplings
-	minecraft:mineable / hoe,
-	minecraft:iron_ores
-	minecraft:oak_logs
-	minecraft:unstable_bottom_center
-	minecraft:doors
-	minecraft:needs_iron_tool
 
 code related to the following packets (either implement the packet itself or code to ease the use of the packet or other infrastructure):
 
