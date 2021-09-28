@@ -39,7 +39,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 
 	//loading registries...
 	Log::txt() << "\nLoading registries..." << Log::flush;
-	Registry::loadRegistry();
+	Registry::loadRegistriesAndPalette();
 
 	//loading vanilla tags
 	Log::txt() << "\nLoading vanilla tags..." << Log::flush;

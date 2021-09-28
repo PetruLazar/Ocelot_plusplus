@@ -226,6 +226,7 @@
     <ClInclude Include="types\varData.h" />
     <ClInclude Include="types\winLeanMean.h" />
     <ClInclude Include="world.h" />
+    <ClInclude Include="world\block.h" />
     <ClInclude Include="world\chunk.h" />
     <ClInclude Include="world\customGen.h" />
     <ClInclude Include="world\noise.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="types\utils.cpp" />
     <ClCompile Include="types\uuid.cpp" />
     <ClCompile Include="types\varData.cpp" />
+    <ClCompile Include="world\block.cpp" />
     <ClCompile Include="world\chunk.cpp" />
     <ClCompile Include="world\noise.cpp" />
     <ClCompile Include="world\region.cpp" />

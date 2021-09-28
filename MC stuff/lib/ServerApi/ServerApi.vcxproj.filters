@@ -246,6 +246,9 @@
     <ClInclude Include="world\customGen.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>
+    <ClInclude Include="world\block.h">
+      <Filter>Header Files\world</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -400,6 +403,9 @@
     </ClCompile>
     <ClCompile Include="types\registry.cpp">
       <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="world\block.cpp">
+      <Filter>Source Files\world</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
