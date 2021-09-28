@@ -26,7 +26,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 
 	//rand seeding
 	srand((uint)time(nullptr));
-	
+
 	//listen on port
 	sf::TcpListener listener;
 	if (listener.listen(Options::port(), Options::ip()) != sockStat::Done)

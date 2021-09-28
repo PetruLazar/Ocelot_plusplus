@@ -15,7 +15,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerApi", "MC stuff\lib\S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "reports", "reports", "{82457F40-BCF0-424F-98FD-76DC3C2C0768}"
 	ProjectSection(SolutionItems) = preProject
-		reports\blocks.json = reports\blocks.json
 		reports\commands.json = reports\commands.json
 		reports\registries.json = reports\registries.json
 	EndProjectSection
