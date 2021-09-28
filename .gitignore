@@ -368,7 +368,7 @@ MC stuff/lib/ServerApi/Build/
 Build/Release/MC Stuff.*
 Build/Release/ServerApi.*
 Build/Debug/MC Stuff.*
-Build/Debgu/ServerApi-d.*
+Build/Debug/ServerApi-d.*
 
 # Temporary files
 MC stuff/Build
