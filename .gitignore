@@ -357,21 +357,23 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-Build
+# Build
 NetConsole/tcp
-MC stuff/server.properties
-MC stuff/debug.txt
-MC stuff/lib/ServerApi/lib/
-MC stuff/lib/ServerApi/Build/
+#MC stuff/server.properties
+#MC stuff/debug.txt
+#MC stuff/lib/ServerApi/lib/
+#MC stuff/lib/ServerApi/Build/
 
 # Build files
-Build/Release/MC Stuff.*
-Build/Release/ServerApi.*
-Build/Debug/MC Stuff.*
-Build/Debug/ServerApi-d.*
+Build/*/*.exe
+Build/*/debug.*
+Build/*/ServerApi*
 
 # Temporary files
 MC stuff/Build
-MC stuff/lib/ServerApi/Build
+MC stuff/lib/ServerApi/Build/
 GlobalPalleteTranslator
-MC stuff/generators/CustomWGenTest/Build
+MC stuff/generators/*/Build
+
+# Custom world generators
+Build/*/worlds/*/generator.*
