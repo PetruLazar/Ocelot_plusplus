@@ -9,5 +9,5 @@ Chat::Chat(const char* text) :
 Chat::Chat(const char* text, color cl) :
 	json_compound("", new json* [2]{
 			new json_string("text",text),
-			new json_string("color",'#' + to_hexstring(cl))
+			new json_string("color","#" + to_hexstring(static_cast<int>(cl)))
 		}, 2) { }

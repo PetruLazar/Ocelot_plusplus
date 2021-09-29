@@ -1,12 +1,12 @@
 #include "nbt_list.h"
-nbt_list::nbt_list(const std::string& name, nbt** v, int s) : nbt(List, name), values(v), _size(s)
+nbt_list::nbt_list(const std::string& name, nbt** v, int s) : nbt(tag::List, name), values(v), _size(s)
 {
 	if (_size) childType = values[0]->getType();
 	for (uint i = 1; i < _size; i++) if (values[i]->getType() != childType) throw "Not all elements of the list are of the same type";
 }
 nbt_list::~nbt_list()
 {
-	if (childType != End) for (uint i = 0; i < _size; i++) if (values[i])
+	if (childType != tag::End) for (uint i = 0; i < _size; i++) if (values[i])
 	{
 		//possible error:	do NOT use the same tags multiple times
 		//					and do not use local variables (due to variable lifetime)
@@ -39,7 +39,7 @@ void nbt_list::read(std::fstream& is, const std::string& name)
 {
 	if (values)
 	{
-		if (childType != End) for (uint i = 0; i < _size; i++)
+		if (childType != tag::End) for (uint i = 0; i < _size; i++)
 		{
 			//possible error:	do NOT use the same tags multiple times
 			//					and do not use local variables (due to variable lifetime)
@@ -68,12 +68,12 @@ void nbt_list::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
-		*(buffer++) = type;
+		*(buffer++) = static_cast<char>(type);
 
 		writeName(buffer);
 	}
 
-	*(buffer++) = childType;
+	*(buffer++) = static_cast<char>(childType);
 
 	_size.write(buffer);
 
@@ -83,7 +83,7 @@ void nbt_list::read(char*& end, const std::string& name)
 {
 	if (values)
 	{
-		if (childType != End) for (uint i = 0; i < _size; i++)
+		if (childType != tag::End) for (uint i = 0; i < _size; i++)
 		{
 			//possible error:	do NOT use the same tags multiple times
 			//					and do not use local variables (due to variable lifetim
@@ -138,7 +138,7 @@ void nbt_list::changeType(tag newtag)
 	if (childType == newtag) return;
 	for (uint i = 0; i < _size; i++)
 	{
-		if (childType != End) delete values[i];
+		if (childType != tag::End) delete values[i];
 		values[i] = getTagP(newtag);
 	}
 	childType = newtag;
@@ -149,7 +149,7 @@ void nbt_list::resize(uint newSize)
 
 	uint minSize = newSize < _size ? newSize : (uint)_size;
 	for (uint i = 0; i < minSize; i++) newValues[i] = values[i];
-	if (childType != End) for (uint i = minSize; i < _size; i++) delete values[i];
+	if (childType != tag::End) for (uint i = minSize; i < _size; i++) delete values[i];
 	for (uint i = minSize; i < newSize; i++) values[i] = getTagP(childType);
 
 	delete[] values;

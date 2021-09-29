@@ -101,6 +101,6 @@ namespace Command
 			delete temp;
 			return;
 		}
-		message::play::send::chatMessage(p, Chat("Ba da atata esti de prost de nici nu stii sa scrii o comanda...", Chat::red), 1, mcUUID(0, 0, 0, 0));
+		message::play::send::chatMessage(p, Chat("Ba da atata esti de prost de nici nu stii sa scrii o comanda...", Chat::color::red), 1, mcUUID(0, 0, 0, 0));
 	}
 }

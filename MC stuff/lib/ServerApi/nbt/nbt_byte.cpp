@@ -1,6 +1,6 @@
 #include "nbt_Byte.h"
 
-nbt_Byte::nbt_Byte(const std::string& name, char v) : nbt(Byte, name), value(v) { }
+nbt_Byte::nbt_Byte(const std::string& name, char v) : nbt(tag::Byte, name), value(v) { }
 
 void nbt_Byte::write(std::fstream& os, bool iNT) const
 {
@@ -26,7 +26,7 @@ void nbt_Byte::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
-		*(buffer++) = type;
+		*(buffer++) = static_cast<char>(type);
 
 		writeName(buffer);
 	}

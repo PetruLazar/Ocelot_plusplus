@@ -1,6 +1,6 @@
 #include "nbt_int_array.h"
 
-nbt_int_array::nbt_int_array(const std::string& name, int* v, int s) : nbt(IntArray, name), values((bint*)v), _size(s) { }
+nbt_int_array::nbt_int_array(const std::string& name, int* v, int s) : nbt(tag::IntArray, name), values((bint*)v), _size(s) { }
 nbt_int_array::~nbt_int_array()
 {
 	delete[] values;
@@ -45,7 +45,7 @@ void nbt_int_array::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
-		*(buffer++) = type;
+		*(buffer++) = static_cast<char>(type);
 
 		writeName(buffer);
 	}

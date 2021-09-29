@@ -11,7 +11,7 @@ extern const char* searchFailedError;
 class nbt
 {
 public:
-	enum tag : Byte
+	enum class tag : Byte
 	{
 		End,
 		Byte,
@@ -30,7 +30,7 @@ public:
 protected:
 	std::string name;
 
-	tag type;
+	nbt::tag type;
 
 	SERVER_API void readName(std::fstream&);
 	SERVER_API void writeName(std::fstream&) const;
@@ -95,9 +95,9 @@ public:
 	SERVER_API virtual void changeType(tag);
 
 	//check if an nbt file has the specified nbt tag
-	SERVER_API static bool checkTag(std::fstream&, tag = Compound);
+	SERVER_API static bool checkTag(std::fstream&, tag = tag::Compound);
 	//check if an nbt in memory contains the specified tag
-	SERVER_API static bool checkTag(char*&, tag = Compound);
+	SERVER_API static bool checkTag(char*&, tag = tag::Compound);
 	//allocate a pointer of the specified type
 	SERVER_API static nbt* getTagP(tag);
 

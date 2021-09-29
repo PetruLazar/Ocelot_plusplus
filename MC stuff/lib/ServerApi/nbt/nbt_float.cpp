@@ -1,6 +1,6 @@
 #include "nbt_float.h"
 
-nbt_float::nbt_float(const std::string& name, float v) : nbt(Float, name), value(v) { }
+nbt_float::nbt_float(const std::string& name, float v) : nbt(tag::Float, name), value(v) { }
 
 void nbt_float::write(std::fstream& os, bool iNT) const
 {
@@ -26,7 +26,7 @@ void nbt_float::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
-		*(buffer++) = type;
+		*(buffer++) = static_cast<char>(type);
 
 		writeName(buffer);
 	}

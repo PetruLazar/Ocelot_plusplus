@@ -1,6 +1,6 @@
 #include "nbt_long.h"
 
-nbt_long::nbt_long(const std::string& name, int64 v) : nbt(Long, name), value(v) { }
+nbt_long::nbt_long(const std::string& name, int64 v) : nbt(tag::Long, name), value(v) { }
 
 void nbt_long::write(std::fstream& os, bool iNT) const
 {
@@ -26,7 +26,7 @@ void nbt_long::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
-		*(buffer++) = type;
+		*(buffer++) = static_cast<char>(type);
 
 		writeName(buffer);
 	}

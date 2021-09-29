@@ -175,7 +175,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::declareCommands(p);
 
-	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
+	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::color::yellow), p);
 	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p);
 
 	p->setWorld(World::worlds[World::spawnWorld]);
@@ -589,8 +589,8 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equi
 	id.write(data);
 	eid.write(data);
 
-	//				if the top bit is set true, another entry follows
-	for (int i = 0; (equipments[i].getSlot() & 0x80) == true; i++)
+	//				if the top bit is set, another entry follows
+	for (int i = 0; (equipments[i].getSlot() & 0x80) == 1; i++)
 		equipments[i].write(data);
 
 
