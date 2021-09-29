@@ -581,6 +581,21 @@ void message::play::send::spawnPosition(Player* p, Position location, bfloat ang
 
 	finishSendMacro;
 }
+void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equipments)
+{
+	varInt id = (int)id::entityEquipment;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+
+	//				if the top bit is set true, another entry follows
+	for (int i = 0; (equipments[i].getSlot() & 0x80) == true; i++)
+		equipments[i].write(data);
+
+
+	finishSendMacro;
+}
 void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
 {
 	varInt id = (int)id::declareRecipes;
@@ -847,6 +862,21 @@ void message::play::send::declareCommands(Player* p, varInt count, Node* nodes, 
 
 	finishSendMacro;
 }
+
+void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, const Slot& slotData)
+{
+	varInt id = (int)id::setSlot;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	stateId.write(data);
+	slot.write(data);
+	slotData.write(data);
+
+	finishSendMacro;
+}
+
 void message::play::send::respawn(Player* p, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata)
 {
 	varInt id = (int)id::respawn;

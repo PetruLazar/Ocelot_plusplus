@@ -476,7 +476,7 @@ struct message
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			//SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot* slots, const Slot& carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);
-			//SERVER_API static void setSlot(Player*, Byte winId, varInt stateId, bshort slot, const Slot& data);
+			SERVER_API static void setSlot(Player*, Byte winId, varInt stateId, bshort slot, const Slot& data);
 			SERVER_API static void setCooldown(Player*, varInt itemId, varInt cooldown);
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, const char* data);
 			SERVER_API static void namedSoundEffect(Player*, const mcString& soundName, varInt category, bint effectX, bint effectY, bint effectZ, bfloat volume, bfloat pitch);
@@ -534,7 +534,7 @@ struct message
 			//SERVER_API static void entityMetadata(varInt eid, const Metadata& metadata);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
-			//SERVER_API static void entityEquipment(Player*, varInt eid, Equipment* equipment);
+			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment* equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			//SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);

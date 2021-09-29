@@ -17,7 +17,9 @@ std::string Registry::getName(const std::string& category, int id)
 void Registry::loadRegistriesAndPalette()
 {
 	std::fstream registryFile("data/registries.json", std::ios::in);
-	if (!registryFile.is_open()) throw runtimeError("Could not load registries");
+	if (!registryFile.is_open())
+		throw runtimeError("Could not load registries");
+
 	registries = json::parse(registryFile);
 	registryFile.close();
 }

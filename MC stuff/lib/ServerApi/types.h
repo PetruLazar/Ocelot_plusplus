@@ -24,3 +24,4 @@
 #include "types/utils.h"
 #include "types/uuid.h"
 #include "types/varData.h"
+#include "types/Equipment.h"

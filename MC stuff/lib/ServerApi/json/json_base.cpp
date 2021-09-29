@@ -180,5 +180,6 @@ json* json::parse(std::fstream& f, bool canHaveName)
 	{
 		throw runtimeError(invalidJson);
 	}
+
 	return nullptr;
 }
