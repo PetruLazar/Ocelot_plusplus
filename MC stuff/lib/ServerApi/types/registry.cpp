@@ -42,7 +42,7 @@ json& Registry::getBlockState(const std::string& blockName)
 		}
 		catch (...) {}
 	}
-	throw runtimeError("no default state found");
+	throw runtimeError("No default state found");
 }
 json& Registry::getBlockState(const std::string& blockName, BlockProperty* states)
 {
@@ -69,11 +69,36 @@ json& Registry::getBlockState(const std::string& blockName, BlockProperty* state
 		//no different states found, return the id
 		return state;
 	}
-	throw runtimeError("desired state not found");
+	throw runtimeError("Desired state not found");
 }
 json& Registry::getBlockState(int id)
 {
 	return *(json*)nullptr;
+}
+
+std::string Registry::getBlock(int id)
+{
+	ull blockCount = registries->getSize();
+	for (ull i = 0; i < blockCount; i++)
+	{
+		json& block = (*registries)[i],
+			& blockStates = block["states"];
+		if (blockStates[blockStates.getSize() - 1]["id"].iValue() >= id) return block.getName();
+	}
+	throw runtimeError("No block found");
+}
+std::string Registry::getBlock(const json& blockState)
+{
+	ull blockCount = registries->getSize();
+	for (ull i = 0; i < blockCount; i++)
+	{
+		json& block = (*registries)[i],
+			& blockStates = block["states"];
+		ull stateCount = blockStates.getSize();
+
+		for (ull j = 0; j < stateCount; j++) if (&blockStates[j] == &blockState) return block.getName();
+	}
+	throw runtimeError("No block found");
 }
 
 void Registry::loadRegistriesAndPalette()
