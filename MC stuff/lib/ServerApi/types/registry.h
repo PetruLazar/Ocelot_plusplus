@@ -24,8 +24,14 @@ public:
 
 	//get the protocol id of the block, or the id of the default state if the block has multiple states
 	SERVER_API static int getBlockId(const std::string& blockName);
-	//get the protocol id of the block state with the desired properties, "properties" array is assumed to be the same size as the block property count, and the block is assumed to have properties
+	//get the protocol id of the block state with the desired properties; "properties" array is assumed to be the same size as the block property count, and the block is assumed to have properties
 	SERVER_API static int getBlockId(const std::string& blockName, BlockProperty* properties);
+	//get the default state, or the only state of the block, in json format
+	SERVER_API static json& getBlockState(const std::string& blockName);
+	//get the state of the block with the desired properties; "properties" array is assumed to be the same size as the block property count, and the block is assumed to have properties
+	SERVER_API static json& getBlockState(const std::string& blockName, BlockProperty* properties);
+	//get the state of the block based on the block id
+	SERVER_API static json& getBlockState(int id);
 
 	SERVER_API static void loadRegistriesAndPalette();
 };

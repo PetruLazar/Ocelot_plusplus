@@ -17,6 +17,15 @@ std::string Registry::getName(const std::string& category, int id)
 }
 int Registry::getBlockId(const std::string& blockName)
 {
+	return getBlockState(blockName)["id"].iValue();
+}
+int Registry::getBlockId(const std::string& blockName, BlockProperty* states)
+{
+	return getBlockState(blockName, states)["id"].iValue();
+}
+
+json& Registry::getBlockState(const std::string& blockName)
+{
 	json& blockStates = (*globalPalette)[blockName]["states"];
 	ull stateCount = blockStates.getSize();
 	for (ull i = 0; i < stateCount; i++)
@@ -27,14 +36,14 @@ int Registry::getBlockId(const std::string& blockName)
 		{
 			if (state["default"].bValue() == true)
 			{
-				return state["id"].iValue();
+				return state;
 			}
 		}
 		catch (...) {}
 	}
 	throw runtimeError("no default state found");
 }
-int Registry::getBlockId(const std::string& blockName, BlockProperty* states)
+json& Registry::getBlockState(const std::string& blockName, BlockProperty* states)
 {
 	json& blockEntry = (*globalPalette)[blockName];
 	ull propertyCount = blockEntry["properties"].getSize();
@@ -57,9 +66,13 @@ int Registry::getBlockId(const std::string& blockName, BlockProperty* states)
 		}
 		if (cont) continue;
 		//no different states found, return the id
-		return state["id"].iValue();
+		return state;
 	}
 	throw runtimeError("desired state not found");
+}
+json& Registry::getBlockState(int id)
+{
+	return *(json*)nullptr;
 }
 
 void Registry::loadRegistriesAndPalette()
