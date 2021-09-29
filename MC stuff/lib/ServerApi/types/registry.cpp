@@ -5,6 +5,7 @@
 json* Registry::registries, * Registry::globalPalette;
 
 BlockProperty::BlockProperty(const std::string& name, const std::string& val) : name(name), value(val) { }
+BlockProperty::BlockProperty() { }
 
 int Registry::getId(const std::string& category, const std::string& item)
 {

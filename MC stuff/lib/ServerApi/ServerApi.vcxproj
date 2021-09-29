@@ -168,7 +168,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\types\registry.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="json\json_array.h" />

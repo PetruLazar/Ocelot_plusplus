@@ -237,9 +237,6 @@
     <ClInclude Include="server\console.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\types\registry.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
     <ClInclude Include="types\registry.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>

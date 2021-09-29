@@ -10,6 +10,7 @@ class BlockProperty
 public:
 	const std::string name, value;
 
+	SERVER_API BlockProperty();
 	SERVER_API BlockProperty(const std::string& name, const std::string& value);
 };
 
