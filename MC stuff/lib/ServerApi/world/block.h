@@ -11,6 +11,7 @@ public:
 	class Block
 	{
 		json* state;
+
 	public:
 		varInt id;
 
