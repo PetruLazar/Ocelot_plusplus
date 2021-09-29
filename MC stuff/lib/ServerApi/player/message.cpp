@@ -538,6 +538,21 @@ void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 
 	finishSendMacro;
 }
+void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround) {
+	varInt id = (int)id::entityTeleport;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	*(data++) = (char&)yaw;
+	*(data++) = (char&)pitch;
+	*(data++) = onGround;
+
+	finishSendMacro;
+}
 void message::play::send::pluginMessage(Player* p, const mcString& channel, ull ByteCount, const char* Bytes)
 {
 	varInt id = (int)id::pluginMessage_clientbound;
