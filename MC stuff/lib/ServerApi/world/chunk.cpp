@@ -40,6 +40,12 @@ Chunk::~Chunk()
 
 void Chunk::read(char*& buffer, int sectionCount, int sectionOffset)
 {
+	//chunk data
+
+
+	//light data
+
+
 	throw runtimeError("Chunk::read not implemented yet.");
 }
 void Chunk::write(char*& buffer)
@@ -52,6 +58,24 @@ void Chunk::write(char*& buffer)
 
 	throw runtimeError("Chunk::write not implemented yet.");
 }
+
+BlockState& Chunk::getPaletteEntry(int relX, int relY, int relZ)
+{
+	return sections[relY >> 4].getPaletteEntry(relX, relY & 0xff, relZ);
+}
+BlockState& Chunk::getPaletteEntry(int sectionY, int paletteIndex)
+{
+	return sections[sectionY].getPaletteEntry(paletteIndex);
+}
+BlockState Chunk::getBlock(int relX, int relY, int relZ)
+{
+	return sections[relY >> 4].getBlock(relX, relY & 0xff, relZ);
+}
+void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl)
+{
+	sections[relY >> 4].setBlock(relX, relY & 0xff, relZ, bl);
+}
+
 void Chunk::writeSectionData(char*&)
 {
 	throw runtimeError("Chunk::writeSectionData not implemented yet");

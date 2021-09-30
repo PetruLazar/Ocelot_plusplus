@@ -300,7 +300,7 @@ nbt_compound World::dimension_codec("", new nbt* [2]{
 
 World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 {
-	Log::txt() << "\nLoading world \"" << c_name << "\"..." << Log::flush;
+	IF_WORLD_LOAD_DEBUG(Log::txt() << "\nLoading world \"" << c_name << "\"..." << Log::flush);
 	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::in);
 	if (!worldMain.is_open())
 	{
@@ -363,13 +363,13 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 		break;
 	}
 
-	Log::txt() << "\nLoading spawn area..." << Log::flush;
+	IF_WORLD_LOAD_DEBUG(Log::txt() << "\nLoading spawn area..." << Log::flush);
 	for (int x = spawn.ChunkX - Options::viewDistance(); x <= spawn.ChunkX + Options::viewDistance(); x++)
 		for (int z = spawn.ChunkZ - Options::viewDistance(); z <= spawn.ChunkZ + Options::viewDistance(); z++)
 			get(x, z, true);
 
 	spawn.Y = double(characteristics["min_y"].vInt()) + get(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
-	Log::txt() << "\nDone!" << Log::flush;
+	IF_WORLD_LOAD_DEBUG(Log::txt() << "\nDone!" << Log::flush);
 }
 
 World::~World()
@@ -998,13 +998,13 @@ Chunk* World::get(int x, int z, bool increaseLoadCount)
 		Chunk* chunk = regions[i]->get(this, relX, relZ, increaseLoadCount);
 		if (chunk)
 		{
-			IF_CHUNK_DEBUG(cout << "\nChunk [" << x << ", " << z << "] extracted(" << chunk->loadCount << ")");
+			IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] extracted(" << chunk->loadCount << ")" << Log::flush;);
 			return chunk;
 		}
 		//chunk not found in region, generate
 		chunk = generatorFunction(this, x, z);
 		chunk->loadCount = 1;
-		IF_CHUNK_DEBUG(cout << "\nChunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")");
+		IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;);
 		regions[i]->set(relX, relZ, chunk);
 		return chunk;
 	}
@@ -1012,10 +1012,10 @@ Chunk* World::get(int x, int z, bool increaseLoadCount)
 	//region not found, create region and load chunk
 	Region* region = new Region(rX, rZ);
 	regions.push_back(region);
-	IF_REGION_DEBUG(std::cout << "\nRegions is now " << regions.size());
+	IF_REGION_DEBUG(Log::txt() << "\nRegions is now " << regions.size() << Log::flush;);
 	Chunk* chunk = generatorFunction(this, x, z);
 	chunk->loadCount = 1;
-	IF_CHUNK_DEBUG(cout << "\nChunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")");
+	IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;);
 
 	region->set(relX, relZ, chunk);
 	return chunk;
@@ -1029,7 +1029,7 @@ void World::loadAll()
 	{
 		worlds.push_back(new World(name));
 	}
-	cout << "\nFinished loading " << worlds.size() << " worlds!";
+	Log::txt() << "\nFinished loading " << worlds.size() << " worlds!" << Log::flush;
 }
 void World::unloadAll()
 {

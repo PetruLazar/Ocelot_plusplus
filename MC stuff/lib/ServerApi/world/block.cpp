@@ -15,7 +15,7 @@ BlockState::BlockState(const std::string blockName, BlockProperty* properties) :
 std::string BlockState::getState(const std::string& stateName) const
 {
 	json& stateProp = (*state)["properties"][stateName];
-	return stateProp.getType() == json::string ? stateProp.value() : stateProp.stringValue();
+	return stateProp.getType() == json::type::string ? stateProp.value() : stateProp.stringValue();
 }
 void BlockState::setState(const std::string& stateName, const std::string& value)
 {
@@ -28,7 +28,7 @@ void BlockState::setState(const std::string& stateName, const std::string& value
 		BlockProperty& desiredProp = desiredProps[i];
 		desiredProp.name = prop.getName();
 		if (desiredProp.name == stateName) desiredProp.value = value;
-		else desiredProp.value = prop.getType() == json::string ? prop.value() : prop.stringValue();
+		else desiredProp.value = prop.getType() == json::type::string ? prop.value() : prop.stringValue();
 	}
 	state = &Registry::getBlockState(Registry::getBlock(id), desiredProps);
 	id = (*state)["id"].iValue();

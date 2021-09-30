@@ -8,6 +8,7 @@
 
 class Section
 {
+	void decRefCount(PaletteEntry& bl, const ull& paletteIndex);
 public:
 	SERVER_API Section();
 	//SERVER_API Section();

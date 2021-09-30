@@ -59,7 +59,7 @@ json& Registry::getBlockState(const std::string& blockName, BlockProperty* prope
 		for (ull j = 0; j < propertyCount; j++)
 		{
 			json& propertyField = stateProperties[properties[j].name];
-			if ((propertyField.getType() == json::string && propertyField.value() != properties[j].value) || (propertyField.getType() == json::boolean && propertyField.stringValue() != properties[j].value))
+			if ((propertyField.getType() == json::type::string && propertyField.value() != properties[j].value) || (propertyField.getType() == json::type::boolean && propertyField.stringValue() != properties[j].value))
 			{
 				cont = true;
 				break;
@@ -78,15 +78,15 @@ json& Registry::getBlockState(int id)
 	ull blockCount = globalPalette->getSize();
 	for (ull i = 0; i < blockCount; i++)
 	{
-		json& blockStates = (*globalPalette)[i]["states"];
+		json& blockStates = (*globalPalette)[(int)i]["states"];
 		ull stateCount = blockStates.getSize() - 1;
-		json& lastState = blockStates[stateCount];
+		json& lastState = blockStates[(int)stateCount];
 		int lastStateId = lastState["id"].iValue();
 		if (lastStateId == id) return lastState;
 		else if (lastStateId > id)
 		{
 			int diff = lastStateId - id;
-			return blockStates[stateCount - diff];
+			return blockStates[(int)stateCount - diff];
 		}
 	}
 	throw runtimeError("No block found");
@@ -97,9 +97,9 @@ std::string Registry::getBlock(int id)
 	ull blockCount = globalPalette->getSize();
 	for (ull i = 0; i < blockCount; i++)
 	{
-		json& block = (*globalPalette)[i],
+		json& block = (*globalPalette)[(int)i],
 			& blockStates = block["states"];
-		if (blockStates[blockStates.getSize() - 1]["id"].iValue() >= id) return block.getName();
+		if (blockStates[(int)blockStates.getSize() - 1]["id"].iValue() >= id) return block.getName();
 	}
 	throw runtimeError("No block found");
 }
@@ -108,11 +108,11 @@ std::string Registry::getBlock(const json& blockState)
 	ull blockCount = globalPalette->getSize();
 	for (ull i = 0; i < blockCount; i++)
 	{
-		json& block = (*globalPalette)[i],
+		json& block = (*globalPalette)[(int)i],
 			& blockStates = block["states"];
 		ull stateCount = blockStates.getSize();
 
-		for (ull j = 0; j < stateCount; j++) if (&blockStates[j] == &blockState) return block.getName();
+		for (ull j = 0; j < stateCount; j++) if (&blockStates[(int)j] == &blockState) return block.getName();
 	}
 	throw runtimeError("No block found");
 }

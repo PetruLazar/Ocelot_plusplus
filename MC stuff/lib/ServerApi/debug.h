@@ -22,6 +22,9 @@
 //comment or decomment this define to turn on or off the debugging of player sightings
 //#define DEBUG_SIGHT
 
+//comment or decomment this define to enable world loading debug
+//#define WORLD_LOAD_DEBUG
+
 #ifdef DEBUG_ALLOCATIONS
 
 void* operator new(size_t s);
@@ -66,4 +69,10 @@ void operator delete[](void*, size_t);
 #define IF_DEBUG_SIGHT(x) x
 #else
 #define IF_DEBUG_SIGHT(x)
+#endif
+
+#ifdef WORLD_LOAD_DEBUG
+#define IF_WORLD_LOAD_DEBUG(x) x
+#else
+#define IF_WORLD_LOAD_DEBUG(x)
 #endif
