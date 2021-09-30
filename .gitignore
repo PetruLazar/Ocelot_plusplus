@@ -100,7 +100,6 @@ NetConsole/tcp
 #MC stuff/server.properties
 MC stuff/debug.txt
 MC stuff/lib/ServerApi/lib/
-MC stuff/lib/ServerApi/Build/
 
 # Build files
 Build/*/*.exe
