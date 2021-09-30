@@ -44,7 +44,7 @@ json& Registry::getBlockState(const std::string& blockName)
 	}
 	throw runtimeError("No default state found");
 }
-json& Registry::getBlockState(const std::string& blockName, BlockProperty* states)
+json& Registry::getBlockState(const std::string& blockName, BlockProperty* properties)
 {
 	json& blockEntry = (*globalPalette)[blockName];
 	ull propertyCount = blockEntry["properties"].getSize();
@@ -53,35 +53,51 @@ json& Registry::getBlockState(const std::string& blockName, BlockProperty* state
 	for (ull i = 0; i < stateCount; i++)
 	{
 		json& state = blockStates[(int)i],
-			& properties = state["properties"];
+			& stateProperties = state["properties"];
 		//if any of the properties is different, skip this state
 		bool cont = false;
 		for (ull j = 0; j < propertyCount; j++)
 		{
-			json& propertyField = properties[states[j].name];
-			if ((propertyField.getType() == json::string && propertyField.value() != states[j].value) || (propertyField.getType() == json::boolean && propertyField.stringValue() != states[j].value))
+			json& propertyField = stateProperties[properties[j].name];
+			if ((propertyField.getType() == json::string && propertyField.value() != properties[j].value) || (propertyField.getType() == json::boolean && propertyField.stringValue() != properties[j].value))
 			{
 				cont = true;
 				break;
 			}
 		}
 		if (cont) continue;
-		//no different states found, return the id
+		//no different properties found, return the state
+		delete[] properties;
 		return state;
 	}
+	delete[] properties;
 	throw runtimeError("Desired state not found");
 }
 json& Registry::getBlockState(int id)
 {
-	return *(json*)nullptr;
+	ull blockCount = globalPalette->getSize();
+	for (ull i = 0; i < blockCount; i++)
+	{
+		json& blockStates = (*globalPalette)[i]["states"];
+		ull stateCount = blockStates.getSize() - 1;
+		json& lastState = blockStates[stateCount];
+		int lastStateId = lastState["id"].iValue();
+		if (lastStateId == id) return lastState;
+		else if (lastStateId > id)
+		{
+			int diff = lastStateId - id;
+			return blockStates[stateCount - diff];
+		}
+	}
+	throw runtimeError("No block found");
 }
 
 std::string Registry::getBlock(int id)
 {
-	ull blockCount = registries->getSize();
+	ull blockCount = globalPalette->getSize();
 	for (ull i = 0; i < blockCount; i++)
 	{
-		json& block = (*registries)[i],
+		json& block = (*globalPalette)[i],
 			& blockStates = block["states"];
 		if (blockStates[blockStates.getSize() - 1]["id"].iValue() >= id) return block.getName();
 	}
@@ -89,10 +105,10 @@ std::string Registry::getBlock(int id)
 }
 std::string Registry::getBlock(const json& blockState)
 {
-	ull blockCount = registries->getSize();
+	ull blockCount = globalPalette->getSize();
 	for (ull i = 0; i < blockCount; i++)
 	{
-		json& block = (*registries)[i],
+		json& block = (*globalPalette)[i],
 			& blockStates = block["states"];
 		ull stateCount = blockStates.getSize();
 

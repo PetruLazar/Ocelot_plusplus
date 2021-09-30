@@ -4,6 +4,7 @@
 #include "../types/bitarray.h"
 #include <vector>
 #include "../types/apidef.h"
+#include "block.h"
 
 class Section
 {

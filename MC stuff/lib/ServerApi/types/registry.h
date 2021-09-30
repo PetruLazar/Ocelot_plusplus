@@ -35,7 +35,7 @@ public:
 	SERVER_API static json& getBlockState(int id);
 	//get the block name based on a block state id (multiple ids can give you the same result)
 	SERVER_API static std::string getBlock(int id);
-	//get the block name based on a block state (multiple ids can give you the same result)
+	//get the block name based on a block state (multiple ids can give you the same result); assumes the ids are in order
 	SERVER_API static std::string getBlock(const json& blockState);
 
 	SERVER_API static void loadRegistriesAndPalette();
