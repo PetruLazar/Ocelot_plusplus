@@ -12,7 +12,7 @@ BlockState::BlockState(const std::string blockName, BlockProperty* properties) :
 	id = (*state)["id"].iValue();
 }
 
-std::string BlockState::getState(const std::string& stateName)
+std::string BlockState::getState(const std::string& stateName) const
 {
 	json& stateProp = (*state)["properties"][stateName];
 	return stateProp.getType() == json::string ? stateProp.value() : stateProp.stringValue();
@@ -50,7 +50,7 @@ void BlockState::set(const std::string& blockName, BlockProperty* properties)
 	id = (*state)["id"].iValue();
 }
 
-bool BlockState::operator==(const BlockState& that)
+bool BlockState::operator==(const BlockState& that) const
 {
 	return (int&)id == (int&)that.id;
 }

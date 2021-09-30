@@ -30,7 +30,7 @@ public:
 	SERVER_API BlockState& getPaletteEntry(int paletteIndex);
 	//get a copy of the block state at the desired coordinates to use with setBlock
 	SERVER_API BlockState getBlock(int relX, int relY, int relZ);
-	SERVER_API void setBlock(const BlockState&);
+	SERVER_API void setBlock(int relX, int relY, int relZ, const BlockState&);
 };
 
 class LightSection
