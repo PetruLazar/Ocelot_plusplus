@@ -456,8 +456,8 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
 
-		section.pallete.push_back(0);
-		section.pallete.push_back(1);
+		section.palette.push_back(PaletteEntry(BlockState("minecraft:air"), 0));
+		section.palette.push_back(PaletteEntry(BlockState("minecraft:stone"), 0));
 
 		for (int z = 0; z < 16; z++)
 			for (int x = 0; x < 16; x++)
@@ -469,7 +469,7 @@ Chunk* World::generate_def(World* world, int X, int Z)
 				//if (i == 9 && z == 3 && x == 4)
 				//	cout << ' ';
 
-				section.blockCount = section.blockCount + adjustedHeight;
+				section.blockCount += adjustedHeight;
 				for (int y = 0; y < adjustedHeight; y++)
 				{
 					blocks[y][z][x] = 1;
@@ -485,6 +485,8 @@ Chunk* World::generate_def(World* world, int X, int Z)
 				}
 			}
 
+		section.palette[1].referenceCount = section.blockCount;
+		section.palette[0].referenceCount = 4096 - section.blockCount;
 		section.blockStates = new BitArray(0x1000, 4, (Byte*)blocks);
 		if (section.blockCount) chunk->sectionMask->setElement(i, 1);
 		if (hasSkyLight) chunk->skyLightMask->setElement((ull)i + 1, 1);
@@ -565,8 +567,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(34);
-			section.pallete.push_back(33);
+			section.palette.push_back(PaletteEntry(BlockState(34), 0xf00));
+			section.palette.push_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
 				blocks[j] = 1;
@@ -591,7 +593,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(34);
+			section.palette.push_back(PaletteEntry(BlockState(34), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -610,7 +612,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(34);
+			section.palette.push_back(PaletteEntry(BlockState(34), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -629,7 +631,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(0);
+			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -666,8 +668,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(50);
-			section.pallete.push_back(33);
+			section.palette.push_back(PaletteEntry(BlockState(50), 0xf00));
+			section.palette.push_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
 				blocks[j] = 1;
@@ -692,7 +694,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(50);
+			section.palette.push_back(PaletteEntry(BlockState(50), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -711,7 +713,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(50);
+			section.palette.push_back(PaletteEntry(BlockState(50), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -730,7 +732,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(0);
+			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -747,7 +749,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(0);
+			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -784,8 +786,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(1);
-			section.pallete.push_back(33);
+			section.palette.push_back(PaletteEntry(BlockState(1), 0xf00));
+			section.palette.push_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
 				blocks[j] = 1;
@@ -810,7 +812,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(1);
+			section.palette.push_back(PaletteEntry(BlockState(1), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -829,9 +831,9 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(1);
-			section.pallete.push_back(10);
-			section.pallete.push_back(9);
+			section.palette.push_back(PaletteEntry(BlockState(1), 0xd00));
+			section.palette.push_back(PaletteEntry(BlockState(10), 0x200));
+			section.palette.push_back(PaletteEntry(BlockState(9), 0x100));
 			for (int y0 = 0; y0 < 13; y0++) for (int j = 0; j < 256; j++)
 			{
 				blocks[y0 * 256 + j] = 0;
@@ -862,7 +864,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.pallete.push_back(0);
+			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -940,7 +942,7 @@ Chunk* World::generate_void(World* world, int x, int z)
 		section.blockCount = 0x0;
 		section.bitsPerBlock = 4;
 		section.useGlobalPallete = false;
-		section.pallete.push_back(0);
+		section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
 		for (int j = 0; j < 4096; j++)
 		{
 			skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;

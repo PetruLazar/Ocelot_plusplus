@@ -1072,8 +1072,8 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
 			*(dataBuffer++) = section.bitsPerBlock;
 			if (!section.useGlobalPallete)
 			{
-				varInt((uint)section.pallete.size()).write(dataBuffer);
-				for (varInt val : section.pallete) val.write(dataBuffer);
+				varInt((uint)section.palette.size()).write(dataBuffer);
+				for (const PaletteEntry val : section.palette) val.block.id.write(dataBuffer);
 			}
 			varInt((uint)section.blockStates->getCompactedSize()).write(dataBuffer);
 			section.blockStates->write(dataBuffer);

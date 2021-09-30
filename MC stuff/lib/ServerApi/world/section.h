@@ -19,10 +19,18 @@ public:
 	Byte bitsPerBlock;
 
 	bool useGlobalPallete;
-	std::vector<varInt> pallete;
+	std::vector<PaletteEntry> palette;
 
 	varInt dataLength;
 	BitArray* blockStates;
+
+	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section
+	SERVER_API BlockState& getPaletteEntry(int relX, int relY, int relZ);
+	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section
+	SERVER_API BlockState& getPaletteEntry(int paletteIndex);
+	//get a copy of the block state at the desired coordinates to use with setBlock
+	SERVER_API BlockState getBlock(int relX, int relY, int relZ);
+	SERVER_API void setBlock(const BlockState&);
 };
 
 class LightSection

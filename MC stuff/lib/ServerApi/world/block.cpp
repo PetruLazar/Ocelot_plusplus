@@ -1,14 +1,23 @@
 #include "block.h"
 
-PaletteEntry::Block::Block(int id) : id(id), state(&Registry::getBlockState(id)) { }
-PaletteEntry::Block::Block(json* blockState) : state(blockState), id((*blockState)["id"].iValue()) { }
-PaletteEntry::Block::Block(json& blockState) : state(&blockState), id(blockState["id"].iValue()) { }
-std::string PaletteEntry::Block::getState(const std::string& stateName)
+BlockState::BlockState(int id) : id(id), state(&Registry::getBlockState(id)) { }
+BlockState::BlockState(json* blockState) : state(blockState), id((*blockState)["id"].iValue()) { }
+BlockState::BlockState(json& blockState) : state(&blockState), id(blockState["id"].iValue()) { }
+BlockState::BlockState(const std::string blockName) : state(&Registry::getBlockState(blockName))
+{
+	id = (*state)["id"].iValue();
+}
+BlockState::BlockState(const std::string blockName, BlockProperty* properties) : state(&Registry::getBlockState(blockName, properties))
+{
+	id = (*state)["id"].iValue();
+}
+
+std::string BlockState::getState(const std::string& stateName)
 {
 	json& stateProp = (*state)["properties"][stateName];
 	return stateProp.getType() == json::string ? stateProp.value() : stateProp.stringValue();
 }
-void PaletteEntry::Block::setState(const std::string& stateName, const std::string& value)
+void BlockState::setState(const std::string& stateName, const std::string& value)
 {
 	json& stateProps = (*state)["properties"];
 	ull propCount = stateProps.getSize();
@@ -25,28 +34,30 @@ void PaletteEntry::Block::setState(const std::string& stateName, const std::stri
 	id = (*state)["id"].iValue();
 }
 
-void PaletteEntry::Block::set(int blockId)
+void BlockState::set(int blockId)
 {
 	state = &Registry::getBlockState(blockId);
 	id = (*state)["id"].iValue();
 }
-void PaletteEntry::Block::set(const std::string& blockName)
+void BlockState::set(const std::string& blockName)
 {
 	state = &Registry::getBlockState(blockName);
 	id = (*state)["id"].iValue();
 }
-void PaletteEntry::Block::set(const std::string& blockName, BlockProperty* properties)
+void BlockState::set(const std::string& blockName, BlockProperty* properties)
 {
 	state = &Registry::getBlockState(blockName, properties);
 	id = (*state)["id"].iValue();
 }
 
-bool PaletteEntry::Block::operator==(const Block& that)
+bool BlockState::operator==(const BlockState& that)
 {
 	return (int&)id == (int&)that.id;
 }
-void PaletteEntry::Block::operator=(const Block& that)
+void BlockState::operator=(const BlockState& that)
 {
 	id = that.id;
 	state = that.state;
 }
+
+PaletteEntry::PaletteEntry(const BlockState& bl, short refCount) : block(bl), referenceCount(refCount) { }
