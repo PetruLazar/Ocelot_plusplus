@@ -1211,6 +1211,16 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
 }
+void message::play::receive::heldItemChange(Player* p, bshort slot)
+{
+	p->selectedSlot = slot;
+}
+void message::play::receive::creativeInventoryAction(Player* p, bshort slot, const Slot& clickedItem)
+{
+	if (slot != -1) {
+		p->slots[slot] = clickedItem;
+	}
+}
 void message::play::receive::animation(Player* p, Hand hand)
 {
 	Animation animation = hand == Hand::main ? Animation::swingMainArm : Animation::swingOffhand;
@@ -1653,7 +1663,11 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::heldItemChange_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: held item change");
+			bshort slot;
+			slot.read(data);
+
+			play::receive::heldItemChange(p, slot);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartialy handled packet: held item change");
 		}
 		break;
 		case play::id::updateCommandBlock:
@@ -1668,7 +1682,20 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::creativeInventoryAction:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: creative inventoty action");
+			bshort slot;
+			bool present;
+			varInt itemId = 0;
+			Byte count = 0;
+			nbt_compound item_data;
+
+			slot.read(data);
+			present = *(data++);
+			itemId.read(data);
+			count = *(data++);
+			item_data.read(data);
+
+			play::receive::creativeInventoryAction(p, slot, Slot(present, itemId, count, item_data));
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartialy handled packet: creative inventoty action");
 		}
 		break;
 		case play::id::updateJigsawBlock:
