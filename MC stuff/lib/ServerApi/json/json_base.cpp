@@ -38,17 +38,17 @@ json* json::allocate(type tp)
 {
 	switch (tp)
 	{
-	case none:
+	case json::type::none:
 		return nullptr;
-	case integer:
+	case json::type::integer:
 		return new json_int();
-	case string:
+	case json::type::string:
 		return new json_string();
-	case array:
+	case json::type::array:
 		return new json_array();
-	case compound:
+	case json::type::compound:
 		return new json_compound("", nullptr);
-	case boolean:
+	case json::type::boolean:
 		return new json_boolean();
 	}
 	throw typeError;
@@ -180,5 +180,6 @@ json* json::parse(std::fstream& f, bool canHaveName)
 	{
 		throw runtimeError(invalidJson);
 	}
+
 	return nullptr;
 }

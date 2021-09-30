@@ -175,7 +175,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::declareCommands(p);
 
-	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::yellow), p);
+	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::color::yellow), p);
 	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p);
 
 	p->setWorld(World::worlds[World::spawnWorld]);
@@ -538,6 +538,21 @@ void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 
 	finishSendMacro;
 }
+void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround) {
+	varInt id = (int)id::entityTeleport;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	*(data++) = (char&)yaw;
+	*(data++) = (char&)pitch;
+	*(data++) = onGround;
+
+	finishSendMacro;
+}
 void message::play::send::pluginMessage(Player* p, const mcString& channel, ull ByteCount, const char* Bytes)
 {
 	varInt id = (int)id::pluginMessage_clientbound;
@@ -578,6 +593,21 @@ void message::play::send::spawnPosition(Player* p, Position location, bfloat ang
 	id.write(data);
 	location.write(data);
 	angle.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equipments)
+{
+	varInt id = (int)id::entityEquipment;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+
+	//				if the top bit is set, another entry follows
+	for (int i = 0; (equipments[i].getSlot() & 0x80) == 1; i++)
+		equipments[i].write(data);
+
 
 	finishSendMacro;
 }
@@ -847,6 +877,21 @@ void message::play::send::declareCommands(Player* p, varInt count, Node* nodes, 
 
 	finishSendMacro;
 }
+
+void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, const Slot& slotData)
+{
+	varInt id = (int)id::setSlot;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	stateId.write(data);
+	slot.write(data);
+	slotData.write(data);
+
+	finishSendMacro;
+}
+
 void message::play::send::respawn(Player* p, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata)
 {
 	varInt id = (int)id::respawn;

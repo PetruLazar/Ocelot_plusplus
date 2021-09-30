@@ -1,6 +1,6 @@
 #include "json_boolean.h"
 
-json_boolean::json_boolean(const std::string& name, bool value) : json(boolean, name), v(value) { }
+json_boolean::json_boolean(const std::string& name, bool value) : json(json::type::boolean, name), v(value) { }
 
 bool& json_boolean::bValue() { return v; }
 json_boolean::operator bool& () { return v; }

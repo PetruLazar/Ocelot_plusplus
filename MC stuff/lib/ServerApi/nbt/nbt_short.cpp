@@ -1,6 +1,6 @@
 #include "nbt_short.h"
 
-nbt_short::nbt_short(const std::string& name, short v) : nbt(Short, name), value(v) { }
+nbt_short::nbt_short(const std::string& name, short v) : nbt(tag::Short, name), value(v) { }
 
 void nbt_short::write(std::fstream& os, bool iNT) const
 {
@@ -26,7 +26,7 @@ void nbt_short::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
-		*(buffer++) = type;
+		*(buffer++) = static_cast<char>(type);
 
 		writeName(buffer);
 	}

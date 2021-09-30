@@ -290,7 +290,7 @@ void Player::disconnect()
 	{
 		leaveWorld(world);
 		Player::eidDispenser.Free(eid);
-		broadcastChat(Chat((username + " left the game").c_str(), Chat::yellow), this);
+		broadcastChat(Chat((username + " left the game").c_str(), Chat::color::yellow), this);
 		Player* p = this;
 		broadcastMessageOmitSafe(message::play::send::playerInfo(player_macro, playerInfo::removePlayer, 1, &p), this)
 	}

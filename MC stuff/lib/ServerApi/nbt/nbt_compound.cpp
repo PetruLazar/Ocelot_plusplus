@@ -1,7 +1,7 @@
 #include "nbt_compound.h"
 
-nbt_compound::nbt_compound(const std::string& name, const std::vector <nbt*>& v) : nbt(Compound, name), values(v) { }
-nbt_compound::nbt_compound(const std::string& name, nbt** v, uint s) : nbt(Compound, name)
+nbt_compound::nbt_compound(const std::string& name, const std::vector <nbt*>& v) : nbt(tag::Compound, name), values(v) { }
+nbt_compound::nbt_compound(const std::string& name, nbt** v, uint s) : nbt(tag::Compound, name)
 {
 	for (uint i = 0; i < s; i++) values.push_back(v[i]);
 	delete[] v;
@@ -42,11 +42,11 @@ void nbt_compound::read(std::fstream& is, const std::string& name)
 	if (name == "") readName(is);
 	else nbt::name = name;
 
-	tag t = End;
+	tag t = tag::End;
 	while (true)
 	{
 		is.read((char*)&t, sizeof(t));
-		if (t == End) break;
+		if (t == tag::End) break;
 		nbt* v = getTagP(t);
 		v->read(is);
 		values.push_back(v);
@@ -56,7 +56,7 @@ void nbt_compound::write(char*& buffer, bool iNT) const
 {
 	if (iNT)
 	{
-		*(buffer++) = type;
+		*(buffer++) = static_cast<char>(type);
 
 		writeName(buffer);
 	}
@@ -78,11 +78,11 @@ void nbt_compound::read(char*& end, const std::string& name)
 	if (name == "") readName(end);
 	else nbt::name = name;
 
-	tag t;
+	nbt::tag t;
 	while (true)
 	{
-		t = (tag) * (end++);
-		if (t == End) break;
+		t = (nbt::tag) * (end++);
+		if (t == nbt::tag::End) break;
 		nbt* v = getTagP(t);
 		v->read(end);
 		values.push_back(v);

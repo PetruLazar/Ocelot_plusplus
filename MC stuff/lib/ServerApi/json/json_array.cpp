@@ -3,7 +3,7 @@
 const char invalidArrayElements[] = "Not all elements of the array are of the same type.";
 const char outOfBounds[] = "Index out of array bounds.";
 
-json_array::json_array(const std::string& name, json** values, ull size) : json(array, name), s(size), v(values)
+json_array::json_array(const std::string& name, json** values, ull size) : json(json::type::array, name), s(size), v(values)
 {
 	if (!s)
 	{

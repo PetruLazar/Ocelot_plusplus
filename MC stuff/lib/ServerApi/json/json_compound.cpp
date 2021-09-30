@@ -3,8 +3,8 @@
 
 const char notFound[] = "No element found by that name.";
 
-json_compound::json_compound(const std::string& name, const std::vector<json*>& values) : json(compound, name), v(values) { }
-json_compound::json_compound(const std::string& name, json** values, ull s) : json(compound, name)
+json_compound::json_compound(const std::string& name, const std::vector<json*>& values) : json(json::type::compound, name), v(values) { }
+json_compound::json_compound(const std::string& name, json** values, ull s) : json(json::type::compound, name)
 {
 	for (ull i = 0; i < s; i++) v.push_back(values[i]);
 	delete[] values;

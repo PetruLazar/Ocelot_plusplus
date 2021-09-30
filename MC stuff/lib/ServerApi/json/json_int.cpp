@@ -1,6 +1,6 @@
 #include "json_int.h"
 
-json_int::json_int(const std::string& name, int value) : json(integer, name), v(value) { }
+json_int::json_int(const std::string& name, int value) : json(json::type::integer, name), v(value) { }
 
 int& json_int::iValue() { return v; }
 json_int::operator int& () { return v; }

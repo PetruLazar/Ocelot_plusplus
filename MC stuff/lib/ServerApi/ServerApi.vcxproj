@@ -207,6 +207,7 @@
     <ClInclude Include="types\endian.h" />
     <ClInclude Include="types\entity.h" />
     <ClInclude Include="types\enums.h" />
+    <ClInclude Include="types\Equipment.h" />
     <ClInclude Include="types\error.h" />
     <ClInclude Include="types\fixedPoint.h" />
     <ClInclude Include="types\fluid.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="types\bitstream.cpp" />
     <ClCompile Include="types\chat.cpp" />
     <ClCompile Include="types\entity.cpp" />
+    <ClCompile Include="types\Equipment.cpp" />
     <ClCompile Include="types\error.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
     <ClCompile Include="types\gametags.cpp" />

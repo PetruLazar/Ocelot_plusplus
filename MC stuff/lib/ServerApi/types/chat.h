@@ -8,7 +8,7 @@
 class Chat : public json_compound
 {
 public:
-	enum color
+	enum class color
 	{
 		black,
 		dark_blue = 0xaa,

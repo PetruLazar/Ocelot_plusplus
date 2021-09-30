@@ -6,7 +6,7 @@
 class json
 {
 public:
-	enum type : Byte
+	enum class type : Byte
 	{
 		none,
 		integer,
@@ -16,7 +16,7 @@ public:
 		boolean
 	};
 
-	SERVER_API json(type, const std::string& name = "");
+	SERVER_API json(json::type, const std::string& name = "");
 	SERVER_API virtual ~json() = 0;
 
 	//virtual void parse(const std::string) = 0;
@@ -25,11 +25,11 @@ public:
 	//get the name of a json object
 	SERVER_API std::string getName();
 	//get the type of a json object
-	SERVER_API type getType();
+	SERVER_API json::type getType();
 	//get the type of json objects stored by the array
-	SERVER_API type getChildType();
+	SERVER_API json::type getChildType();
 	//change the type that of the json object stored by an array
-	virtual void SERVER_API changeType(type);
+	virtual void SERVER_API changeType(json::type);
 
 	//get the value of an int json object
 	SERVER_API virtual int& iValue();
@@ -61,10 +61,10 @@ public:
 	virtual void SERVER_API remove(json*);
 	virtual void SERVER_API remove(const std::string&);
 
-	SERVER_API static json* allocate(type);
+	SERVER_API static json* allocate(json::type);
 
 protected:
-	type t;
+	json::type t;
 	std::string name;
 };
 

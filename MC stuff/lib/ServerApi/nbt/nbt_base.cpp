@@ -5,31 +5,31 @@ nbt* nbt::getTagP(tag t)
 {
 	switch (t)
 	{
-	case End:
+	case tag::End:
 		return nullptr;
-	case Byte:
+	case tag::Byte:
 		return new nbt_Byte;
-	case Short:
+	case tag::Short:
 		return new nbt_short;
-	case Int:
+	case tag::Int:
 		return new nbt_int;
-	case Long:
+	case tag::Long:
 		return new nbt_long;
-	case Float:
+	case tag::Float:
 		return new nbt_float;
-	case Double:
+	case tag::Double:
 		return new nbt_double;
-	case ByteArray:
+	case tag::ByteArray:
 		return new nbt_Byte_array;
-	case String:
+	case tag::String:
 		return new nbt_string;
-	case List:
+	case tag::List:
 		return new nbt_list;
-	case Compound:
+	case tag::Compound:
 		return new nbt_compound("", nullptr);
-	case IntArray:
+	case tag::IntArray:
 		return new nbt_int_array;
-	case LongArray:
+	case tag::LongArray:
 		return new nbt_long_array;
 	}
 	throw typeError;
@@ -69,7 +69,7 @@ nbt* nbt::getTagP(tag t)
 }*/
 bool nbt::checkTag(std::fstream& is, tag t)
 {
-	tag ft = End;
+	tag ft = tag::End;
 	is.read((char*)&ft, sizeof(ft));
 	return ft == t;
 }
