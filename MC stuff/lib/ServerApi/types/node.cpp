@@ -1,5 +1,51 @@
 #include "node.h"
 
+namespace Command
+{
+	//flags
+			//node type: 0b00011 -0x03
+				//root - 0
+				//literal - 1
+				//argument - 2
+			//executable - 0b00100 - 0x04
+			//redirects - 0b01000 - 0x08
+			//hasSuggestions - 0b10000 - 0x10
+
+	//childrenCount [varInt]
+	//children (index) [varInt]
+	//redirect node (index) [varInt] - if flags - redirects
+	//name [mcString] - for argument and literal nodes
+	
+	//parser [mcString] - for argument nodes
+	//properties [varies] - for argument nodes
+	//suggestions [mcString] - if flags - hasSuggestions
+
+	void RootNode::write(char*& buffer)
+	{
+		*(buffer++) = rootType;
+		childrenCount.write(buffer);
+		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
+	}
+
+	void LiteralNode::write(char*& buffer)
+	{
+		*(buffer++) = (hasRedirect << 3) | ((handler != 0) << 2) | literalType;
+		childrenCount.write(buffer);
+		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
+		if (hasRedirect) redirectNode.write(buffer);
+		name.write(buffer);
+	}
+
+	void ArgumentNode::write(char*& buffer)
+	{
+		*(buffer++) = ((suggestionsHandler != 0) << 4) | (hasRedirect << 3) | ((handler != 0) << 2) | argumentType;
+		childrenCount.write(buffer);
+		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
+		if (hasRedirect) redirectNode.write(buffer);
+		name.write(buffer);
+	}
+}
+
 Node::Properties::Properties(const DoubleProperties& properties) : doubleProperties(properties) { }
 Node::Properties::Properties(const FloatProperties& properties) : floatProperties(properties) { }
 Node::Properties::Properties(const IntegerProperties& properties) : integerProperties(properties) { }

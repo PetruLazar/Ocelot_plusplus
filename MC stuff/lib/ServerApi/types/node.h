@@ -3,6 +3,113 @@
 #include "varData.h"
 #include "mcString.h"
 #include "endian.h"
+#include <vector>
+
+namespace Command
+{
+	typedef void (*Handler)(const std::vector<mcString>&);
+	typedef void (*SuggestionsHandler)(const mcString&);
+
+	namespace Parser
+	{
+		class brigadier
+		{
+		public:
+			static const mcString Boolean,
+				Double,
+				Float,
+				Integer,
+				Long,
+				String;
+		};
+
+		class minecraft
+		{
+		public:
+			static const mcString entity,
+				game_profile,
+				block_pos,
+				column_pos,
+				vec3,
+				vec2,
+				block_state,
+				block_predicate,
+				item_stack,
+				item_predicate,
+				color,
+				component,
+				message,
+				nbt,
+				nbt_path,
+				objective,
+				ovjective_criteria,
+				operation,
+				particle,
+				rotation,
+				angle,
+				scoreboard_slot,
+				score_holder,
+				swizzle,
+				team,
+				item_slot,
+				resource_location,
+				mob_effect,
+				function,
+				entity_anchor,
+				range,
+				int_range,
+				float_range,
+				item_enchantment,
+				entity_summon,
+				dimension,
+				uuid,
+				nbt_tag,
+				nbt_compound_tag,
+				time;
+		};
+	}
+
+	class Node
+	{
+	public:
+
+
+
+		varInt childrenCount;
+		varInt* children;
+
+		virtual void write(char*&) = 0;
+	};
+	class RootNode : public Node
+	{
+		static const Byte rootType = 0;
+	public:
+
+
+		virtual void write(char*&);
+	};
+	class LiteralNode : public Node
+	{
+		static const Byte literalType = 1;
+	public:
+
+		bool hasRedirect;
+		varInt redirectNode;
+		Handler handler;
+		mcString name;
+
+		virtual void write(char*&);
+	};
+	class ArgumentNode : public LiteralNode
+	{
+		static const Byte argumentType = 2;
+	public:
+
+		SuggestionsHandler suggestionsHandler;
+
+		virtual void write(char*&);
+	};
+}
 
 class Node
 {

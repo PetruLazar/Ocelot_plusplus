@@ -1,5 +1,6 @@
 #include "section.h"
 #include "../types/error.h"
+#include "../types/utils.h"
 
 Section::Section() { }
 Section::~Section()
@@ -29,47 +30,89 @@ void Section::decRefCount(PaletteEntry& bl, const ull& paletteIndex)
 		//too expensive, need to figure out an optimization
 	}
 }
+/*void Section::updateBitsPerBlock()
+{
+	if (bitCount(palette.size()))
+}*/
 void Section::setBlock(int relX, int relY, int relZ, const BlockState& bl)
 {
 	//throw runtimeError("Can't you just wait a few days before you try calling this function...?");
 
-	ull blockStatesIndex = ((ull)relY << 8) | ((ull)relZ << 4) | relX,
-		oldPaletteEntryIndex = blockStates->getElement(blockStatesIndex);
-	PaletteEntry& oldPaletteEntry = palette[oldPaletteEntryIndex];
+	if (useGlobalPallete)
+	{
+		throw "hmmm... Hmmm!... HMMMM!!!";
 
-	if ((int&)oldPaletteEntry.block.id == (const int&)bl.id)
-		//the specified coordinates already contain that block
+		ull blockStatesIndex = ((ull)relY << 8) | ((ull)relZ << 4) | relX,
+			oldBlockState = blockStates->getElement(blockStatesIndex);
+
+		if ((int)oldBlockState == (const int&)bl.id)
+			//the specified coordinates already contain that block
+			return;
+
+
+		//decrease refCount of old block
+		//if (i > oldPaletteEntryIndex) i--;
+		//decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
+
+		//increase refCount on new block and update blockStates
+		//entry.referenceCount++;
+		//blockStates->setElement(blockStatesIndex, i);
+
+		//update blockCount
+		//if (oldPaletteEntry.block.id == 0) blockCount++;
+		//else if ((int&)bl.id == 0) blockCount--;
 		return;
 
-	//check if the block is already in the palette
-	ull i = 0;
-	for (PaletteEntry& entry : palette)
-	{
-		if ((int&)entry.block.id == (int&)bl.id)//block is already present
-		{
-			//decrease refCount of old block
-			//if (i > oldPaletteEntryIndex) i--;
-			decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
+		//block not already present
+		//decrease the old blocks refCount
+		//decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
 
-			//increase refCount on new block and update blockStates
-			entry.referenceCount++;
-			blockStates->setElement(blockStatesIndex, i);
-
-			//update blockCount
-			if (oldPaletteEntry.block.id == 0) blockCount++;
-			else if ((int&)bl.id == 0) blockCount--;
-			return;
-		}
-		i++;
+		//put the new block in the palette and update blockStates
+		palette.push_back(PaletteEntry(bl, 1));
+		blockStates->setElement(blockStatesIndex, palette.size() - 1);
+		updateBitsPerBlock();
 	}
+	else
+	{
+		ull blockStatesIndex = ((ull)relY << 8) | ((ull)relZ << 4) | relX,
+			oldPaletteEntryIndex = blockStates->getElement(blockStatesIndex);
+		PaletteEntry& oldPaletteEntry = palette[oldPaletteEntryIndex];
 
-	//block not already present
-	//decrease the old blocks refCount
-	decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
+		if ((int&)oldPaletteEntry.block.id == (const int&)bl.id)
+			//the specified coordinates already contain that block
+			return;
 
-	//put the new block in the palette and update blockStates
-	palette.push_back(PaletteEntry(bl, 1));
-	blockStates->setElement(blockStatesIndex, palette.size() - 1);
+		//check if the block is already in the palette
+		ull i = 0;
+		for (PaletteEntry& entry : palette)
+		{
+			if ((int&)entry.block.id == (int&)bl.id)//block is already present
+			{
+				//decrease refCount of old block
+				//if (i > oldPaletteEntryIndex) i--;
+				decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
+
+				//increase refCount on new block and update blockStates
+				entry.referenceCount++;
+				blockStates->setElement(blockStatesIndex, i);
+
+				//update blockCount
+				if (oldPaletteEntry.block.id == 0) blockCount++;
+				else if ((int&)bl.id == 0) blockCount--;
+				return;
+			}
+			i++;
+		}
+
+		//block not already present
+		//decrease the old blocks refCount
+		decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
+
+		//put the new block in the palette and update blockStates
+		palette.push_back(PaletteEntry(bl, 1));
+		blockStates->setElement(blockStatesIndex, palette.size() - 1);
+		updateBitsPerBlock();
+	}
 }
 
 const varInt LightSection::lightArrayLength = 2048;
