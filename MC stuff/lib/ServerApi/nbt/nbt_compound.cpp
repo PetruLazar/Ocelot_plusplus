@@ -94,7 +94,10 @@ std::string nbt_compound::getStringValue() const
 
 	for (nbt* e : values)
 		ret += e->to_string() + ',';
-	ret.pop_back();
+	
+	if (values.size() != 0)
+		ret.pop_back();
+
 	ret += '}';
 	return ret;
 }

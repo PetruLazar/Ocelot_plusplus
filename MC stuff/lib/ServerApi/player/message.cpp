@@ -604,10 +604,11 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equi
 	id.write(data);
 	eid.write(data);
 
+	equipments[0].write(data);
+
 	//				if the top bit is set, another entry follows
 	for (int i = 0; (equipments[i].getSlot() & 0x80) == 1; i++)
-		equipments[i].write(data);
-
+		equipments[i + 1].write(data);
 
 	finishSendMacro;
 }
@@ -1214,11 +1215,25 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
 	p->selectedSlot = slot;
+
+	Equipment* eqp = new Equipment(0, p->slots[36 + slot]);
+	for (Player* seener : p->seenBy)
+		message::play::send::entityEquipment(seener, p->eid, eqp);
+
+	delete eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, const Slot& clickedItem)
 {
 	if (slot != -1) {
 		p->slots[slot] = clickedItem;
+
+		if (p->selectedSlot == slot - 36) {
+			Equipment* eqp = new Equipment(0, p->slots[slot]);
+			for (Player* seener : p->seenBy)
+				message::play::send::entityEquipment(seener, p->eid, eqp);
+
+			delete eqp;
+		}
 	}
 }
 void message::play::receive::animation(Player* p, Hand hand)
@@ -1667,7 +1682,6 @@ void message::dispatch(Player* p, char* data, uint size)
 			slot.read(data);
 
 			play::receive::heldItemChange(p, slot);
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartialy handled packet: held item change");
 		}
 		break;
 		case play::id::updateCommandBlock:
@@ -1683,19 +1697,22 @@ void message::dispatch(Player* p, char* data, uint size)
 		case play::id::creativeInventoryAction:
 		{
 			bshort slot;
+			slot.read(data);
+
 			bool present;
 			varInt itemId = 0;
 			Byte count = 0;
 			nbt_compound item_data;
 
-			slot.read(data);
 			present = *(data++);
-			itemId.read(data);
-			count = *(data++);
-			item_data.read(data);
+			if (present) {
+				itemId.read(data);
+				count = *(data++);
+
+				//item_data.read(data);   <- problema
+			}
 
 			play::receive::creativeInventoryAction(p, slot, Slot(present, itemId, count, item_data));
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartialy handled packet: creative inventoty action");
 		}
 		break;
 		case play::id::updateJigsawBlock:
