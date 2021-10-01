@@ -15,6 +15,8 @@ nbt_compound::~nbt_compound()
 
 void nbt_compound::write(std::fstream& os, bool iNT) const
 {
+	if (values.empty()) os.write("", 1);
+
 	if (iNT)
 	{
 		os.write((char*)&type, sizeof(type));
@@ -24,7 +26,7 @@ void nbt_compound::write(std::fstream& os, bool iNT) const
 
 	for (nbt* e : values) e->write(os);
 
-	os.write("\0", 1);
+	os.write("", 1);
 }
 void nbt_compound::read(std::fstream& is, const std::string& name)
 {
@@ -54,6 +56,12 @@ void nbt_compound::read(std::fstream& is, const std::string& name)
 }
 void nbt_compound::write(char*& buffer, bool iNT) const
 {
+	if (values.empty())
+	{
+		*(buffer++) = 0;
+		return;
+	}
+
 	if (iNT)
 	{
 		*(buffer++) = static_cast<char>(type);
@@ -90,6 +98,7 @@ void nbt_compound::read(char*& end, const std::string& name)
 }
 std::string nbt_compound::getStringValue() const
 {
+	if (values.empty()) return "{}";
 	std::string ret = "{";
 
 	for (nbt* e : values)
@@ -107,7 +116,7 @@ nbt& nbt_compound::vTag(const std::string& n)
 }
 nbt& nbt_compound::operator[](const std::string& n)
 {
-	for (nbt* e : values) 
+	for (nbt* e : values)
 		if (n == e->getName())
 			return *e;
 	throw searchFailedError;
