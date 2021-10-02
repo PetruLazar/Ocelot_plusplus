@@ -18,6 +18,8 @@ public:
 	//get the value of the tag
 	SERVER_API std::string& vString();
 	SERVER_API operator std::string& ();
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_string&);
 	SERVER_API void operator=(const std::string&);
 	SERVER_API void operator=(const char*);
 };

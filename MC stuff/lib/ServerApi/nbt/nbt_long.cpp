@@ -48,4 +48,13 @@ std::string nbt_long::getStringValue() const
 }
 int64& nbt_long::vLong() { return value; }
 nbt_long::operator int64& () { return value; }
+void nbt_long::operator= (const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_long&)that);
+}
+void nbt_long::operator=(const nbt_long& that)
+{
+	value = that.value;
+}
 void nbt_long::operator=(int64 v) { value = v; }

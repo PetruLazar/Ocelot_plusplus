@@ -18,5 +18,7 @@ public:
 	//get the value of the tag
 	SERVER_API short& vShort();
 	SERVER_API operator short& ();
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_short&);
 	SERVER_API void operator=(short);
 };

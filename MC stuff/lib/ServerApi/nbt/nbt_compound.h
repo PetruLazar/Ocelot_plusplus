@@ -29,4 +29,7 @@ public:
 	virtual void SERVER_API remove(const std::string&);
 	//add a new tag to the compound tag
 	virtual void SERVER_API add(nbt*);
+
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_compound&);
 };

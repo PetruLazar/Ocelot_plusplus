@@ -103,7 +103,7 @@ std::string nbt_compound::getStringValue() const
 
 	for (nbt* e : values)
 		ret += e->to_string() + ',';
-	
+
 	if (values.size() != 0)
 		ret.pop_back();
 
@@ -148,4 +148,16 @@ void nbt_compound::remove(const std::string& elem)
 		return;
 	}
 	throw searchFailedError;
+}
+
+void nbt_compound::operator=(const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_compound&)that);
+}
+void nbt_compound::operator=(const nbt_compound& that)
+{
+	ull size = that.values.size();
+	values.resize(size);
+	for (ull i = 0; i < size; i++) values[i] = that.values[i];
 }

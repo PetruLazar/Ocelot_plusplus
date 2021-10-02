@@ -48,4 +48,13 @@ std::string nbt_short::getStringValue() const
 }
 short& nbt_short::vShort() { return value; }
 nbt_short::operator short& () { return value; }
+void nbt_short::operator=(const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_short&)that);
+}
+void nbt_short::operator=(const nbt_short& that)
+{
+	value = that.value;
+}
 void nbt_short::operator=(short v) { value = v; }
