@@ -30,10 +30,10 @@ void Section::decRefCount(PaletteEntry& bl, const ull& paletteIndex)
 		//too expensive, need to figure out an optimization
 	}
 }
-/*void Section::updateBitsPerBlock()
+void Section::updateBitsPerBlock()
 {
-	if (bitCount(palette.size()))
-}*/
+	//if (bitCount(palette.size()))
+}
 void Section::setBlock(int relX, int relY, int relZ, const BlockState& bl)
 {
 	//throw runtimeError("Can't you just wait a few days before you try calling this function...?");

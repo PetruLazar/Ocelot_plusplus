@@ -2,6 +2,161 @@
 
 namespace Command
 {
+	namespace Parser
+	{
+		Parser::~Parser() { }
+
+		namespace brigadier
+		{
+			const mcString Boolean::protocolIdentifier = "brigadier:boolean",
+				Double::protocolIdentifier = "brigadier:double",
+				Float::protocolIdentifier = "brigadier:float",
+				Integer::protocolIdentifier = "brigadier:integer",
+				Long::protocolIdentifier = "brigadier:long",
+				String::protocolIdentifier = "brigadier:string";
+
+			template <class T> PropertiesMin<T>::PropertiesMin(T min) : min(min) { }
+			template <class T> PropertiesMax<T>::PropertiesMax(T max) : max(max) { }
+			template <class T> PropertiesMinMax<T>::PropertiesMinMax(T min, T max) : PropertiesMin<T>(min), PropertiesMax<T>(max) { }
+
+			template <class T> void Properties<T>::write(char*& buffer)
+			{
+				*(buffer++) = flags;
+			}
+			template <class T> void PropertiesMin<T>::write(char*& buffer)
+			{
+				*(buffer++) = flags;
+				min.write(buffer);
+			}
+			template <class T> void PropertiesMax<T>::write(char*& buffer)
+			{
+				*(buffer++) = flags;
+				max.write(buffer);
+			}
+			template <class T> void PropertiesMinMax<T>::write(char*& buffer)
+			{
+				*(buffer++) = flags;
+				PropertiesMin<T>::min.write(buffer);
+				PropertiesMax<T>::max.write(buffer);
+			}
+
+			void Boolean::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+
+			Double::Double(Properties<bdouble>* props) : properties(props) { }
+			Double::~Double()
+			{
+				delete properties;
+			}
+			void Double::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+				properties->write(buffer);
+			}
+
+			Float::Float(Properties<bfloat>* props) : properties(props) { }
+			Float::~Float()
+			{
+				delete properties;
+			}
+			void Float::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+				properties->write(buffer);
+			}
+
+			Integer::Integer(Properties<bint>* props) : properties(props) { }
+			Integer::~Integer()
+			{
+				delete properties;
+			}
+			void Integer::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+				properties->write(buffer);
+			}
+
+			Long::Long(Properties<blong>* props) : properties(props) { }
+			Long::~Long()
+			{
+				delete properties;
+			}
+			void Long::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+				properties->write(buffer);
+			}
+
+			String::String(PropertiesString::Mode mode) : mode(mode) { }
+			void String::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+				mode.write(buffer);
+			}
+		}
+
+		namespace minecraft
+		{
+			const mcString entity::protocolIdentifier = "minecraft:entity",
+				game_profile::protocolIdentifier = "minecraft:game_profile",
+				block_pos::protocolIdentifier = "minecraft:block_pos",
+				column_pos::protocolIdentifier = "minecraft:column_pos",
+				vec3::protocolIdentifier = "minecraft:vec3",
+				vec2::protocolIdentifier = "minecraft:vec2",
+				block_state::protocolIdentifier = "minecraft:block_state",
+				block_predicate::protocolIdentifier = "minecraft:block_predicate",
+				item_stack::protocolIdentifier = "minecraft:item_stack",
+				item_predicate::protocolIdentifier = "minecraft:item_predicate",
+				color::protocolIdentifier = "minecraft:color",
+				component::protocolIdentifier = "minecraft:component",
+				message::protocolIdentifier = "minecraft:message",
+				nbt::protocolIdentifier = "minecraft:nbt",
+				nbt_path::protocolIdentifier = "minecraft:nbt_path",
+				objective::protocolIdentifier = "minecraft:objective",
+				ovjective_criteria::protocolIdentifier = "minecraft:objective_criteria",
+				operation::protocolIdentifier = "minecraft:operation",
+				particle::protocolIdentifier = "minecraft:particle",
+				rotation::protocolIdentifier = "minecraft:rotation",
+				angle::protocolIdentifier = "minecraft:angle",
+				scoreboard_slot::protocolIdentifier = "minecraft:scoreboard_slot",
+				score_holder::protocolIdentifier = "minecraft:score_holder",
+				swizzle::protocolIdentifier = "minecraft:swizzle",
+				team::protocolIdentifier = "minecraft:team",
+				item_slot::protocolIdentifier = "minecraft:item_slot",
+				resource_location::protocolIdentifier = "minecraft:resource_location",
+				mob_effect::protocolIdentifier = "minecraft:mob_effect",
+				function::protocolIdentifier = "minecraft:function",
+				entity_anchor::protocolIdentifier = "minecraft:entity_anchor",
+				range::protocolIdentifier = "minecraft:range",
+				int_range::protocolIdentifier = "minecraft:int_range",
+				float_range::protocolIdentifier = "minecraft:float_range",
+				item_enchantment::protocolIdentifier = "minecraft:item_enchantment",
+				entity_summon::protocolIdentifier = "minecraft:entity_summon",
+				dimension::protocolIdentifier = "minecraft:dimension",
+				uuid::protocolIdentifier = "minecraft:uuid",
+				nbt_tag::protocolIdentifier = "minecraft:nbt_tag",
+				nbt_compound_tag::protocolIdentifier = "minecraft:nbt_compound_tag",
+				time::protocolIdentifier = "minecraft:time";
+
+			entity::entity(bool singleTargetsOnly, bool playersOnly) : flags((playersOnly << 1) | singleTargetsOnly) { }
+			void entity::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+				*(buffer++) = flags;
+			}
+
+			score_holder::score_holder(bool allowMultiple) : allowMultiple(allowMultiple) { }
+			void score_holder::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+
+			}
+		}
+
+	}
+
 	//flags
 			//node type: 0b00011 -0x03
 				//root - 0
@@ -15,16 +170,28 @@ namespace Command
 	//children (index) [varInt]
 	//redirect node (index) [varInt] - if flags - redirects
 	//name [mcString] - for argument and literal nodes
-	
+
 	//parser [mcString] - for argument nodes
 	//properties [varies] - for argument nodes
 	//suggestions [mcString] - if flags - hasSuggestions
 
+	Node::Node(varInt childrenCount, varInt* children) : childrenCount(childrenCount), children(children) { }
+	Node::~Node()
+	{
+		delete[] children;
+	}
+
+	RootNode::RootNode(varInt childrenCount, varInt* children) : Node(childrenCount, children) { }
 	void RootNode::write(char*& buffer)
 	{
 		*(buffer++) = rootType;
 		childrenCount.write(buffer);
 		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
+		//no redirect
+		//no name
+		//no parser
+		//no properties
+		//no suggestions
 	}
 
 	void LiteralNode::write(char*& buffer)
@@ -34,6 +201,9 @@ namespace Command
 		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
 		if (hasRedirect) redirectNode.write(buffer);
 		name.write(buffer);
+		//no parser
+		//no properties
+		//no suggestions
 	}
 
 	void ArgumentNode::write(char*& buffer)
@@ -43,6 +213,7 @@ namespace Command
 		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
 		if (hasRedirect) redirectNode.write(buffer);
 		name.write(buffer);
+		parser->write(buffer);
 	}
 }
 
