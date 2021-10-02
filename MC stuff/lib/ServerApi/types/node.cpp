@@ -115,7 +115,7 @@ namespace Command
 				nbt::protocolIdentifier = "minecraft:nbt",
 				nbt_path::protocolIdentifier = "minecraft:nbt_path",
 				objective::protocolIdentifier = "minecraft:objective",
-				ovjective_criteria::protocolIdentifier = "minecraft:objective_criteria",
+				objective_criteria::protocolIdentifier = "minecraft:objective_criteria",
 				operation::protocolIdentifier = "minecraft:operation",
 				particle::protocolIdentifier = "minecraft:particle",
 				rotation::protocolIdentifier = "minecraft:rotation",
@@ -146,14 +146,166 @@ namespace Command
 				protocolIdentifier.write(buffer);
 				*(buffer++) = flags;
 			}
-
-			score_holder::score_holder(bool allowMultiple) : allowMultiple(allowMultiple) { }
+			void game_profile::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void block_pos::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void column_pos::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void vec3::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void vec2::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void block_state::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void block_predicate::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void item_stack::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void item_predicate::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void color::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void component::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void message::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void nbt::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void nbt_path::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void objective::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void objective_criteria::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void particle::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void rotation::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void angle::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void scoreboard_slot::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			score_holder::score_holder(bool allowsMultiple) : allowsMultiple(allowsMultiple) { }
 			void score_holder::write(char*& buffer)
 			{
 				protocolIdentifier.write(buffer);
-
+				*(buffer++) = allowsMultiple;
+			}
+			void swizzle::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void team::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void item_slot::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void resource_location::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void mob_effect::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void function::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void entity_anchor::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			range::range(bool allowsDecimals) : allowsDecimals(allowsDecimals) { }
+			void range::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+				*(buffer++) = allowsDecimals;
+			}
+			void int_range::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void float_range::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void item_enchantment::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void entity_summon::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void dimension::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void uuid::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void nbt_tag::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void nbt_compound_tag::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
+			}
+			void time::write(char*& buffer)
+			{
+				protocolIdentifier.write(buffer);
 			}
 		}
+	}
+	namespace Suggestions::minecraft
+	{
 
 	}
 
@@ -170,9 +322,9 @@ namespace Command
 	//children (index) [varInt]
 	//redirect node (index) [varInt] - if flags - redirects
 	//name [mcString] - for argument and literal nodes
-
 	//parser [mcString] - for argument nodes
 	//properties [varies] - for argument nodes
+
 	//suggestions [mcString] - if flags - hasSuggestions
 
 	Node::Node(varInt childrenCount, varInt* children) : childrenCount(childrenCount), children(children) { }
@@ -213,7 +365,7 @@ namespace Command
 		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
 		if (hasRedirect) redirectNode.write(buffer);
 		name.write(buffer);
-		parser->write(buffer);
+		parser->write(buffer); // includes properties
 	}
 }
 

@@ -26,7 +26,7 @@ namespace Command
 				static const Byte flags = 0b00;
 
 			public:
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			template <class T> class PropertiesMin : public Properties<T>
 			{
@@ -36,8 +36,8 @@ namespace Command
 				T min;
 
 			public:
-				PropertiesMin(T min);
-				virtual void write(char*&);
+				SERVER_API PropertiesMin(T min);
+				SERVER_API virtual void write(char*&);
 			};
 			template <class T> class PropertiesMax : public Properties<T>
 			{
@@ -47,21 +47,21 @@ namespace Command
 				T max;
 
 			public:
-				PropertiesMax(T max);
-				virtual void write(char*&);
+				SERVER_API PropertiesMax(T max);
+				SERVER_API virtual void write(char*&);
 			};
 			template <class T> class PropertiesMinMax : public PropertiesMin<T>, public PropertiesMax<T>
 			{
 				static const Byte flags = 0b11;
 
 			public:
-				PropertiesMinMax(T min, T max);
-				virtual void write(char*&);
+				SERVER_API PropertiesMinMax(T min, T max);
+				SERVER_API virtual void write(char*&);
 			};
 			class PropertiesString
 			{
 			public:
-				static enum Mode
+				enum Mode
 				{
 					single_word,
 					quotable_phrase,
@@ -74,7 +74,7 @@ namespace Command
 				static const mcString protocolIdentifier;
 			public:
 
-				void write(char*&);
+				SERVER_API void write(char*&);
 			};
 			class Double : public Parser
 			{
@@ -82,9 +82,9 @@ namespace Command
 				Properties<bdouble>* properties;
 
 			public:
-				Double(Properties<bdouble>* properties);
-				~Double();
-				void write(char*&);
+				SERVER_API Double(Properties<bdouble>* properties);
+				SERVER_API ~Double();
+				SERVER_API void write(char*&);
 			};
 			class Float : public Parser
 			{
@@ -92,9 +92,9 @@ namespace Command
 				Properties<bfloat>* properties;
 
 			public:
-				Float(Properties<bfloat>* properties);
-				~Float();
-				void write(char*&);
+				SERVER_API Float(Properties<bfloat>* properties);
+				SERVER_API ~Float();
+				SERVER_API void write(char*&);
 			};
 			class Integer : public Parser
 			{
@@ -102,9 +102,9 @@ namespace Command
 				Properties<bint>* properties;
 
 			public:
-				Integer(Properties<bint>* properties);
-				~Integer();
-				void write(char*&);
+				SERVER_API Integer(Properties<bint>* properties);
+				SERVER_API ~Integer();
+				SERVER_API void write(char*&);
 			};
 			class Long : public Parser
 			{
@@ -113,9 +113,9 @@ namespace Command
 
 			public:
 
-				Long(Properties<blong>* properties);
-				~Long();
-				void write(char*&);
+				SERVER_API Long(Properties<blong>* properties);
+				SERVER_API ~Long();
+				SERVER_API void write(char*&);
 			};
 			class String : public Parser
 			{
@@ -123,8 +123,8 @@ namespace Command
 				varInt mode;
 
 			public:
-				String(PropertiesString::Mode mode);
-				void write(char*&);
+				SERVER_API String(PropertiesString::Mode mode);
+				SERVER_API void write(char*&);
 			};
 		}
 
@@ -136,333 +136,321 @@ namespace Command
 				//single target only - 0x01
 				//players only - 0x02
 				Byte flags;
-			public:
 
-				entity(bool singleTargetOnly, bool playersOnly);
-				virtual void write(char*&);
+			public:
+				SERVER_API entity(bool singleTargetOnly, bool playersOnly);
+				SERVER_API virtual void write(char*&);
 			};
 			class game_profile : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class block_pos : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class column_pos : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class vec3 : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class vec2 : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class block_state : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class block_predicate : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class item_stack : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class item_predicate : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class color : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class component : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class message : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class nbt : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class nbt_path : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class objective : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
-			class ovjective_criteria : public Parser
+			class objective_criteria : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class operation : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class particle : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class rotation : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class angle : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class scoreboard_slot : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class score_holder : public Parser
 			{
 				static const mcString protocolIdentifier;
-				bool allowMultiple;
+				bool allowsMultiple;
 
 			public:
-
-				score_holder(bool allowsMultiple);
-				virtual void write(char*&);
+				SERVER_API score_holder(bool allowsMultiple);
+				SERVER_API virtual void write(char*&);
 			};
 			class swizzle : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class team : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class item_slot : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class resource_location : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class mob_effect : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class function : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class entity_anchor : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class range : public Parser
 			{
 				static const mcString protocolIdentifier;
-			public:
+				bool allowsDecimals;
 
-				virtual void write(char*&);
+			public:
+				SERVER_API range(bool allowsDecimals);
+				SERVER_API virtual void write(char*&);
 			};
 			class int_range : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class float_range : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class item_enchantment : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class entity_summon : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class dimension : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class uuid : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class nbt_tag : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class nbt_compound_tag : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 			class time : public Parser
 			{
 				static const mcString protocolIdentifier;
 			public:
 
-				virtual void write(char*&);
+				SERVER_API virtual void write(char*&);
 			};
 		}
-
-		/*class minecraft
+	}
+	namespace Suggestions
+	{
+		class Suggestions
 		{
 		public:
-			static const mcString entity,
-				game_profile,
-				block_pos,
-				column_pos,
-				vec3,
-				vec2,
-				block_state,
-				block_predicate,
-				item_stack,
-				item_predicate,
-				color,
-				component,
-				message,
-				nbt,
-				nbt_path,
-				objective,
-				ovjective_criteria,
-				operation,
-				particle,
-				rotation,
-				angle,
-				scoreboard_slot,
-				score_holder,
-				swizzle,
-				team,
-				item_slot,
-				resource_location,
-				mob_effect,
-				function,
-				entity_anchor,
-				range,
-				int_range,
-				float_range,
-				item_enchantment,
-				entity_summon,
-				dimension,
-				uuid,
-				nbt_tag,
-				nbt_compound_tag,
-				time;
-		};*/
+			virtual void write(char*&) = 0;
+		};
+
+		namespace minecraft
+		{
+			class ask_server : public Suggestions
+			{
+
+			};
+			class all_recipes : public Suggestions
+			{
+
+			};
+			class available_sounds : public Suggestions
+			{
+
+			};
+			class available_biomes : public Suggestions
+			{
+
+			};
+			class summonable_entities: public Suggestions
+			{
+
+			};
+		}
 	}
 
 	class Node
