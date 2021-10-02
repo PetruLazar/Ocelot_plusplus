@@ -77,7 +77,7 @@ public:
 	void updateRotation(bfloat yaw, bfloat pitch);
 
 	//player inventory
-	Slot slots[45];
+	Slot *slots[45];
 	bshort selectedSlot = 0; //main hand selected slot
 
 	//player info

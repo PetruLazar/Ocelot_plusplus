@@ -23,6 +23,11 @@ Player::~Player()
 	delete socket;
 	if (buffer) delete buffer;
 	if (uuid) delete uuid;
+
+	for (int i = 0; i < 45; i++) {
+		if(slots[i])
+			delete slots[i];
+	}
 }
 
 void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)

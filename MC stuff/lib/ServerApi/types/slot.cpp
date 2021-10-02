@@ -6,6 +6,6 @@ void Slot::write(char*& buffer) const {
 	if (present != 0) {
 		itemId.write(buffer);
 		*(buffer++) = count;
-		data.write(buffer);
+		nbt_data->write(buffer);
 	}
 }

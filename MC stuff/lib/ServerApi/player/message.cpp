@@ -1222,7 +1222,7 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 
 	delete eqp;
 }
-void message::play::receive::creativeInventoryAction(Player* p, bshort slot, const Slot& clickedItem)
+void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
 	if (slot != -1) {
 		p->slots[slot] = clickedItem;
@@ -1702,17 +1702,19 @@ void message::dispatch(Player* p, char* data, uint size)
 			bool present;
 			varInt itemId = 0;
 			Byte count = 0;
-			nbt_compound item_data;
+			nbt_compound* item_data = new nbt_compound();
 
 			present = *(data++);
 			if (present) {
 				itemId.read(data);
 				count = *(data++);
 
-				//item_data.read(data);   <- problema
+				if(nbt::checkTag(data, nbt::tag::Compound))
+					item_data->read(data);
 			}
 
-			play::receive::creativeInventoryAction(p, slot, Slot(present, itemId, count, item_data));
+			Slot* item = new Slot(present, itemId, count, item_data);
+			play::receive::creativeInventoryAction(p, slot, item);
 		}
 		break;
 		case play::id::updateJigsawBlock:
