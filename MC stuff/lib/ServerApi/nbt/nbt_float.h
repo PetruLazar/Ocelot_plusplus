@@ -18,5 +18,7 @@ public:
 	//get the value of the tag
 	SERVER_API float& vFloat();
 	SERVER_API operator float& ();
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_float&);
 	SERVER_API void operator=(float);
 };

@@ -64,5 +64,14 @@ std::string nbt_string::getStringValue() const
 }
 std::string& nbt_string::vString() { return value; }
 nbt_string::operator std::string& () { return value; }
+void nbt_string::operator=(const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_string&)that);
+}
+void nbt_string::operator=(const nbt_string& that)
+{
+	value = that.value;
+}
 void nbt_string::operator=(const std::string& v) { value = v; }
 void nbt_string::operator=(const char* v) { value = v; }

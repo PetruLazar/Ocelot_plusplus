@@ -18,5 +18,7 @@ public:
 	//get the value of the tag
 	SERVER_API char& vByte();
 	SERVER_API operator char& ();
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_Byte&);
 	SERVER_API void operator=(char);
 };

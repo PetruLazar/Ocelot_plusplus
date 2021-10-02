@@ -30,14 +30,14 @@ public:
 protected:
 	std::string name;
 
-	nbt::tag type;
-
 	SERVER_API void readName(std::fstream&);
 	SERVER_API void writeName(std::fstream&) const;
 	SERVER_API void readName(char*&);
 	SERVER_API void writeName(char*&) const;
 
 public:
+	const nbt::tag type;
+
 	SERVER_API nbt(tag, std::string name = "");
 	SERVER_API virtual ~nbt() = 0;
 
@@ -47,8 +47,9 @@ public:
 	SERVER_API virtual void write(char*&, bool includeNameAndType = true) const = 0;
 	//make sure to either use checkTag() or skip a Byte manually
 	SERVER_API virtual void read(char*&, const std::string& name = "") = 0;
-	SERVER_API std::string getName();
-	SERVER_API tag getType();
+	SERVER_API std::string getName() const;
+	//for backwards compatibility
+	SERVER_API tag getType() const;
 
 	//get the value of any tag as a string
 	SERVER_API virtual std::string getStringValue() const = 0;
@@ -101,6 +102,7 @@ public:
 	//allocate a pointer of the specified type
 	SERVER_API static nbt* getTagP(tag);
 
+	SERVER_API virtual void operator=(const nbt&);
 	SERVER_API virtual void operator=(char);
 	SERVER_API virtual void operator=(short);
 	SERVER_API virtual void operator=(int);

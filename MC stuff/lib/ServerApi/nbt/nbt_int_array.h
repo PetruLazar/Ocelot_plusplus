@@ -24,4 +24,7 @@ public:
 	SERVER_API uint getSize() const;
 	//resize the array
 	SERVER_API virtual void resize(uint);
+
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_int_array&);
 };
