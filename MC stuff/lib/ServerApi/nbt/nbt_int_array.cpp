@@ -105,3 +105,14 @@ void nbt_int_array::resize(uint newSize)
 	values = newValues;
 	_size = newSize;
 }
+void nbt_int_array::operator=(const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_int_array&)that);
+}
+void nbt_int_array::operator=(const nbt_int_array& that)
+{
+	_size = that._size;
+	values = new bint[_size];
+	for (uint i = 0; i < _size; i++) values[i] = that.values[i];
+}

@@ -29,4 +29,7 @@ public:
 
 	SERVER_API tag getElemType()const;
 	SERVER_API void changeType(tag);
+
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_list&);
 };

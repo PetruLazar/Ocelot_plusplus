@@ -18,5 +18,7 @@ public:
 	//get the value of the tag
 	SERVER_API int64& vLong();
 	SERVER_API operator int64& ();
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_long&);
 	SERVER_API void operator=(int64);
 };

@@ -604,10 +604,11 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equi
 	id.write(data);
 	eid.write(data);
 
+	equipments[0].write(data);
+
 	//				if the top bit is set, another entry follows
 	for (int i = 0; (equipments[i].getSlot() & 0x80) == 1; i++)
-		equipments[i].write(data);
-
+		equipments[i + 1].write(data);
 
 	finishSendMacro;
 }
@@ -1211,6 +1212,30 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
 }
+void message::play::receive::heldItemChange(Player* p, bshort slot)
+{
+	p->selectedSlot = slot;
+
+	Equipment* eqp = new Equipment(0, p->slots[36 + slot]);
+	for (Player* seener : p->seenBy)
+		message::play::send::entityEquipment(seener, p->eid, eqp);
+
+	delete eqp;
+}
+void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
+{
+	if (slot != -1) {
+		p->slots[slot] = clickedItem;
+
+		if (p->selectedSlot == slot - 36) {
+			Equipment* eqp = new Equipment(0, p->slots[slot]);
+			for (Player* seener : p->seenBy)
+				message::play::send::entityEquipment(seener, p->eid, eqp);
+
+			delete eqp;
+		}
+	}
+}
 void message::play::receive::animation(Player* p, Hand hand)
 {
 	Animation animation = hand == Hand::main ? Animation::swingMainArm : Animation::swingOffhand;
@@ -1653,7 +1678,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::heldItemChange_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: held item change");
+			bshort slot;
+			slot.read(data);
+
+			play::receive::heldItemChange(p, slot);
 		}
 		break;
 		case play::id::updateCommandBlock:
@@ -1668,7 +1696,25 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::creativeInventoryAction:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: creative inventoty action");
+			bshort slot;
+			slot.read(data);
+
+			bool present;
+			varInt itemId = 0;
+			Byte count = 0;
+			nbt_compound* item_data = new nbt_compound();
+
+			present = *(data++);
+			if (present) {
+				itemId.read(data);
+				count = *(data++);
+
+				if(nbt::checkTag(data, nbt::tag::Compound))
+					item_data->read(data);
+			}
+
+			Slot* item = new Slot(present, itemId, count, item_data);
+			play::receive::creativeInventoryAction(p, slot, item);
 		}
 		break;
 		case play::id::updateJigsawBlock:

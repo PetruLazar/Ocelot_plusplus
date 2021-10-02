@@ -48,4 +48,13 @@ std::string nbt_double::getStringValue() const
 }
 double& nbt_double::vDouble() { return value; }
 nbt_double::operator double& () { return value; }
+void nbt_double::operator= (const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_double&)that);
+}
+void nbt_double::operator= (const nbt_double& that)
+{
+	value = that.value;
+}
 void nbt_double::operator=(double v) { value = v; }

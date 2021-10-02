@@ -15,6 +15,8 @@ nbt_compound::~nbt_compound()
 
 void nbt_compound::write(std::fstream& os, bool iNT) const
 {
+	if (values.empty()) os.write("", 1);
+
 	if (iNT)
 	{
 		os.write((char*)&type, sizeof(type));
@@ -24,7 +26,7 @@ void nbt_compound::write(std::fstream& os, bool iNT) const
 
 	for (nbt* e : values) e->write(os);
 
-	os.write("\0", 1);
+	os.write("", 1);
 }
 void nbt_compound::read(std::fstream& is, const std::string& name)
 {
@@ -54,6 +56,12 @@ void nbt_compound::read(std::fstream& is, const std::string& name)
 }
 void nbt_compound::write(char*& buffer, bool iNT) const
 {
+	if (values.empty())
+	{
+		*(buffer++) = 0;
+		return;
+	}
+
 	if (iNT)
 	{
 		*(buffer++) = static_cast<char>(type);
@@ -90,11 +98,15 @@ void nbt_compound::read(char*& end, const std::string& name)
 }
 std::string nbt_compound::getStringValue() const
 {
+	if (values.empty()) return "{}";
 	std::string ret = "{";
 
 	for (nbt* e : values)
 		ret += e->to_string() + ',';
-	ret.pop_back();
+
+	if (values.size() != 0)
+		ret.pop_back();
+
 	ret += '}';
 	return ret;
 }
@@ -104,7 +116,7 @@ nbt& nbt_compound::vTag(const std::string& n)
 }
 nbt& nbt_compound::operator[](const std::string& n)
 {
-	for (nbt* e : values) 
+	for (nbt* e : values)
 		if (n == e->getName())
 			return *e;
 	throw searchFailedError;
@@ -136,4 +148,16 @@ void nbt_compound::remove(const std::string& elem)
 		return;
 	}
 	throw searchFailedError;
+}
+
+void nbt_compound::operator=(const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_compound&)that);
+}
+void nbt_compound::operator=(const nbt_compound& that)
+{
+	ull size = that.values.size();
+	values.resize(size);
+	for (ull i = 0; i < size; i++) values[i] = that.values[i];
 }

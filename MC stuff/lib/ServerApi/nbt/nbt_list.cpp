@@ -156,3 +156,15 @@ void nbt_list::resize(uint newSize)
 	values = newValues;
 	_size = newSize;
 }
+
+void nbt_list::operator=(const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_list&)that);
+}
+void nbt_list::operator=(const nbt_list& that)
+{
+	_size = that._size;
+	values = new nbt * [_size];
+	for (uint i = 0; i < _size; i++) values[i] = that.values[i];
+}

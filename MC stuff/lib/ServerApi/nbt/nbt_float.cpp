@@ -48,4 +48,13 @@ std::string nbt_float::getStringValue() const
 }
 float& nbt_float::vFloat() { return value; }
 nbt_float::operator float& () { return value; }
+void nbt_float::operator=(const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_float&)that);
+}
+void nbt_float::operator=(const nbt_float& that)
+{
+	value = that.value;
+}
 void nbt_float::operator=(float v) { value = v; }

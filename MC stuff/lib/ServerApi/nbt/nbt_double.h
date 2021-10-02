@@ -18,5 +18,7 @@ public:
 	//get the value of the tag
 	SERVER_API double& vDouble();
 	SERVER_API operator double& ();
+	SERVER_API void operator=(const nbt&);
+	SERVER_API void operator=(const nbt_double&);
 	SERVER_API void operator=(double);
 };

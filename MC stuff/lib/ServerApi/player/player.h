@@ -6,6 +6,7 @@
 #include "../types/chat.h"
 #include "../types/queue.h"
 #include "../types/entity.h"
+#include "../types/slot.h"
 
 enum class ConnectionState : Byte
 {
@@ -74,6 +75,10 @@ public:
 	bool onGround;
 	void updatePosition(bdouble X, bdouble Y, bdouble Z);
 	void updateRotation(bfloat yaw, bfloat pitch);
+
+	//player inventory
+	Slot *slots[45];
+	bshort selectedSlot = 0; //main hand selected slot
 
 	//player info
 	varInt ping;

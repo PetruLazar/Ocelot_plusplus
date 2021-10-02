@@ -45,10 +45,15 @@ std::string nbt_Byte::getStringValue() const
 {
 	return std::to_string(value) + 'b';
 }
-/*std::string nbt_Byte::to_string()
-{
-
-}*/
 char& nbt_Byte::vByte() { return value; }
 nbt_Byte::operator char& () { return value; }
+void nbt_Byte::operator= (const nbt& that)
+{
+	if (that.type != type) throw typeError;
+	operator=((const nbt_Byte&)that);
+}
+void nbt_Byte::operator=(const nbt_Byte& that)
+{
+	value = that.value;
+}
 void nbt_Byte::operator=(char v) { value = v; }

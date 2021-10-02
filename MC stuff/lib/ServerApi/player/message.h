@@ -604,7 +604,7 @@ struct message
 			SERVER_API static void heldItemChange(Player*, bshort slot);
 			SERVER_API static void updateCommandBlock(Player*, Position location, const mcString& command, varInt mode, Byte flags);
 			SERVER_API static void updateCommandBlockMinecart(Player*, varInt eid, const mcString& command, bool trackOutput);
-			//SERVER_API static void creativeInventoryAction(Player*, bshort slot, const Slot& clickedItem);
+			SERVER_API static void creativeInventoryAction(Player*, bshort slot, Slot* clickedItem);
 			SERVER_API static void updateJigsawBlock(Player*, Position location, const mcString& name, const mcString& target, const mcString& pool, const mcString& finalState, const mcString& jointType);
 			SERVER_API static void updateStructureBlock(Player*, Position location, varInt action, varInt mode, const mcString& name, char offsetX, char offsetY, char offsetZ, Byte sizeX, Byte sizeY, Byte sizeZ, varInt mirror, varInt rotation, const mcString& metadata, bfloat integrity, varLong seed, Byte flags);
 			SERVER_API static void updateSign(Player*, Position location, const mcString& line1, const mcString& line2, const mcString& line3, const mcString& line4);

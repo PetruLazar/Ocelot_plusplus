@@ -82,8 +82,8 @@ bool nbt::checkTag(char*& buffer, tag t)
 
 nbt::nbt(tag t, std::string name) : type(t), name(name) { }
 nbt::~nbt() { }
-std::string nbt::getName() { return name; }
-nbt::tag nbt::getType() { return type; }
+std::string nbt::getName() const { return name; }
+nbt::tag nbt::getType() const { return type; }
 void nbt::readName(std::fstream& is)
 {
 	bigEndian<ush> nameSize;
@@ -142,6 +142,7 @@ std::string nbt::to_string() const
 	if (!name.empty()) return name + ':' + getStringValue();
 	return getStringValue();
 }
+void nbt::operator=(const nbt&) { throw typeError; }
 void nbt::operator=(char) { throw typeError; }
 void nbt::operator=(short) { throw typeError; }
 void nbt::operator=(int) { throw typeError; }
