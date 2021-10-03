@@ -596,7 +596,7 @@ void message::play::send::spawnPosition(Player* p, Position location, bfloat ang
 
 	finishSendMacro;
 }
-void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equipments)
+void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equipments)
 {
 	varInt id = (int)id::entityEquipment;
 	prepareSendMacro(1024 * 1024);
@@ -604,11 +604,11 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equi
 	id.write(data);
 	eid.write(data);
 
-	equipments[0].write(data);
+	equipments[0]->write(data);
 
 	//				if the top bit is set, another entry follows
-	for (int i = 0; (equipments[i].getSlot() & 0x80) == 1; i++)
-		equipments[i + 1].write(data);
+	for (int i = 0; (equipments[i]->getSlot() & 0x80) == 1; i++)
+		equipments[i + 1]->write(data);
 
 	finishSendMacro;
 }
@@ -1216,11 +1216,13 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
 	p->selectedSlot = slot;
 
-	Equipment* eqp = new Equipment(0, p->slots[36 + slot]);
+	Equipment** eqp = new Equipment * [1];
+	eqp[0] = new Equipment(0, p->slots[36 + slot]);
+
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->eid, eqp);
-
-	delete eqp;
+	
+	delete[] eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
@@ -1228,11 +1230,13 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 		p->slots[slot] = clickedItem;
 
 		if (p->selectedSlot == slot - 36) {
-			Equipment* eqp = new Equipment(0, p->slots[slot]);
+			Equipment** eqp = new Equipment * [1];
+			eqp[0] = new Equipment(0, clickedItem);
+
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->eid, eqp);
 
-			delete eqp;
+			delete[] eqp;
 		}
 	}
 }

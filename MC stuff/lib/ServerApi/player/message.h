@@ -534,7 +534,7 @@ struct message
 			//SERVER_API static void entityMetadata(varInt eid, const Metadata& metadata);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
-			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment* equipments);
+			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			//SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);

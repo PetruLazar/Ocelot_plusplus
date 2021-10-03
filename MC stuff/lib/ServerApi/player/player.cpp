@@ -17,6 +17,10 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 
 	//player initializations
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
+
+	for (int i = 0; i < 45; i++) {
+		slots[i] = new Slot();
+	}
 }
 Player::~Player()
 {
