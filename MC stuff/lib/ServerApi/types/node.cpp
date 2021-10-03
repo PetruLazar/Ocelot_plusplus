@@ -306,7 +306,32 @@ namespace Command
 	}
 	namespace Suggestions::minecraft
 	{
+		const mcString ask_server::protocolIdentifier = "minecraft:ask_server",
+			all_recipes::protocolIdentifier = "minecraft:all_recipes",
+			available_sounds::protocolIdentifier = "minecraft:available_sounds",
+			available_biomes::protocolIdentifier = "minecraft:available_biomes",
+			summonable_entities::protocolIdentifier = "minecraft:summonable_entities";
 
+		void ask_server::write(char*& buffer)
+		{
+			protocolIdentifier.write(buffer);
+		}
+		void all_recipes::write(char*& buffer)
+		{
+			protocolIdentifier.write(buffer);
+		}
+		void available_sounds::write(char*& buffer)
+		{
+			protocolIdentifier.write(buffer);
+		}
+		void available_biomes::write(char*& buffer)
+		{
+			protocolIdentifier.write(buffer);
+		}
+		void summonable_entities::write(char*& buffer)
+		{
+			protocolIdentifier.write(buffer);
+		}
 	}
 
 	//flags
@@ -346,6 +371,8 @@ namespace Command
 		//no suggestions
 	}
 
+	LiteralNode::LiteralNode(const mcString& name, varInt childrenCount, varInt* children, Handler handler) : Node(childrenCount, children), name(name), handler(handler), hasRedirect(false) { }
+	LiteralNode::LiteralNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Handler handler) : Node(childrenCount, children), name(name), hasRedirect(true), redirectNode(redirectNode), handler(handler) { }
 	void LiteralNode::write(char*& buffer)
 	{
 		*(buffer++) = (hasRedirect << 3) | ((handler != 0) << 2) | literalType;
@@ -358,14 +385,19 @@ namespace Command
 		//no suggestions
 	}
 
+	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, childrenCount, children), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr) : LiteralNode(name, childrenCount, children, handler), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, childrenCount, children, redirectNode), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser = nullptr, Suggestions::Suggestions* suggestions = nullptr) : LiteralNode(name, childrenCount, children, redirectNode, handler), parser(parser), suggestions(suggestions) { }
 	void ArgumentNode::write(char*& buffer)
 	{
-		*(buffer++) = ((suggestionsHandler != 0) << 4) | (hasRedirect << 3) | ((handler != 0) << 2) | argumentType;
+		*(buffer++) = ((suggestions != 0) << 4) | (hasRedirect << 3) | ((handler != 0) << 2) | argumentType;
 		childrenCount.write(buffer);
 		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
 		if (hasRedirect) redirectNode.write(buffer);
 		name.write(buffer);
 		parser->write(buffer); // includes properties
+		if (suggestions) suggestions->write(buffer);
 	}
 }
 

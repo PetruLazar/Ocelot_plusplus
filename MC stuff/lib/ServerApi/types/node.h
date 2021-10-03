@@ -7,8 +7,8 @@
 
 namespace Command
 {
-	typedef void (*Handler)(const std::vector<mcString>&);
-	typedef void (*SuggestionsHandler)(const mcString&);
+	typedef void (*Handler)(const std::vector<mcString>& argumentStack);
+	//typedef void (*SuggestionsHandler)(const mcString&);
 
 	namespace Parser
 	{
@@ -425,30 +425,45 @@ namespace Command
 		class Suggestions
 		{
 		public:
-			virtual void write(char*&) = 0;
+			SERVER_API virtual void write(char*&) = 0;
 		};
 
 		namespace minecraft
 		{
 			class ask_server : public Suggestions
 			{
+				static const mcString protocolIdentifier;
 
+			public:
+				SERVER_API void write(char*&);
 			};
 			class all_recipes : public Suggestions
 			{
+				static const mcString protocolIdentifier;
 
+			public:
+				SERVER_API void write(char*&);
 			};
 			class available_sounds : public Suggestions
 			{
+				static const mcString protocolIdentifier;
 
+			public:
+				SERVER_API void write(char*&);
 			};
 			class available_biomes : public Suggestions
 			{
+				static const mcString protocolIdentifier;
 
+			public:
+				SERVER_API void write(char*&);
 			};
-			class summonable_entities: public Suggestions
+			class summonable_entities : public Suggestions
 			{
+				static const mcString protocolIdentifier;
 
+			public:
+				SERVER_API void write(char*&);
 			};
 		}
 	}
@@ -460,17 +475,17 @@ namespace Command
 		varInt childrenCount;
 		varInt* children;
 
-		Node(varInt childrenCount, varInt* children);
-		virtual ~Node();
-		virtual void write(char*&) = 0;
+		SERVER_API Node(varInt childrenCount, varInt* children);
+		SERVER_API virtual ~Node();
+		SERVER_API virtual void write(char*&) = 0;
 	};
 	class RootNode : public Node
 	{
 		static const Byte rootType = 0;
 	public:
 
-		RootNode(varInt childrenCount, varInt* children);
-		virtual void write(char*&);
+		SERVER_API RootNode(varInt childrenCount, varInt* children);
+		SERVER_API virtual void write(char*&);
 	};
 	class LiteralNode : public Node
 	{
@@ -482,7 +497,9 @@ namespace Command
 		Handler handler;
 		mcString name;
 
-		virtual void write(char*&);
+		SERVER_API LiteralNode(const mcString& name, varInt childrenCount, varInt* children, Handler handler = nullptr);
+		SERVER_API LiteralNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Handler handler = nullptr);
+		SERVER_API virtual void write(char*&);
 		//virtual bool match(const mcString&);
 	};
 	class ArgumentNode : public LiteralNode
@@ -490,10 +507,16 @@ namespace Command
 		static const Byte argumentType = 2;
 	public:
 
-		mcString* parser;
-		SuggestionsHandler suggestionsHandler;
+		Parser::Parser* parser;
+		Suggestions::Suggestions* suggestions;
 
-		virtual void write(char*&);
+		//handler
+		//suggestions
+		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Suggestions::Suggestions* suggestions);
+		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr);
+		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions);
+		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr);
+		SERVER_API virtual void write(char*&);
 		//virtual bool match(const mcString&);
 	};
 }
