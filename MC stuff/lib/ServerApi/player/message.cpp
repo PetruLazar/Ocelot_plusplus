@@ -1158,8 +1158,15 @@ void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
 	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
 }
-void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, varInt chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
+void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, Hand mainHand, bool disableTextFiltering)
 {
+	p->locale = locale;
+	p->viewDistance = (p->viewDistance > (int)viewDistance) ? (int)viewDistance : p->viewDistance;
+	p->chatMode = chatMode;
+	p->chatColors = chatColors;
+	p->displayedSkinParts = displayedSkinParts;
+	p->mainHand = mainHand;
+	p->disableTextFiltering = disableTextFiltering;
 
 }
 void message::play::receive::chatMessage(Player* p, const mcString& content)
@@ -1251,11 +1258,10 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 }
 void message::play::receive::animation(Player* p, Hand hand)
 {
-	Animation animation = hand == Hand::main ? Animation::swingMainArm : Animation::swingOffhand;
+	Animation animation = (hand == p->mainHand) ? Animation::swingMainArm : Animation::swingOffhand;
+
 	for (Player* seener : p->seenBy)
-	{
 		ignoreExceptions(message::play::send::entityAnimation(seener, p->eid, animation));
-	}
 }
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
@@ -1493,23 +1499,20 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::clientSettings:
 		{
-			{
-				mcString locale;
-				Byte viewDistance, displayedSkinParts;
-				varInt chatMode, mainHand;
-				bool chatColors, disableTextFiltering;
+			mcString locale;
+			Byte viewDistance, displayedSkinParts;
+			varInt chatMode, mainHand;
+			bool chatColors, disableTextFiltering;
 
-				locale.read(data);
-				viewDistance = *(data++);
-				chatMode.read(data);
-				chatColors = *(data++);
-				displayedSkinParts = *(data++);
-				mainHand.read(data);
-				disableTextFiltering = *(data++);
+			locale.read(data);
+			viewDistance = *(data++);
+			chatMode.read(data);
+			chatColors = *(data++);
+			displayedSkinParts = *(data++);
+			mainHand.read(data);
+			disableTextFiltering = *(data++);
 
-				play::receive::clientSettings(p, locale, viewDistance, chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
-			}
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: client settings");
+			play::receive::clientSettings(p, locale, viewDistance, (ChatMode)(int)chatMode, chatColors, displayedSkinParts, (Hand)(int)mainHand, disableTextFiltering);
 		}
 		break;
 		case play::id::tabComplete_serverbound:

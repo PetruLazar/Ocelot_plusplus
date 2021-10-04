@@ -20,6 +20,12 @@ enum class Hand
 	main,
 	offhand
 };
+enum class ChatMode
+{
+	enabled,
+	commands,
+	hidden
+};
 
 class Player
 {
@@ -102,7 +108,14 @@ public:
 
 	gamemode gm;
 
+	//user settings
+	mcString locale = "en_US";
 	int viewDistance;
+	ChatMode chatMode;		//---\/
+	bool chatColors;		//to do: processing chat
+	Byte displayedSkinParts;
+	Hand mainHand;
+	bool disableTextFiltering;
 
 	SERVER_API Player(sf::TcpSocket*);
 	SERVER_API ~Player();
