@@ -51,7 +51,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	Log::txt() << "\nLoad complete." << Log::flush;
 
 	//testing...
-	cout << '\n' << World::worlds[1]->get(0, 0)->getBlock(0, 80, 0).id << '\n';
+	//cout << '\n' << World::worlds[1]->get(0, 0)->getBlock(0, 80, 0).id << '\n';
 
 	//main loop
 	bool keepAlive = true;

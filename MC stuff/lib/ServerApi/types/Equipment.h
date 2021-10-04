@@ -3,8 +3,6 @@
 #include "slot.h"
 #include "item.h"
 
-#include <iostream>
-
 class Equipment {
 private:
 	Byte slot;

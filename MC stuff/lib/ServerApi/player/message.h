@@ -569,7 +569,7 @@ struct message
 			SERVER_API static void setDifficulty(Player*, Byte difficulty);
 			SERVER_API static void chatMessage(Player*, const mcString& content);
 			SERVER_API static void clientStatus(Player*, varInt actionId);
-			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, varInt chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
+			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, Hand mainHand, bool disableTextFiltering);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);
 			SERVER_API static void clickWindowButton(Player*, Byte winId, Byte buttonId);
 			//SERVER_API static void clickWindow(Player*, Byte winId, bshort slot, varInt stateId, Byte button, varInt mode, varInt length, );
