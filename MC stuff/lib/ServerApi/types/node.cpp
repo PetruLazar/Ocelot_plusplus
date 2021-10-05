@@ -1,4 +1,8 @@
 #include "node.h"
+#include "../player/command.h"
+
+#undef min
+#undef max
 
 namespace Command
 {
@@ -140,7 +144,7 @@ namespace Command
 				nbt_compound_tag::protocolIdentifier = "minecraft:nbt_compound_tag",
 				time::protocolIdentifier = "minecraft:time";
 
-			entity::entity(bool singleTargetsOnly, bool playersOnly) : flags((playersOnly << 1) | singleTargetsOnly) { }
+			entity::entity(bool singleTargetsOnly, bool playersOnly) : flags((playersOnly << 1) | (int)singleTargetsOnly) { }
 			void entity::write(char*& buffer)
 			{
 				protocolIdentifier.write(buffer);
@@ -352,18 +356,19 @@ namespace Command
 
 	//suggestions [mcString] - if flags - hasSuggestions
 
-	Node::Node(varInt childrenCount, varInt* children) : childrenCount(childrenCount), children(children) { }
-	Node::~Node()
+	Node::Node(std::vector<varInt> children) : children(children) { }
+	void Node::addChild(varInt c)
 	{
-		delete[] children;
+		children.push_back(c);
 	}
+	Node::~Node() { }
 
-	RootNode::RootNode(varInt childrenCount, varInt* children) : Node(childrenCount, children) { }
-	void RootNode::write(char*& buffer)
+	RootNode::RootNode(std::vector<varInt> children) : Node(children) { }
+	void RootNode::write(char*& buffer) const
 	{
 		*(buffer++) = rootType;
-		childrenCount.write(buffer);
-		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
+		varInt((int)children.size()).write(buffer);
+		for (varInt child : children) child.write(buffer);
 		//no redirect
 		//no name
 		//no parser
@@ -371,13 +376,14 @@ namespace Command
 		//no suggestions
 	}
 
-	LiteralNode::LiteralNode(const mcString& name, varInt childrenCount, varInt* children, Handler handler) : Node(childrenCount, children), name(name), handler(handler), hasRedirect(false) { }
-	LiteralNode::LiteralNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Handler handler) : Node(childrenCount, children), name(name), hasRedirect(true), redirectNode(redirectNode), handler(handler) { }
-	void LiteralNode::write(char*& buffer)
+	LiteralNode::LiteralNode(const mcString& name, std::vector<varInt> children, Handler handler) : Node(children), name(name), handler(handler), hasRedirect(false) { }
+	LiteralNode::LiteralNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Handler handler) : Node(children), name(name), hasRedirect(true), redirectNode(redirectNode), handler(handler) { }
+	LiteralNode::~LiteralNode() { }
+	void LiteralNode::write(char*& buffer) const
 	{
 		*(buffer++) = (hasRedirect << 3) | ((handler != 0) << 2) | literalType;
-		childrenCount.write(buffer);
-		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
+		varInt((int)children.size()).write(buffer);
+		for (varInt child : children) child.write(buffer);
 		if (hasRedirect) redirectNode.write(buffer);
 		name.write(buffer);
 		//no parser
@@ -385,110 +391,40 @@ namespace Command
 		//no suggestions
 	}
 
-	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, childrenCount, children), parser(parser), suggestions(suggestions) { }
-	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr) : LiteralNode(name, childrenCount, children, handler), parser(parser), suggestions(suggestions) { }
-	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, childrenCount, children, redirectNode), parser(parser), suggestions(suggestions) { }
-	ArgumentNode::ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser = nullptr, Suggestions::Suggestions* suggestions = nullptr) : LiteralNode(name, childrenCount, children, redirectNode, handler), parser(parser), suggestions(suggestions) { }
-	void ArgumentNode::write(char*& buffer)
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, children), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Handler handler, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, handler), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, redirectNode), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Handler handler, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, redirectNode, handler), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::~ArgumentNode()
+	{
+		delete parser;
+		if (suggestions) delete suggestions;
+	}
+	void ArgumentNode::write(char*& buffer) const
 	{
 		*(buffer++) = ((suggestions != 0) << 4) | (hasRedirect << 3) | ((handler != 0) << 2) | argumentType;
-		childrenCount.write(buffer);
-		for (int i = 0; i < childrenCount; i++) children[i].write(buffer);
+		varInt((int)children.size()).write(buffer);
+		for (varInt child : children) child.write(buffer);
 		if (hasRedirect) redirectNode.write(buffer);
 		name.write(buffer);
 		parser->write(buffer); // includes properties
 		if (suggestions) suggestions->write(buffer);
 	}
+
+	std::vector<Node*> Commands::commands{
+		new LiteralNode("survival",{},CommandHandlers::gamemodeSurvival),
+		new LiteralNode("creative",{},CommandHandlers::gamemodeCreative),
+		new LiteralNode("adventure",{},CommandHandlers::gamemodeAdventure),
+		new LiteralNode("spectator",{},CommandHandlers::gamemodeSpectator),
+		new LiteralNode("gamemode",{0,1,2,3}),
+		new ArgumentNode("world name",{},new Parser::brigadier::String(Parser::brigadier::PropertiesString::single_word),CommandHandlers::worldChange,new Suggestions::minecraft::ask_server()),
+		new LiteralNode("world",{5}),
+	};
+	RootNode Commands::root = std::vector<varInt>{ 4,6 };
+
+	Commands Commands::atuomatic;
+	Commands::~Commands()
+	{
+		for (Node* p : commands) delete p;
+	}
 }
-
-Node::Properties::Properties(const DoubleProperties& properties) : doubleProperties(properties) { }
-Node::Properties::Properties(const FloatProperties& properties) : floatProperties(properties) { }
-Node::Properties::Properties(const IntegerProperties& properties) : integerProperties(properties) { }
-Node::Properties::Properties(const LongProperties& properties) : longProperties(properties) { }
-Node::Properties::Properties(const StringProperties& properties) : stringProperties(properties) { }
-Node::Properties::Properties(const EntityProperties& properties) : entityProperties(properties) { }
-Node::Properties::Properties(const ScoreHolderProperties& properties) : scoreHolderProperties(properties) { }
-Node::Properties::Properties(const RangeProperties& properties) : rangeProperties(properties) { }
-Node::Properties::Properties() { }
-
-Node::Properties::StringProperties::StringProperties(Node::Properties::StringProperties::Flags flag) : flag(flag) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::DoubleProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::FloatProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::IntegerProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::LongProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::StringProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::EntityProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::ScoreHolderProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, const Properties::RangeProperties& properties, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType), properties(properties) { }
-
-Node::Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-	varInt childrenCount, varInt* children,
-	varInt redirectNode, mcString* name, mcString* parser, mcString* suggestionsType) :
-	type(type), isExecutable(isExecutable), hasRedirect(hasRedirect), hasSuggestionsType(hasSuggestionsType), childrenCount(childrenCount), children(children),
-	redirectNode(redirectNode), name(name), parser(parser), suggestionsType(suggestionsType) { }
-
-Node::~Node()
-{
-	if (children) delete[] children;
-	if (name) delete name;
-	if (parser) delete parser;
-	if (suggestionsType) delete suggestionsType;
-}
-
-Byte Node::flags()
-{
-	return (hasSuggestionsType << 4) | (hasRedirect << 3) | (isExecutable << 2) | type;
-}
-
-varInt Node::defaultCommandsCount = 8;
-Node Node::defaultCommands[] = {
-	Node(Node::literal,true,false,false,0,nullptr,0,new mcString("creative"),nullptr,nullptr),
-	Node(Node::literal,true,false,false,0,nullptr,0,new mcString("survival"),nullptr,nullptr),
-	Node(Node::literal,true,false,false,0,nullptr,0,new mcString("spectator"),nullptr,nullptr),
-	Node(Node::literal,true,false,false,0,nullptr,0,new mcString("adventure"),nullptr,nullptr),
-	Node(Node::literal,true,false,false,4,new varInt[4]{0,1,2,3},0,new mcString("gamemode"),nullptr,nullptr),
-	Node(Node::argument,true,false,true,0,nullptr,0,new mcString("world name"),new mcString("brigadier:string"),Node::Properties::StringProperties(Node::Properties::StringProperties::SINGLE_WORD),new mcString("minecraft:ask_server")),
-	Node(Node::literal,true,false,false,1,new varInt[1]{5},0,new mcString("world"),nullptr,nullptr),
-	Node(Node::root,false,false,false,2,new varInt[2]{4,6},0,nullptr,nullptr,nullptr)
-};
-varInt Node::defaultCommandsRootIndex = Node::defaultCommandsCount - 1;

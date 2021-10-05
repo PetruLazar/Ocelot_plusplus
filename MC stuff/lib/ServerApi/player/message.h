@@ -472,7 +472,7 @@ struct message
 			SERVER_API static void clearTitles(Player*, bool reset);
 			//SERVER_API static void tabComplete(Player*, varInt id, varInt start, varInt length, varInt count, );
 			SERVER_API static void declareCommands(Player*);
-			SERVER_API static void declareCommands(Player*, varInt count, Node* nodes, varInt root);
+			SERVER_API static void declareCommands(Player*, const std::vector<Command::Node*>& commandGraphNodes, const Command::RootNode& rootNode);
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			//SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot* slots, const Slot& carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);

@@ -18,7 +18,33 @@ namespace fs = std::filesystem;
 using namespace std;
 
 const int mc_zlib_compression_level = 6;
+/*
+class Test1
+{
+public:
+	Test1()
+	{
+		cout << "\ntest1 constructed.";
+	}
+	~Test1()
+	{
+		cout << "\ntest1 destroyed.";
+	}
+} test1;
 
+class Test2
+{
+public:
+	Test2()
+	{
+		cout << "\ntest2 constructed.";
+	}
+	~Test2()
+	{
+		cout << "\ntest2 destroyed.";
+	}
+} test2;
+*/
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
 {
 	Log::initialize();
@@ -51,7 +77,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	Log::txt() << "\nLoad complete." << Log::flush;
 
 	//testing...
-	cout << '\n' << World::worlds[1]->get(0, 0)->getBlock(0, 80, 0).id << '\n';
+	//cout << '\n' << World::worlds[1]->get(0, 0)->getBlock(0, 80, 0).id << '\n';
 
 	//main loop
 	bool keepAlive = true;
@@ -96,7 +122,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 			cout << "\nUnknown error.";
 		}
 		Player::clearDisconnectedPlayers();
-		//exit on excape - makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
+		//exit on escape - makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
 		if (_kbhit())
 		{
 			//27 is escape

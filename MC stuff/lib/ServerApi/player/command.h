@@ -1,7 +1,13 @@
 #pragma once
 #include "player.h"
 
-namespace Command
+#define CommandHandlerArguments Player* executingPlayer, const std::vector<mcString>& argumentStack
+
+namespace CommandHandlers
 {
-	SERVER_API void parse(Player* executing, char* command);
+	void gamemodeSurvival(CommandHandlerArguments);
+	void gamemodeCreative(CommandHandlerArguments);
+	void gamemodeSpectator(CommandHandlerArguments);
+	void gamemodeAdventure(CommandHandlerArguments);
+	void worldChange(CommandHandlerArguments);
 }

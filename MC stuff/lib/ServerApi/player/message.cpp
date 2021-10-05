@@ -803,15 +803,22 @@ void message::play::send::tags(Player* p, varInt tagCategoryCount, TagGroup* tag
 }
 void message::play::send::declareCommands(Player* p)
 {
-	declareCommands(p, Node::defaultCommandsCount, Node::defaultCommands, Node::defaultCommandsRootIndex);
+	declareCommands(p, Command::Commands::commands, Command::Commands::root);
 }
-void message::play::send::declareCommands(Player* p, varInt count, Node* nodes, varInt root)
+void message::play::send::declareCommands(Player* p, const std::vector<Command::Node*>& commandGraphNodes, const Command::RootNode& rootNode)
 {
 	varInt id = (int)id::declareCommands;
 	prepareSendMacro(1024 * 1024);
 
+	varInt graphSize = (int)commandGraphNodes.size();
 	id.write(data);
-	count.write(data);
+
+	varInt(graphSize + 1).write(data);
+	for (const Command::Node* node : commandGraphNodes) node->write(data);
+	rootNode.write(data);
+	graphSize.write(data);
+
+	/*count.write(data);
 	for (int i = 0; i < count; i++)
 	{
 		Node& node = nodes[i];
@@ -874,7 +881,8 @@ void message::play::send::declareCommands(Player* p, varInt count, Node* nodes, 
 		}
 		if (node.hasSuggestionsType) node.suggestionsType->write(data);
 	}
-	root.write(data);
+
+	root.write(data);*/
 
 	finishSendMacro;
 }
@@ -1161,7 +1169,8 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 		try
 		{
 			char* command = (char*)content.c_str();
-			Command::parse(p, command);
+			//Command::parse(p, command);
+			send::chatMessage(p, Chat("Commands system currently in rework.", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		catch (const Chat& errormessage)
 		{
@@ -1709,7 +1718,7 @@ void message::dispatch(Player* p, char* data, uint size)
 				itemId.read(data);
 				count = *(data++);
 
-				if(nbt::checkTag(data, nbt::tag::Compound))
+				if (nbt::checkTag(data, nbt::tag::Compound))
 					item_data->read(data);
 			}
 

@@ -3,11 +3,12 @@
 #include "varData.h"
 #include "mcString.h"
 #include "endian.h"
+#include "../player/player.h"
 #include <vector>
 
 namespace Command
 {
-	typedef void (*Handler)(const std::vector<mcString>& argumentStack);
+	typedef void (*Handler)(Player* executingPlayer, const std::vector<mcString>& argumentStack);
 	//typedef void (*SuggestionsHandler)(const mcString&);
 
 	namespace Parser
@@ -472,20 +473,20 @@ namespace Command
 	{
 	public:
 
-		varInt childrenCount;
-		varInt* children;
+		std::vector<varInt> children;
 
-		SERVER_API Node(varInt childrenCount, varInt* children);
+		SERVER_API Node(std::vector<varInt> children);
+		SERVER_API void addChild(varInt);
 		SERVER_API virtual ~Node();
-		SERVER_API virtual void write(char*&) = 0;
+		SERVER_API virtual void write(char*&) const = 0;
 	};
 	class RootNode : public Node
 	{
 		static const Byte rootType = 0;
 	public:
 
-		SERVER_API RootNode(varInt childrenCount, varInt* children);
-		SERVER_API virtual void write(char*&);
+		SERVER_API RootNode(std::vector<varInt> children);
+		SERVER_API virtual void write(char*&) const;
 	};
 	class LiteralNode : public Node
 	{
@@ -497,9 +498,10 @@ namespace Command
 		Handler handler;
 		mcString name;
 
-		SERVER_API LiteralNode(const mcString& name, varInt childrenCount, varInt* children, Handler handler = nullptr);
-		SERVER_API LiteralNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Handler handler = nullptr);
-		SERVER_API virtual void write(char*&);
+		SERVER_API LiteralNode(const mcString& name, std::vector<varInt> children, Handler handler = nullptr);
+		SERVER_API LiteralNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Handler handler = nullptr);
+		SERVER_API virtual ~LiteralNode();
+		SERVER_API virtual void write(char*&) const;
 		//virtual bool match(const mcString&);
 	};
 	class ArgumentNode : public LiteralNode
@@ -510,190 +512,27 @@ namespace Command
 		Parser::Parser* parser;
 		Suggestions::Suggestions* suggestions;
 
-		//handler
-		//suggestions
-		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Suggestions::Suggestions* suggestions);
-		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr);
-		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions);
-		SERVER_API ArgumentNode(const mcString& name, varInt childrenCount, varInt* children, varInt redirectNode, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr);
-		SERVER_API virtual void write(char*&);
+		SERVER_API ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Suggestions::Suggestions* suggestions);
+		SERVER_API ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr);
+		SERVER_API ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions);
+		SERVER_API ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr);
+		SERVER_API ~ArgumentNode();
+		SERVER_API virtual void write(char*&) const;
 		//virtual bool match(const mcString&);
 	};
+
+	class Commands
+	{
+	public:
+		static std::vector<Node*> commands;
+		static RootNode root;
+
+		static Commands atuomatic;
+		~Commands();
+
+		//write the commands to a buffer for sending over the network
+		void write(char*&);
+		//does NOT include the root node
+		ull size();
+	};
 }
-
-class Node
-{
-public:
-	//Byte flags
-	enum NodeType : Byte
-	{
-		root,
-		literal,
-		argument
-	} type;
-	bool isExecutable;
-	bool hasRedirect;
-	bool hasSuggestionsType;
-	SERVER_API Byte flags();
-
-	//children array
-	varInt childrenCount;
-	varInt* children;
-
-	//redirect node
-	varInt redirectNode;
-
-	//name
-	mcString* name; // only for argument and literal nodes
-
-	//parser
-	mcString* parser; //only for argument nodes
-
-	//properties
-	union Properties
-	{
-		class DoubleProperties
-		{
-		public:
-			enum Flags : Byte
-			{
-				none = 0x00,
-				hasMin = 0x01,
-				hasMax = 0x02
-			} flags;
-			bdouble min; // if flags & 0x01
-			bdouble max; // if flags & 0x02
-		} doubleProperties;
-		class FloatProperties
-		{
-		public:
-			enum Flags : Byte
-			{
-				none = 0x00,
-				hasMin = 0x01,
-				hasMax = 0x02
-			} flags;
-			bfloat min;
-			bfloat max;
-		} floatProperties;
-		class IntegerProperties
-		{
-		public:
-			enum Flags : Byte
-			{
-				none = 0x00,
-				hasMin = 0x01,
-				hasMax = 0x02
-			} flags;
-			bint min;
-			bint max;
-		} integerProperties;
-		class LongProperties
-		{
-		public:
-			enum Flags : Byte
-			{
-				none = 0x00,
-				hasMin = 0x01,
-				hasMax = 0x02
-			} flags;
-			blong min;
-			blong max;
-		} longProperties;
-		class StringProperties
-		{
-		public:
-			enum Flags : Byte
-			{
-				SINGLE_WORD,
-				QUOTABLE_PHRASE,
-				GREEDY_PHRASE
-			};
-			varInt flag;
-
-			StringProperties(Flags flag);
-		} stringProperties;
-		class EntityProperties
-		{
-		public:
-			//0x01 - single entity/player
-			//0x02 - players
-			enum Flags : Byte
-			{
-				none = 0x00,
-				singleTarget = 0x01,
-				playerTarget = 0x02
-			} flags;
-		} entityProperties;
-		class ScoreHolderProperties
-		{
-		public:
-			//0x01 - allows multiple
-			enum Flags : Byte
-			{
-				none = 0x00,
-				allowsMultiple = 0x01
-			} flags;
-		} scoreHolderProperties;
-		class RangeProperties
-		{
-		public:
-			bool decimals;
-		} rangeProperties;
-
-		Properties(const DoubleProperties&);
-		Properties(const FloatProperties&);
-		Properties(const IntegerProperties&);
-		Properties(const LongProperties&);
-		Properties(const StringProperties&);
-		Properties(const EntityProperties&);
-		Properties(const ScoreHolderProperties&);
-		Properties(const RangeProperties&);
-		Properties();
-	} properties;
-
-	//suggestions type
-	mcString* suggestionsType; //only if hasSuggestionsType is true
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::DoubleProperties& doubleProperties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::FloatProperties& floatProperties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::IntegerProperties& integerProperties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::LongProperties& longProperties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::StringProperties& stringProperties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::EntityProperties& Properties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::ScoreHolderProperties& scoreHolderProperties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, const Properties::RangeProperties& rangeProperties, mcString* suggestionsType);
-
-	SERVER_API Node(NodeType type, bool isExecutable, bool hasRedirect, bool hasSuggestionsType,
-		varInt childrenCount, varInt* children,
-		varInt redirectNode, mcString* name, mcString* parser, mcString* suggestionsType);
-
-	SERVER_API ~Node();
-
-	SERVER_API static varInt defaultCommandsCount;
-	SERVER_API static Node defaultCommands[];
-	SERVER_API static varInt defaultCommandsRootIndex;
-};
