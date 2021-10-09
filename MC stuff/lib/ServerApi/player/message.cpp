@@ -803,9 +803,9 @@ void message::play::send::tags(Player* p, varInt tagCategoryCount, TagGroup* tag
 }
 void message::play::send::declareCommands(Player* p)
 {
-	declareCommands(p, Command::Commands::commands, Command::Commands::root);
+	declareCommands(p, Commands::Commands::commands, Commands::Commands::root);
 }
-void message::play::send::declareCommands(Player* p, const std::vector<Command::Node*>& commandGraphNodes, const Command::RootNode& rootNode)
+void message::play::send::declareCommands(Player* p, const std::vector<Commands::Node*>& commandGraphNodes, const Commands::RootNode& rootNode)
 {
 	varInt id = (int)id::declareCommands;
 	prepareSendMacro(1024 * 1024);
@@ -814,7 +814,7 @@ void message::play::send::declareCommands(Player* p, const std::vector<Command::
 	id.write(data);
 
 	varInt(graphSize + 1).write(data);
-	for (const Command::Node* node : commandGraphNodes) node->write(data);
+	for (const Commands::Node* node : commandGraphNodes) node->write(data);
 	rootNode.write(data);
 	graphSize.write(data);
 
@@ -1162,15 +1162,25 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 {
 
 }
-void message::play::receive::chatMessage(Player* p, const mcString& content)
+void message::play::receive::chatMessage(Player* p, mcString& content)
 {
 	if (content[0] == '/')
 	{
 		try
 		{
-			char* command = (char*)content.c_str();
-			//Command::parse(p, command);
-			send::chatMessage(p, Chat("Commands system currently in rework.", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			content.erase(0, 1);
+			try
+			{
+				if (!Commands::dispatch(p, content)) throw Chat("Unknown command", Chat::color::red);
+			}
+			catch (const Chat& msg)
+			{
+				send::chatMessage(p, msg, ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			}
+			catch (...)
+			{
+				send::chatMessage(p, Chat("Internal error occured", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			}
 		}
 		catch (const Chat& errormessage)
 		{

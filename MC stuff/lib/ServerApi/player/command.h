@@ -1,7 +1,6 @@
 #pragma once
 #include "player.h"
-
-#define CommandHandlerArguments Player* executingPlayer, const std::vector<mcString>& argumentStack
+#include "../types/node.h"
 
 namespace CommandHandlers
 {
@@ -10,4 +9,16 @@ namespace CommandHandlers
 	void gamemodeSpectator(CommandHandlerArguments);
 	void gamemodeAdventure(CommandHandlerArguments);
 	void worldChange(CommandHandlerArguments);
+	void tellWorld(CommandHandlerArguments);
+}
+
+namespace SuggestionsHandler
+{
+	void world();
+}
+
+namespace Commands
+{
+	bool dispatch(Player* executingPlayer, mcString&, Node*, ArgumentStack&);
+	SERVER_API bool dispatch(Player* executingPlayer, mcString& command);
 }

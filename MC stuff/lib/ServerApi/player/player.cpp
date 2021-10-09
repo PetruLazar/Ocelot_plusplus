@@ -25,7 +25,7 @@ Player::~Player()
 	if (uuid) delete uuid;
 
 	for (int i = 0; i < 45; i++) {
-		if(slots[i])
+		if (slots[i])
 			delete slots[i];
 	}
 }
@@ -327,7 +327,7 @@ void Player::updateNet()
 		case MessageBuffer::chunk:
 		case MessageBuffer::raw:
 		{
-			ull sent;
+			ull sent{};
 			MessageBuffer::Iterator::Value::Raw& val = it.data.raw;
 			switch (socket->send(val.buffer, val.bufferSize, sent))
 			{

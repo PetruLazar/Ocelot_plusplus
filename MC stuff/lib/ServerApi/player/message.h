@@ -472,7 +472,7 @@ struct message
 			SERVER_API static void clearTitles(Player*, bool reset);
 			//SERVER_API static void tabComplete(Player*, varInt id, varInt start, varInt length, varInt count, );
 			SERVER_API static void declareCommands(Player*);
-			SERVER_API static void declareCommands(Player*, const std::vector<Command::Node*>& commandGraphNodes, const Command::RootNode& rootNode);
+			SERVER_API static void declareCommands(Player*, const std::vector<Commands::Node*>& commandGraphNodes, const Commands::RootNode& rootNode);
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			//SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot* slots, const Slot& carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);
@@ -567,7 +567,7 @@ struct message
 			SERVER_API static void teleportConfirm(Player*, varInt id);
 			SERVER_API static void queryBlockNbt(Player*, varInt transactionId, Position location);
 			SERVER_API static void setDifficulty(Player*, Byte difficulty);
-			SERVER_API static void chatMessage(Player*, const mcString& content);
+			SERVER_API static void chatMessage(Player*, mcString& content);
 			SERVER_API static void clientStatus(Player*, varInt actionId);
 			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, varInt chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);

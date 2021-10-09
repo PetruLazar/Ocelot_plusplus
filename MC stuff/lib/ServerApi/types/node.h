@@ -6,9 +6,11 @@
 #include "../player/player.h"
 #include <vector>
 
-namespace Command
+namespace Commands
 {
-	typedef void (*Handler)(Player* executingPlayer, const std::vector<mcString>& argumentStack);
+	typedef std::vector<void*> ArgumentStack;
+	typedef void (*Handler)(Player* executingPlayer, const ArgumentStack& argumentStack);
+#define CommandHandlerArguments Player * executingPlayer, const Commands::ArgumentStack & argumentStack
 	//typedef void (*SuggestionsHandler)(const mcString&);
 
 	namespace Parser
@@ -16,8 +18,10 @@ namespace Command
 		class Parser
 		{
 		public:
-			virtual void write(char*&) = 0;
-			virtual ~Parser();
+			//test calling without SERVER_API
+			SERVER_API virtual void write(char*&) = 0;
+			SERVER_API virtual ~Parser();
+			SERVER_API virtual bool extract(mcString&, ArgumentStack&) = 0;
 		};
 
 		namespace brigadier
@@ -28,6 +32,7 @@ namespace Command
 
 			public:
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual void limit(T val);
 			};
 			template <class T> class PropertiesMin : public Properties<T>
 			{
@@ -39,6 +44,7 @@ namespace Command
 			public:
 				SERVER_API PropertiesMin(T min);
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual void limit(T val);
 			};
 			template <class T> class PropertiesMax : public Properties<T>
 			{
@@ -50,6 +56,7 @@ namespace Command
 			public:
 				SERVER_API PropertiesMax(T max);
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual void limit(T val);
 			};
 			template <class T> class PropertiesMinMax : public PropertiesMin<T>, public PropertiesMax<T>
 			{
@@ -58,6 +65,7 @@ namespace Command
 			public:
 				SERVER_API PropertiesMinMax(T min, T max);
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual void limit(T val);
 			};
 			class PropertiesString
 			{
@@ -76,6 +84,7 @@ namespace Command
 			public:
 
 				SERVER_API void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class Double : public Parser
 			{
@@ -86,6 +95,7 @@ namespace Command
 				SERVER_API Double(Properties<bdouble>* properties);
 				SERVER_API ~Double();
 				SERVER_API void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class Float : public Parser
 			{
@@ -96,6 +106,7 @@ namespace Command
 				SERVER_API Float(Properties<bfloat>* properties);
 				SERVER_API ~Float();
 				SERVER_API void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class Integer : public Parser
 			{
@@ -106,6 +117,7 @@ namespace Command
 				SERVER_API Integer(Properties<bint>* properties);
 				SERVER_API ~Integer();
 				SERVER_API void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class Long : public Parser
 			{
@@ -117,6 +129,7 @@ namespace Command
 				SERVER_API Long(Properties<blong>* properties);
 				SERVER_API ~Long();
 				SERVER_API void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class String : public Parser
 			{
@@ -126,6 +139,7 @@ namespace Command
 			public:
 				SERVER_API String(PropertiesString::Mode mode);
 				SERVER_API void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 		}
 
@@ -141,6 +155,7 @@ namespace Command
 			public:
 				SERVER_API entity(bool singleTargetOnly, bool playersOnly);
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class game_profile : public Parser
 			{
@@ -148,6 +163,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class block_pos : public Parser
 			{
@@ -155,6 +171,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class column_pos : public Parser
 			{
@@ -162,6 +179,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class vec3 : public Parser
 			{
@@ -169,6 +187,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class vec2 : public Parser
 			{
@@ -176,6 +195,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class block_state : public Parser
 			{
@@ -183,6 +203,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class block_predicate : public Parser
 			{
@@ -190,6 +211,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class item_stack : public Parser
 			{
@@ -197,6 +219,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class item_predicate : public Parser
 			{
@@ -204,6 +227,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class color : public Parser
 			{
@@ -211,6 +235,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class component : public Parser
 			{
@@ -218,6 +243,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class message : public Parser
 			{
@@ -225,6 +251,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class nbt : public Parser
 			{
@@ -232,6 +259,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class nbt_path : public Parser
 			{
@@ -239,6 +267,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class objective : public Parser
 			{
@@ -246,6 +275,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class objective_criteria : public Parser
 			{
@@ -253,6 +283,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class operation : public Parser
 			{
@@ -260,6 +291,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class particle : public Parser
 			{
@@ -267,6 +299,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class rotation : public Parser
 			{
@@ -274,6 +307,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class angle : public Parser
 			{
@@ -281,6 +315,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class scoreboard_slot : public Parser
 			{
@@ -288,6 +323,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class score_holder : public Parser
 			{
@@ -297,6 +333,7 @@ namespace Command
 			public:
 				SERVER_API score_holder(bool allowsMultiple);
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class swizzle : public Parser
 			{
@@ -304,6 +341,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class team : public Parser
 			{
@@ -311,6 +349,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class item_slot : public Parser
 			{
@@ -318,6 +357,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class resource_location : public Parser
 			{
@@ -325,6 +365,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class mob_effect : public Parser
 			{
@@ -332,6 +373,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class function : public Parser
 			{
@@ -339,6 +381,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class entity_anchor : public Parser
 			{
@@ -346,6 +389,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class range : public Parser
 			{
@@ -355,6 +399,7 @@ namespace Command
 			public:
 				SERVER_API range(bool allowsDecimals);
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class int_range : public Parser
 			{
@@ -362,6 +407,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class float_range : public Parser
 			{
@@ -369,6 +415,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class item_enchantment : public Parser
 			{
@@ -376,6 +423,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class entity_summon : public Parser
 			{
@@ -383,6 +431,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class dimension : public Parser
 			{
@@ -390,6 +439,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class uuid : public Parser
 			{
@@ -397,6 +447,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class nbt_tag : public Parser
 			{
@@ -404,6 +455,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class nbt_compound_tag : public Parser
 			{
@@ -411,6 +463,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 			class time : public Parser
 			{
@@ -418,6 +471,7 @@ namespace Command
 			public:
 
 				SERVER_API virtual void write(char*&);
+				SERVER_API virtual bool extract(mcString&, ArgumentStack&);
 			};
 		}
 	}
@@ -479,10 +533,13 @@ namespace Command
 		SERVER_API void addChild(varInt);
 		SERVER_API virtual ~Node();
 		SERVER_API virtual void write(char*&) const = 0;
+		SERVER_API virtual bool extract(mcString& command, ArgumentStack& argumentStack) = 0;
+		SERVER_API virtual void execute(Player* executingPlayer, ArgumentStack& argumentStack);
 	};
 	class RootNode : public Node
 	{
 		static const Byte rootType = 0;
+		SERVER_API bool extract(mcString&, ArgumentStack&);
 	public:
 
 		SERVER_API RootNode(std::vector<varInt> children);
@@ -502,7 +559,8 @@ namespace Command
 		SERVER_API LiteralNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Handler handler = nullptr);
 		SERVER_API virtual ~LiteralNode();
 		SERVER_API virtual void write(char*&) const;
-		//virtual bool match(const mcString&);
+		SERVER_API virtual bool extract(mcString& command, ArgumentStack& argumentStack);
+		SERVER_API virtual void execute(Player* executingPlayer, ArgumentStack& argumentStack);
 	};
 	class ArgumentNode : public LiteralNode
 	{
@@ -518,14 +576,14 @@ namespace Command
 		SERVER_API ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Handler handler = nullptr, Suggestions::Suggestions* suggestions = nullptr);
 		SERVER_API ~ArgumentNode();
 		SERVER_API virtual void write(char*&) const;
-		//virtual bool match(const mcString&);
+		SERVER_API virtual bool extract(mcString& command, ArgumentStack& argumentStack);
 	};
 
 	class Commands
 	{
 	public:
-		static std::vector<Node*> commands;
-		static RootNode root;
+		SERVER_API static std::vector<Node*> commands;
+		SERVER_API static RootNode root;
 
 		static Commands atuomatic;
 		~Commands();
