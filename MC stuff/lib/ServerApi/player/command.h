@@ -10,6 +10,8 @@ namespace CommandHandlers
 	void gamemodeAdventure(CommandHandlerArguments);
 	void worldChange(CommandHandlerArguments);
 	void tellWorld(CommandHandlerArguments);
+	void tellPing(CommandHandlerArguments);
+	void test(CommandHandlerArguments);
 }
 
 namespace SuggestionsHandler

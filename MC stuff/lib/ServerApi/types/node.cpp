@@ -746,10 +746,13 @@ namespace Commands
 		new LiteralNode("adventure", { }, CommandHandlers::gamemodeAdventure),
 		new LiteralNode("spectator", { }, CommandHandlers::gamemodeSpectator),
 		new LiteralNode("gamemode", { 0, 1, 2, 3 }),
-		new ArgumentNode("world name", {}, new Parser::brigadier::String(Parser::brigadier::PropertiesString::single_word), CommandHandlers::worldChange, new Suggestions::minecraft::ask_server()),
+		new ArgumentNode("world name", { }, new Parser::brigadier::String(Parser::brigadier::PropertiesString::single_word), CommandHandlers::worldChange, new Suggestions::minecraft::ask_server()),
 		new LiteralNode("world", { 5 }, CommandHandlers::tellWorld),
+		new LiteralNode("ping", { }, CommandHandlers::tellPing),
+		new ArgumentNode("test number", { }, new Parser::brigadier::Integer(new Parser::brigadier::PropertiesMin<bint>(1)), CommandHandlers::test),
+		new LiteralNode("test", { 8 })
 	};
-	RootNode Commands::root = std::vector<varInt>{ 4,6 };
+	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 9 };
 
 	Commands Commands::atuomatic;
 	Commands::~Commands()
