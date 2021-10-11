@@ -1158,6 +1158,10 @@ void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
 	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
 }
+void message::play::receive::clientStatus(Player*, varInt actionId)
+{
+
+}
 void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, Hand mainHand, bool disableTextFiltering)
 {
 	p->locale = locale;
@@ -1167,6 +1171,13 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 	p->displayedSkinParts = displayedSkinParts;
 	p->mainHand = mainHand;
 	p->disableTextFiltering = disableTextFiltering;
+}
+void message::play::receive::interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
+{
+
+	if (type == 2) {
+
+	}
 
 }
 void message::play::receive::chatMessage(Player* p, const mcString& content)
@@ -1187,12 +1198,13 @@ void message::play::receive::chatMessage(Player* p, const mcString& content)
 		{
 			throw;
 		}
-		return;
 	}
-	Chat msg(('<' + p->username + "> " + content).c_str());
+	else {
+		Chat msg(('<' + p->username + "> " + content).c_str());
 
-	for (Player* pl : Player::players)
-		message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+		for (Player* pl : Player::players)
+			message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+	}
 }
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
 {
@@ -1494,7 +1506,11 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::clientStatus:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: client status");
+			varInt actionId;
+			actionId.read(data);
+			play::receive::clientStatus(p, actionId);
+
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: client status");
 		}
 		break;
 		case play::id::clientSettings:
@@ -1552,7 +1568,22 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::interactEntity:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: interact entity");
+			varInt eid, type, mainHand;
+			bfloat targetX, targetY, targetZ;
+			bool sneaking;
+
+			eid.read(data);
+			type.read(data);
+			if (type == 2) {
+				targetX.read(data);
+				targetY.read(data);
+				targetZ.read(data);
+				mainHand.read(data);
+			}
+			sneaking = *(data++);
+
+			message::play::receive::interactEntity(p, eid, type, targetX, targetY, targetZ, (Hand)(int)mainHand, sneaking);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: interact entity");
 		}
 		break;
 		case play::id::generateStructure:

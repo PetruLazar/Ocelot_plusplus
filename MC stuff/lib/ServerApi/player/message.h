@@ -577,7 +577,7 @@ struct message
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, char* data);
 			//SERVER_API static void editBook(Player*, varInt hand, varInt count, mcString* pages,???);
 			SERVER_API static void queryEntityNbt(Player*, varInt transactionId, varInt eid);
-			SERVER_API static void interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, varInt  hand, bool sneaking);
+			SERVER_API static void interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking);
 			SERVER_API static void generateStructure(Player*, Position location, varInt levels, bool keepJigsaw);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
 			SERVER_API static void lockDifficulty(Player*, bool locked);
