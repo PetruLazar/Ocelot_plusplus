@@ -2,8 +2,6 @@
 #include "../nbt.h"
 #include "varData.h"
 
-#include <iostream>
-
 class Slot
 {
 private:
@@ -26,4 +24,8 @@ public:
 	}
 
 	void write(char*& buffer) const;
+
+	bool isPresent() { return present; }
+	varInt getItemId() { return itemId; }
+	Byte getCount() { return count; }
 };

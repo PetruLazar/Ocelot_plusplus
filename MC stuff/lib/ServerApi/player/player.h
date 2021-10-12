@@ -20,6 +20,12 @@ enum class Hand
 	main,
 	offhand
 };
+enum class ChatMode
+{
+	enabled,
+	commands,
+	hidden
+};
 
 class Player
 {
@@ -77,7 +83,7 @@ public:
 	void updateRotation(bfloat yaw, bfloat pitch);
 
 	//player inventory
-	Slot *slots[45];
+	Slot *slots[46];
 	bshort selectedSlot = 0; //main hand selected slot
 
 	//player info
@@ -102,7 +108,14 @@ public:
 
 	gamemode gm;
 
+	//user settings
+	mcString locale = "en_US";
 	int viewDistance;
+	ChatMode chatMode;		//---\/
+	bool chatColors;		//to do: processing chat
+	Byte displayedSkinParts;
+	Hand mainHand;
+	bool disableTextFiltering;
 
 	SERVER_API Player(sf::TcpSocket*);
 	SERVER_API ~Player();

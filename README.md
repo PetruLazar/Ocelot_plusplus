@@ -5,8 +5,6 @@ Minecraft server implemented in c++
 https://wiki.vg/Protocol
 
 # To-do
-class for 'Slot'
-
 class for 'Chat'
 
 classes for world/region/chunk (in progress)
@@ -121,7 +119,6 @@ code related to the following packets (either implement the packet itself or cod
 	play::send::entityMetadata
 	play::send::attachEntity
 	play::send::entityVelocity
-	play::send::entityEquipment
 	play::send::setXp
 	play::send::updateHp
 	play::send::scoreboardObjective
@@ -149,7 +146,6 @@ code related to the following packets (either implement the packet itself or cod
 	play::receive::setDifficulty
 	play::receive::chatMessage
 	play::receive::clientStatus
-	play::receive::clientSettings
 	play::receive::tabComplete
 	play::receive::clickWindowButton
 	play::receive::clickWindow

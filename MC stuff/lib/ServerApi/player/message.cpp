@@ -596,7 +596,7 @@ void message::play::send::spawnPosition(Player* p, Position location, bfloat ang
 
 	finishSendMacro;
 }
-void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equipments)
+void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equipments)
 {
 	varInt id = (int)id::entityEquipment;
 	prepareSendMacro(1024 * 1024);
@@ -604,11 +604,11 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equi
 	id.write(data);
 	eid.write(data);
 
-	equipments[0].write(data);
+	equipments[0]->write(data);
 
 	//				if the top bit is set, another entry follows
-	for (int i = 0; (equipments[i].getSlot() & 0x80) == 1; i++)
-		equipments[i + 1].write(data);
+	for (int i = 0; (equipments[i]->getSlot() & 0x80) == 1; i++)
+		equipments[i + 1]->write(data);
 
 	finishSendMacro;
 }
@@ -886,7 +886,29 @@ void message::play::send::declareCommands(Player* p, const std::vector<Commands:
 
 	finishSendMacro;
 }
+void message::play::send::closeWindow(Player* p, Byte winId) {
+	varInt id = (int)id::closeWindow; //to do: send this packet when "a window is forcibly closed, such as when a chest is destroyed while it's open."
+	prepareSendMacro(1024 * 1024);
 
+	id.write(data);
+	*(data++) = winId;
+
+	finishSendMacro;
+}
+void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried) {
+	varInt id = (int)id::windowItems;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	stateId.write(data);
+	count.write(data);
+	for (int i = 0; i < count; i++)
+		slots[i]->write(data);
+	carried.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, const Slot& slotData)
 {
 	varInt id = (int)id::setSlot;
@@ -933,6 +955,18 @@ void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProp
 		prop.value.write(data);
 		varInt(0).write(data);
 	}
+
+	finishSendMacro;
+}
+void message::play::send::setXp(Player* p, bfloat xpBar, varInt level, varInt totalXp)
+{
+	varInt id = (int)id::updateHp;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = xpBar;
+	level.write(data);
+	totalXp.write(data);
 
 	finishSendMacro;
 }
@@ -1158,8 +1192,29 @@ void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
 	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
 }
-void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, varInt chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
+void message::play::receive::clientStatus(Player*, varInt actionId)
 {
+
+}
+void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, Hand mainHand, bool disableTextFiltering)
+{
+	p->locale = locale;
+	p->viewDistance = (p->viewDistance > (int)viewDistance) ? (int)viewDistance : p->viewDistance;
+	p->chatMode = chatMode;
+	p->chatColors = chatColors;
+	p->displayedSkinParts = displayedSkinParts;
+	p->mainHand = mainHand;
+	p->disableTextFiltering = disableTextFiltering;
+}
+void message::play::receive::closeWindow(Player* p, Byte winId) {
+	message::play::send::closeWindow(p, winId);
+}
+void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
+{
+
+	if (type == 2) {
+
+	}
 
 }
 void message::play::receive::chatMessage(Player* p, mcString& content)
@@ -1190,12 +1245,13 @@ void message::play::receive::chatMessage(Player* p, mcString& content)
 		{
 			throw;
 		}
-		return;
 	}
-	Chat msg(('<' + p->username + "> " + content).c_str());
+	else {
+		Chat msg(('<' + p->username + "> " + content).c_str());
 
-	for (Player* pl : Player::players)
-		message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+		for (Player* pl : Player::players)
+			message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+	}
 }
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
 {
@@ -1235,33 +1291,39 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
 	p->selectedSlot = slot;
 
-	Equipment* eqp = new Equipment(0, p->slots[36 + slot]);
+	Equipment** eqp = new Equipment * [1];
+	eqp[0] = new Equipment(0, p->slots[36 + slot]);
+
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->eid, eqp);
-
-	delete eqp;
+	
+	delete[] eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
-	if (slot != -1) {
+	if (slot == -1) { //throw away from inventory, create entity
+		Log::txt() << "create!" << "\n";
+	}
+	else { //put in inventory
 		p->slots[slot] = clickedItem;
 
 		if (p->selectedSlot == slot - 36) {
-			Equipment* eqp = new Equipment(0, p->slots[slot]);
+			Equipment** eqp = new Equipment * [1];
+			eqp[0] = new Equipment(0, clickedItem);
+
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->eid, eqp);
 
-			delete eqp;
+			delete[] eqp;
 		}
 	}
 }
 void message::play::receive::animation(Player* p, Hand hand)
 {
-	Animation animation = hand == Hand::main ? Animation::swingMainArm : Animation::swingOffhand;
+	Animation animation = (hand == p->mainHand) ? Animation::swingMainArm : Animation::swingOffhand;
+
 	for (Player* seener : p->seenBy)
-	{
 		ignoreExceptions(message::play::send::entityAnimation(seener, p->eid, animation));
-	}
 }
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
@@ -1494,28 +1556,29 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::clientStatus:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: client status");
+			varInt actionId;
+			actionId.read(data);
+			play::receive::clientStatus(p, actionId);
+
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: client status");
 		}
 		break;
 		case play::id::clientSettings:
 		{
-			{
-				mcString locale;
-				Byte viewDistance, displayedSkinParts;
-				varInt chatMode, mainHand;
-				bool chatColors, disableTextFiltering;
+			mcString locale;
+			Byte viewDistance, displayedSkinParts;
+			varInt chatMode, mainHand;
+			bool chatColors, disableTextFiltering;
 
-				locale.read(data);
-				viewDistance = *(data++);
-				chatMode.read(data);
-				chatColors = *(data++);
-				displayedSkinParts = *(data++);
-				mainHand.read(data);
-				disableTextFiltering = *(data++);
+			locale.read(data);
+			viewDistance = *(data++);
+			chatMode.read(data);
+			chatColors = *(data++);
+			displayedSkinParts = *(data++);
+			mainHand.read(data);
+			disableTextFiltering = *(data++);
 
-				play::receive::clientSettings(p, locale, viewDistance, chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
-			}
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: client settings");
+			play::receive::clientSettings(p, locale, viewDistance, (ChatMode)(int)chatMode, chatColors, displayedSkinParts, (Hand)(int)mainHand, disableTextFiltering);
 		}
 		break;
 		case play::id::tabComplete_serverbound:
@@ -1535,7 +1598,12 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::closeWindow_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: close window");
+			Byte windowID;
+			windowID = *(data++);
+
+			play::receive::closeWindow(p, windowID);
+
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: close window");
 		}
 		break;
 		case play::id::pluginMessage_serverbound:
@@ -1555,7 +1623,22 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::interactEntity:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: interact entity");
+			varInt eid, type, mainHand;
+			bfloat targetX, targetY, targetZ;
+			bool sneaking;
+
+			eid.read(data);
+			type.read(data);
+			if (type == 2) {
+				targetX.read(data);
+				targetY.read(data);
+				targetZ.read(data);
+				mainHand.read(data);
+			}
+			sneaking = *(data++);
+
+			message::play::receive::interactEntity(p, eid, type, targetX, targetY, targetZ, (Hand)(int)mainHand, sneaking);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: interact entity");
 		}
 		break;
 		case play::id::generateStructure:
