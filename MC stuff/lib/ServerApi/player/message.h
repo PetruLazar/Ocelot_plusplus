@@ -474,7 +474,7 @@ struct message
 			SERVER_API static void declareCommands(Player*);
 			SERVER_API static void declareCommands(Player*, const std::vector<Commands::Node*>& commandGraphNodes, const Commands::RootNode& rootNode);
 			SERVER_API static void closeWindow(Player*, Byte winId);
-			//SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot* slots, const Slot& carried);
+			SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);
 			SERVER_API static void setSlot(Player*, Byte winId, varInt stateId, bshort slot, const Slot& data);
 			SERVER_API static void setCooldown(Player*, varInt itemId, varInt cooldown);
@@ -534,7 +534,7 @@ struct message
 			//SERVER_API static void entityMetadata(varInt eid, const Metadata& metadata);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
-			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment* equipments);
+			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			//SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
@@ -569,7 +569,7 @@ struct message
 			SERVER_API static void setDifficulty(Player*, Byte difficulty);
 			SERVER_API static void chatMessage(Player*, mcString& content);
 			SERVER_API static void clientStatus(Player*, varInt actionId);
-			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, varInt chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
+			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, Hand mainHand, bool disableTextFiltering);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);
 			SERVER_API static void clickWindowButton(Player*, Byte winId, Byte buttonId);
 			//SERVER_API static void clickWindow(Player*, Byte winId, bshort slot, varInt stateId, Byte button, varInt mode, varInt length, );
@@ -577,7 +577,7 @@ struct message
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, char* data);
 			//SERVER_API static void editBook(Player*, varInt hand, varInt count, mcString* pages,???);
 			SERVER_API static void queryEntityNbt(Player*, varInt transactionId, varInt eid);
-			SERVER_API static void interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, varInt  hand, bool sneaking);
+			SERVER_API static void interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking);
 			SERVER_API static void generateStructure(Player*, Position location, varInt levels, bool keepJigsaw);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
 			SERVER_API static void lockDifficulty(Player*, bool locked);

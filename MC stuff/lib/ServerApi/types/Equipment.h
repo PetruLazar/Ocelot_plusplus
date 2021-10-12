@@ -9,12 +9,11 @@ private:
 	Slot* item;
 
 public:
-	Equipment(Byte slot, Slot*& item) : slot(slot), item(item) {
+	Equipment(Byte slot, Slot* item) : slot(slot), item(item) {
 
 	}
 
 	void write(char*& buffer) const;
 
 	Byte getSlot() { return slot; }
-	Slot* getItem() { return item; }
 };

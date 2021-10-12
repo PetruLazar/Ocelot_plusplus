@@ -1,7 +1,6 @@
 #include "player.h"
 #include "message.h"
 #include "../types/error.h"
-#include <iostream>
 #include "../types/enums.h"
 #include "../server/log.h"
 
@@ -17,6 +16,10 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 
 	//player initializations
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
+
+	for (int i = 0; i < 46; i++) {
+		slots[i] = new Slot();
+	}
 }
 Player::~Player()
 {
@@ -24,10 +27,8 @@ Player::~Player()
 	if (buffer) delete buffer;
 	if (uuid) delete uuid;
 
-	for (int i = 0; i < 45; i++) {
-		if (slots[i])
-			delete slots[i];
-	}
+	for (int i = 0; i < 46; i++)
+		delete slots[i];
 }
 
 void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
@@ -314,7 +315,7 @@ void Player::updateNet()
 	else if ((lastKeepAliveId != -1 || state != ConnectionState::play) && cycleTime > keepAliveTimeoutPoint)
 	{
 		disconnect();
-		std::cout << '\n' << username << " was timed out.";
+		Log::txt() << '\n' << username << " was timed out.";
 		return;
 	}
 
