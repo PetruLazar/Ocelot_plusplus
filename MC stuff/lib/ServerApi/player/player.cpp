@@ -17,7 +17,7 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 	//player initializations
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
 
-	for (int i = 0; i < 45; i++) {
+	for (int i = 0; i < 46; i++) {
 		slots[i] = new Slot();
 	}
 }
@@ -27,7 +27,7 @@ Player::~Player()
 	if (buffer) delete buffer;
 	if (uuid) delete uuid;
 
-	for (int i = 0; i < 45; i++)
+	for (int i = 0; i < 46; i++)
 		delete slots[i];
 }
 

@@ -886,7 +886,29 @@ void message::play::send::declareCommands(Player* p, const std::vector<Command::
 
 	finishSendMacro;
 }
+void message::play::send::closeWindow(Player* p, Byte winId) {
+	varInt id = (int)id::closeWindow; //to do: send this packet when "a window is forcibly closed, such as when a chest is destroyed while it's open."
+	prepareSendMacro(1024 * 1024);
 
+	id.write(data);
+	*(data++) = winId;
+
+	finishSendMacro;
+}
+void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried) {
+	varInt id = (int)id::windowItems;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	stateId.write(data);
+	count.write(data);
+	for (int i = 0; i < count; i++)
+		slots[i]->write(data);
+	carried.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, const Slot& slotData)
 {
 	varInt id = (int)id::setSlot;
@@ -933,6 +955,18 @@ void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProp
 		prop.value.write(data);
 		varInt(0).write(data);
 	}
+
+	finishSendMacro;
+}
+void message::play::send::setXp(Player* p, bfloat xpBar, varInt level, varInt totalXp)
+{
+	varInt id = (int)id::updateHp;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = xpBar;
+	level.write(data);
+	totalXp.write(data);
 
 	finishSendMacro;
 }
@@ -1172,7 +1206,10 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 	p->mainHand = mainHand;
 	p->disableTextFiltering = disableTextFiltering;
 }
-void message::play::receive::interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
+void message::play::receive::closeWindow(Player* p, Byte winId) {
+	message::play::send::closeWindow(p, winId);
+}
+void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
 {
 
 	if (type == 2) {
@@ -1254,7 +1291,10 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
-	if (slot != -1) {
+	if (slot == -1) { //throw away from inventory, create entity
+		Log::txt() << "create!" << "\n";
+	}
+	else { //put in inventory
 		p->slots[slot] = clickedItem;
 
 		if (p->selectedSlot == slot - 36) {
@@ -1548,7 +1588,12 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::closeWindow_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: close window");
+			Byte windowID;
+			windowID = *(data++);
+
+			play::receive::closeWindow(p, windowID);
+
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: close window");
 		}
 		break;
 		case play::id::pluginMessage_serverbound:

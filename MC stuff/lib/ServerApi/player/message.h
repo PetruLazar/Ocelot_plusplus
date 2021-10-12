@@ -474,7 +474,7 @@ struct message
 			SERVER_API static void declareCommands(Player*);
 			SERVER_API static void declareCommands(Player*, const std::vector<Command::Node*>& commandGraphNodes, const Command::RootNode& rootNode);
 			SERVER_API static void closeWindow(Player*, Byte winId);
-			//SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot* slots, const Slot& carried);
+			SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);
 			SERVER_API static void setSlot(Player*, Byte winId, varInt stateId, bshort slot, const Slot& data);
 			SERVER_API static void setCooldown(Player*, varInt itemId, varInt cooldown);

@@ -26,4 +26,6 @@ public:
 	void write(char*& buffer) const;
 
 	bool isPresent() { return present; }
+	varInt getItemId() { return itemId; }
+	Byte getCount() { return count; }
 };
