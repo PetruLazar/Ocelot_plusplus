@@ -32,7 +32,11 @@ namespace CommandHandlers
 	void worldChange(CommandHandlerArguments)
 	{
 		mcString& arg0 = *(mcString*)argumentStack[0];
-		if (executingPlayer->world->name == arg0) message::play::send::chatMessage(executingPlayer, Chat("You already are in that world", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		if (executingPlayer->world->name == arg0)
+		{
+			message::play::send::chatMessage(executingPlayer, Chat("You already are in that world", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			return;
+		}
 		for (World* wld : World::worlds)
 		{
 			if (arg0 == wld->name)
