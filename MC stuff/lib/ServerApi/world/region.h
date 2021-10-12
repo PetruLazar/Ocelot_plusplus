@@ -18,7 +18,6 @@ public:
 	SERVER_API void unload(World*);
 	SERVER_API void unload(World*, int relX, int relZ);
 	SERVER_API void set(int relX, int relZ, Chunk*);
-	SERVER_API Chunk* get(World* world, int relX, int relZ,bool increaseLoadCount = false);
+	SERVER_API Chunk* get(World* world, int relX, int relZ, bool increaseLoadCount = false);
 	SERVER_API bool hasChunksLoaded();
 };
-
