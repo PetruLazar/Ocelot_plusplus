@@ -65,12 +65,13 @@ namespace CommandHandlers
 				y = fastfloor((double)executingPlayer->Y) - 1 - executingPlayer->world->min_y,
 				z = fastfloor((double)executingPlayer->Z),
 				cx = x >> 4,
-				cy = y >> 4,
 				cz = z >> 4;
-			x &= 0xf; y &= 0xf; z &= 0xf;
+			x &= 0xf; z &= 0xf;
 			//message::play::send::chatMessage(executingPlayer, Chat((std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + " in " + std::to_string(cx) + ' ' + std::to_string(cy) + ' ' + std::to_string(cz)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 			//executingPlayer->world->get(cx, cz)->sections[cy].getPaletteEntry(x, y, z).set(rand() % 10000);
-			executingPlayer->world->get(cx, cz)->sections[cy].setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
+			Chunk* chunk = executingPlayer->world->get(cx, cz);
+			//for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++) section.setBlock(i, y, j, Registry::getBlockState(rand() % 10000));
+			chunk->setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;

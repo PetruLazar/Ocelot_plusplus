@@ -61,7 +61,7 @@ void Chunk::write(char*& buffer)
 
 BlockState& Chunk::getPaletteEntry(int relX, int relY, int relZ)
 {
-	return sections[relY >> 4].getPaletteEntry(relX, relY & 0xff, relZ);
+	return sections[relY >> 4].getPaletteEntry(relX, relY & 0xf, relZ);
 }
 BlockState& Chunk::getPaletteEntry(int sectionY, int paletteIndex)
 {
@@ -69,11 +69,20 @@ BlockState& Chunk::getPaletteEntry(int sectionY, int paletteIndex)
 }
 BlockState Chunk::getBlock(int relX, int relY, int relZ)
 {
-	return sections[relY >> 4].getBlock(relX, relY & 0xff, relZ);
+	return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ);
 }
 void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl)
 {
-	sections[relY >> 4].setBlock(relX, relY & 0xff, relZ, bl);
+	Section& section = sections[relY >> 4];
+	bool hadBlocks = section.blockCount;
+	section.setBlock(relX, relY & 0xf, relZ, bl);
+	if ((bool)section.blockCount != hadBlocks)
+	{
+		//section mask modified
+		sectionMask->setElement(relY >> 4, (bool)section.blockCount);
+	}
+
+
 }
 
 void Chunk::writeSectionData(char*&)
