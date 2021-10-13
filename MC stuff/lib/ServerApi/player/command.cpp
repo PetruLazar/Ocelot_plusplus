@@ -32,7 +32,11 @@ namespace CommandHandlers
 	void worldChange(CommandHandlerArguments)
 	{
 		mcString& arg0 = *(mcString*)argumentStack[0];
-		if (executingPlayer->world->name == arg0) message::play::send::chatMessage(executingPlayer, Chat("You already are in that world", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		if (executingPlayer->world->name == arg0)
+		{
+			message::play::send::chatMessage(executingPlayer, Chat("You already are in that world", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			return;
+		}
 		for (World* wld : World::worlds)
 		{
 			if (arg0 == wld->name)
@@ -55,7 +59,23 @@ namespace CommandHandlers
 	{
 		switch (*(int*)argumentStack[0])
 		{
-			//add tests here
+		case 1:
+		{
+			int x = fastfloor((double)executingPlayer->X),
+				y = fastfloor((double)executingPlayer->Y) - 1 - executingPlayer->world->min_y,
+				z = fastfloor((double)executingPlayer->Z),
+				cx = x >> 4,
+				cz = z >> 4;
+			x &= 0xf; z &= 0xf;
+			//message::play::send::chatMessage(executingPlayer, Chat((std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + " in " + std::to_string(cx) + ' ' + std::to_string(cy) + ' ' + std::to_string(cz)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			//executingPlayer->world->get(cx, cz)->sections[cy].getPaletteEntry(x, y, z).set(rand() % 10000);
+			Chunk* chunk = executingPlayer->world->get(cx, cz);
+			//for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++) section.setBlock(i, y, j, Registry::getBlockState(rand() % 10000));
+			chunk->setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
+			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		}
+		break;
+		//add tests here - starting at 1
 		default:
 			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}

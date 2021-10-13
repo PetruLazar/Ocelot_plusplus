@@ -10,6 +10,12 @@ Section::~Section()
 
 BlockState& Section::getPaletteEntry(int relX, int relY, int relZ)
 {
+	if (useGlobalPallete)
+	{
+		int idToSearch = blockStates->getElement(((ull)relY << 8) | ((ull)relZ << 4) | relX);
+		for (PaletteEntry& entry : palette) if (entry.block.id == idToSearch) return entry.block;
+		throw 0; // id not found
+	}
 	return palette[blockStates->getElement(((ull)relY << 8) | ((ull)relZ << 4) | relX)].block;
 }
 BlockState& Section::getPaletteEntry(int paletteIndex)
@@ -18,6 +24,10 @@ BlockState& Section::getPaletteEntry(int paletteIndex)
 }
 BlockState Section::getBlock(int relX, int relY, int relZ)
 {
+	if (useGlobalPallete)
+	{
+		return Registry::getBlockState(blockStates->getElement(((ull)relY << 8) | ((ull)relZ << 4) | relX));
+	}
 	return palette[blockStates->getElement(((ull)relY << 8) | ((ull)relZ << 4) | relX)].block;
 }
 void Section::decRefCount(PaletteEntry& bl, const ull& paletteIndex)
@@ -26,92 +36,109 @@ void Section::decRefCount(PaletteEntry& bl, const ull& paletteIndex)
 	if (!bl.referenceCount)
 	{
 		//remove the entry from the palette and decrement the values that are bigger than this index in the blockStates bit array
+		palette.erase(palette.begin() + paletteIndex);
+		for (ull i = 0; i < 4096; i++)
+		{
+			ull value = blockStates->getElement(i);
+			if (value > paletteIndex) blockStates->setElement(i, value - 1);
+		}
 
-		//too expensive, need to figure out an optimization
+		//update bits per block
+		updateBitsPerBlock();
+
+		//expensive, need to figure out an optimization
 	}
 }
 void Section::updateBitsPerBlock()
 {
-	//if (bitCount(palette.size()))
+	//palette cannot be empty
+	uint newBitsPerBlock = bitCount(palette.size() - 1);
+	if (newBitsPerBlock >= 4 && newBitsPerBlock != bitsPerBlock)
+	{
+		if (newBitsPerBlock <= 8)
+		{
+			//local palette
+			blockStates->changeBitsPerEntry(newBitsPerBlock);
+			bitsPerBlock = newBitsPerBlock;
+		}
+		else
+		{
+			throw "Na";
+			//move section to global palette
+		}
+	}
+
 }
 void Section::setBlock(int relX, int relY, int relZ, const BlockState& bl)
 {
 	//throw runtimeError("Can't you just wait a few days before you try calling this function...?");
 
+	//modify:
+	// 	   blockStates
+	// 	   palette
+	// 	   blockCount
+	// 
+	// 	   bitsPerBlock
+	// 	   useGlobalPalette
+
+	ull blockStatesIndex = ((ull)relY << 8) | ((ull)relZ << 4) | relX,
+		blockStatesValue = blockStates->getElement(blockStatesIndex);
+
+	//new
 	if (useGlobalPallete)
 	{
-		throw "hmmm... Hmmm!... HMMMM!!!";
-
-		ull blockStatesIndex = ((ull)relY << 8) | ((ull)relZ << 4) | relX,
-			oldBlockState = blockStates->getElement(blockStatesIndex);
-
-		if ((int)oldBlockState == (const int&)bl.id)
-			//the specified coordinates already contain that block
-			return;
-
-
-		//decrease refCount of old block
-		//if (i > oldPaletteEntryIndex) i--;
-		//decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
-
-		//increase refCount on new block and update blockStates
-		//entry.referenceCount++;
-		//blockStates->setElement(blockStatesIndex, i);
-
-		//update blockCount
-		//if (oldPaletteEntry.block.id == 0) blockCount++;
-		//else if ((int&)bl.id == 0) blockCount--;
-		return;
-
-		//block not already present
-		//decrease the old blocks refCount
-		//decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
-
-		//put the new block in the palette and update blockStates
-		palette.push_back(PaletteEntry(bl, 1));
-		blockStates->setElement(blockStatesIndex, palette.size() - 1);
-		updateBitsPerBlock();
+		throw 0;
 	}
 	else
 	{
-		ull blockStatesIndex = ((ull)relY << 8) | ((ull)relZ << 4) | relX,
-			oldPaletteEntryIndex = blockStates->getElement(blockStatesIndex);
-		PaletteEntry& oldPaletteEntry = palette[oldPaletteEntryIndex];
+		PaletteEntry& oldPaletteEntry = palette[blockStatesValue];
 
 		if ((int&)oldPaletteEntry.block.id == (const int&)bl.id)
-			//the specified coordinates already contain that block
+			//the specified coordinates already contain the specified block
 			return;
 
 		//check if the block is already in the palette
 		ull i = 0;
 		for (PaletteEntry& entry : palette)
 		{
-			if ((int&)entry.block.id == (int&)bl.id)//block is already present
+			if ((int&)entry.block.id == (const int&)bl.id)
 			{
-				//decrease refCount of old block
-				//if (i > oldPaletteEntryIndex) i--;
-				decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
-
-				//increase refCount on new block and update blockStates
-				entry.referenceCount++;
+				//block found in the palette
+				if ((int&)oldPaletteEntry.block.id == 0) blockCount++;
+				else if ((int&)bl.id == 0) blockCount--;
 				blockStates->setElement(blockStatesIndex, i);
 
-				//update blockCount
-				if (oldPaletteEntry.block.id == 0) blockCount++;
-				else if ((int&)bl.id == 0) blockCount--;
+				//take care of the new block
+				entry.referenceCount++;
+
+				//take care of the previous block
+				//update old refCount and bitsPerBlock if necessary
+				decRefCount(oldPaletteEntry, i);
+
 				return;
 			}
 			i++;
 		}
 
-		//block not already present
-		//decrease the old blocks refCount
-		decRefCount(oldPaletteEntry, oldPaletteEntryIndex);
+		//block not present in palette
+		if ((int&)oldPaletteEntry.block.id == 0) blockCount++;
+		else if ((int&)bl.id == 0) blockCount--;
 
-		//put the new block in the palette and update blockStates
-		palette.push_back(PaletteEntry(bl, 1));
-		blockStates->setElement(blockStatesIndex, palette.size() - 1);
-		updateBitsPerBlock();
+		//test the refCount for the old block
+		if (oldPaletteEntry.referenceCount == 1)
+		{
+			//put the new block in the old entry
+			oldPaletteEntry.block.set((int&)bl.id);
+		}
+		else
+		{
+			//create a different palette entry for the new block
+			oldPaletteEntry.referenceCount--;
+			palette.emplace_back(bl, 1);
+			ull paletteSize = palette.size() - 1;
+			blockStates->setElement(blockStatesIndex, paletteSize);
+			updateBitsPerBlock();
+		}
 	}
 }
 

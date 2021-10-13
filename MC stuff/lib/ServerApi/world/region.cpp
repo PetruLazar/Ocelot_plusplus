@@ -5,6 +5,11 @@
 #include <iostream>
 #include "../types/basic.h"
 
+class chunkNotLoaded : public std::exception
+{
+	using std::exception::exception;
+};
+
 Region::Region(int rX, int rZ) : rX(rX), rZ(rZ) { }
 Region::~Region()
 {
@@ -73,3 +78,28 @@ Chunk* Region::get(World* parent, int relX, int relZ, bool increaseLoadCount)
 }
 
 bool Region::hasChunksLoaded() { return loadedChunks; }
+
+BlockState& Region::getPaletteEntry(int relX, int relY, int relZ)
+{
+	Chunk* chunk = chunks[relX >> 5][relZ >> 5];
+	if (!chunk) throw chunkNotLoaded();
+	return chunk->getPaletteEntry(relX & 0x1f, relY, relZ & 0x1f);
+}
+BlockState& Region::getPaletteEntry(int chunkX, int sectionY, int chunkZ, int paletteIndex)
+{
+	Chunk* chunk = chunks[chunkX][chunkZ];
+	if (!chunk) throw chunkNotLoaded();
+	chunk->getPaletteEntry(sectionY, paletteIndex);
+}
+BlockState Region::getBlock(int relX, int relY, int relZ)
+{
+	Chunk* chunk = chunks[relX >> 5][relZ >> 5];
+	if (!chunk) throw chunkNotLoaded();
+	return chunk->getBlock(relX & 0x1f, relY, relZ & 0x1f);
+}
+void Region::setBlock(int relX, int relY, int relZ, const BlockState& bl)
+{
+	Chunk* chunk = chunks[relX >> 5][relZ >> 5];
+	if (!chunk) throw chunkNotLoaded();
+	chunk->setBlock(relX & 0x1f, relY, relZ & 0x1f, bl);
+}
