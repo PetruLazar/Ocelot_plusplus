@@ -20,6 +20,7 @@
 #include "types/position.h"
 #include "types/queue.h"
 #include "types/slot.h"
+#include "types/particle.h"
 #include "types/typedefs.h"
 #include "types/utils.h"
 #include "types/uuid.h"

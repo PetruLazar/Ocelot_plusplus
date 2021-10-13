@@ -13,6 +13,7 @@
 #include <debug.cpp>
 #include <filesystem>
 #include "types/registry.h"
+#include "player/command.h"
 
 namespace fs = std::filesystem;
 using namespace std;
@@ -45,6 +46,7 @@ public:
 	}
 } test2;
 */
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
 {
 	Log::initialize();

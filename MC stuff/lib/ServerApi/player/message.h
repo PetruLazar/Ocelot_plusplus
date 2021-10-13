@@ -472,7 +472,7 @@ struct message
 			SERVER_API static void clearTitles(Player*, bool reset);
 			//SERVER_API static void tabComplete(Player*, varInt id, varInt start, varInt length, varInt count, );
 			SERVER_API static void declareCommands(Player*);
-			SERVER_API static void declareCommands(Player*, const std::vector<Command::Node*>& commandGraphNodes, const Command::RootNode& rootNode);
+			SERVER_API static void declareCommands(Player*, const std::vector<Commands::Node*>& commandGraphNodes, const Commands::RootNode& rootNode);
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);
@@ -490,7 +490,7 @@ struct message
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
 			SERVER_API static void chunkData(Player*, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes, varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities);
 			SERVER_API static void effect(Player*, bint effectId, Position location, bint data, bool disableRelativeVolume);
-			//SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble X, bdouble Y, bdouble Z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat data, bint count, ???);
+			SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, Particle* particle);
 			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
 			SERVER_API static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
 			//SERVER_API static void mapData(Player*, varInt mapId, Byte scale, bool locked, bool trackingPosition, varInt iconCount, Icon* icons, Byte optColumns, Byte optRows, Byte optX, Byte optZ, varInt optLength, Byte* data);
@@ -567,7 +567,7 @@ struct message
 			SERVER_API static void teleportConfirm(Player*, varInt id);
 			SERVER_API static void queryBlockNbt(Player*, varInt transactionId, Position location);
 			SERVER_API static void setDifficulty(Player*, Byte difficulty);
-			SERVER_API static void chatMessage(Player*, const mcString& content);
+			SERVER_API static void chatMessage(Player*, mcString& content);
 			SERVER_API static void clientStatus(Player*, varInt actionId);
 			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, Hand mainHand, bool disableTextFiltering);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);

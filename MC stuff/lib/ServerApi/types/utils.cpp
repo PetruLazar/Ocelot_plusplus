@@ -18,6 +18,7 @@ std::string to_hexstring(int value)
 
 uint bitCount(ull n)
 {
+	if (!n) return 1;
 	uint count = 0;
 	do
 	{

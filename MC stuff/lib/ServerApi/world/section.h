@@ -11,6 +11,8 @@ class Section
 	void decRefCount(PaletteEntry& bl, const ull& paletteIndex);
 	void updateBitsPerBlock();
 
+	//Byte internalBitsPerBlock;
+
 public:
 	SERVER_API Section();
 	//SERVER_API Section();

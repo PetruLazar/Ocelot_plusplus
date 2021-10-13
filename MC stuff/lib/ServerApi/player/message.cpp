@@ -497,6 +497,27 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 
 	finishSendMacro;
 }
+void message::play::send::particle(Player* p, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, Particle* particle = nullptr) {
+	varInt id = (int)id::particle;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	particleId.write(data);
+	*(data++) = longDistance;
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	offsetX.write(data);
+	offsetY.write(data);
+	offsetZ.write(data);
+	particleData.write(data);
+	count.write(data);
+
+	if (particle)
+		particle->write(data);
+
+	finishSendMacro;
+}
 void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, Byte flags, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
@@ -748,6 +769,15 @@ void message::play::send::chatMessage(Player* p, const Chat& msg, Byte position,
 
 	finishSendMacro;
 }
+void message::play::send::clearTitles(Player* p, bool reset) {
+	varInt id = (int)id::clearTitles;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = reset;
+
+	finishSendMacro;
+}
 void message::play::send::changeGameState(Player* p, Byte reason, bfloat value)
 {
 	varInt id = (int)id::changeGameState;
@@ -803,9 +833,9 @@ void message::play::send::tags(Player* p, varInt tagCategoryCount, TagGroup* tag
 }
 void message::play::send::declareCommands(Player* p)
 {
-	declareCommands(p, Command::Commands::commands, Command::Commands::root);
+	declareCommands(p, Commands::Commands::commands, Commands::Commands::root);
 }
-void message::play::send::declareCommands(Player* p, const std::vector<Command::Node*>& commandGraphNodes, const Command::RootNode& rootNode)
+void message::play::send::declareCommands(Player* p, const std::vector<Commands::Node*>& commandGraphNodes, const Commands::RootNode& rootNode)
 {
 	varInt id = (int)id::declareCommands;
 	prepareSendMacro(1024 * 1024);
@@ -814,7 +844,7 @@ void message::play::send::declareCommands(Player* p, const std::vector<Command::
 	id.write(data);
 
 	varInt(graphSize + 1).write(data);
-	for (const Command::Node* node : commandGraphNodes) node->write(data);
+	for (const Commands::Node* node : commandGraphNodes) node->write(data);
 	rootNode.write(data);
 	graphSize.write(data);
 
@@ -909,6 +939,17 @@ void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, var
 
 	finishSendMacro;
 }
+void message::play::send::windowProperty(Player* p, Byte winId, bshort property, bshort value) {
+	varInt id = (int)id::windowProperty;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	property.write(data);
+	value.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, const Slot& slotData)
 {
 	varInt id = (int)id::setSlot;
@@ -922,7 +963,16 @@ void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort 
 
 	finishSendMacro;
 }
+void message::play::send::setCooldown(Player* p, varInt itemId, varInt cooldown) {
+	varInt id = (int)id::setCooldown;
+	prepareSendMacro(1024 * 1024);
 
+	id.write(data);
+	itemId.write(data);
+	cooldown.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::respawn(Player* p, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata)
 {
 	varInt id = (int)id::respawn;
@@ -964,7 +1014,7 @@ void message::play::send::setXp(Player* p, bfloat xpBar, varInt level, varInt to
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
-	*(data++) = xpBar;
+	xpBar.write(data);
 	level.write(data);
 	totalXp.write(data);
 
@@ -1217,15 +1267,25 @@ void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, 
 	}
 
 }
-void message::play::receive::chatMessage(Player* p, const mcString& content)
+void message::play::receive::chatMessage(Player* p, mcString& content)
 {
 	if (content[0] == '/')
 	{
 		try
 		{
-			char* command = (char*)content.c_str();
-			//Command::parse(p, command);
-			send::chatMessage(p, Chat("Commands system currently in rework.", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			content.erase(0, 1);
+			try
+			{
+				if (!Commands::dispatch(p, content)) throw Chat("Unknown command", Chat::color::red);
+			}
+			catch (const Chat& msg)
+			{
+				send::chatMessage(p, msg, ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			}
+			catch (...)
+			{
+				send::chatMessage(p, Chat("Internal error occured", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			}
 		}
 		catch (const Chat& errormessage)
 		{
