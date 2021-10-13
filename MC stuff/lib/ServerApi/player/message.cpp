@@ -497,6 +497,27 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 
 	finishSendMacro;
 }
+void message::play::send::particle(Player* p, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, Particle* particle = nullptr) {
+	varInt id = (int)id::particle;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	particleId.write(data);
+	*(data++) = longDistance;
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	offsetX.write(data);
+	offsetY.write(data);
+	offsetZ.write(data);
+	particleData.write(data);
+	count.write(data);
+
+	if (particle)
+		particle->write(data);
+
+	finishSendMacro;
+}
 void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, Byte flags, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
@@ -748,6 +769,15 @@ void message::play::send::chatMessage(Player* p, const Chat& msg, Byte position,
 
 	finishSendMacro;
 }
+void message::play::send::clearTitles(Player* p, bool reset) {
+	varInt id = (int)id::clearTitles;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = reset;
+
+	finishSendMacro;
+}
 void message::play::send::changeGameState(Player* p, Byte reason, bfloat value)
 {
 	varInt id = (int)id::changeGameState;
@@ -909,6 +939,17 @@ void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, var
 
 	finishSendMacro;
 }
+void message::play::send::windowProperty(Player* p, Byte winId, bshort property, bshort value) {
+	varInt id = (int)id::windowProperty;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	property.write(data);
+	value.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, const Slot& slotData)
 {
 	varInt id = (int)id::setSlot;
@@ -922,7 +963,16 @@ void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort 
 
 	finishSendMacro;
 }
+void message::play::send::setCooldown(Player* p, varInt itemId, varInt cooldown) {
+	varInt id = (int)id::setCooldown;
+	prepareSendMacro(1024 * 1024);
 
+	id.write(data);
+	itemId.write(data);
+	cooldown.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::respawn(Player* p, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata)
 {
 	varInt id = (int)id::respawn;
@@ -964,7 +1014,7 @@ void message::play::send::setXp(Player* p, bfloat xpBar, varInt level, varInt to
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
-	*(data++) = xpBar;
+	xpBar.write(data);
 	level.write(data);
 	totalXp.write(data);
 

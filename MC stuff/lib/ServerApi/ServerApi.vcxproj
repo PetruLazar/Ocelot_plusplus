@@ -216,6 +216,7 @@
     <ClInclude Include="types\item.h" />
     <ClInclude Include="types\mcString.h" />
     <ClInclude Include="types\node.h" />
+    <ClInclude Include="types\particle.h" />
     <ClInclude Include="types\position.h" />
     <ClInclude Include="types\queue.h" />
     <ClInclude Include="types\registry.h" />
@@ -274,6 +275,7 @@
     <ClCompile Include="types\gametags.cpp" />
     <ClCompile Include="types\mcString.cpp" />
     <ClCompile Include="types\node.cpp" />
+    <ClCompile Include="types\particle.cpp" />
     <ClCompile Include="types\position.cpp" />
     <ClCompile Include="types\queue.cpp" />
     <ClCompile Include="types\registry.cpp" />
