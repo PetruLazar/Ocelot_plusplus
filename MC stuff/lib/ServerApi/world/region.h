@@ -20,4 +20,8 @@ public:
 	SERVER_API void set(int relX, int relZ, Chunk*);
 	SERVER_API Chunk* get(World* world, int relX, int relZ, bool increaseLoadCount = false);
 	SERVER_API bool hasChunksLoaded();
-};
+
+	SERVER_API BlockState& getPaletteEntry(int relX, int relY, int relZ);
+	SERVER_API BlockState& getPaletteEntry(int chunkX, int sectionY, int chunkZ, int paletteIndex);
+	SERVER_API BlockState getBlock(int relX, int relY, int relZ);
+	SERVER_API void setBlock(int relX, int relY, int relZ, const BlockState&);
