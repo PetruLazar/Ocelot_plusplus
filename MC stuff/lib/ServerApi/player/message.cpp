@@ -964,7 +964,7 @@ void message::play::send::setXp(Player* p, bfloat xpBar, varInt level, varInt to
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
-	*(data++) = xpBar;
+	xpBar.write(data);
 	level.write(data);
 	totalXp.write(data);
 
