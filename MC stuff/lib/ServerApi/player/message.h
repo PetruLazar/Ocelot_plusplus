@@ -552,7 +552,7 @@ struct message
 			SERVER_API static void nbtQueryResponse(Player*, varInt transactionId, const nbt& tag);
 			SERVER_API static void collectItem(Player*, varInt collectedEid, varInt collectorEid, varInt pickupCount);
 			SERVER_API static void entityTeleport(Player*, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround);
-			//SERVER_API static void advancements(Player*, bool reset,)
+			SERVER_API static void advancements(Player*, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement* advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress* advancementProgresses);
 			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, EntityProperty* properties);
 			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
 			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes);

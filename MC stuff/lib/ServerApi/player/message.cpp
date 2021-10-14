@@ -574,6 +574,30 @@ void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdoub
 
 	finishSendMacro;
 }
+void message::play::send::advancements(Player* p, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement* advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress* advancementProgresses)
+{ //untested!!!
+	varInt id = (int)id::advancements;
+	prepareSendMacro(1024 * 1024);
+
+	*(data++) = reset;
+	mappingSize.write(data);
+	for (int i = 0; i < (int)(&mappingSize); i++) {
+		advancementsIdentifiers[i].write(data);
+		advancements[i].write(data);
+	}
+
+	listSize.write(data);
+	for (int i = 0; i < (int)(&listSize); i++)
+		removedIdentifiers[i].write(data);
+
+	progressSize.write(data);
+	for (int i = 0; i < (int)(&progressSize); i++) {
+		progressIdentifiers[i].write(data);
+		advancementProgresses[i].write(data);
+	}
+		
+	finishSendMacro;
+}
 void message::play::send::pluginMessage(Player* p, const mcString& channel, ull ByteCount, const char* Bytes)
 {
 	varInt id = (int)id::pluginMessage_clientbound;
