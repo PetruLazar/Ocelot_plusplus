@@ -89,7 +89,7 @@ BlockState& Region::getPaletteEntry(int chunkX, int sectionY, int chunkZ, int pa
 {
 	Chunk* chunk = chunks[chunkX][chunkZ];
 	if (!chunk) throw chunkNotLoaded();
-	chunk->getPaletteEntry(sectionY, paletteIndex);
+	return chunk->getPaletteEntry(sectionY, paletteIndex);
 }
 BlockState Region::getBlock(int relX, int relY, int relZ)
 {
