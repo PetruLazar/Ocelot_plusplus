@@ -1008,6 +1008,20 @@ void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProp
 
 	finishSendMacro;
 }
+void message::play::send::entityEffect(Player* p, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags)
+{
+	varInt id = (int)id::entityEffect;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	entityId.write(data);
+	*(data++) = effectId;
+	*(data++) = amplifier;
+	duration.write(data);
+	*(data++) = flags;
+
+	finishSendMacro;
+}
 void message::play::send::setXp(Player* p, bfloat xpBar, varInt level, varInt totalXp)
 {
 	varInt id = (int)id::updateHp;
