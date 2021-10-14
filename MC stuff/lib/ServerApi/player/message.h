@@ -539,7 +539,7 @@ struct message
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			//SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
 			SERVER_API static void setPassengers(Player*, varInt vehicleEid, varInt count, varInt* passenders);
-			//SERVER_API static void teams(Player*, const mcString& name, Byte mode, ...);
+			SERVER_API static void teams(Player*, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode);
 			SERVER_API static void updateScore(Player*, const mcString& name, Byte action, const mcString& objective, varInt value);
 			//SERVER_API static void setTitleSubtitle(Player*, const Chat& subtitle);
 			SERVER_API static void timeUpdate(Player*, blong worldAge, blong timeOfDay);

@@ -1046,6 +1046,18 @@ void message::play::send::updateHp(Player* p, bfloat hp, varInt food, bfloat sat
 
 	finishSendMacro;
 }
+void message::play::send::teams(Player* p, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode)
+{
+	varInt id = (int)id::teams;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	name.write(data);
+	*(data++) = mode;
+	teamUpdateMode->write(data);
+
+	finishSendMacro;
+}
 void message::play::send::entityHeadLook(Player* p, varInt eid, Angle headYaw)
 {
 	varInt id = (int)id::entityHeadLook;

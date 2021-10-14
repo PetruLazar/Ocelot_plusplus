@@ -26,3 +26,4 @@
 #include "types/uuid.h"
 #include "types/varData.h"
 #include "types/Equipment.h"
+#include "types/teams.h"
