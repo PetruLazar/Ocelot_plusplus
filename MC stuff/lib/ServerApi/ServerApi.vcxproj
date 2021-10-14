@@ -197,12 +197,14 @@
     <ClInclude Include="server\log.h" />
     <ClInclude Include="server\options.h" />
     <ClInclude Include="types.h" />
+    <ClInclude Include="types\advancements.h" />
     <ClInclude Include="types\angle.h" />
     <ClInclude Include="types\apidef.h" />
     <ClInclude Include="types\basic.h" />
     <ClInclude Include="types\bitarray.h" />
     <ClInclude Include="types\bitstream.h" />
     <ClInclude Include="types\block.h" />
+    <ClInclude Include="types\bossBar.h" />
     <ClInclude Include="types\chat.h" />
     <ClInclude Include="types\endian.h" />
     <ClInclude Include="types\entity.h" />
@@ -221,6 +223,7 @@
     <ClInclude Include="types\queue.h" />
     <ClInclude Include="types\registry.h" />
     <ClInclude Include="types\slot.h" />
+    <ClInclude Include="types\teams.h" />
     <ClInclude Include="types\typedefs.h" />
     <ClInclude Include="types\utils.h" />
     <ClInclude Include="types\uuid.h" />
@@ -263,10 +266,12 @@
     <ClCompile Include="server\console.cpp" />
     <ClCompile Include="server\log.cpp" />
     <ClCompile Include="server\options.cpp" />
+    <ClCompile Include="types\advancements.cpp" />
     <ClCompile Include="types\angle.cpp" />
     <ClCompile Include="types\basic.cpp" />
     <ClCompile Include="types\bitarray.cpp" />
     <ClCompile Include="types\bitstream.cpp" />
+    <ClCompile Include="types\bossBar.cpp" />
     <ClCompile Include="types\chat.cpp" />
     <ClCompile Include="types\entity.cpp" />
     <ClCompile Include="types\Equipment.cpp" />
@@ -280,6 +285,7 @@
     <ClCompile Include="types\queue.cpp" />
     <ClCompile Include="types\registry.cpp" />
     <ClCompile Include="types\slot.cpp" />
+    <ClCompile Include="types\teams.cpp" />
     <ClCompile Include="types\utils.cpp" />
     <ClCompile Include="types\uuid.cpp" />
     <ClCompile Include="types\varData.cpp" />

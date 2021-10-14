@@ -13,7 +13,7 @@ void advancement::write(char*& buffer) const {
 	nOfCriteria.write(buffer);
 	for (int i = 0; i < (int)(&nOfCriteria); i++) {
 		criteriaIdentifiers[i].write(buffer);
-		//criteriaValue.write(buffer) ?
+		//(void) criteriaValue.write(buffer) ?
 	}
 
 	arraySetLength.write(buffer);

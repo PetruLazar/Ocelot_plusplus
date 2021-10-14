@@ -4,23 +4,6 @@
 #include "chat.h"
 #include "slot.h"
 
-class advancement
-{
-private:
-	bool hasParent, hasDisplay;
-	mcString parentId;
-	advancementDisplay displayData;
-	varInt nOfCriteria;
-	mcString* criteriaIdentifiers;
-	//void* criteriaValue; ?
-	varInt arraySetLength;
-	varInt* arrayLength;
-	mcString** criteriaRequirements;
-
-public:
-	void write(char*& buffer) const;
-};
-
 class advancementDisplay
 {
 public:
@@ -37,6 +20,26 @@ private:
 public:
 	advancementDisplay(Chat title, Chat decription, Slot icon, frameType frame, bint flags, mcString backgroundTexture, bfloat x, bfloat y)
 		: title(title), description(description), icon(icon), frame(frame), flags(flags), backgroundTexture(backgroundTexture), x(x), y(y) {}
+
+	void write(char*& buffer) const;
+};
+
+class advancement
+{
+private:
+	bool hasParent, hasDisplay;
+	mcString parentId;
+	advancementDisplay displayData;
+	varInt nOfCriteria;
+	mcString* criteriaIdentifiers;
+	//void* criteriaValue; ?
+	varInt arraySetLength;
+	varInt* arrayLength;
+	mcString** criteriaRequirements;
+
+public:
+	advancement(bool hasParent, mcString parentId, bool hasDisplay, advancementDisplay displayData, varInt nOfCriteria, mcString* criteriaIdentifiers, varInt arraySetLength, varInt* arrayLength, mcString** criteriaRequirements)
+		: hasParent(hasParent), parentId(parentId), hasDisplay(hasDisplay), displayData(displayData), nOfCriteria(nOfCriteria), criteriaIdentifiers(criteriaIdentifiers), arraySetLength(arraySetLength), arrayLength(arrayLength), criteriaRequirements(criteriaRequirements) {}
 
 	void write(char*& buffer) const;
 };

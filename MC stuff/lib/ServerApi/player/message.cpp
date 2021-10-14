@@ -318,7 +318,17 @@ void message::play::send::entityAnimation(Player* p, varInt eid, Animation anima
 
 	finishSendMacro;
 }
+void message::play::send::bossBar(Player* p, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField) {
+	varInt id = (int)id::bossBar;
+	prepareSendMacro(1024 * 1024);
 
+	id.write(data);
+	uuid.write(data);
+	varInt((int)action).write(data);
+	actionField->write(data);
+
+	finishSendMacro;
+}
 void message::play::send::keepAlive(Player* p, blong keepAlive_id)
 {
 	varInt id = (int)id::keepAlive_clientbound;
@@ -559,6 +569,36 @@ void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 
 	finishSendMacro;
 }
+void message::play::send::setTitleText(Player* p, const Chat& title) {
+	varInt id = (int)id::setTitleText;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	title.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::setTitleTimes(Player* p, bint fadeIn, bint stay, bint fadeOut) {
+	varInt id = (int)id::setTitleTimes;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	fadeIn.write(data);
+	stay.write(data);
+	fadeOut.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::playerListHeaderAndFooter(Player* p, const Chat& header, const Chat& footer) {
+	varInt id = (int)id::playerListHeaderAndFooter;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	header.write(data);
+	footer.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround) {
 	varInt id = (int)id::entityTeleport;
 	prepareSendMacro(1024 * 1024);
@@ -574,7 +614,7 @@ void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdoub
 
 	finishSendMacro;
 }
-void message::play::send::advancements(Player* p, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement* advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress* advancementProgresses)
+void message::play::send::advancements(Player* p, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement** advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress** advancementProgresses)
 { //untested!!!
 	varInt id = (int)id::advancements;
 	prepareSendMacro(1024 * 1024);
@@ -583,7 +623,7 @@ void message::play::send::advancements(Player* p, bool reset, varInt mappingSize
 	mappingSize.write(data);
 	for (int i = 0; i < (int)(&mappingSize); i++) {
 		advancementsIdentifiers[i].write(data);
-		advancements[i].write(data);
+		advancements[i]->write(data);
 	}
 
 	listSize.write(data);
@@ -593,7 +633,7 @@ void message::play::send::advancements(Player* p, bool reset, varInt mappingSize
 	progressSize.write(data);
 	for (int i = 0; i < (int)(&progressSize); i++) {
 		progressIdentifiers[i].write(data);
-		advancementProgresses[i].write(data);
+		advancementProgresses[i]->write(data);
 	}
 		
 	finishSendMacro;
@@ -1079,6 +1119,15 @@ void message::play::send::teams(Player* p, const mcString& name, Byte mode, team
 	name.write(data);
 	*(data++) = mode;
 	teamUpdateMode->write(data);
+
+	finishSendMacro;
+}
+void message::play::send::setTitleSubtitle(Player* p, const Chat& subtitle) {
+	varInt id = (int)id::setTitleSubtitle;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	subtitle.write(data);
 
 	finishSendMacro;
 }

@@ -28,3 +28,4 @@
 #include "types/Equipment.h"
 #include "types/teams.h"
 #include "types/advancements.h"
+#include "types/bossBar.h"
