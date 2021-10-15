@@ -962,6 +962,101 @@ void message::play::send::displayScoreboard(Player* p, Byte position, const mcSt
 
 	finishSendMacro;
 }
+void message::play::send::entityMetadata(Player* p, varInt eid, Byte* index, void** args) //args should contain all data in array like network buffer style
+{ //untested!!!
+	bool optional;
+
+	varInt id = (int)id::entityMetadata;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+
+	int dataOffset = 0;
+	for (int counter = 0; index[counter] != 0xff; counter++) {
+		*(data++) = index[counter];
+		switch (index[counter]) {
+		case 0:
+			*(data++) = *static_cast<Byte*>(args[counter + dataOffset]);
+			break;
+		case 1:
+			static_cast<varInt*>(args[counter + dataOffset])->write(data);
+			break;
+		case 2:
+			static_cast<bfloat*>(args[counter + dataOffset])->write(data);
+			break;
+		case 3:
+			static_cast<mcString*>(args[counter + dataOffset])->write(data);
+			break;
+		case 4:
+			static_cast<Chat*>(args[counter + dataOffset])->write(data);
+			break;
+		case 5:
+			optional = static_cast<bool*>(args[counter + dataOffset]);
+			*(data++) = optional;
+			if (optional)
+				static_cast<Chat*>(args[counter + ++dataOffset])->write(data);
+			break;
+		case 6:
+			static_cast<Slot*>(args[counter + dataOffset])->write(data);
+			break;
+		case 7:
+			*(data++) = *static_cast<bool*>(args[counter + dataOffset]);
+			break;
+		case 8:
+			static_cast<bfloat*>(args[counter + dataOffset])->write(data);
+			static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
+			static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
+			break;
+		case 9:
+			static_cast<Position*>(args[counter + dataOffset])->write(data);
+			break;
+		case 10:
+			optional = static_cast<bool*>(args[counter + dataOffset]);
+			*(data++) = optional;
+			if (optional) {
+				static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
+				static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
+				static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
+			}
+			break;
+		case 11:
+			static_cast<varInt*>(args[counter + dataOffset])->write(data);
+			break;
+		case 12:
+			optional = static_cast<bool*>(args[counter + dataOffset]);
+			*(data++) = optional;
+			if (optional)
+				static_cast<mcUUID*>(args[counter + ++dataOffset])->write(data);
+			break;
+		case 13:
+			static_cast<varInt*>(args[counter + dataOffset])->write(data);
+			break;
+		case 14:
+			static_cast<nbt*>(args[counter + dataOffset])->write(data);
+			break;
+		case 15:
+			static_cast<Particle*>(args[counter + dataOffset])->write(data);
+			break;
+		case 16:
+			static_cast<varInt*>(args[counter + dataOffset])->write(data);
+			static_cast<varInt*>(args[counter + ++dataOffset])->write(data);
+			static_cast<varInt*>(args[counter + ++dataOffset])->write(data);
+			break;
+		case 17:
+			static_cast<varInt*>(args[counter + dataOffset])->write(data);
+			break;
+		case 18:
+			static_cast<varInt*>(args[counter + dataOffset])->write(data);
+			break;
+		default:
+			break;
+		}
+	}
+
+	*(data++) = (Byte)0xff;
+
+	finishSendMacro;
+}
 void message::play::send::attachEntity(Player* p, bint attachedEid, bint holdingEid)
 {
 	varInt id = (int)id::attachEntity;
