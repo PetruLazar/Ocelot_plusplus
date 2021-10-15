@@ -29,3 +29,5 @@
 #include "types/teams.h"
 #include "types/advancements.h"
 #include "types/bossBar.h"
+#include "types/trades.h"
+#include "types/mapIcon.h"

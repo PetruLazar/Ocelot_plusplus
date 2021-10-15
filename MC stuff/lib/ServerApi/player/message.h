@@ -121,7 +121,7 @@
 
 namespace blockEntityData
 {
-	enum action
+	enum class action
 	{
 		setMobSpawnerData,
 		setCommandBlockText,
@@ -463,7 +463,7 @@ struct message
 			SERVER_API static void statistics(Player*, varInt count, statistic* stats);
 			SERVER_API static void acknowledgePlayerDigging(Player*, Position location, varInt block, varInt status, bool successful);
 			SERVER_API static void blockBreakAnimation(Player*, varInt eid, Position location, Byte destroyStage);
-			SERVER_API static void blockEntityData(Player*, Position location, Byte action, const nbt& data);
+			SERVER_API static void blockEntityData(Player*, Position location, blockEntityData::action action, const nbt& data);
 			SERVER_API static void blockAction(Player*, Position location, Byte actionId, Byte actionParam, varInt blockType);
 			SERVER_API static void blockChange(Player*, Position location, varInt blockId);
 			SERVER_API static void bossBar(Player*, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField);
@@ -493,33 +493,33 @@ struct message
 			SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, Particle* particle);
 			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
 			SERVER_API static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
-			//SERVER_API static void mapData(Player*, varInt mapId, Byte scale, bool locked, bool trackingPosition, varInt iconCount, Icon* icons, Byte optColumns, Byte optRows, Byte optX, Byte optZ, varInt optLength, Byte* data);
-			//SERVER_API static void tradeList(Player*, varInt winId, Byte size, Trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock);
+			SERVER_API static void mapData(Player*, varInt mapId, Byte scale, bool locked, bool trackingPosition, varInt iconCount, map::icon* icons, Byte optColumns, Byte optRows, Byte optX, Byte optZ, varInt optLength, Byte* data);
+			SERVER_API static void tradeList(Player*, varInt winId, Byte size, trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock);
 			SERVER_API static void entityPosition(Player*, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, bool onGround);
 			SERVER_API static void entityPositionAndRotation(Player*, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, Angle yaw, Angle pitch, bool onGround);
 			SERVER_API static void entityRotation(Player*, varInt eid, Angle yaw, Angle pitch, bool onGround);
 			SERVER_API static void vehicleMove(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch);
-			SERVER_API static void openBook(Player*, varInt hand);
-			//SERVER_API static void openWindow(Player*, varInt winId, varInt winType, const Chat& winTitle);
+			SERVER_API static void openBook(Player*, Hand whichHand);
+			SERVER_API static void openWindow(Player*, varInt winId, varInt winType, const Chat& winTitle);
 			SERVER_API static void openSignEditor(Player*, Position location);
 			SERVER_API static void ping(Player*, bint pingId);
 			SERVER_API static void craftRecipeResponse(Player*, Byte winId, const mcString& recipeIdentifier);
 			SERVER_API static void playerAbilities(Player*, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier);
 			SERVER_API static void endCombatEvent(Player*, varInt duration, bint eid);
 			SERVER_API static void enterCombatEvent(Player*);
-			//SERVER_API static void deathCombatEvent(Player*, varInt playerId, bint eid, const Chat& message);
+			SERVER_API static void deathCombatEvent(Player*, varInt playerId, bint eid, const Chat& message);
 			SERVER_API static void playerInfo(Player*, varInt action, varInt playerCount, Player**);
 			SERVER_API static void facePlayer(Player*, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot);
 			SERVER_API static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, Byte flags, bool dismountVehicle);
 			SERVER_API static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, mcString* array1, varInt size2, mcString* array2);
 			SERVER_API static void destroyEntities(Player*, varInt count, varInt* eids);
 			SERVER_API static void removeEntityEffect(Player*, varInt eid, Byte effectId);
-			//SERVER_API static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
+			SERVER_API static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
 			SERVER_API static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
 			SERVER_API static void entityHeadLook(Player*, varInt eid, Angle headYaw);
 			SERVER_API static void multiBlockChange(Player, blong sectionPosition, bool unknown, varInt size, varLong* blocks);
 			SERVER_API static void selectAdvancementTab(Player*, bool hasId, const mcString& id);
-			//SERVER_API static void actionBar(Player*, const Chat& actionBarText);
+			SERVER_API static void actionBar(Player*, const Chat& actionBarText);
 			SERVER_API static void worldBorderCenter(Player*, bdouble x, bdouble z);
 			SERVER_API static void worldBorderLerpSize(Player*, bdouble oldDiameter, bdouble newDiameter, varLong speed);
 			SERVER_API static void worldBorderSize(Player*, bdouble diameter);
@@ -537,7 +537,7 @@ struct message
 			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
-			//SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
+			SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
 			SERVER_API static void setPassengers(Player*, varInt vehicleEid, varInt count, varInt* passenders);
 			SERVER_API static void teams(Player*, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode);
 			SERVER_API static void updateScore(Player*, const mcString& name, Byte action, const mcString& objective, varInt value);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -216,6 +216,7 @@
     <ClInclude Include="types\gameevent.h" />
     <ClInclude Include="types\gametags.h" />
     <ClInclude Include="types\item.h" />
+    <ClInclude Include="types\mapIcon.h" />
     <ClInclude Include="types\mcString.h" />
     <ClInclude Include="types\node.h" />
     <ClInclude Include="types\particle.h" />
@@ -224,6 +225,7 @@
     <ClInclude Include="types\registry.h" />
     <ClInclude Include="types\slot.h" />
     <ClInclude Include="types\teams.h" />
+    <ClInclude Include="types\trades.h" />
     <ClInclude Include="types\typedefs.h" />
     <ClInclude Include="types\utils.h" />
     <ClInclude Include="types\uuid.h" />
@@ -278,6 +280,7 @@
     <ClCompile Include="types\error.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
     <ClCompile Include="types\gametags.cpp" />
+    <ClCompile Include="types\mapIcon.cpp" />
     <ClCompile Include="types\mcString.cpp" />
     <ClCompile Include="types\node.cpp" />
     <ClCompile Include="types\particle.cpp" />
@@ -286,6 +289,7 @@
     <ClCompile Include="types\registry.cpp" />
     <ClCompile Include="types\slot.cpp" />
     <ClCompile Include="types\teams.cpp" />
+    <ClCompile Include="types\trades.cpp" />
     <ClCompile Include="types\utils.cpp" />
     <ClCompile Include="types\uuid.cpp" />
     <ClCompile Include="types\varData.cpp" />

@@ -33,6 +33,7 @@ public:
 		obfuscated, bold, strikethrough, underline, italic, reset
 	};
 
+	SERVER_API Chat();
 	SERVER_API Chat(const char* text);
 	SERVER_API Chat(const char* text, color cl);
 };

@@ -318,6 +318,19 @@ void message::play::send::entityAnimation(Player* p, varInt eid, Animation anima
 
 	finishSendMacro;
 }
+
+void message::play::send::blockEntityData(Player* p, Position location, blockEntityData::action action, const nbt& blockData)
+{
+	varInt id = (int)id::blockEntityData;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	location.write(data);
+	*(data++) = (Byte)action;
+	blockData.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::bossBar(Player* p, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField) {
 	varInt id = (int)id::bossBar;
 	prepareSendMacro(1024 * 1024);
@@ -362,6 +375,49 @@ void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemod
 	*(data++) = respawnScreen;
 	*(data++) = isDebug;
 	*(data++) = isFlat;
+
+	finishSendMacro;
+}
+void message::play::send::mapData(Player* p, varInt mapId, Byte scale, bool locked, bool trackingPosition, varInt iconCount, map::icon* icons, Byte optColumns, Byte optRows, Byte optX, Byte optZ, varInt optLength, Byte* optData)
+{ //untested!!!
+	varInt id = (int)id::mapData;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	mapId.write(data);
+	*(data++) = scale;
+	*(data++) = locked;
+	*(data++) = trackingPosition;
+	iconCount.write(data);
+	for (int i = 0; i < (int)(&iconCount); i++)
+		icons[i].write(data);
+
+	*(data++) = optColumns;
+	if (optColumns > 0) {
+		*(data++) = optRows;
+		*(data++) = optX;
+		*(data++) = optZ;
+		optLength.write(data);
+		for (int i = 0; i < (int)(&optLength); i++)
+			*(data++) = optData[i];
+	}
+	
+	finishSendMacro;
+}
+void message::play::send::tradeList(Player* p, varInt winId, Byte tradesCount, trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock)
+{
+	varInt id = (int)id::tradeList;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	winId.write(data);
+	for (int i = 0; i < (int)(&winId); i++)
+		trades[i].write(data);
+
+	villagerLevel.write(data);
+	experience.write(data);
+	*(data++) = isRegularVillager;
+	*(data++) = canRestock;
 
 	finishSendMacro;
 }
@@ -507,6 +563,18 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 
 	finishSendMacro;
 }
+void message::play::send::effect(Player* p, bint effectId, Position location, bint extraData, bool disableRelativeVolume)
+{
+	varInt id = (int)id::effect;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	location.write(data);
+	extraData.write(data);
+	*(data++) = disableRelativeVolume;
+
+	finishSendMacro;
+}
 void message::play::send::particle(Player* p, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, Particle* particle = nullptr) {
 	varInt id = (int)id::particle;
 	prepareSendMacro(1024 * 1024);
@@ -543,6 +611,33 @@ void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEn
 	p->pendingTpId = p->nextTpId++;
 	p->pendingTpId.write(data);
 	*(data++) = dismountVehicle;
+
+	finishSendMacro;
+}
+void message::play::send::unlockRecipes(Player* p, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, mcString* array1, varInt size2, mcString* array2)
+{
+	varInt id = (int)id::unlockRecipes;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	action.write(data);
+	*(data++) = bookOpen;
+	*(data++) = filterActive;
+	*(data++) = smeltingOpen;
+	*(data++) = smeltingFilter;
+	*(data++) = blastOpen;
+	*(data++) = blastFilter;
+	*(data++) = smokerOpen;
+	*(data++) = smokerFilter;
+	size1.write(data);
+	for (int i = 0; i < (int)(&size1); i++)
+		array1[i].write(data);
+
+	if (action == 0) {
+		size2.write(data);
+		for (int i = 0; i < (int)(&size2); i++)
+			array2[i].write(data);
+	}
 
 	finishSendMacro;
 }
@@ -599,6 +694,17 @@ void message::play::send::playerListHeaderAndFooter(Player* p, const Chat& heade
 
 	finishSendMacro;
 }
+void message::play::send::collectItem(Player* p, varInt collectedEid, varInt collectorEid, varInt pickupCount) {
+	varInt id = (int)id::collectItem;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	collectedEid.write(data);
+	collectorEid.write(data);
+	pickupCount.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround) {
 	varInt id = (int)id::entityTeleport;
 	prepareSendMacro(1024 * 1024);
@@ -645,7 +751,8 @@ void message::play::send::pluginMessage(Player* p, const mcString& channel, ull 
 
 	id.write(data);
 	channel.write(data);
-	for (ull i = 0; i < ByteCount; i++) *(data++) = Bytes[i];
+	for (ull i = 0; i < ByteCount; i++) 
+		*(data++) = Bytes[i];
 
 	finishSendMacro;
 }
@@ -678,6 +785,17 @@ void message::play::send::spawnPosition(Player* p, Position location, bfloat ang
 	id.write(data);
 	location.write(data);
 	angle.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::displayScoreboard(Player* p, Byte position, const mcString& scoreName)
+{
+	varInt id = (int)id::displayScoreboard;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = position;
+	scoreName.write(data);
 
 	finishSendMacro;
 }
@@ -715,6 +833,16 @@ void message::play::send::updateViewPosition(Player* p, varInt chunkX, varInt ch
 	id.write(data);
 	chunkX.write(data);
 	chunkZ.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::updateViewDistance(Player* p, varInt distance)
+{
+	varInt id = (int)id::updateViewDistance;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	distance.write(data);
 
 	finishSendMacro;
 }
@@ -821,6 +949,17 @@ void message::play::send::disconnect(Player* p, const Chat& reason)
 
 	finishSendAndDisconnect;
 }
+void message::play::send::entityStatus(Player* p, bint eid, Byte status)
+{
+	varInt id = (int)id::entityStatus;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	*(data++) = status;
+
+	finishSendAndDisconnect;
+}
 void message::play::send::chatMessage(Player* p, const Chat& msg, Byte position, const mcUUID& sender)
 {
 	varInt id = (int)id::chatMessage_clientbound;
@@ -850,6 +989,18 @@ void message::play::send::changeGameState(Player* p, Byte reason, bfloat value)
 	id.write(data);
 	*(data++) = reason;
 	value.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::openHorseWindow(Player* p, Byte winId, varInt slotCount, bint eid)
+{
+	varInt id = (int)id::openHorseWindow;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	slotCount.write(data);
+	eid.write(data);
 
 	finishSendMacro;
 }
@@ -1110,6 +1261,22 @@ void message::play::send::updateHp(Player* p, bfloat hp, varInt food, bfloat sat
 
 	finishSendMacro;
 }
+void message::play::send::scoreboardObjective(Player* p, const mcString& name, Byte mode, const Chat& value, varInt type)
+{
+	varInt id = (int)id::scoreboardObjective;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	name.write(data);
+	*(data++) = mode;
+
+	if (mode != 1) {
+		value.write(data);
+		type.write(data);
+	}
+
+	finishSendMacro;
+}
 void message::play::send::teams(Player* p, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode)
 {
 	varInt id = (int)id::teams;
@@ -1119,6 +1286,21 @@ void message::play::send::teams(Player* p, const mcString& name, Byte mode, team
 	name.write(data);
 	*(data++) = mode;
 	teamUpdateMode->write(data);
+
+	finishSendMacro;
+}
+void message::play::send::updateScore(Player* p, const mcString& name, Byte action, const mcString& objective, varInt value)
+{
+	varInt id = (int)id::updateScore;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	name.write(data);
+	*(data++) = action;
+	objective.write(data);
+
+	if (action != 1)
+		value.write(data);
 
 	finishSendMacro;
 }
@@ -1142,6 +1324,37 @@ void message::play::send::entityHeadLook(Player* p, varInt eid, Angle headYaw)
 
 	finishSendMacro;
 }
+void message::play::send::selectAdvancementTab(Player* p, bool hasId, const mcString& identifier)
+{
+	varInt id = (int)id::selectAdvancementTab;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = hasId;
+	identifier.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::actionBar(Player* p, const Chat& actionBarText) 
+{
+	varInt id = (int)id::actionBar;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	actionBarText.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::camera(Player* p, varInt camId)
+{
+	varInt id = (int)id::camera;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	camId.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 {
 	varInt id = (int)id::destroyEntities;
@@ -1150,6 +1363,32 @@ void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 	id.write(data);
 	count.write(data);
 	for (int i = 0; i < count; i++) eids[i].write(data);
+
+	finishSendMacro;
+}
+void message::play::send::removeEntityEffect(Player* p, varInt eid, Byte effectId)
+{
+	varInt id = (int)id::removeEntityEffect;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	*(data++) = effectId;
+
+	finishSendMacro;
+}
+void message::play::send::resourcePackSend(Player* p, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage = "")
+{
+	varInt id = (int)id::resourcePackSend;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	url.write(data);
+	hash.write(data);
+	*(data++) = forced;
+	*(data++) = hasPromptMessage;
+	if(hasPromptMessage)
+		promptMessage.write(data);
 
 	finishSendMacro;
 }
@@ -1177,6 +1416,59 @@ void message::play::send::entityRotation(Player* p, varInt eid, Angle yaw, Angle
 	*(data++) = (char&)yaw;
 	*(data++) = (char&)pitch;
 	*(data++) = onGround;
+
+	finishSendMacro;
+}
+void message::play::send::openBook(Player* p, Hand whichHand)
+{
+	varInt id = (int)id::openBook;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	varInt((int)whichHand).write(data);
+
+	finishSendMacro;
+}
+void message::play::send::openWindow(Player* p, varInt winId, varInt winType, const Chat& winTitle)
+{
+	varInt id = (int)id::openWindow;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	winId.write(data);
+	winType.write(data);
+	winTitle.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::openSignEditor(Player* p, Position location)
+{
+	varInt id = (int)id::openSignEditor;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	location.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::ping(Player* p, bint pingId)
+{
+	varInt id = (int)id::ping;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	pingId.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::craftRecipeResponse(Player* p, Byte winId, const mcString& recipeIdentifier)
+{
+	varInt id = (int)id::craftRecipeResponse;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	*(data++) = winId;
+	recipeIdentifier.write(data);
 
 	finishSendMacro;
 }
@@ -1435,6 +1727,14 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
+}
+void message::play::receive::craftRecipeRequest(Player* p, Byte winId, const mcString& recipe, bool makeAll)
+{
+
+}
+void message::play::receive::resourcePackStatus(Player* p, varInt result)
+{
+
 }
 void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
@@ -1864,7 +2164,17 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::craftRecipeRequest:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: craft recipe request");
+			Byte windowID;
+			mcString recipe;
+			bool makeAll;
+
+			windowID = *(data++);
+			recipe.read(data);
+			makeAll = *(data++);
+
+			message::play::receive::craftRecipeRequest(p, windowID, recipe, makeAll);
+
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: craft recipe request");
 		}
 		break;
 		case play::id::playerAbilities_serverbound:
@@ -1909,7 +2219,11 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::resourcePackStatus:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: resource pack status");
+			varInt result;
+			result.read(data);
+
+			play::receive::resourcePackStatus(p, result);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: resource pack status");
 		}
 		break;
 		case play::id::advancementTab:

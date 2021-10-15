@@ -1,6 +1,11 @@
 #include "chat.h"
 #include "../types/utils.h"
 
+Chat::Chat() :
+	json_compound("", new json* [1]{
+			new json_string("text", "")
+		}, 1) { }
+
 Chat::Chat(const char* text) : 
 	json_compound("", new json* [1]{ 
 			new json_string("text",text)
