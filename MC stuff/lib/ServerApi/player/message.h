@@ -459,8 +459,7 @@ struct message
 			SERVER_API static void spawnPlayer(Player*, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch);
 			SERVER_API static void sculkVibrationSignal(Player*, Position source, Sculk::destinationType destinationType, Sculk::destination destination, varInt arrivalTicks);
 			SERVER_API static void entityAnimation(Player*, varInt eid, Animation animation);
-
-			SERVER_API static void statistics(Player*, varInt count, statistic* stats);
+			//SERVER_API static void statistics(Player*, varInt count, statistic* stats);
 			SERVER_API static void acknowledgePlayerDigging(Player*, Position location, varInt block, varInt status, bool successful);
 			SERVER_API static void blockBreakAnimation(Player*, varInt eid, Position location, Byte destroyStage);
 			SERVER_API static void blockEntityData(Player*, Position location, blockEntityData::action action, const nbt& data);
@@ -517,7 +516,7 @@ struct message
 			SERVER_API static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
 			SERVER_API static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
 			SERVER_API static void entityHeadLook(Player*, varInt eid, Angle headYaw);
-			SERVER_API static void multiBlockChange(Player, blong sectionPosition, bool unknown, varInt size, varLong* blocks);
+			SERVER_API static void multiBlockChange(Player*, blong sectionPosition, bool unknown, varInt size, varLong* blocks);
 			SERVER_API static void selectAdvancementTab(Player*, bool hasId, const mcString& id);
 			SERVER_API static void actionBar(Player*, const Chat& actionBarText);
 			SERVER_API static void worldBorderCenter(Player*, bdouble x, bdouble z);
@@ -538,7 +537,7 @@ struct message
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
-			SERVER_API static void setPassengers(Player*, varInt vehicleEid, varInt count, varInt* passenders);
+			SERVER_API static void setPassengers(Player*, varInt vehicleEid, varInt count, varInt* passengers);
 			SERVER_API static void teams(Player*, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode);
 			SERVER_API static void updateScore(Player*, const mcString& name, Byte action, const mcString& objective, varInt value);
 			SERVER_API static void setTitleSubtitle(Player*, const Chat& subtitle);

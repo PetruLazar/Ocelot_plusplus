@@ -318,7 +318,31 @@ void message::play::send::entityAnimation(Player* p, varInt eid, Animation anima
 
 	finishSendMacro;
 }
+void message::play::send::acknowledgePlayerDigging(Player* p, Position location, varInt block, varInt status, bool successful)
+{
+	varInt id = (int)id::acknowledgePlayerDigging;
+	prepareSendMacro(1024 * 1024);
 
+	id.write(data);
+	location.write(data);
+	block.write(data);
+	status.write(data);
+	*(data++) = successful;
+
+	finishSendMacro;
+}
+void message::play::send::blockBreakAnimation(Player* p, varInt eid, Position location, Byte destroyStage)
+{
+	varInt id = (int)id::blockBreakAnimation;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	location.write(data);
+	*(data++) = destroyStage;
+
+	finishSendMacro;
+}
 void message::play::send::blockEntityData(Player* p, Position location, blockEntityData::action action, const nbt& blockData)
 {
 	varInt id = (int)id::blockEntityData;
@@ -328,6 +352,30 @@ void message::play::send::blockEntityData(Player* p, Position location, blockEnt
 	location.write(data);
 	*(data++) = (Byte)action;
 	blockData.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::blockAction(Player* p, Position location, Byte actionId, Byte actionParam, varInt blockType)
+{
+	varInt id = (int)id::blockAction;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	location.write(data);
+	*(data++) = actionId;
+	*(data++) = actionParam;
+	blockType.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::blockChange(Player* p, Position location, varInt blockId)
+{
+	varInt id = (int)id::blockChange;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	location.write(data);
+	blockId.write(data);
 
 	finishSendMacro;
 }
@@ -476,6 +524,24 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 			player->uuid->write(data);
 		}
 		break;
+	}
+
+	finishSendMacro;
+}
+void message::play::send::facePlayer(Player* p, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot)
+{
+	varInt id = (int)id::facePlayer;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	pivot.write(data);
+	targetX.write(data);
+	targetY.write(data);
+	targetZ.write(data);
+	*(data++) = isEntity;
+	if (isEntity) {
+		eid.write(data);
+		targetPivot.write(data);
 	}
 
 	finishSendMacro;
@@ -653,6 +719,38 @@ void message::play::send::playerAbilities(Player* p, bool invulnerable, bool fly
 
 	finishSendMacro;
 }
+void message::play::send::endCombatEvent(Player* p, varInt duration, bint eid)
+{
+	varInt id = (int)id::endCombatEvent;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	duration.write(data);
+	eid.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::enterCombatEvent(Player* p)
+{
+	varInt id = (int)id::enterCombatEvent;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::deathCombatEvent(Player* p, varInt playerId, bint eid, const Chat& message)
+{
+	varInt id = (int)id::deathCombatEvent;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	playerId.write(data);
+	eid.write(data);
+	message.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 {
 	varInt id = (int)id::timeUpdate;
@@ -684,6 +782,45 @@ void message::play::send::setTitleTimes(Player* p, bint fadeIn, bint stay, bint 
 
 	finishSendMacro;
 }
+void message::play::send::entitySoundEffect(Player* p, varInt soundId, varInt category, varInt eid, bfloat volume, bfloat pitch)
+{
+	varInt id = (int)id::entitySoundEffect;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	soundId.write(data);
+	category.write(data);
+	eid.write(data);
+	volume.write(data);
+	pitch.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::soundEffect(Player* p, varInt soundId, varInt category, bint effectPosX, bint effectPosY, bint effectPosZ, bfloat volume, bfloat pitch)
+{
+	varInt id = (int)id::soundEffect;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	soundId.write(data);
+	category.write(data);
+	effectPosX.write(data);
+	effectPosY.write(data);
+	effectPosZ.write(data);
+	volume.write(data);
+	pitch.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::stopSound(Player* p, Byte flags, varInt source, const mcString& name)
+{
+	varInt id = (int)id::stopSound;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::playerListHeaderAndFooter(Player* p, const Chat& header, const Chat& footer) {
 	varInt id = (int)id::playerListHeaderAndFooter;
 	prepareSendMacro(1024 * 1024);
@@ -691,6 +828,16 @@ void message::play::send::playerListHeaderAndFooter(Player* p, const Chat& heade
 	id.write(data);
 	header.write(data);
 	footer.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::nbtQueryResponse(Player* p, varInt transactionId, const nbt& tag) {
+	varInt id = (int)id::nbtQueryResponse;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	transactionId.write(data);
+	tag.write(data);
 
 	finishSendMacro;
 }
@@ -756,6 +903,22 @@ void message::play::send::pluginMessage(Player* p, const mcString& channel, ull 
 
 	finishSendMacro;
 }
+void message::play::send::namedSoundEffect(Player* p, const mcString& soundName, varInt category, bint effectX, bint effectY, bint effectZ, bfloat volume, bfloat pitch)
+{
+	varInt id = (int)id::namedSoundEffect;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	soundName.write(data);
+	category.write(data);
+	effectX.write(data);
+	effectY.write(data);
+	effectZ.write(data);
+	volume.write(data);
+	pitch.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::heldItemChange(Player* p, Byte slot)
 {
 	varInt id = (int)id::heldItemChange_clientbound;
@@ -796,6 +959,30 @@ void message::play::send::displayScoreboard(Player* p, Byte position, const mcSt
 	id.write(data);
 	*(data++) = position;
 	scoreName.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::attachEntity(Player* p, bint attachedEid, bint holdingEid)
+{
+	varInt id = (int)id::attachEntity;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	attachedEid.write(data);
+	holdingEid.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ)
+{
+	varInt id = (int)id::entityVelocity;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	velocityX.write(data);
+	velocityY.write(data);
+	velocityZ.write(data);
 
 	finishSendMacro;
 }
@@ -960,6 +1147,25 @@ void message::play::send::entityStatus(Player* p, bint eid, Byte status)
 
 	finishSendAndDisconnect;
 }
+void message::play::send::explosion(Player* p, bfloat x, bfloat y, bfloat z, bfloat strength, varInt recordCount, Byte* records, bfloat playerMotionX, bfloat playerMotionY, bfloat playerMotionZ)
+{
+	varInt id = (int)id::explosion;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	strength.write(data);
+	recordCount.write(data);
+	for (int i = 0; i < recordCount; i++)
+		*(data++) = records[i];
+	playerMotionX.write(data);
+	playerMotionY.write(data);
+	playerMotionZ.write(data);
+
+	finishSendAndDisconnect;
+}
 void message::play::send::chatMessage(Player* p, const Chat& msg, Byte position, const mcUUID& sender)
 {
 	varInt id = (int)id::chatMessage_clientbound;
@@ -1001,6 +1207,23 @@ void message::play::send::openHorseWindow(Player* p, Byte winId, varInt slotCoun
 	*(data++) = winId;
 	slotCount.write(data);
 	eid.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::initializeWorldBorder(Player* p, bdouble x, bdouble z, bdouble oldDiameter, bdouble newDiameter, varLong speed, varInt portalTeleportBoundary, varInt warningBlocks, varInt warningTime)
+{
+	varInt id = (int)id::initializeWorldBorder;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	x.write(data);
+	z.write(data);
+	oldDiameter.write(data);
+	newDiameter.write(data);
+	speed.write(data);
+	portalTeleportBoundary.write(data);
+	warningBlocks.write(data);
+	warningTime.write(data);
 
 	finishSendMacro;
 }
@@ -1277,6 +1500,19 @@ void message::play::send::scoreboardObjective(Player* p, const mcString& name, B
 
 	finishSendMacro;
 }
+void message::play::send::setPassengers(Player* p, varInt vehicleEid, varInt count, varInt* passengers)
+{
+	varInt id = (int)id::setPassengers;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	vehicleEid.write(data);
+	count.write(data);
+	for (int i = 0; i < count; i++)
+		passengers[i].write(data);
+
+	finishSendMacro;
+}
 void message::play::send::teams(Player* p, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode)
 {
 	varInt id = (int)id::teams;
@@ -1324,6 +1560,20 @@ void message::play::send::entityHeadLook(Player* p, varInt eid, Angle headYaw)
 
 	finishSendMacro;
 }
+void message::play::send::multiBlockChange(Player* p, blong sectionPosition, bool unknown, varInt arraySize, varLong* blocks)
+{
+	varInt id = (int)id::multiBLockChange;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	sectionPosition.write(data);
+	*(data++) = unknown;
+	arraySize.write(data);
+	for (int i = 0; i < arraySize; i++)
+		blocks[i].write(data);
+
+	finishSendMacro;
+}
 void message::play::send::selectAdvancementTab(Player* p, bool hasId, const mcString& identifier)
 {
 	varInt id = (int)id::selectAdvancementTab;
@@ -1345,6 +1595,59 @@ void message::play::send::actionBar(Player* p, const Chat& actionBarText)
 
 	finishSendMacro;
 }
+void message::play::send::worldBorderCenter(Player* p, bdouble x, bdouble z)
+{
+	varInt id = (int)id::worldBorderCenter;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	x.write(data);
+	z.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::worldBorderLerpSize(Player* p, bdouble oldDiameter, bdouble newDiameter, varLong speed)
+{
+	varInt id = (int)id::worldBorderLerpSize;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	oldDiameter.write(data);
+	newDiameter.write(data);
+	speed.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::worldBorderSize(Player* p, bdouble diameter)
+{
+	varInt id = (int)id::worldBorderSize;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	diameter.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::worldBorderWarningDelay(Player* p, varInt warningTime)
+{
+	varInt id = (int)id::worldBorderWarningDelay;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	warningTime.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::worldBorderWarningReach(Player* p, varInt warningBlocks)
+{
+	varInt id = (int)id::worldBorderWarningReach;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	warningBlocks.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::camera(Player* p, varInt camId)
 {
 	varInt id = (int)id::camera;
@@ -1362,7 +1665,8 @@ void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 
 	id.write(data);
 	count.write(data);
-	for (int i = 0; i < count; i++) eids[i].write(data);
+	for (int i = 0; i < count; i++) 
+		eids[i].write(data);
 
 	finishSendMacro;
 }
@@ -1416,6 +1720,20 @@ void message::play::send::entityRotation(Player* p, varInt eid, Angle yaw, Angle
 	*(data++) = (char&)yaw;
 	*(data++) = (char&)pitch;
 	*(data++) = onGround;
+
+	finishSendMacro;
+}
+void message::play::send::vehicleMove(Player* p, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch)
+{
+	varInt id = (int)id::vehicleMove;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	x.write(data);
+	y.write(data);
+	z.write(data);
+	yaw.write(data);
+	pitch.write(data);
 
 	finishSendMacro;
 }

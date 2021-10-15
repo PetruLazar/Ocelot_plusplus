@@ -46,32 +46,8 @@ code related to the following packets (either implement the packet itself or cod
 	login::receive::loginPluginResponse
 
 	play::send::statistics
-	play::send::acknowledgePlayerDigging
-	play::send::blockBreakAnimation
-	play::send::blockAction
-	play::send::blockChange
 	play::send::tabComplete
-	play::send::namedSoundEffect
-	play::send::explosion
-	play::send::initializeWorldBorder
-	play::send::vehicleMove
-	play::send::endCombatEvent
-	play::send::enterCombatEvent
-	play::send::deathCombatEvent
-	play::send::faceplayer
-	play::send::multiBLockChange
-	play::send::worldBorderCenter
-	play::send::worldBorderLerpSize
-	play::send::worldBorderSize
-	play::send::worldBorderWarningDelay
-	play::send::worldBorderWarningReach
 	play::send::entityMetadata
-	play::send::attachEntity
-	play::send::setPassengers
-	play::send::entitySoundEffect
-	play::send::soundEffect
-	play::send::stopSound
-	play::send::nbtQueryResponse
 
 	play::receive::queryBlockNbt
 	play::receive::setDifficulty
