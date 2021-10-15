@@ -389,7 +389,7 @@ void message::play::send::mapData(Player* p, varInt mapId, Byte scale, bool lock
 	*(data++) = locked;
 	*(data++) = trackingPosition;
 	iconCount.write(data);
-	for (int i = 0; i < (int)(&iconCount); i++)
+	for (int i = 0; i < iconCount; i++)
 		icons[i].write(data);
 
 	*(data++) = optColumns;
@@ -398,7 +398,7 @@ void message::play::send::mapData(Player* p, varInt mapId, Byte scale, bool lock
 		*(data++) = optX;
 		*(data++) = optZ;
 		optLength.write(data);
-		for (int i = 0; i < (int)(&optLength); i++)
+		for (int i = 0; i < optLength; i++)
 			*(data++) = optData[i];
 	}
 	
@@ -411,7 +411,7 @@ void message::play::send::tradeList(Player* p, varInt winId, Byte tradesCount, t
 
 	id.write(data);
 	winId.write(data);
-	for (int i = 0; i < (int)(&winId); i++)
+	for (int i = 0; i < winId; i++)
 		trades[i].write(data);
 
 	villagerLevel.write(data);
@@ -630,12 +630,12 @@ void message::play::send::unlockRecipes(Player* p, varInt action, bool bookOpen,
 	*(data++) = smokerOpen;
 	*(data++) = smokerFilter;
 	size1.write(data);
-	for (int i = 0; i < (int)(&size1); i++)
+	for (int i = 0; i < size1; i++)
 		array1[i].write(data);
 
 	if (action == 0) {
 		size2.write(data);
-		for (int i = 0; i < (int)(&size2); i++)
+		for (int i = 0; i < size2; i++)
 			array2[i].write(data);
 	}
 
@@ -727,17 +727,17 @@ void message::play::send::advancements(Player* p, bool reset, varInt mappingSize
 
 	*(data++) = reset;
 	mappingSize.write(data);
-	for (int i = 0; i < (int)(&mappingSize); i++) {
+	for (int i = 0; i < mappingSize; i++) {
 		advancementsIdentifiers[i].write(data);
 		advancements[i]->write(data);
 	}
 
 	listSize.write(data);
-	for (int i = 0; i < (int)(&listSize); i++)
+	for (int i = 0; i < listSize; i++)
 		removedIdentifiers[i].write(data);
 
 	progressSize.write(data);
-	for (int i = 0; i < (int)(&progressSize); i++) {
+	for (int i = 0; i < progressSize; i++) {
 		progressIdentifiers[i].write(data);
 		advancementProgresses[i]->write(data);
 	}

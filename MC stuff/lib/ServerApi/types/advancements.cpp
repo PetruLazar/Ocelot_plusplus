@@ -11,14 +11,14 @@ void advancement::write(char*& buffer) const {
 		displayData.write(buffer);
 
 	nOfCriteria.write(buffer);
-	for (int i = 0; i < (int)(&nOfCriteria); i++) {
+	for (int i = 0; i < nOfCriteria; i++) {
 		criteriaIdentifiers[i].write(buffer);
 		//(void) criteriaValue.write(buffer) ?
 	}
 
 	arraySetLength.write(buffer);
-	for (int i = 0; i < (int)(&arraySetLength); i++) {
-		for (int j = 0; j < (int)(&(arrayLength[i])); j++)
+	for (int i = 0; i < arraySetLength; i++) {
+		for (int j = 0; j < arrayLength[i]; j++)
 			criteriaRequirements[i][j].write(buffer);
 	}
 }
@@ -43,7 +43,7 @@ void criterionProgress::write(char*& buffer) const {
 
 void advancementProgress::write(char*& buffer) const {
 	size.write(buffer);
-	for (int i = 0; i < (int)(&size); i++) {
+	for (int i = 0; i < size; i++) {
 		identifiers[i].write(buffer);
 		criterions[i].write(buffer);
 	}

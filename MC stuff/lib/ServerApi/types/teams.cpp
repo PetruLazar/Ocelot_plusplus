@@ -11,7 +11,7 @@ void teamsUpdate::createTeam::write(char*& buffer) const {
 	teamSufix.write(buffer);
 	entityCount.write(buffer);
 
-	for (int i = 0; i < (int)(&entityCount); i++)
+	for (int i = 0; i < entityCount; i++)
 		entities[i].write(buffer);
 }
 
@@ -32,13 +32,13 @@ void teamsUpdate::updateTeamInfo::write(char*& buffer) const {
 void teamsUpdate::addEntitiesToTeam::write(char*& buffer) const {
 	entityCount.write(buffer);
 
-	for (int i = 0; i < (int)(&entityCount); i++)
+	for (int i = 0; i < entityCount; i++)
 		entities[i].write(buffer);
 }
 
 void teamsUpdate::removeEntitiesFromTeam::write(char*& buffer) const {
 	entityCount.write(buffer);
 
-	for (int i = 0; i < (int)(&entityCount); i++)
+	for (int i = 0; i < entityCount; i++)
 		entities[i].write(buffer);
 }

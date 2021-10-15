@@ -14,6 +14,7 @@ public:
 	void SERVER_API read(char*&);
 	void SERVER_API write(char*&) const;
 	SERVER_API operator int& ();
+	SERVER_API operator int () const;
 	void SERVER_API operator=(int);
 
 	//check if there is a valid varInt in memory with the maximum size of 'max' Bytes
@@ -32,6 +33,7 @@ public:
 	void SERVER_API read(char*&);
 	void SERVER_API write(char*&) const;
 	SERVER_API operator long long& ();
+	SERVER_API operator long long () const;
 	void SERVER_API operator=(int64);
 
 	//check if there is a valid varLong in memory with the maximum size of 'max' Bytes

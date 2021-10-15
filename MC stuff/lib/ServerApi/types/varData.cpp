@@ -50,8 +50,10 @@ void varInt::write(char*& buffer) const
 		*(buffer++) = b;
 	} while (c);
 }
-varInt::operator int& ()
-{
+varInt::operator int& () {
+	return v;
+}
+varInt::operator int () const {
 	return v;
 }
 void varInt::operator=(int o) { v = o; }
@@ -116,8 +118,10 @@ void varLong::write(char*& buffer) const
 		*(buffer++) = b;
 	} while (c);
 }
-varLong::operator long long& ()
-{
+varLong::operator long long& () {
+	return v;
+}
+varLong::operator long long () const {
 	return v;
 }
 void varLong::operator=(int64 o) { v = o; }
