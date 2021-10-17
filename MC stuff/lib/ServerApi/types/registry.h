@@ -18,8 +18,12 @@ class Registry
 {
 	static json* registries;
 	static json* globalPalette;
+	static ull blockStatesCount;
+
 
 public:
+	SERVER_API static ull getBlockStateCount();
+
 	SERVER_API static int getId(const std::string& category, const std::string& item);
 	SERVER_API static std::string getName(const std::string& category, int id);
 

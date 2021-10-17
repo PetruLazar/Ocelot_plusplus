@@ -3,6 +3,7 @@
 #include "error.h"
 
 json* Registry::registries, * Registry::globalPalette;
+ull Registry::blockStatesCount;
 
 BlockProperty::BlockProperty(const std::string& name, const std::string& val) : name(name), value(val) { }
 BlockProperty::BlockProperty() { }
@@ -117,6 +118,11 @@ std::string Registry::getBlock(const json& blockState)
 	throw runtimeError("No block found");
 }
 
+ull Registry::getBlockStateCount()
+{
+	return blockStatesCount;
+}
+
 void Registry::loadRegistriesAndPalette()
 {
 	//load registries
@@ -130,4 +136,10 @@ void Registry::loadRegistriesAndPalette()
 	if (!jsonFile.is_open()) throw runtimeError("Could not load global palette");
 	globalPalette = json::parse(jsonFile);
 	jsonFile.close();
+
+	//load blockStatesCount
+	ull blockCount = globalPalette->getSize();
+	json& lastBlockStates = (*globalPalette)[(int)blockCount - 1]["states"];
+	ull lastBlockStateCount = lastBlockStates.getSize();
+	blockStatesCount = lastBlockStates[(int)lastBlockStateCount - 1]["id"].iValue();
 }

@@ -1901,6 +1901,19 @@ void message::play::send::entityPositionAndRotation(Player* p, varInt eid, bshor
 
 	finishSendMacro;
 }
+void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ)
+{
+	varInt id = (int)id::entityVelocity;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+	velocityX.write(data);
+	velocityY.write(data);
+	velocityZ.write(data);
+
+	finishSendMacro;
+}
 
 /*void message::translateChunk()
 {
@@ -1910,9 +1923,9 @@ void message::translateLight()
 {
 
 }*/
-void message::play::send::sendFullChunk(Player* p, int cX, int cZ)
+void message::play::send::sendFullChunk(Player* p, int cX, int cZ, bool incLoadCount)
 {
-	Chunk* chunk = p->world->get(cX, cZ, true);
+	Chunk* chunk = p->world->get(cX, cZ, incLoadCount);
 
 	//update light
 	int sectionCount = (int)chunk->lightData.size();
@@ -2158,7 +2171,7 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->eid, eqp);
-	
+
 	delete[] eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
