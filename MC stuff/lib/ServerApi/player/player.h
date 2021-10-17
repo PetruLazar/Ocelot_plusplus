@@ -135,7 +135,7 @@ public:
 	SERVER_API bool ScheduledDisconnect();
 
 	SERVER_API static std::vector<Player*> players;
-	SERVER_API static EidDispenser::Player eidDispenser;
+	SERVER_API static eidDispenser::Player eidDispenser;
 
 	//clears the players list of disconnected players
 	SERVER_API static void clearDisconnectedPlayers();

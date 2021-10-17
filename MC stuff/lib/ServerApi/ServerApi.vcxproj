@@ -224,6 +224,7 @@
     <ClInclude Include="types\queue.h" />
     <ClInclude Include="types\registry.h" />
     <ClInclude Include="types\slot.h" />
+    <ClInclude Include="types\statistics.h" />
     <ClInclude Include="types\teams.h" />
     <ClInclude Include="types\trades.h" />
     <ClInclude Include="types\typedefs.h" />
@@ -288,6 +289,7 @@
     <ClCompile Include="types\queue.cpp" />
     <ClCompile Include="types\registry.cpp" />
     <ClCompile Include="types\slot.cpp" />
+    <ClCompile Include="types\statistics.cpp" />
     <ClCompile Include="types\teams.cpp" />
     <ClCompile Include="types\trades.cpp" />
     <ClCompile Include="types\utils.cpp" />

@@ -20,7 +20,7 @@ const double noiseFactor_x = 1. / 128, noiseFactor_z = 1. / 128;
 std::vector<World*> World::worlds;
 int World::spawnWorld = 0;
 
-EidDispenser::Entity World::eidDispenser;
+eidDispenser::Entity World::eidDispenser;
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
 		new nbt_string("type","minecraft:dimension_type"),

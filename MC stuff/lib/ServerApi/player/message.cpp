@@ -200,7 +200,7 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 	throw protocolError("Encryption not supported");
 }
 
-void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, EntityType type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
+void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, entity::type type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
 {
 	varInt id = (int)id::spawnEntity;
 	prepareSendMacro(1024 * 1024);
@@ -208,7 +208,7 @@ void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid,
 	id.write(data);
 	eid.write(data);
 	uuid.write(data);
-	varInt(type).write(data);
+	varInt((int)type).write(data);
 	x.write(data);
 	y.write(data);
 	z.write(data);
@@ -235,7 +235,7 @@ void message::play::send::spawnXPorb(Player* p, varInt eid, bdouble x, bdouble y
 
 	finishSendMacro;
 }
-void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID& uuid, EntityType type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ)
+void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID& uuid, entity::type type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ)
 {
 	varInt id = (int)id::spawnLivingEntity;
 	prepareSendMacro(1024 * 1024);
@@ -243,7 +243,7 @@ void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID&
 	id.write(data);
 	eid.write(data);
 	uuid.write(data);
-	varInt(type).write(data);
+	varInt((int)type).write(data);
 	x.write(data);
 	y.write(data);
 	z.write(data);
@@ -256,7 +256,7 @@ void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID&
 
 	finishSendMacro;
 }
-void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, Painting::motive motive, Position location, Painting::direction direction)
+void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, entity::Painting::motive motive, Position location, entity::direction direction)
 {
 	varInt id = (int)id::spawnPainting;
 	prepareSendMacro(1024 * 1024);
@@ -266,7 +266,7 @@ void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uui
 	uuid.write(data);
 	varInt(motive).write(data);
 	location.write(data);
-	*(data++) = direction;
+	*(data++) = (Byte)direction;
 
 	finishSendMacro;
 }
@@ -286,14 +286,14 @@ void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid,
 
 	finishSendMacro;
 }
-void message::play::send::sculkVibrationSignal(Player* p, Position source, Sculk::destinationType destinationType, Sculk::destination destination, varInt arrivalTime)
+void message::play::send::sculkVibrationSignal(Player* p, Position source, entity::Sculk::destinationType destinationType, entity::Sculk::destination destination, varInt arrivalTime)
 {
 	varInt id = (int)id::sculkVibrationSignal;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	source.write(data);
-	if (destinationType == Sculk::block)
+	if (destinationType == entity::Sculk::block)
 	{
 		mcString("block").write(data);
 		destination.position.write(data);
@@ -307,14 +307,14 @@ void message::play::send::sculkVibrationSignal(Player* p, Position source, Sculk
 
 	finishSendMacro;
 }
-void message::play::send::entityAnimation(Player* p, varInt eid, Animation animation)
+void message::play::send::entityAnimation(Player* p, varInt eid, entity::animation animation)
 {
 	varInt id = (int)id::entityAnimation;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	eid.write(data);
-	*(data++) = (Byte&)animation;
+	*(data++) = (Byte)animation;
 
 	finishSendMacro;
 }
@@ -962,96 +962,15 @@ void message::play::send::displayScoreboard(Player* p, Byte position, const mcSt
 
 	finishSendMacro;
 }
-void message::play::send::entityMetadata(Player* p, varInt eid, Byte* index, void** args) //args should contain all data in array like network buffer style
+void message::play::send::entityMetadata(Player* p, entity::Metadata* metadatas) //args should contain all data in array like network buffer style
 { //untested!!!
-	bool optional;
-
 	varInt id = (int)id::entityMetadata;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 
-	int dataOffset = 0;
-	for (int counter = 0; index[counter] != 0xff; counter++) {
-		*(data++) = index[counter];
-		switch (index[counter]) {
-		case 0:
-			*(data++) = *static_cast<Byte*>(args[counter + dataOffset]);
-			break;
-		case 1:
-			static_cast<varInt*>(args[counter + dataOffset])->write(data);
-			break;
-		case 2:
-			static_cast<bfloat*>(args[counter + dataOffset])->write(data);
-			break;
-		case 3:
-			static_cast<mcString*>(args[counter + dataOffset])->write(data);
-			break;
-		case 4:
-			static_cast<Chat*>(args[counter + dataOffset])->write(data);
-			break;
-		case 5:
-			optional = static_cast<bool*>(args[counter + dataOffset]);
-			*(data++) = optional;
-			if (optional)
-				static_cast<Chat*>(args[counter + ++dataOffset])->write(data);
-			break;
-		case 6:
-			static_cast<Slot*>(args[counter + dataOffset])->write(data);
-			break;
-		case 7:
-			*(data++) = *static_cast<bool*>(args[counter + dataOffset]);
-			break;
-		case 8:
-			static_cast<bfloat*>(args[counter + dataOffset])->write(data);
-			static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
-			static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
-			break;
-		case 9:
-			static_cast<Position*>(args[counter + dataOffset])->write(data);
-			break;
-		case 10:
-			optional = static_cast<bool*>(args[counter + dataOffset]);
-			*(data++) = optional;
-			if (optional) {
-				static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
-				static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
-				static_cast<bfloat*>(args[counter + ++dataOffset])->write(data);
-			}
-			break;
-		case 11:
-			static_cast<varInt*>(args[counter + dataOffset])->write(data);
-			break;
-		case 12:
-			optional = static_cast<bool*>(args[counter + dataOffset]);
-			*(data++) = optional;
-			if (optional)
-				static_cast<mcUUID*>(args[counter + ++dataOffset])->write(data);
-			break;
-		case 13:
-			static_cast<varInt*>(args[counter + dataOffset])->write(data);
-			break;
-		case 14:
-			static_cast<nbt*>(args[counter + dataOffset])->write(data);
-			break;
-		case 15:
-			static_cast<Particle*>(args[counter + dataOffset])->write(data);
-			break;
-		case 16:
-			static_cast<varInt*>(args[counter + dataOffset])->write(data);
-			static_cast<varInt*>(args[counter + ++dataOffset])->write(data);
-			static_cast<varInt*>(args[counter + ++dataOffset])->write(data);
-			break;
-		case 17:
-			static_cast<varInt*>(args[counter + dataOffset])->write(data);
-			break;
-		case 18:
-			static_cast<varInt*>(args[counter + dataOffset])->write(data);
-			break;
-		default:
-			break;
-		}
-	}
+	for (int counter = 0; metadatas[counter].index != 0xff; counter++)
+		metadatas[counter].write(data);
 
 	*(data++) = (Byte)0xff;
 
@@ -1523,7 +1442,7 @@ void message::play::send::respawn(Player* p, const nbt_compound& dimension, cons
 
 	finishSendMacro;
 }
-void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProperties, EntityProperty* properties)
+void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProperties, entity::Property* properties)
 {
 	varInt id = (int)id::entityProperties;
 	prepareSendMacro(1024 * 1024);
@@ -1532,12 +1451,7 @@ void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProp
 	eid.write(data);
 	nOfProperties.write(data);
 	for (int i = 0; i < nOfProperties; i++)
-	{
-		EntityProperty& prop = properties[i];
-		prop.key.write(data);
-		prop.value.write(data);
-		varInt(0).write(data);
-	}
+		properties[i].write(data);
 
 	finishSendMacro;
 }
@@ -1901,19 +1815,6 @@ void message::play::send::entityPositionAndRotation(Player* p, varInt eid, bshor
 
 	finishSendMacro;
 }
-void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ)
-{
-	varInt id = (int)id::entityVelocity;
-	prepareSendMacro(1024 * 1024);
-
-	id.write(data);
-	eid.write(data);
-	velocityX.write(data);
-	velocityY.write(data);
-	velocityZ.write(data);
-
-	finishSendMacro;
-}
 
 /*void message::translateChunk()
 {
@@ -2195,7 +2096,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 }
 void message::play::receive::animation(Player* p, Hand hand)
 {
-	Animation animation = (hand == p->mainHand) ? Animation::swingMainArm : Animation::swingOffhand;
+	entity::animation animation = (hand == p->mainHand) ? entity::animation::swingMainArm : entity::animation::swingOffhand;
 
 	for (Player* seener : p->seenBy)
 		ignoreExceptions(message::play::send::entityAnimation(seener, p->eid, animation));

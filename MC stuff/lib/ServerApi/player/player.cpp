@@ -556,7 +556,7 @@ void Player::schedulePacket(char* buffer, ull size, char* toDelete, bool disconn
 bool Player::Connected() { return connected; }
 bool Player::ScheduledDisconnect() { return scheduledDisconnect; }
 
-EidDispenser::Player Player::eidDispenser;
+eidDispenser::Player Player::eidDispenser;
 
 void Player::clearDisconnectedPlayers()
 {

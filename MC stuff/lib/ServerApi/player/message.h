@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "player.h"
 #include "../nbt.h"
 #include "../json.h"
@@ -17,107 +17,6 @@
 //for outside the Player class, use broadcastMessage
 //broadcasting destionation is "player_macro"
 #define broadcastMessageOmitSafe(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr && player_macro->connected) ignoreExceptions(msg_f_call);
-
-//A log of the vanilla client playing on a vanilla server:
-//S: join game - done
-//S : plugin message - done
-//S : server difficulty - done
-//S : player abilities - done
-//S : held item change
-//S : declare recipes - done
-//S : tags
-//										C: client settings
-//S : entity status
-//										C: plugin message
-//S : declare commands
-//S : unlock recipes
-//S : player position and look - done
-//S : player info
-//S : player info
-//S : update view position
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : spawn living entity
-//S : entity metadata
-//S : entity properties
-//S : spawn living entity
-//S : entity metadata
-//S : entity properties
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : spawn entity
-//S : entity metadata
-//S : entity velocity
-//S : spawn living entity
-//S : entity metadata
-//S : entity properties
-//S : spawn entity
-//S : entity metadata
-//S : entity velocity
-//S : spawn living entity
-//S : entity metadata
-//S : entity properties
-//S : update light
-//S : chunk data
-//S : spawn living entity
-//S : entity metadata
-//S : entity properties
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : update light
-//S : chunk data
-//S : spawn living entity
-//S : entity metadata
-//S : entity properties
-//										C: teleport confirm
-//S : spawn living entity
-//										C: player position and rotation
-//S : entity metadata
-//S : entity properties
-//										C: player position and rotation
-//...
-//window Items?
-//spawnPosition? - done
 
 namespace blockEntityData
 {
@@ -139,83 +38,6 @@ namespace blockEntityData
 		beehiveInfo
 	};
 }
-
-class statistic
-{
-public:
-	enum category
-	{
-		mined,
-		crafted,
-		used,
-		broken,
-		picked_up,
-		dropped,
-		killed,
-		killed_by,
-		custom
-	};
-	enum custom
-	{
-		leave_game,
-		play_one_minute,
-		time_since_death,
-		time_since_rest,
-		sneak_time,
-		walk_one_cm,
-		crouch_one_cm,
-		sprint_one_cm,
-		walk_on_water_one_cm,
-		fall_one_cm,
-		climb_one_cm,
-		fly_one_cm,
-		walk_under_water_one_cm,
-		minecart_one_cm,
-		boat_one_cm,
-		pig_one_cm,
-		horse_one_cm,
-		aviate_one_cm,
-		swim_one_cm,
-		strider_one_cm,
-		jump,
-		drop,
-		damage_dealt,
-		damage_dealt_absorbed,
-		damage_dealt_resisted,
-		damage_taken,
-		damage_blocked_by_shield,
-		damage_absorbed,
-		damage_resisted,
-		deaths,
-		mob_kills,
-		animals_bred,
-		player_kills,
-		fish_caught,
-		talked_to_villager,
-		traded_with_villager,
-		eat_cake_slice,
-		fill_cauldron,
-		use_cauldron,
-		clean_armor,
-		clean_banner,
-		clean_shulker_box,
-		interact_with_brewingstand,
-		interact_with_beacon,
-		inspect_dropper,
-		inspect_hopper,
-		inspect_dispenser,
-		play_noteblock,
-		tune_noteblock,
-		pot_flower,
-		trigger_trapped_chest,
-		open_enderchest,
-
-	};
-
-	varInt categoryId;
-	varInt statisticId;
-	varInt value;
-};
 
 struct message
 {
@@ -452,13 +274,13 @@ struct message
 
 		struct send
 		{
-			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, EntityType type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint data, bshort velocityX, bshort velocityY, bshort velocityZ);
+			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, entity::type type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint data, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void spawnXPorb(Player*, varInt eid, bdouble x, bdouble y, bdouble z, bigEndian<short> xpCount);
-			SERVER_API static void spawnLivingEntity(Player*, varInt eid, const mcUUID& uuid, EntityType type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ);
-			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, Painting::motive motive, Position location, Painting::direction direction);
+			SERVER_API static void spawnLivingEntity(Player*, varInt eid, const mcUUID& uuid, entity::type type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ);
+			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, entity::Painting::motive motive, Position location, entity::direction direction);
 			SERVER_API static void spawnPlayer(Player*, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch);
-			SERVER_API static void sculkVibrationSignal(Player*, Position source, Sculk::destinationType destinationType, Sculk::destination destination, varInt arrivalTicks);
-			SERVER_API static void entityAnimation(Player*, varInt eid, Animation animation);
+			SERVER_API static void sculkVibrationSignal(Player*, Position source, entity::Sculk::destinationType destinationType, entity::Sculk::destination destination, varInt arrivalTicks);
+			SERVER_API static void entityAnimation(Player*, varInt eid, entity::animation animation);
 			//SERVER_API static void statistics(Player*, varInt count, statistic* stats);
 			SERVER_API static void acknowledgePlayerDigging(Player*, Position location, varInt block, varInt status, bool successful);
 			SERVER_API static void blockBreakAnimation(Player*, varInt eid, Position location, Byte destroyStage);
@@ -530,7 +352,7 @@ struct message
 			SERVER_API static void updateViewDistance(Player*, varInt distance);
 			SERVER_API static void spawnPosition(Player*, Position location, bfloat angle);
 			SERVER_API static void displayScoreboard(Player*, Byte position, const mcString& scoreName);
-			SERVER_API static void entityMetadata(Player*, varInt eid, Byte* index, void** args);
+			SERVER_API static void entityMetadata(Player*, entity::Metadata* metadatas);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
@@ -552,7 +374,7 @@ struct message
 			SERVER_API static void collectItem(Player*, varInt collectedEid, varInt collectorEid, varInt pickupCount);
 			SERVER_API static void entityTeleport(Player*, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround);
 			SERVER_API static void advancements(Player*, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement** advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress** advancementProgresses);
-			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, EntityProperty* properties);
+			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, entity::Property* properties);
 			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
 			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes);
 			SERVER_API static void tags(Player*);
