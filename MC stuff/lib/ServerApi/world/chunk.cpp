@@ -82,7 +82,7 @@ void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl)
 		sectionMask->setElement(relY >> 4, (bool)section.blockCount);
 	}
 
-
+	//change heightmaps? (once it is needed)
 }
 
 void Chunk::writeSectionData(char*&)

@@ -67,12 +67,50 @@ namespace CommandHandlers
 				cx = x >> 4,
 				cz = z >> 4;
 			x &= 0xf; z &= 0xf;
-			//message::play::send::chatMessage(executingPlayer, Chat((std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + " in " + std::to_string(cx) + ' ' + std::to_string(cy) + ' ' + std::to_string(cz)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-			//executingPlayer->world->get(cx, cz)->sections[cy].getPaletteEntry(x, y, z).set(rand() % 10000);
-			Chunk* chunk = executingPlayer->world->get(cx, cz);
-			//for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++) section.setBlock(i, y, j, Registry::getBlockState(rand() % 10000));
-			chunk->setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
+
+			int cy = y >> 4; y &= 0xf;
+			Section& section = executingPlayer->world->get(cx, cz)->sections[cy];
+			for (int i = 0; i < 16; i++) for (int j = 0; j < 15; j++) section.setBlock(i, y, j, Registry::getBlockState(rand() % 10000));
+
+			//Chunk* chunk = executingPlayer->world->get(cx, cz);
+			//chunk->setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
+			message::play::send::sendFullChunk(executingPlayer, cx, cz, false);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		}
+		break;
+		case 2:
+		{
+			int x = fastfloor((double)executingPlayer->X),
+				y = fastfloor((double)executingPlayer->Y) - 1 - executingPlayer->world->min_y,
+				z = fastfloor((double)executingPlayer->Z),
+				cx = x >> 4,
+				cz = z >> 4;
+			x &= 0xf; z &= 0xf;
+
+			//int cy = y >> 4; y &= 0xf;
+			//Section& section = executingPlayer->world->get(cx, cz)->sections[cy];
+			//for (int i = 0; i < 16; i++) for (int j = 0; j < 15; j++) section.setBlock(i, y, j, Registry::getBlockState(rand() % 10000));
+
+			Chunk* chunk = executingPlayer->world->get(cx, cz);
+			chunk->setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
+			message::play::send::sendFullChunk(executingPlayer, cx, cz, false);
+			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		}
+		break;
+		case 3:
+		{
+			int x = fastfloor((double)executingPlayer->X),
+				y = fastfloor((double)executingPlayer->Y) - 1 - executingPlayer->world->min_y,
+				z = fastfloor((double)executingPlayer->Z),
+				cx = x >> 4,
+				cz = z >> 4;
+			x &= 0xf; z &= 0xf;
+
+			int cy = y >> 4; y &= 0xf;
+			Section& section = executingPlayer->world->get(cx, cz)->sections[cy];
+			
+			if (section.useGlobalPallete) message::play::send::chatMessage(executingPlayer, Chat("global palette"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			else message::play::send::chatMessage(executingPlayer, Chat("local palette"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
 		//add tests here - starting at 1

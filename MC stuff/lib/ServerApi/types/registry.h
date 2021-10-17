@@ -18,11 +18,11 @@ class Registry
 {
 	static json* registries;
 	static json* globalPalette;
+	static ull blockStatesCount;
 
-	SERVER_API static ull getBlockStateCount();
 
 public:
-	static const ull blockStatesCount;
+	SERVER_API static ull getBlockStateCount();
 
 	SERVER_API static int getId(const std::string& category, const std::string& item);
 	SERVER_API static std::string getName(const std::string& category, int id);
@@ -41,7 +41,6 @@ public:
 	SERVER_API static std::string getBlock(int id);
 	//get the block name based on a block state (multiple ids can give you the same result); assumes the ids are in order
 	SERVER_API static std::string getBlock(const json& blockState);
-
 
 	SERVER_API static void loadRegistriesAndPalette();
 };
