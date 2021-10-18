@@ -30,5 +30,8 @@ uint bitCount(ull n)
 
 int fastfloor(double x)
 {
-	return x >= 0 ? int(x) : int(x) - 1;
+	if (x >= 0) return int(x);
+	int i = int(x);
+	if (i == x) return i;
+	return --i;
 }
