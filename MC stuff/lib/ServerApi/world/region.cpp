@@ -81,25 +81,25 @@ bool Region::hasChunksLoaded() { return loadedChunks; }
 
 BlockState& Region::getPaletteEntry(int relX, int relY, int relZ)
 {
-	Chunk* chunk = chunks[relX >> 5][relZ >> 5];
-	if (!chunk) throw chunkNotLoaded();
-	return chunk->getPaletteEntry(relX & 0x1f, relY, relZ & 0x1f);
+	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
+	if (!chunk) throw chunkNotLoaded("Region::getPaletteEntry(int3): Chunk not loaded");
+	return chunk->getPaletteEntry(relX & 0xf, relY, relZ & 0xf);
 }
 BlockState& Region::getPaletteEntry(int chunkX, int sectionY, int chunkZ, int paletteIndex)
 {
 	Chunk* chunk = chunks[chunkX][chunkZ];
-	if (!chunk) throw chunkNotLoaded();
+	if (!chunk) throw chunkNotLoaded("Region::getPaletteEntry(int4): Chunk not loaded");
 	return chunk->getPaletteEntry(sectionY, paletteIndex);
 }
 BlockState Region::getBlock(int relX, int relY, int relZ)
 {
-	Chunk* chunk = chunks[relX >> 5][relZ >> 5];
-	if (!chunk) throw chunkNotLoaded();
-	return chunk->getBlock(relX & 0x1f, relY, relZ & 0x1f);
+	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
+	if (!chunk) throw chunkNotLoaded("Region::getBlock: Chunk not loaded");
+	return chunk->getBlock(relX & 0xf, relY, relZ & 0xf);
 }
 void Region::setBlock(int relX, int relY, int relZ, const BlockState& bl)
 {
-	Chunk* chunk = chunks[relX >> 5][relZ >> 5];
-	if (!chunk) throw chunkNotLoaded();
-	chunk->setBlock(relX & 0x1f, relY, relZ & 0x1f, bl);
+	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
+	if (!chunk) throw chunkNotLoaded("Region::setBlock: Chunk not loaded");
+	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, bl);
 }

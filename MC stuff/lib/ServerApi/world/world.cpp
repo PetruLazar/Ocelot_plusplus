@@ -1020,6 +1020,64 @@ Chunk* World::get(int x, int z, bool increaseLoadCount)
 	region->set(relX, relZ, chunk);
 	return chunk;
 }
+Region* World::getRegion(int rX, int rZ)
+{
+	for (Region* reg : regions) if (rX == reg->rX && rZ == reg->rZ) return reg;
+	return nullptr;
+}
+
+BlockState& World::getPaletteEntry(int x, int y, int z)
+{
+	y -= min_y;
+	int rX = x >> 9,
+		rZ = z >> 9;
+	x &= 0x1ff; z &= 0x1ff;
+
+	Region* reg = getRegion(rX, rZ);
+	if (reg)
+	{
+		return reg->getPaletteEntry(x, y, z);
+	}
+	throw std::exception("World::getBlock: region not loaded");
+}
+BlockState& World::getPaletteEntry(int cx, int cy, int cz, int paletteIndex)
+{
+	int rX = cx >> 5,
+		rZ = cz >> 5;
+	cx &= 0x1f; cz &= 0x1f;
+
+	Region* reg = getRegion(rX, rZ);
+	if (reg)
+	{
+		return reg->getPaletteEntry(cx, cy, cz, paletteIndex);
+	}
+	throw std::exception("World::getBlock: region not loaded");
+}
+BlockState World::getBlock(int x, int y, int z)
+{
+	y -= min_y;
+	int rX = x >> 9,
+		rZ = z >> 9;
+	x &= 0x1ff; z &= 0x1ff;
+
+	Region* reg = getRegion(rX, rZ);
+	if (reg)
+	{
+		return reg->getBlock(x, y, z);
+	}
+	throw std::exception("World::getBlock: region not loaded");
+}
+void World::setBlock(int x, int y, int z, const BlockState& bl)
+{
+	y -= min_y;
+	int rX = x >> 9,
+		rZ = z >> 9;
+	x &= 0x1ff; z &= 0x1ff;
+
+	Region* reg = getRegion(rX, rZ);
+	if (!reg) throw std::exception("World::setBlock: region not loaded");
+	reg->setBlock(x, y, z, bl);
+}
 
 void World::loadAll()
 {

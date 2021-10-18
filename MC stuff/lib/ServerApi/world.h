@@ -66,6 +66,12 @@ public:
 
 	SERVER_API void unload(int x, int z);
 	SERVER_API Chunk* get(int x, int z, bool increaseLoadCount = false);
+	SERVER_API Region* getRegion(int rX, int rZ);
+
+	SERVER_API BlockState& getPaletteEntry(int x, int y, int z);
+	SERVER_API BlockState& getPaletteEntry(int cx, int cy, int cz, int paletteIndex);
+	SERVER_API BlockState getBlock(int x, int y, int z);
+	SERVER_API void setBlock(int x, int y, int z, const BlockState&);
 
 	//generator
 	GeneratorFunction generatorFunction = 0;
