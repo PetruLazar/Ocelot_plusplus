@@ -105,7 +105,7 @@ namespace Commands
 					//check for limits
 					properties->limit(*argValue);
 					//value is valid and within limits
-					command.erase(0, after);
+					command.erase(0, after + 1);
 					argumentStack.push_back(argValue);
 					return true;
 				}
@@ -135,7 +135,7 @@ namespace Commands
 					//check for limits
 					properties->limit(*argValue);
 					//value is valid and within limits
-					command.erase(0, after);
+					command.erase(0, after + 1);
 					argumentStack.push_back(argValue);
 					return true;
 				}
@@ -165,7 +165,7 @@ namespace Commands
 					//check for limits
 					properties->limit(*argValue);
 					//value is valid and within limits
-					command.erase(0, after);
+					command.erase(0, after + 1);
 					argumentStack.push_back(argValue);
 					return true;
 				}
@@ -195,7 +195,7 @@ namespace Commands
 					//check for limits
 					properties->limit(*argValue);
 					//value is valid and within limits
-					command.erase(0, after);
+					command.erase(0, after + 1);
 					argumentStack.push_back(argValue);
 					return true;
 				}
