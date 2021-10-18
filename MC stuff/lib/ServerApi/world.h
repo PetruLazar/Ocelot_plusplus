@@ -19,8 +19,8 @@ class World
 	static Chunk* generate_void(World*, int x, int z);
 
 public:
-	World(const char* name);
-	~World();
+	SERVER_API World(const char* name);
+	SERVER_API ~World();
 
 	mcString name;
 	std::vector<Player*> players;
@@ -68,6 +68,10 @@ public:
 	SERVER_API Chunk* get(int x, int z, bool increaseLoadCount = false);
 	SERVER_API Region* getRegion(int rX, int rZ);
 
+	//converts a y coordinate from absolute values to relative values (to the min_y of the world)
+	SERVER_API int AbsToRelHeight(int);
+	//checks whether the y coordinate is in world (relative coordinate)
+	SERVER_API bool checkCoordinates(int y);
 	SERVER_API BlockState& getPaletteEntry(int x, int y, int z);
 	SERVER_API BlockState& getPaletteEntry(int cx, int cy, int cz, int paletteIndex);
 	SERVER_API BlockState getBlock(int x, int y, int z);

@@ -1026,9 +1026,16 @@ Region* World::getRegion(int rX, int rZ)
 	return nullptr;
 }
 
+int World::AbsToRelHeight(int y)
+{
+	return y - min_y;
+}
+bool World::checkCoordinates(int y)
+{
+	return y >= 0 && y < height;
+}
 BlockState& World::getPaletteEntry(int x, int y, int z)
 {
-	y -= min_y;
 	int rX = x >> 9,
 		rZ = z >> 9;
 	x &= 0x1ff; z &= 0x1ff;
@@ -1055,7 +1062,6 @@ BlockState& World::getPaletteEntry(int cx, int cy, int cz, int paletteIndex)
 }
 BlockState World::getBlock(int x, int y, int z)
 {
-	y -= min_y;
 	int rX = x >> 9,
 		rZ = z >> 9;
 	x &= 0x1ff; z &= 0x1ff;
@@ -1069,7 +1075,6 @@ BlockState World::getBlock(int x, int y, int z)
 }
 void World::setBlock(int x, int y, int z, const BlockState& bl)
 {
-	y -= min_y;
 	int rX = x >> 9,
 		rZ = z >> 9;
 	x &= 0x1ff; z &= 0x1ff;
