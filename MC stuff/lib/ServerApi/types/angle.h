@@ -8,7 +8,6 @@ class Angle
 	Byte v;
 
 public:
-	
 	SERVER_API Angle();
 	SERVER_API Angle(Byte);
 	SERVER_API Angle(double);
@@ -16,4 +15,3 @@ public:
 	SERVER_API operator double();
 	SERVER_API void operator=(double);
 };
-
