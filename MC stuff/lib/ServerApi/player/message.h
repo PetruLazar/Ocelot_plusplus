@@ -119,6 +119,30 @@
 //window Items?
 //spawnPosition? - done
 
+namespace playerDigging
+{
+	enum status
+	{
+		startedDigging,
+		cancelledDigging,
+		finishedDigging,
+		dropItemStack,
+		dropItem,
+		shootArrow,
+		//finishEating = shootArrow,
+		swapItemInHand
+	};
+
+	enum face
+	{
+		bottom,
+		top,
+		north,
+		south,
+		west,
+		east
+	};
+}
 namespace blockEntityData
 {
 	enum action

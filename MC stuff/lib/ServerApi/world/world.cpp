@@ -1033,6 +1033,7 @@ int World::AbsToRelHeight(int y)
 bool World::checkCoordinates(int y)
 {
 	return y >= 0 && y < height;
+
 }
 BlockState& World::getPaletteEntry(int x, int y, int z)
 {

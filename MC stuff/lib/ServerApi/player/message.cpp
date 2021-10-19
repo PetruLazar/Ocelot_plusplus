@@ -1060,6 +1060,17 @@ void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX
 
 	finishSendMacro;
 }
+void message::play::send::blockChange(Player* p, Position location, varInt blockId)
+{
+	varInt id = (int)id::blockChange;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	location.write(data);
+	blockId.write(data);
+
+	finishSendMacro;
+}
 
 /*void message::translateChunk()
 {
@@ -1337,6 +1348,52 @@ void message::play::receive::animation(Player* p, Hand hand)
 
 	for (Player* seener : p->seenBy)
 		ignoreExceptions(message::play::send::entityAnimation(seener, p->eid, animation));
+}
+void message::play::receive::playerDigging(Player* p, varInt status, Position location, Byte face)
+{
+	switch (status)
+	{
+	case playerDigging::startedDigging:
+	{
+		if (p->gm != gamemode::creative) break;
+		sf::Vector3i v = location.get();
+		v.y = p->world->AbsToRelHeight(v.y);
+		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
+		p->world->setBlock(v.x, v.y, v.z, 0);
+		//to do: send "acknowledge player digging" instead of "block change"
+		for (Player* other : p->world->players)
+			if (other != p && other->positionInRange(location))
+				send::blockChange(other, location, 0);
+	}
+	break;
+	case playerDigging::cancelledDigging:
+
+		break;
+	case playerDigging::finishedDigging:
+	{
+		sf::Vector3i v = location.get();
+		v.y = p->world->AbsToRelHeight(v.y);
+		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
+		p->world->setBlock(v.x, v.y, v.z, 0);
+		//to do: send "acknowledge player digging" instead of "block change"
+		for (Player* other : p->world->players)
+			if (other != p && other->positionInRange(location))
+				send::blockChange(other, location, 0);
+	}
+	break;
+	case playerDigging::dropItemStack:
+
+		break;
+	case playerDigging::dropItem:
+
+		break;
+	case playerDigging::shootArrow: //also finish eating
+
+		break;
+	case playerDigging::swapItemInHand:
+
+		break;
+	}
 }
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
@@ -1738,7 +1795,15 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::playerDigging:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: player digging");
+			varInt status;
+			Position location;
+			Byte face;
+			status.read(data);
+			location.read(data);
+			face = *(data++);
+
+			play::receive::playerDigging(p, status, location, face);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: player digging");
 		}
 		break;
 		case play::id::entityAction:
