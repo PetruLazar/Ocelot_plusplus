@@ -84,7 +84,7 @@ public:
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
 
-	SERVER_API static EidDispenser::Entity eidDispenser;
+	SERVER_API static eidDispenser::Entity eidDispenser;
 
 	SERVER_API static void loadAll();
 	SERVER_API static void unloadAll();

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -197,12 +197,14 @@
     <ClInclude Include="server\log.h" />
     <ClInclude Include="server\options.h" />
     <ClInclude Include="types.h" />
+    <ClInclude Include="types\advancements.h" />
     <ClInclude Include="types\angle.h" />
     <ClInclude Include="types\apidef.h" />
     <ClInclude Include="types\basic.h" />
     <ClInclude Include="types\bitarray.h" />
     <ClInclude Include="types\bitstream.h" />
     <ClInclude Include="types\block.h" />
+    <ClInclude Include="types\bossBar.h" />
     <ClInclude Include="types\chat.h" />
     <ClInclude Include="types\endian.h" />
     <ClInclude Include="types\entity.h" />
@@ -214,12 +216,17 @@
     <ClInclude Include="types\gameevent.h" />
     <ClInclude Include="types\gametags.h" />
     <ClInclude Include="types\item.h" />
+    <ClInclude Include="types\mapIcon.h" />
     <ClInclude Include="types\mcString.h" />
     <ClInclude Include="types\node.h" />
+    <ClInclude Include="types\particle.h" />
     <ClInclude Include="types\position.h" />
     <ClInclude Include="types\queue.h" />
     <ClInclude Include="types\registry.h" />
     <ClInclude Include="types\slot.h" />
+    <ClInclude Include="types\statistics.h" />
+    <ClInclude Include="types\teams.h" />
+    <ClInclude Include="types\trades.h" />
     <ClInclude Include="types\typedefs.h" />
     <ClInclude Include="types\utils.h" />
     <ClInclude Include="types\uuid.h" />
@@ -262,22 +269,29 @@
     <ClCompile Include="server\console.cpp" />
     <ClCompile Include="server\log.cpp" />
     <ClCompile Include="server\options.cpp" />
+    <ClCompile Include="types\advancements.cpp" />
     <ClCompile Include="types\angle.cpp" />
     <ClCompile Include="types\basic.cpp" />
     <ClCompile Include="types\bitarray.cpp" />
     <ClCompile Include="types\bitstream.cpp" />
+    <ClCompile Include="types\bossBar.cpp" />
     <ClCompile Include="types\chat.cpp" />
     <ClCompile Include="types\entity.cpp" />
     <ClCompile Include="types\Equipment.cpp" />
     <ClCompile Include="types\error.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
     <ClCompile Include="types\gametags.cpp" />
+    <ClCompile Include="types\mapIcon.cpp" />
     <ClCompile Include="types\mcString.cpp" />
     <ClCompile Include="types\node.cpp" />
+    <ClCompile Include="types\particle.cpp" />
     <ClCompile Include="types\position.cpp" />
     <ClCompile Include="types\queue.cpp" />
     <ClCompile Include="types\registry.cpp" />
     <ClCompile Include="types\slot.cpp" />
+    <ClCompile Include="types\statistics.cpp" />
+    <ClCompile Include="types\teams.cpp" />
+    <ClCompile Include="types\trades.cpp" />
     <ClCompile Include="types\utils.cpp" />
     <ClCompile Include="types\uuid.cpp" />
     <ClCompile Include="types\varData.cpp" />
