@@ -1063,11 +1063,24 @@ void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX
 void message::play::send::blockChange(Player* p, Position location, varInt blockId)
 {
 	varInt id = (int)id::blockChange;
-	prepareSendMacro(1024 * 1024);
+	prepareSendMacro(1024);
 
 	id.write(data);
 	location.write(data);
 	blockId.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::acknowledgePlayerDigging(Player* p, Position location, varInt blockId, varInt status, bool successful)
+{
+	varInt id = (int)id::acknowledgePlayerDigging;
+	prepareSendMacro(1024);
+
+	id.write(data);
+	location.write(data);
+	blockId.write(data);
+	status.write(data);
+	*(data++) = successful;
 
 	finishSendMacro;
 }
@@ -1362,8 +1375,9 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 		p->world->setBlock(v.x, v.y, v.z, 0);
 		//to do: send "acknowledge player digging" instead of "block change"
 		for (Player* other : p->world->players)
-			if (other != p && other->positionInRange(location))
-				send::blockChange(other, location, 0);
+			if (other != p/* && other->positionInRange(location)*/)
+				//send::blockChange(other, location, 0);
+				send::acknowledgePlayerDigging(other, location, 0, status, true);
 	}
 	break;
 	case playerDigging::cancelledDigging:
@@ -1377,8 +1391,9 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 		p->world->setBlock(v.x, v.y, v.z, 0);
 		//to do: send "acknowledge player digging" instead of "block change"
 		for (Player* other : p->world->players)
-			if (other != p && other->positionInRange(location))
-				send::blockChange(other, location, 0);
+			if (other != p/* && other->positionInRange(location)*/)
+				//send::blockChange(other, location, 0);
+				send::acknowledgePlayerDigging(other, location, 0, status, true);
 	}
 	break;
 	case playerDigging::dropItemStack:
