@@ -449,7 +449,7 @@ void message::play::send::mapData(Player* p, varInt mapId, Byte scale, bool lock
 		for (int i = 0; i < optLength; i++)
 			*(data++) = optData[i];
 	}
-	
+
 	finishSendMacro;
 }
 void message::play::send::tradeList(Player* p, varInt winId, Byte tradesCount, trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock)
@@ -888,7 +888,7 @@ void message::play::send::advancements(Player* p, bool reset, varInt mappingSize
 		progressIdentifiers[i].write(data);
 		advancementProgresses[i]->write(data);
 	}
-		
+
 	finishSendMacro;
 }
 void message::play::send::pluginMessage(Player* p, const mcString& channel, ull ByteCount, const char* Bytes)
@@ -898,7 +898,7 @@ void message::play::send::pluginMessage(Player* p, const mcString& channel, ull 
 
 	id.write(data);
 	channel.write(data);
-	for (ull i = 0; i < ByteCount; i++) 
+	for (ull i = 0; i < ByteCount; i++)
 		*(data++) = Bytes[i];
 
 	finishSendMacro;
@@ -1594,7 +1594,7 @@ void message::play::send::selectAdvancementTab(Player* p, bool hasId, const mcSt
 
 	finishSendMacro;
 }
-void message::play::send::actionBar(Player* p, const Chat& actionBarText) 
+void message::play::send::actionBar(Player* p, const Chat& actionBarText)
 {
 	varInt id = (int)id::actionBar;
 	prepareSendMacro(1024 * 1024);
@@ -1674,7 +1674,7 @@ void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 
 	id.write(data);
 	count.write(data);
-	for (int i = 0; i < count; i++) 
+	for (int i = 0; i < count; i++)
 		eids[i].write(data);
 
 	finishSendMacro;
@@ -1700,7 +1700,7 @@ void message::play::send::resourcePackSend(Player* p, const mcString& url, const
 	hash.write(data);
 	*(data++) = forced;
 	*(data++) = hasPromptMessage;
-	if(hasPromptMessage)
+	if (hasPromptMessage)
 		promptMessage.write(data);
 
 	finishSendMacro;
@@ -1815,44 +1815,6 @@ void message::play::send::entityPositionAndRotation(Player* p, varInt eid, bshor
 
 	finishSendMacro;
 }
-void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ)
-{
-	varInt id = (int)id::entityVelocity;
-	prepareSendMacro(1024 * 1024);
-
-	id.write(data);
-	eid.write(data);
-	velocityX.write(data);
-	velocityY.write(data);
-	velocityZ.write(data);
-
-	finishSendMacro;
-}
-void message::play::send::blockChange(Player* p, Position location, varInt blockId)
-{
-	varInt id = (int)id::blockChange;
-	prepareSendMacro(1024);
-
-	id.write(data);
-	location.write(data);
-	blockId.write(data);
-
-	finishSendMacro;
-}
-void message::play::send::acknowledgePlayerDigging(Player* p, Position location, varInt blockId, varInt status, bool successful)
-{
-	varInt id = (int)id::acknowledgePlayerDigging;
-	prepareSendMacro(1024);
-
-	id.write(data);
-	location.write(data);
-	blockId.write(data);
-	status.write(data);
-	*(data++) = successful;
-
-	finishSendMacro;
-}
-
 /*void message::translateChunk()
 {
 
