@@ -396,7 +396,7 @@ struct message
 			//SERVER_API static void clickWindow(Player*, Byte winId, bshort slot, varInt stateId, Byte button, varInt mode, varInt length, );
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, char* data);
-			//SERVER_API static void editBook(Player*, varInt hand, varInt count, mcString* pages,???);
+			//SERVER_API static void editBook(Player*, Hand hand, varInt count, mcString* pages,???);
 			SERVER_API static void queryEntityNbt(Player*, varInt transactionId, varInt eid);
 			SERVER_API static void interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking);
 			SERVER_API static void generateStructure(Player*, Position location, varInt levels, bool keepJigsaw);
@@ -431,8 +431,8 @@ struct message
 			SERVER_API static void updateSign(Player*, Position location, const mcString& line1, const mcString& line2, const mcString& line3, const mcString& line4);
 			SERVER_API static void animation(Player*, Hand hand);
 			SERVER_API static void spectate(Player*, const mcUUID& target);
-			SERVER_API static void playerBlockPlacement(Player*, varInt hand, Position location, varInt face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
-			SERVER_API static void useItem(Player*, varInt hand);
+			SERVER_API static void playerBlockPlacement(Player*, Hand hand, Position location, playerDigging::face face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
+			SERVER_API static void useItem(Player*, Hand hand);
 		};
 	};
 

@@ -2107,6 +2107,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 	case playerDigging::startedDigging:
 	{
 		if (p->gm != gamemode::creative) break;
+		//startedDigging actually breaks the block if the block breaks instantly (creative, string haste or efficiency, probably (untested) grass/torch/etc)
 		sf::Vector3i v = location.get();
 		v.y = p->world->AbsToRelHeight(v.y);
 		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
@@ -2147,6 +2148,56 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 
 		break;
 	}
+}
+void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
+{
+	std::string text = "playerBlockPlacement: ";
+
+	switch (hand)
+	{
+	case Hand::main:
+		text += "main ";
+		break;
+	case Hand::offhand:
+		text += "off";
+	}
+
+	text += "hand, (" + std::to_string(location.x()) + ' ' + std::to_string(location.y()) + ' ' + std::to_string(location.z()) + "), ";
+
+	switch (face)
+	{
+	case playerDigging::top:
+		text += "top";
+		break;
+	case playerDigging::bottom:
+		text += "bottom";
+		break;
+	case playerDigging::east:
+		text += "east";
+		break;
+	case playerDigging::west:
+		text += "west";
+		break;
+	case playerDigging::south:
+		text += "south";
+		break;
+	case playerDigging::north:
+		text += "north";
+	}
+
+	text += ", (" + std::to_string(curX) + ' ' + std::to_string(curY) + ' ' + std::to_string(curZ) + "), ";
+
+	switch (insideBlock)
+	{
+	case true:
+		text += "true";
+		break;
+	case false:
+		text += "false";
+	}
+
+	Log::txt() << '\n' << p->username << " - " << text;
+	play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 }
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
@@ -2693,7 +2744,21 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::playerBlockPlacement:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: player block placement");
+			varInt hand, face;
+			Position location;
+			bfloat curX, curY, curZ;
+			bool insideBlock;
+
+			hand.read(data);
+			location.read(data);
+			face.read(data);
+			curX.read(data);
+			curY.read(data);
+			curZ.read(data);
+			insideBlock = *(data++);
+
+			play::receive::playerBlockPlacement(p, (Hand)(int)hand, location, (playerDigging::face)(int)face, curX, curY, curZ, insideBlock);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: player block placement");
 		}
 		break;
 		case play::id::useItem:
