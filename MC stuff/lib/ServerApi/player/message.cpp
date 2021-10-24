@@ -2152,17 +2152,20 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
 	std::string text = "playerBlockPlacement: ";
+	Slot* slot = nullptr;
 
 	switch (hand)
 	{
 	case Hand::main:
 		text += "main ";
+		slot = p->slots[p->selectedSlot + 36];
 		break;
 	case Hand::offhand:
 		text += "off";
+		slot = p->slots[45];
 	}
 
-	text += "hand, (" + std::to_string(location.x()) + ' ' + std::to_string(location.y()) + ' ' + std::to_string(location.z()) + "), ";
+	text += "hand (" + std::to_string(slot->getCount()) + " x " + Registry::getName("minecraft:item", slot->getItemId()) + "), (" + std::to_string(location.x()) + ' ' + std::to_string(location.y()) + ' ' + std::to_string(location.z()) + "), ";
 
 	switch (face)
 	{
