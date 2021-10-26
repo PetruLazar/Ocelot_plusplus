@@ -24,6 +24,9 @@ public:
 
 	mcString name;
 	std::vector<Player*> players;
+	std::vector<entity::entity*> entities;
+
+	eidDispenser::Entity eidDispenser;
 
 	/*Contents of nbt_compound characteristics
 	*
@@ -83,8 +86,6 @@ public:
 
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
-
-	SERVER_API static eidDispenser::Entity eidDispenser;
 
 	SERVER_API static void loadAll();
 	SERVER_API static void unloadAll();

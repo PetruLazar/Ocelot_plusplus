@@ -156,6 +156,19 @@ namespace eidDispenser
 
 namespace entity //all entity classes functions
 {
+	entity::entity(eidDispenser::Entity& eidDispenser, Byte attributes, varInt airTicks, Chat customName, bool isCustomNameVisible, bool isSilent, bool hasGravity, pose thePose, varInt ticksFrozen)
+		: attributes(attributes), airTicks(airTicks), customName(customName), isCustomNameVisible(isCustomNameVisible), isSilent(isSilent), hasGravity(hasGravity), thePose(thePose), ticksFrozen(ticksFrozen), euuid(mcUUID::entity), eidDispenser(eidDispenser), eid(eidDispenser.Alloc()) {}
+
+	entity::entity(const entity& e)
+		: attributes(e.attributes), airTicks(e.airTicks), customName(e.customName), isCustomNameVisible(e.isCustomNameVisible), isSilent(e.isSilent), hasGravity(e.hasGravity), thePose(e.thePose), ticksFrozen(e.ticksFrozen), euuid(mcUUID::entity), eidDispenser(eidDispenser), eid(eidDispenser.Alloc()){}
+
+	entity::~entity() {
+		eidDispenser.Free(eid);
+	}
+
+	mcUUID entity::getUuid() { return euuid; }
+	varInt entity::getEid() { return eid; }
+
 	void entity::write(char*& buffer) const {
 		*(buffer++) = attributes;
 		airTicks.write(buffer);
@@ -166,6 +179,7 @@ namespace entity //all entity classes functions
 		varInt((int)thePose).write(buffer);
 		ticksFrozen.write(buffer);
 	}
+
 	void thrownEgg::write(char*& buffer) const {
 		entity::write(buffer);
 		item.write(buffer);
