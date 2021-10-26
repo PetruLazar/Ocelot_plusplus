@@ -61,10 +61,11 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>lib\zlib\include;lib\SFML\include;lib\ServerApi</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalDependencies>zlibwapi.lib;ServerApi-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\zlib\lib;lib\SFML\lib;lib\ServerApi\lib</AdditionalLibraryDirectories>
     </Link>
