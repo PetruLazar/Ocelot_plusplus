@@ -5,6 +5,15 @@
 json* Registry::registries, * Registry::globalPalette;
 ull Registry::blockStatesCount;
 
+const std::string Registry::itemRegistry = "minecraft:item",
+Registry::blockRegistry = "minecraft:block",
+Registry::entityTypeRegistry = "minecraft:entity_type",
+Registry::fluidRegistry = "minecraft:fluid",
+Registry::gameEventRegistry = "minecraft:game_event",
+Registry::enchantsRegistry = "minecraft:enchantment",
+Registry::mobEffectRegistry = "minecraft:mob_effect",
+Registry::soundEventRegistry = "minecraft:sound_event";
+
 BlockProperty::BlockProperty(const std::string& name, const std::string& val) : name(name), value(val) { }
 BlockProperty::BlockProperty() { }
 

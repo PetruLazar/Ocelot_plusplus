@@ -81,6 +81,7 @@ public:
 	bool onGround;
 	void updatePosition(bdouble X, bdouble Y, bdouble Z);
 	void updateRotation(bfloat yaw, bfloat pitch);
+	bool positionInRange(Position);
 
 	//player inventory
 	Slot *slots[46];

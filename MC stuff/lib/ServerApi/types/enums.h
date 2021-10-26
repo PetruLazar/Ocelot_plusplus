@@ -73,6 +73,31 @@ namespace playerInfo
 	};
 }
 
+namespace playerDigging
+{
+	enum status
+	{
+		startedDigging,
+		cancelledDigging,
+		finishedDigging,
+		dropItemStack,
+		dropItem,
+		shootArrow,
+		//finishEating = shootArrow,
+		swapItemInHand
+	};
+
+	enum face
+	{
+		bottom,
+		top,
+		north,
+		south,
+		west,
+		east
+	};
+}
+
 enum class gamemode : Byte
 {
 	survival,

@@ -184,6 +184,14 @@ void Player::updateRotation(bfloat yaw, bfloat pitch)
 	Player::yaw = yaw;
 	Player::pitch = pitch;
 }
+bool Player::positionInRange(Position location)
+{
+	int cX = location.x() >> 4;
+	int cZ = location.z() >> 4;
+	if (cX < chunkX - viewDistance || cX > chunkX + viewDistance ||
+		cZ < chunkZ - viewDistance || cZ > chunkZ + viewDistance) return false;
+	return true;
+}
 
 void Player::setWorld(World* world)
 {

@@ -62,55 +62,14 @@ namespace CommandHandlers
 		case 1:
 		{
 			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1 - executingPlayer->world->min_y,
-				z = fastfloor((double)executingPlayer->Z),
-				cx = x >> 4,
-				cz = z >> 4;
-			x &= 0xf; z &= 0xf;
+				y = fastfloor((double)executingPlayer->Y) - 1,
+				z = fastfloor((double)executingPlayer->Z);
 
-			int cy = y >> 4; y &= 0xf;
-			Section& section = executingPlayer->world->get(cx, cz)->sections[cy];
-			for (int i = 0; i < 16; i++) for (int j = 0; j < 15; j++) section.setBlock(i, y, j, Registry::getBlockState(rand() % 10000));
-
-			//Chunk* chunk = executingPlayer->world->get(cx, cz);
-			//chunk->setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
-			message::play::send::sendFullChunk(executingPlayer, cx, cz, false);
+			y = executingPlayer->world->AbsToRelHeight(y);
+			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			executingPlayer->world->setBlock(x, y, z, 0);
+			message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX, executingPlayer->chunkZ, false);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-		}
-		break;
-		case 2:
-		{
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1 - executingPlayer->world->min_y,
-				z = fastfloor((double)executingPlayer->Z),
-				cx = x >> 4,
-				cz = z >> 4;
-			x &= 0xf; z &= 0xf;
-
-			//int cy = y >> 4; y &= 0xf;
-			//Section& section = executingPlayer->world->get(cx, cz)->sections[cy];
-			//for (int i = 0; i < 16; i++) for (int j = 0; j < 15; j++) section.setBlock(i, y, j, Registry::getBlockState(rand() % 10000));
-
-			Chunk* chunk = executingPlayer->world->get(cx, cz);
-			chunk->setBlock(x, y, z, Registry::getBlockState(rand() % 10000));
-			message::play::send::sendFullChunk(executingPlayer, cx, cz, false);
-			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-		}
-		break;
-		case 3:
-		{
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1 - executingPlayer->world->min_y,
-				z = fastfloor((double)executingPlayer->Z),
-				cx = x >> 4,
-				cz = z >> 4;
-			x &= 0xf; z &= 0xf;
-
-			int cy = y >> 4; y &= 0xf;
-			Section& section = executingPlayer->world->get(cx, cz)->sections[cy];
-			
-			if (section.useGlobalPallete) message::play::send::chatMessage(executingPlayer, Chat("global palette"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-			else message::play::send::chatMessage(executingPlayer, Chat("local palette"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
 		//add tests here - starting at 1
@@ -148,5 +107,6 @@ namespace Commands
 	{
 		ArgumentStack argumentStack;
 		return dispatch(executingPlayer, command, &Commands::root, argumentStack);
+		for (void* ptr : argumentStack) delete ptr;
 	}
 }

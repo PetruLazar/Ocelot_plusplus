@@ -449,7 +449,7 @@ void message::play::send::mapData(Player* p, varInt mapId, Byte scale, bool lock
 		for (int i = 0; i < optLength; i++)
 			*(data++) = optData[i];
 	}
-	
+
 	finishSendMacro;
 }
 void message::play::send::tradeList(Player* p, varInt winId, Byte tradesCount, trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock)
@@ -888,7 +888,7 @@ void message::play::send::advancements(Player* p, bool reset, varInt mappingSize
 		progressIdentifiers[i].write(data);
 		advancementProgresses[i]->write(data);
 	}
-		
+
 	finishSendMacro;
 }
 void message::play::send::pluginMessage(Player* p, const mcString& channel, ull ByteCount, const char* Bytes)
@@ -898,7 +898,7 @@ void message::play::send::pluginMessage(Player* p, const mcString& channel, ull 
 
 	id.write(data);
 	channel.write(data);
-	for (ull i = 0; i < ByteCount; i++) 
+	for (ull i = 0; i < ByteCount; i++)
 		*(data++) = Bytes[i];
 
 	finishSendMacro;
@@ -1594,7 +1594,7 @@ void message::play::send::selectAdvancementTab(Player* p, bool hasId, const mcSt
 
 	finishSendMacro;
 }
-void message::play::send::actionBar(Player* p, const Chat& actionBarText) 
+void message::play::send::actionBar(Player* p, const Chat& actionBarText)
 {
 	varInt id = (int)id::actionBar;
 	prepareSendMacro(1024 * 1024);
@@ -1674,7 +1674,7 @@ void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 
 	id.write(data);
 	count.write(data);
-	for (int i = 0; i < count; i++) 
+	for (int i = 0; i < count; i++)
 		eids[i].write(data);
 
 	finishSendMacro;
@@ -1700,7 +1700,7 @@ void message::play::send::resourcePackSend(Player* p, const mcString& url, const
 	hash.write(data);
 	*(data++) = forced;
 	*(data++) = hasPromptMessage;
-	if(hasPromptMessage)
+	if (hasPromptMessage)
 		promptMessage.write(data);
 
 	finishSendMacro;
@@ -1815,7 +1815,6 @@ void message::play::send::entityPositionAndRotation(Player* p, varInt eid, bshor
 
 	finishSendMacro;
 }
-
 /*void message::translateChunk()
 {
 
@@ -2100,6 +2099,108 @@ void message::play::receive::animation(Player* p, Hand hand)
 
 	for (Player* seener : p->seenBy)
 		ignoreExceptions(message::play::send::entityAnimation(seener, p->eid, animation));
+}
+void message::play::receive::playerDigging(Player* p, varInt status, Position location, Byte face)
+{
+	switch (status)
+	{
+	case playerDigging::startedDigging:
+	{
+		if (p->gm != gamemode::creative) break;
+		//startedDigging actually breaks the block if the block breaks instantly (creative, string haste or efficiency, probably (untested) grass/torch/etc)
+		sf::Vector3i v = location.get();
+		v.y = p->world->AbsToRelHeight(v.y);
+		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
+		p->world->setBlock(v.x, v.y, v.z, 0);
+		//to do: send "acknowledge player digging" instead of "block change"
+		for (Player* other : p->world->players)
+			if (other != p/* && other->positionInRange(location)*/)
+				//send::blockChange(other, location, 0);
+				send::acknowledgePlayerDigging(other, location, 0, status, true);
+	}
+	break;
+	case playerDigging::cancelledDigging:
+
+		break;
+	case playerDigging::finishedDigging:
+	{
+		sf::Vector3i v = location.get();
+		v.y = p->world->AbsToRelHeight(v.y);
+		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
+		p->world->setBlock(v.x, v.y, v.z, 0);
+		//to do: send "acknowledge player digging" instead of "block change"
+		for (Player* other : p->world->players)
+			if (other != p/* && other->positionInRange(location)*/)
+				//send::blockChange(other, location, 0);
+				send::acknowledgePlayerDigging(other, location, 0, status, true);
+	}
+	break;
+	case playerDigging::dropItemStack:
+
+		break;
+	case playerDigging::dropItem:
+
+		break;
+	case playerDigging::shootArrow: //also finish eating
+
+		break;
+	case playerDigging::swapItemInHand:
+
+		break;
+	}
+}
+void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
+{
+	std::string text = "playerBlockPlacement: ";
+	Slot* slot = nullptr;
+
+	switch (hand)
+	{
+	case Hand::main:
+		text += "main ";
+		slot = p->slots[p->selectedSlot + 36];
+		break;
+	case Hand::offhand:
+		text += "off";
+		slot = p->slots[45];
+	}
+
+	text += "hand (" + std::to_string(slot->getCount()) + " x " + Registry::getName("minecraft:item", slot->getItemId()) + "), (" + std::to_string(location.x()) + ' ' + std::to_string(location.y()) + ' ' + std::to_string(location.z()) + "), ";
+
+	switch (face)
+	{
+	case playerDigging::top:
+		text += "top";
+		break;
+	case playerDigging::bottom:
+		text += "bottom";
+		break;
+	case playerDigging::east:
+		text += "east";
+		break;
+	case playerDigging::west:
+		text += "west";
+		break;
+	case playerDigging::south:
+		text += "south";
+		break;
+	case playerDigging::north:
+		text += "north";
+	}
+
+	text += ", (" + std::to_string(curX) + ' ' + std::to_string(curY) + ' ' + std::to_string(curZ) + "), ";
+
+	switch (insideBlock)
+	{
+	case true:
+		text += "true";
+		break;
+	case false:
+		text += "false";
+	}
+
+	Log::txt() << '\n' << p->username << " - " << text;
+	play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 }
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
@@ -2511,7 +2612,15 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::playerDigging:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: player digging");
+			varInt status;
+			Position location;
+			Byte face;
+			status.read(data);
+			location.read(data);
+			face = *(data++);
+
+			play::receive::playerDigging(p, status, location, face);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: player digging");
 		}
 		break;
 		case play::id::entityAction:
@@ -2638,7 +2747,21 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::playerBlockPlacement:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: player block placement");
+			varInt hand, face;
+			Position location;
+			bfloat curX, curY, curZ;
+			bool insideBlock;
+
+			hand.read(data);
+			location.read(data);
+			face.read(data);
+			curX.read(data);
+			curY.read(data);
+			curZ.read(data);
+			insideBlock = *(data++);
+
+			play::receive::playerBlockPlacement(p, (Hand)(int)hand, location, (playerDigging::face)(int)face, curX, curY, curZ, insideBlock);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: player block placement");
 		}
 		break;
 		case play::id::useItem:
