@@ -77,7 +77,6 @@ json& Registry::getBlockState(const std::string& blockName, BlockProperty* prope
 		}
 		if (cont) continue;
 		//no different properties found, return the state
-		delete[] properties;
 		return state;
 	}
 	delete[] properties;

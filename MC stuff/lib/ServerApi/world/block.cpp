@@ -17,6 +17,10 @@ std::string BlockState::getState(const std::string& stateName) const
 	json& stateProp = (*state)["properties"][stateName];
 	return stateProp.getType() == json::type::string ? stateProp.value() : stateProp.stringValue();
 }
+json* BlockState::getJsonState() const
+{
+	return state;
+}
 void BlockState::setState(const std::string& stateName, const std::string& value)
 {
 	json& stateProps = (*state)["properties"];
