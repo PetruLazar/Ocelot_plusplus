@@ -298,6 +298,7 @@
     <ClCompile Include="world\block.cpp" />
     <ClCompile Include="world\chunk.cpp" />
     <ClCompile Include="world\noise.cpp" />
+    <ClCompile Include="world\placebyitem.cpp" />
     <ClCompile Include="world\region.cpp" />
     <ClCompile Include="world\section.cpp" />
     <ClCompile Include="world\world.cpp" />

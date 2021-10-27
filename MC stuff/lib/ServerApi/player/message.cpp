@@ -2165,7 +2165,7 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 		slot = p->slots[45];
 	}
 
-	text += "hand (" + std::to_string(slot->getCount()) + " x " + Registry::getName("minecraft:item", slot->getItemId()) + "), (" + std::to_string(location.x()) + ' ' + std::to_string(location.y()) + ' ' + std::to_string(location.z()) + "), ";
+	text += "hand, ";
 
 	switch (face)
 	{
@@ -2190,17 +2190,13 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 
 	text += ", (" + std::to_string(curX) + ' ' + std::to_string(curY) + ' ' + std::to_string(curZ) + "), ";
 
-	switch (insideBlock)
-	{
-	case true:
-		text += "true";
-		break;
-	case false:
-		text += "false";
-	}
-
 	Log::txt() << '\n' << p->username << " - " << text;
-	play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+	//play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+
+	p->world->setBlockByItem(p, slot, location, face, curX, curY, curZ);
+	//tmp: increase the id of the held item
+	//((int*)p->slots[p->selectedSlot + 36])[1]++;
+	//play::send::setSlot(p, 0, 12, 36 + p->selectedSlot, *p->slots[p->selectedSlot + 36]);
 }
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
