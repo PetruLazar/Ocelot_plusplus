@@ -9,12 +9,78 @@ enum class slabType : Byte
 	dbl
 };
 
+//is this block waterloggable?
+bool waterloggable(Block id)
+{
+	switch (id)
+	{
+	case Block::minecraft_cut_copper_slab:
+	case Block::minecraft_exposed_cut_copper_slab:
+	case Block::minecraft_weathered_cut_copper_slab:
+	case Block::minecraft_oxidized_cut_copper_slab:
+	case Block::minecraft_waxed_cut_copper_slab:
+	case Block::minecraft_waxed_exposed_cut_copper_slab:
+	case Block::minecraft_waxed_weathered_cut_copper_slab:
+	case Block::minecraft_waxed_oxidized_cut_copper_slab:
+	case Block::minecraft_oak_slab:
+	case Block::minecraft_spruce_slab:
+	case Block::minecraft_birch_slab:
+	case Block::minecraft_jungle_slab:
+	case Block::minecraft_acacia_slab:
+	case Block::minecraft_dark_oak_slab:
+	case Block::minecraft_crimson_slab:
+	case Block::minecraft_warped_slab:
+	case Block::minecraft_stone_slab:
+	case Block::minecraft_smooth_stone_slab:
+	case Block::minecraft_sandstone_slab:
+	case Block::minecraft_cut_sandstone_slab:
+	case Block::minecraft_petrified_oak_slab:
+	case Block::minecraft_cobblestone_slab:
+	case Block::minecraft_brick_slab:
+	case Block::minecraft_stone_brick_slab:
+	case Block::minecraft_nether_brick_slab:
+	case Block::minecraft_quartz_slab:
+	case Block::minecraft_red_sandstone_slab:
+	case Block::minecraft_cut_red_sandstone_slab:
+	case Block::minecraft_purpur_slab:
+	case Block::minecraft_prismarine_slab:
+	case Block::minecraft_prismarine_brick_slab:
+	case Block::minecraft_dark_prismarine_slab:
+	case Block::minecraft_polished_granite_slab:
+	case Block::minecraft_smooth_red_sandstone_slab:
+	case Block::minecraft_mossy_stone_brick_slab:
+	case Block::minecraft_polished_diorite_slab:
+	case Block::minecraft_mossy_cobblestone_slab:
+	case Block::minecraft_end_stone_brick_slab:
+	case Block::minecraft_smooth_sandstone_slab:
+	case Block::minecraft_smooth_quartz_slab:
+	case Block::minecraft_granite_slab:
+	case Block::minecraft_andesite_slab:
+	case Block::minecraft_red_nether_brick_slab:
+	case Block::minecraft_polished_andesite_slab:
+	case Block::minecraft_diorite_slab:
+	case Block::minecraft_cobbled_deepslate_slab:
+	case Block::minecraft_polished_deepslate_slab:
+	case Block::minecraft_deepslate_brick_slab:
+	case Block::minecraft_deepslate_tile_slab:
+		return true;
+	}
+	return false;
+}
 //does water destroy this block?
 bool destroyedByWater(Block id)
 {
 	switch (id)
 	{
 	case Block::minecraft_oak_sapling:
+	case Block::minecraft_spruce_sapling:
+	case Block::minecraft_birch_sapling:
+	case Block::minecraft_jungle_sapling:
+	case Block::minecraft_acacia_sapling:
+	case Block::minecraft_dark_oak_sapling:
+		//more
+
+
 		return true;
 	}
 	return false;
@@ -49,9 +115,10 @@ bool rightClickBlock(Player* p, Block bid)
 	switch (bid)
 	{
 	case Block::minecraft_crafting_table:
-	case Block::minecraft_chest:
-	case Block::minecraft_furnace:
-		return false;
+		//case Block::minecraft_chest:
+		//case Block::minecraft_furnace:
+			//message::play::send::openWindow(p,)
+		return true;
 	}
 	return false;
 }
@@ -73,6 +140,12 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	BlockState targetBlockState = p->world->getBlock(destX, destY, destZ);
 	std::string targetBlockName = Registry::getBlock(targetBlockState.id);
 	Block targetBlockId = (Block)Registry::getId(Registry::blockRegistry, targetBlockName);
+
+	if (rightClickBlock(p, targetBlockId))
+	{
+		//block succsessfully right clicked
+		return;
+	}
 
 	try
 	{
@@ -673,7 +746,144 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_dark_oak_leaves:
 		case Item::minecraft_azalea_leaves:
 		case Item::minecraft_flowering_azalea_leaves:
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "distance";
+				props[0].value = "7";
+				props[1].name = "persistent";
+				props[1].value = "true";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "distance";
+				props[0].value = "7";
+				props[1].name = "persistent";
+				props[1].value = "true";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+			}
 			break;
+			}
+
+			//buckets
+			{
+		case Item::minecraft_bucket:
+		{
+			break;
+		}
+		case Item::minecraft_water_bucket:
+		{
+			if (waterloggable(targetBlockId))
+			{
+				targetBlockState.setState("waterlogged", "true");
+				setBlock(destX, destY, destZ, targetBlockState);
+				//send the block to the client
+				return;
+			}
+			if (destroyedByWater(targetBlockId) || replaceableDirect(targetBlockId))
+			{
+				//destroy the old block (drop and updates)
+				stateJson = &Registry::getBlockState("minecraft:water");
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState("minecraft:water");
+			break;
+		}
+		case Item::minecraft_lava_bucket:
+		{
+
+			break;
+		}
+		case Item::minecraft_powder_snow_bucket:
+		{
+			break;
+		}
+		case Item::minecraft_pufferfish_bucket:
+		{
+			break;
+		}
+		case Item::minecraft_salmon_bucket:
+		{
+			break;
+		}
+		case Item::minecraft_cod_bucket:
+		{
+			break;
+		}
+		case Item::minecraft_tropical_fish_bucket:
+		{
+			break;
+		}
+		case Item::minecraft_axolotl_bucket:
+		{
+			break;
+		}
+			}
+
+			//special blocks
+			{
+
 			}
 
 			//unhandled
@@ -1081,20 +1291,10 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_crimson_sign:
 		case Item::minecraft_warped_sign:
 
-		case Item::minecraft_bucket:
-		case Item::minecraft_water_bucket:
-		case Item::minecraft_lava_bucket:
-		case Item::minecraft_powder_snow_bucket:
-
 		case Item::minecraft_snowball:
 		case Item::minecraft_leather:
 		case Item::minecraft_milk_bucket:
 
-		case Item::minecraft_pufferfish_bucket:
-		case Item::minecraft_salmon_bucket:
-		case Item::minecraft_cod_bucket:
-		case Item::minecraft_tropical_fish_bucket:
-		case Item::minecraft_axolotl_bucket:
 
 		case Item::minecraft_brick:
 		case Item::minecraft_clay_ball:
