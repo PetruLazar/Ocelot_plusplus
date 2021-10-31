@@ -9,6 +9,53 @@ enum class slabType : Byte
 	dbl
 };
 
+//does water destroy this block?
+bool destroyedByWater(Block id)
+{
+	switch (id)
+	{
+	case Block::minecraft_oak_sapling:
+		return true;
+	}
+	return false;
+}
+//replaceable by rightclicking on the block?
+bool replaceableDirect(Block id)
+{
+	/*switch (id)
+	{
+	case Block::minecraft_air:
+	case Block::minecraft_water:
+	case Block::minecraft_lava:
+		return true;
+	}*/
+	return false;
+}
+//replaceable by clicking on a wall nearby and placing a block there?
+bool replaceableIndirect(Block id)
+{
+	switch (id)
+	{
+	case Block::minecraft_air:
+	case Block::minecraft_water:
+	case Block::minecraft_lava:
+		return true;
+	}
+	return false;
+}
+
+bool rightClickBlock(Player* p, Block bid)
+{
+	switch (bid)
+	{
+	case Block::minecraft_crafting_table:
+	case Block::minecraft_chest:
+	case Block::minecraft_furnace:
+		return false;
+	}
+	return false;
+}
+
 SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ)
 {
 	//throw "WIP";
@@ -34,10 +81,11 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			//unplaceable items
 			{
 		case Item::minecraft_air:
+		case Item::minecraft_saddle:
 			return;
 			}
 
-			//block with no states depending on placement
+			//blocks with no states dependent on placement
 			{
 		case Item::minecraft_stone:
 		case Item::minecraft_granite:
@@ -279,6 +327,12 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_honey_block:
 		case Item::minecraft_target:
 		case Item::minecraft_tnt:
+		case Item::minecraft_dried_kelp_block:
+			if (replaceableDirect(targetBlockId))
+			{
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+				break;
+			}
 			switch (face)
 			{
 			case playerDigging::top:
@@ -302,64 +356,69 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			if (!p->world->checkCoordinates(destY))
 				//destY out of world
 				return;
-			//do not replace any block, only specific blocks
-			//if (!getBlock(destX,destY,destZ).id) return;
-			stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
 			break;
 			}
 
 			//stairs
 			{
-		case Item::minecraft_cut_copper_stairs:
-		case Item::minecraft_exposed_cut_copper_stairs:
-		case Item::minecraft_weathered_cut_copper_stairs:
-		case Item::minecraft_oxidized_cut_copper_stairs:
-		case Item::minecraft_waxed_cut_copper_stairs:
-		case Item::minecraft_waxed_exposed_cut_copper_stairs:
-		case Item::minecraft_waxed_weathered_cut_copper_stairs:
-		case Item::minecraft_waxed_oxidized_cut_copper_stairs:
-		case Item::minecraft_purpur_stairs:
-		case Item::minecraft_oak_stairs:
-		case Item::minecraft_spruce_stairs:
-		case Item::minecraft_birch_stairs:
-		case Item::minecraft_jungle_stairs:
-		case Item::minecraft_crimson_stairs:
-		case Item::minecraft_warped_stairs:
-		case Item::minecraft_cobblestone_stairs:
-		case Item::minecraft_acacia_stairs:
-		case Item::minecraft_dark_oak_stairs:
-		case Item::minecraft_brick_stairs:
-		case Item::minecraft_stone_brick_stairs:
-		case Item::minecraft_nether_brick_stairs:
-		case Item::minecraft_sandstone_stairs:
-		case Item::minecraft_quartz_stairs:
-		case Item::minecraft_prismarine_stairs:
-		case Item::minecraft_prismarine_brick_stairs:
-		case Item::minecraft_dark_prismarine_stairs:
-		case Item::minecraft_red_sandstone_stairs:
-		case Item::minecraft_polished_granite_stairs:
-		case Item::minecraft_smooth_red_sandstone_stairs:
-		case Item::minecraft_mossy_stone_brick_stairs:
-		case Item::minecraft_polished_diorite_stairs:
-		case Item::minecraft_mossy_cobblestone_stairs:
-		case Item::minecraft_end_stone_brick_stairs:
-		case Item::minecraft_stone_stairs:
-		case Item::minecraft_smooth_sandstone_stairs:
-		case Item::minecraft_smooth_quartz_stairs:
-		case Item::minecraft_granite_stairs:
-		case Item::minecraft_andesite_stairs:
-		case Item::minecraft_red_nether_brick_stairs:
-		case Item::minecraft_polished_andesite_stairs:
-		case Item::minecraft_diorite_stairs:
-		case Item::minecraft_cobbled_deepslate_stairs:
-		case Item::minecraft_polished_deepslate_stairs:
-		case Item::minecraft_deepslate_brick_stairs:
-		case Item::minecraft_deepslate_tile_stairs:
-			message::play::send::chatMessage(p, Chat("No stairs allowed!", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-			return;
+				{
+			case Item::minecraft_cut_copper_stairs:
+			case Item::minecraft_exposed_cut_copper_stairs:
+			case Item::minecraft_weathered_cut_copper_stairs:
+			case Item::minecraft_oxidized_cut_copper_stairs:
+			case Item::minecraft_waxed_cut_copper_stairs:
+			case Item::minecraft_waxed_exposed_cut_copper_stairs:
+			case Item::minecraft_waxed_weathered_cut_copper_stairs:
+			case Item::minecraft_waxed_oxidized_cut_copper_stairs:
+			case Item::minecraft_purpur_stairs:
+			case Item::minecraft_oak_stairs:
+			case Item::minecraft_spruce_stairs:
+			case Item::minecraft_birch_stairs:
+			case Item::minecraft_jungle_stairs:
+			case Item::minecraft_crimson_stairs:
+			case Item::minecraft_warped_stairs:
+			case Item::minecraft_cobblestone_stairs:
+			case Item::minecraft_acacia_stairs:
+			case Item::minecraft_dark_oak_stairs:
+			case Item::minecraft_brick_stairs:
+			case Item::minecraft_stone_brick_stairs:
+			case Item::minecraft_nether_brick_stairs:
+			case Item::minecraft_sandstone_stairs:
+			case Item::minecraft_quartz_stairs:
+			case Item::minecraft_prismarine_stairs:
+			case Item::minecraft_prismarine_brick_stairs:
+			case Item::minecraft_dark_prismarine_stairs:
+			case Item::minecraft_red_sandstone_stairs:
+			case Item::minecraft_polished_granite_stairs:
+			case Item::minecraft_smooth_red_sandstone_stairs:
+			case Item::minecraft_mossy_stone_brick_stairs:
+			case Item::minecraft_polished_diorite_stairs:
+			case Item::minecraft_mossy_cobblestone_stairs:
+			case Item::minecraft_end_stone_brick_stairs:
+			case Item::minecraft_stone_stairs:
+			case Item::minecraft_smooth_sandstone_stairs:
+			case Item::minecraft_smooth_quartz_stairs:
+			case Item::minecraft_granite_stairs:
+			case Item::minecraft_andesite_stairs:
+			case Item::minecraft_red_nether_brick_stairs:
+			case Item::minecraft_polished_andesite_stairs:
+			case Item::minecraft_diorite_stairs:
+			case Item::minecraft_cobbled_deepslate_stairs:
+			case Item::minecraft_polished_deepslate_stairs:
+			case Item::minecraft_deepslate_brick_stairs:
+			case Item::minecraft_deepslate_tile_stairs:
+				message::play::send::chatMessage(p, Chat("No stairs allowed!", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+				return;
+				}
 			}
 
-			//slabs
+			//slabs ("type" state with "bottom", "top" or "double")
 			{
 		case Item::minecraft_cut_copper_slab:
 		case Item::minecraft_exposed_cut_copper_slab:
@@ -416,6 +475,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			//id of the block to be placed
 			Block heldBlockId = (Block)Registry::getId(Registry::blockRegistry, heldBlockName);
 			slabType type;
+
+			//test and replace slabs directly or indirectly
 
 			switch (face)
 			{
@@ -499,13 +560,12 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				else
 				{
 					//not already a slab of the same type
-					//test for waterlogged
 					BlockProperty* props = new BlockProperty[2];
 					props[0].name = "type";
-					if (type == slabType::bottom) props[0].value = "bottom";
-					else props[0].value = "top";
+					props[0].value = type == slabType::bottom ? "bottom" : "top";
 					props[1].name = "waterlogged";
-					props[1].value = "false";
+					//34 is the water source block state id - to do: make it not hardcoded
+					props[1].value = oldBlockState.id == 34 ? "true" : "false";
 					stateJson = &Registry::getBlockState(heldBlockName, props);
 				}
 			}
@@ -513,8 +573,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		break;
 			}
 
-			//full block that depend on the face clicked (like logs)
+			//blocks that have the state "axis" dependent on plcement (like logs)
 			{
+				{
 		case Item::minecraft_oak_log:
 		case Item::minecraft_spruce_log:
 		case Item::minecraft_birch_log:
@@ -555,6 +616,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_quartz_pillar:
 		case Item::minecraft_bone_block:
 		{
+			//todo replace block (direct)
 			BlockProperty* props = new BlockProperty[1];
 			props[0].name = "axis";
 			switch (face)
@@ -583,13 +645,22 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				destZ--;
 				props[0].value = "z";
 			}
-			stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
-			delete[] props;
 			if (!p->world->checkCoordinates(destY))
+			{
 				//destY out of world
+				delete[] props;
 				return;
+			}
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			delete[] props;
 		}
 		break;
+				}
 			}
 
 			//leaves
@@ -890,7 +961,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 
 		case Item::minecraft_redstone_lamp:
 
-		case Item::minecraft_saddle:
 		case Item::minecraft_minecart:
 		case Item::minecraft_chest_minecart:
 		case Item::minecraft_furnace_minecart:
@@ -899,12 +969,14 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_carrot_on_a_stick:
 		case Item::minecraft_warped_fungus_on_a_stick:
 		case Item::minecraft_elytra:
+
 		case Item::minecraft_oak_boat:
 		case Item::minecraft_spruce_boat:
 		case Item::minecraft_birch_boat:
 		case Item::minecraft_jungle_boat:
 		case Item::minecraft_acacia_boat:
 		case Item::minecraft_dark_oak_boat:
+
 		case Item::minecraft_structure_block:
 		case Item::minecraft_jigsaw:
 		case Item::minecraft_turtle_helmet:
@@ -928,6 +1000,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_gold_ingot:
 		case Item::minecraft_netherite_ingot:
 		case Item::minecraft_netherite_scrap:
+
 		case Item::minecraft_wooden_sword:
 		case Item::minecraft_wooden_shovel:
 		case Item::minecraft_wooden_pickaxe:
@@ -958,6 +1031,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_netherite_pickaxe:
 		case Item::minecraft_netherite_axe:
 		case Item::minecraft_netherite_hoe:
+
 		case Item::minecraft_stick:
 		case Item::minecraft_bowl:
 		case Item::minecraft_mushroom_stew:
@@ -997,6 +1071,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_painting:
 		case Item::minecraft_golden_apple:
 		case Item::minecraft_enchanted_golden_apple:
+
 		case Item::minecraft_oak_sign:
 		case Item::minecraft_spruce_sign:
 		case Item::minecraft_birch_sign:
@@ -1005,21 +1080,24 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_dark_oak_sign:
 		case Item::minecraft_crimson_sign:
 		case Item::minecraft_warped_sign:
+
 		case Item::minecraft_bucket:
 		case Item::minecraft_water_bucket:
 		case Item::minecraft_lava_bucket:
 		case Item::minecraft_powder_snow_bucket:
+
 		case Item::minecraft_snowball:
 		case Item::minecraft_leather:
 		case Item::minecraft_milk_bucket:
+
 		case Item::minecraft_pufferfish_bucket:
 		case Item::minecraft_salmon_bucket:
 		case Item::minecraft_cod_bucket:
 		case Item::minecraft_tropical_fish_bucket:
 		case Item::minecraft_axolotl_bucket:
+
 		case Item::minecraft_brick:
 		case Item::minecraft_clay_ball:
-		case Item::minecraft_dried_kelp_block:
 		case Item::minecraft_paper:
 		case Item::minecraft_book:
 		case Item::minecraft_slime_ball:
@@ -1059,6 +1137,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_bone:
 		case Item::minecraft_sugar:
 		case Item::minecraft_cake:
+
 		case Item::minecraft_white_bed:
 		case Item::minecraft_orange_bed:
 		case Item::minecraft_magenta_bed:
@@ -1075,6 +1154,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_green_bed:
 		case Item::minecraft_red_bed:
 		case Item::minecraft_black_bed:
+
 		case Item::minecraft_cookie:
 		case Item::minecraft_filled_map:
 		case Item::minecraft_shears:
@@ -1211,6 +1291,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_command_block_minecart:
 		case Item::minecraft_mutton:
 		case Item::minecraft_cooked_mutton:
+
 		case Item::minecraft_white_banner:
 		case Item::minecraft_orange_banner:
 		case Item::minecraft_magenta_banner:
@@ -1227,6 +1308,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_green_banner:
 		case Item::minecraft_red_banner:
 		case Item::minecraft_black_banner:
+
 		case Item::minecraft_end_crystal:
 		case Item::minecraft_chorus_fruit:
 		case Item::minecraft_popped_chorus_fruit:
