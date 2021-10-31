@@ -31,6 +31,11 @@ Player::~Player()
 		delete slots[i];
 }
 
+std::string Player::netId()
+{
+	return socket->getRemoteAddress().toString() + std::to_string(socket->getRemotePort());
+}
+
 void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 {
 	int newChunkX = fastfloor(X) >> 4,
@@ -303,6 +308,7 @@ void Player::disconnect()
 	if (state == ConnectionState::play)
 	{
 		leaveWorld(world);
+		Log::txt() << '\n' << username << " (" << netId() << ", eid: " << eid << ") disconnected.";
 		Player::eidDispenser.Free(eid);
 		broadcastChat(Chat((username + " left the game").c_str(), Chat::color::yellow), this);
 		Player* p = this;

@@ -90,7 +90,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
 			Player::players.push_back(new Player(buffer));
-			Log::txt() << '\n' << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.";
+			IF_LOG_ALL_CONNECTIONS(Log::txt() << '\n' << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.");
 			buffer = new sf::TcpSocket;
 		}
 

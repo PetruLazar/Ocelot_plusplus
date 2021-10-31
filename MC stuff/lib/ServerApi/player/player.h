@@ -62,6 +62,9 @@ public:
 	mcUUID* uuid = 0;
 	varInt eid;
 
+	//ip address + port
+	std::string netId();
+
 	int protocolVersion;
 	ConnectionState state;
 

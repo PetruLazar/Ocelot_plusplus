@@ -20,7 +20,7 @@
 	p->schedulePacket(start, size, data);
 #define finishSendAndDisconnect ull size = data - start;	\
 	preparePacket(p, start, size, data);					\
-	p->schedulePacket(start, size, data,true);
+	p->schedulePacket(start, size, data, true);
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
 {
@@ -70,6 +70,7 @@ void message::status::send::pong(Player* p, blong payload)
 */
 void message::status::receive::request(Player* p)
 {
+	Log::txt() << '\n' << p->netId() << " is pinging the server.";
 	message::status::send::respose(p, "{" + Options::version + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"Tim\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
 }
 void message::status::receive::ping(Player* p, blong payload)
@@ -151,6 +152,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->ping = -1;
 	p->hasDisplayName = false;
 	//p->displayName = new Chat(("[Tester] " + username).c_str());
+
+	Log::txt() << '\n' << p->username << '(' << p->netId() << ") is logging in (eid: " << p->eid << ").";
 
 	login::send::setCompression(p, 128);
 
@@ -1986,6 +1989,7 @@ void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, 
 }
 void message::play::receive::chatMessage(Player* p, mcString& content)
 {
+	Log::txt() << "\n[Chat] " << p->username << ": " << content;
 	if (content[0] == '/')
 	{
 		try
