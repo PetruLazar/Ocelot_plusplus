@@ -67,7 +67,7 @@ namespace CommandHandlers
 
 			y = executingPlayer->world->AbsToRelHeight(y);
 			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
-			executingPlayer->world->setBlock(x, y, z, 0);
+			executingPlayer->world->setBlock(x, y, z, 1);
 			message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX, executingPlayer->chunkZ, false);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}

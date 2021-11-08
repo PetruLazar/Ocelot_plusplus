@@ -25,6 +25,12 @@
 //comment or decomment this define to enable world loading debug
 //#define WORLD_LOAD_DEBUG
 
+//comment or decomment this define to log all conections or not
+#define LOG_ALL_CONNECTIONS
+
+//comment or decomment this define to enable/disable server status request logigng
+#define LOG_STATUS_REQ
+
 #ifdef DEBUG_ALLOCATIONS
 
 void* operator new(size_t s);
@@ -75,4 +81,16 @@ void operator delete[](void*, size_t);
 #define IF_WORLD_LOAD_DEBUG(x) x
 #else
 #define IF_WORLD_LOAD_DEBUG(x)
+#endif
+
+#ifdef LOG_ALL_CONNECTIONS
+#define IF_LOG_ALL_CONNECTIONS(x) x
+#else 
+#define IF_LOG_ALL_CONNECTIONS(x)
+#endif
+
+#ifdef LOG_STATUS_REQ
+#define IF_LOG_STATUS_REQ(x) x
+#else
+#define IF_LOG_STATUS_REQ(x)
 #endif

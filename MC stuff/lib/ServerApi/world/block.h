@@ -18,6 +18,7 @@ public:
 	SERVER_API BlockState(json& blockState);
 
 	SERVER_API std::string getState(const std::string&) const;
+	SERVER_API json* getJsonState() const;
 	SERVER_API void setState(const std::string& state, const std::string& value);
 
 	SERVER_API void set(int blockId);

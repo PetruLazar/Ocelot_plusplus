@@ -24,5 +24,6 @@ public:
 	SERVER_API const Tag* getTag(const std::string& category, const std::string& tag);
 	SERVER_API void loadTag(const std::string& tag);
 
+	SERVER_API static bool checkTagEntry(const mcString& tagType, const mcString& tagName, varInt entry);
 	SERVER_API static void loadVanillaTags();
 };

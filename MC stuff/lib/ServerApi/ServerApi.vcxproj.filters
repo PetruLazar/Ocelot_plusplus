@@ -452,6 +452,9 @@
     <ClCompile Include="types\statistics.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
+    <ClCompile Include="world\placebyitem.cpp">
+      <Filter>Source Files\world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

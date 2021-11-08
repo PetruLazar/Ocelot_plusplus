@@ -97,6 +97,18 @@ void TagGroup::loadVanillaTags()
 	}
 }
 
+bool TagGroup::checkTagEntry(const mcString& tagType, const mcString& tagName, varInt entry)
+{
+	for (const TagGroup& tagGroup : defaultTags)
+		if (tagGroup.tagType == tagType)
+			for (const Tag& tag : tagGroup.tags)
+				if (tag.name == tagName)
+					for (varInt entry_ : tag.entries)
+						if (entry_ == entry)
+							return true;
+	return false;
+}
+
 /*previous tag implementation
 const varInt Tags::defaltTagsLengthCount = 5;
 Tags Tags::defaultTags[5] = {

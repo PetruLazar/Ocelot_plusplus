@@ -4,6 +4,8 @@
 #include "types/position.h"
 #include "types/entity.h"
 #include <Windows.h>
+#include "types/slot.h"
+#include "types/enums.h"
 
 class Player;
 #include "player/player.h"
@@ -79,6 +81,7 @@ public:
 	SERVER_API BlockState& getPaletteEntry(int cx, int cy, int cz, int paletteIndex);
 	SERVER_API BlockState getBlock(int x, int y, int z);
 	SERVER_API void setBlock(int x, int y, int z, const BlockState&);
+	SERVER_API void setBlockByItem(Player*, Slot*, Position, playerDigging::face, bfloat curX, bfloat curY, bfloat curZ);
 
 	//generator
 	GeneratorFunction generatorFunction = 0;
