@@ -33,7 +33,7 @@ Player::~Player()
 
 std::string Player::netId()
 {
-	return socket->getRemoteAddress().toString() + std::to_string(socket->getRemotePort());
+	return socket->getRemoteAddress().toString() + ':' + std::to_string(socket->getRemotePort());
 }
 
 void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
