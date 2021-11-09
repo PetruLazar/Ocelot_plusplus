@@ -78,9 +78,23 @@ bool destroyedByWater(Block id)
 	case Block::minecraft_jungle_sapling:
 	case Block::minecraft_acacia_sapling:
 	case Block::minecraft_dark_oak_sapling:
-		//more
-
-
+	case Block::minecraft_grass:
+	case Block::minecraft_fern:
+	case Block::minecraft_dandelion:
+	case Block::minecraft_poppy:
+	case Block::minecraft_blue_orchid:
+	case Block::minecraft_allium:
+	case Block::minecraft_azure_bluet:
+	case Block::minecraft_red_tulip:
+	case Block::minecraft_orange_tulip:
+	case Block::minecraft_white_tulip:
+	case Block::minecraft_pink_tulip:
+	case Block::minecraft_oxeye_daisy:
+	case Block::minecraft_azalea:
+	case Block::minecraft_flowering_azalea:
+	case Block::minecraft_cornflower:
+	case Block::minecraft_lily_of_the_valley:
+	case Block::minecraft_wither_rose:
 		return true;
 	}
 	return false;
@@ -88,13 +102,12 @@ bool destroyedByWater(Block id)
 //replaceable by rightclicking on the block?
 bool replaceableDirect(Block id)
 {
-	/*switch (id)
+	switch (id)
 	{
-	case Block::minecraft_air:
-	case Block::minecraft_water:
-	case Block::minecraft_lava:
+	case Block::minecraft_grass:
+	case Block::minecraft_fern:
 		return true;
-	}*/
+	}
 	return false;
 }
 //replaceable by clicking on a wall nearby and placing a block there?
@@ -105,6 +118,8 @@ bool replaceableIndirect(Block id)
 	case Block::minecraft_air:
 	case Block::minecraft_water:
 	case Block::minecraft_lava:
+	case Block::minecraft_grass:
+	case Block::minecraft_fern:
 		return true;
 	}
 	return false;
@@ -115,10 +130,12 @@ bool rightClickBlock(Player* p, Block bid)
 	switch (bid)
 	{
 	case Block::minecraft_crafting_table:
+		message::play::send::chatMessage(p, Chat("Crafting table right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		//message::play::send::openWindow(p,)
+		return true;
 		//case Block::minecraft_chest:
 		//case Block::minecraft_furnace:
 			//message::play::send::openWindow(p,)
-		return true;
 	}
 	return false;
 }
@@ -401,6 +418,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_target:
 		case Item::minecraft_tnt:
 		case Item::minecraft_dried_kelp_block:
+		case Item::minecraft_moss_block:
 			if (replaceableDirect(targetBlockId))
 			{
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
@@ -436,6 +454,92 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 
 			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
 			break;
+			}
+
+			//blocks that need to be placed on dirt
+			{
+				{
+			case Item::minecraft_grass:
+			case Item::minecraft_fern:
+			case Item::minecraft_dandelion:
+			case Item::minecraft_poppy:
+			case Item::minecraft_blue_orchid:
+			case Item::minecraft_allium:
+			case Item::minecraft_azure_bluet:
+			case Item::minecraft_red_tulip:
+			case Item::minecraft_orange_tulip:
+			case Item::minecraft_white_tulip:
+			case Item::minecraft_pink_tulip:
+			case Item::minecraft_oxeye_daisy:
+			case Item::minecraft_oak_sapling:
+			case Item::minecraft_spruce_sapling:
+			case Item::minecraft_birch_sapling:
+			case Item::minecraft_jungle_sapling:
+			case Item::minecraft_acacia_sapling:
+			case Item::minecraft_dark_oak_sapling:
+			case Item::minecraft_azalea:
+			case Item::minecraft_flowering_azalea:
+			case Item::minecraft_cornflower:
+			case Item::minecraft_lily_of_the_valley:
+			case Item::minecraft_wither_rose:
+			{
+				std::string heldBlockName = Registry::getName(Registry::itemRegistry, itemId);
+				Block heldBlockId = (Block)Registry::getId(Registry::blockRegistry, heldBlockName);
+				if (targetBlockId != heldBlockId && replaceableDirect(targetBlockId))
+				{
+					//get the block below, if in world
+					int soilY = destY - 1;
+					if (!p->world->checkCoordinates(soilY)) break;
+					BlockState soilBlockState = getBlock(destX, soilY, destZ);
+					std::string soilBlockName = Registry::getBlock(soilBlockState.id);
+					Block soilBlockId = (Block)Registry::getId(Registry::blockRegistry, soilBlockName);
+					//check if the block below is dirt
+					if (!TagGroup::checkTagEntry("minecraft:block", "minecraft:dirt", (int)soilBlockId)) break;
+					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+					break;
+				}
+				switch (face)
+				{
+				case playerDigging::top:
+					destY++;
+					break;
+				case playerDigging::bottom:
+					destY--;
+					break;
+				case playerDigging::east:
+					destX++;
+					break;
+				case playerDigging::west:
+					destX--;
+					break;
+				case playerDigging::south:
+					destZ++;
+					break;
+				case playerDigging::north:
+					destZ--;
+				}
+				if (!p->world->checkCoordinates(destY))
+					//destY out of world
+					return;
+
+				BlockState oldBlockState = getBlock(destX, destY, destZ);
+				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+				Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+				if (heldBlockId != oldBlockId && replaceableIndirect(oldBlockId))
+				{
+					int soilY = destY - 1;
+					if (!p->world->checkCoordinates(soilY)) break;
+					BlockState soilBlockState = getBlock(destX, soilY, destZ);
+					std::string soilBlockName = Registry::getBlock(soilBlockState.id);
+					Block soilBlockId = (Block)Registry::getId(Registry::blockRegistry, soilBlockName);
+					//check if the block below is dirt
+					if (!TagGroup::checkTagEntry("minecraft:block", "minecraft:dirt", (int)soilBlockId)) break;
+					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+				}
+				break;
+			}
+				}
 			}
 
 			//stairs
@@ -549,7 +653,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			Block heldBlockId = (Block)Registry::getId(Registry::blockRegistry, heldBlockName);
 			slabType type;
 
-			//test and replace slabs directly or indirectly
+			//test and replace slabs directly
 
 			switch (face)
 			{
@@ -633,13 +737,16 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				else
 				{
 					//not already a slab of the same type
-					BlockProperty* props = new BlockProperty[2];
-					props[0].name = "type";
-					props[0].value = type == slabType::bottom ? "bottom" : "top";
-					props[1].name = "waterlogged";
-					//34 is the water source block state id - to do: make it not hardcoded
-					props[1].value = oldBlockState.id == 34 ? "true" : "false";
-					stateJson = &Registry::getBlockState(heldBlockName, props);
+					if (replaceableIndirect(oldBlockId))
+					{
+						BlockProperty* props = new BlockProperty[2];
+						props[0].name = "type";
+						props[0].value = type == slabType::bottom ? "bottom" : "top";
+						props[1].name = "waterlogged";
+						//34 is the water source block state id - to do: make it not hardcoded
+						props[1].value = oldBlockState.id == 34 ? "true" : "false";
+						stateJson = &Registry::getBlockState(heldBlockName, props);
+					}
 				}
 			}
 		}
@@ -813,12 +920,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				//send the block to the client
 				return;
 			}
-			if (destroyedByWater(targetBlockId) || replaceableDirect(targetBlockId))
-			{
-				//destroy the old block (drop and updates)
-				stateJson = &Registry::getBlockState("minecraft:water");
-				break;
-			}
 			switch (face)
 			{
 			case playerDigging::top:
@@ -847,7 +948,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
 			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
 
-			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState("minecraft:water");
+			if (destroyedByWater(oldBlockId) || replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState("minecraft:water");
 			break;
 		}
 		case Item::minecraft_lava_bucket:
@@ -890,26 +991,11 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 		case Item::minecraft_grass_block:
 		case Item::minecraft_podzol:
-		case Item::minecraft_grass:
-		case Item::minecraft_fern:
-		case Item::minecraft_azalea:
-		case Item::minecraft_flowering_azalea:
+
 		case Item::minecraft_dead_bush:
 		case Item::minecraft_seagrass:
 		case Item::minecraft_sea_pickle:
-		case Item::minecraft_dandelion:
-		case Item::minecraft_poppy:
-		case Item::minecraft_blue_orchid:
-		case Item::minecraft_allium:
-		case Item::minecraft_azure_bluet:
-		case Item::minecraft_red_tulip:
-		case Item::minecraft_orange_tulip:
-		case Item::minecraft_white_tulip:
-		case Item::minecraft_pink_tulip:
-		case Item::minecraft_oxeye_daisy:
-		case Item::minecraft_cornflower:
-		case Item::minecraft_lily_of_the_valley:
-		case Item::minecraft_wither_rose:
+
 		case Item::minecraft_spore_blossom:
 		case Item::minecraft_brown_mushroom:
 		case Item::minecraft_red_mushroom:
@@ -923,7 +1009,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_sugar_cane:
 		case Item::minecraft_kelp:
 		case Item::minecraft_moss_carpet:
-		case Item::minecraft_moss_block:
 		case Item::minecraft_hanging_roots:
 		case Item::minecraft_big_dripleaf:
 		case Item::minecraft_small_dripleaf:
@@ -1155,12 +1240,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_detector_rail:
 		case Item::minecraft_rail:
 		case Item::minecraft_activator_rail:
-		case Item::minecraft_oak_sapling:
-		case Item::minecraft_spruce_sapling:
-		case Item::minecraft_birch_sapling:
-		case Item::minecraft_jungle_sapling:
-		case Item::minecraft_acacia_sapling:
-		case Item::minecraft_dark_oak_sapling:
 		case Item::minecraft_brown_mushroom_block:
 		case Item::minecraft_red_mushroom_block:
 		case Item::minecraft_mushroom_stem:
@@ -1294,7 +1373,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_snowball:
 		case Item::minecraft_leather:
 		case Item::minecraft_milk_bucket:
-
 
 		case Item::minecraft_brick:
 		case Item::minecraft_clay_ball:
