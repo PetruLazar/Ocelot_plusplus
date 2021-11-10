@@ -198,6 +198,23 @@ bool Player::positionInRange(Position location)
 	return true;
 }
 
+void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
+{
+	X = tpX;
+	Y = tpY;
+	Z = tpZ;
+	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, yaw, pitch, 0, false);
+}
+void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloat tpPitch)
+{
+	X = tpX;
+	Y = tpY;
+	Z = tpZ;
+	yaw = tpYaw;
+	pitch = tpPitch;
+	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, tpYaw, tpPitch, 0, false);
+}
+
 void Player::setWorld(World* world)
 {
 	IF_DEBUG_SIGHT(Log::txt() << '\n' << this << " is entering world " << world->name);

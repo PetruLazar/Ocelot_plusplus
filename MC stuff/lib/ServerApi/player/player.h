@@ -87,7 +87,7 @@ public:
 	bool positionInRange(Position);
 
 	//player inventory
-	Slot *slots[46];
+	Slot* slots[46];
 	bshort selectedSlot = 0; //main hand selected slot
 
 	//player info
@@ -103,6 +103,8 @@ public:
 	//teleport/teleport confirm
 	varInt pendingTpId = -1;
 	int nextTpId = 0;
+	void teleport(bdouble tpX, bdouble tpY, bdouble tpZ);
+	void teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat yaw, bfloat pitch);
 
 	//other players visibility
 	std::vector<Player*> seenBy;
