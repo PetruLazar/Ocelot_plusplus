@@ -20,8 +20,9 @@ float rotationOffset(Item itemId)
 	}
 	return 0.f;
 }
-std::string getFacing(Player* p, float playerYaw, Item itemId)
+std::string getHorizontalFacing(Player* p, float playerYaw, Item itemId)
 {
+	//yaw modulation [0, 360)
 	playerYaw += rotationOffset(itemId);
 	int yawInt = (int)(playerYaw);
 	yawInt -= yawInt % 360;
@@ -30,14 +31,13 @@ std::string getFacing(Player* p, float playerYaw, Item itemId)
 
 	//temp
 	if (playerYaw == 45.f || playerYaw == 135.f || playerYaw == 225.f || playerYaw == 315.f)
-		//are you a robot?
 		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-	//temp: more checks than needed
+
 	if (playerYaw < 45 || playerYaw>315)
 	{
 		return "north";
 	}
-	if (playerYaw < 135)
+	if (playerYaw <= 135)
 	{
 		return "east";
 	}
@@ -46,6 +46,15 @@ std::string getFacing(Player* p, float playerYaw, Item itemId)
 		return "south";
 	}
 	return "west";
+}
+std::string get3DFacing(Player* p, float playerYaw, float playerPitch, Item itemId)
+{
+	if (playerPitch == 45.f || playerPitch == -45.f)
+		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+
+	if (playerPitch >= 45.f) return "up";
+	if (playerPitch <= -45.f) return "down";
+	return getHorizontalFacing(p, playerYaw, itemId);
 }
 
 //is this block waterloggable?
@@ -678,7 +687,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 
 			}
 
-			//blocks that have the "facing" property, dependend on player yaw
+			//blocks that have the "facing" property, dependend on player's yaw
 			{
 		case Item::minecraft_anvil:
 		case Item::minecraft_chipped_anvil:
@@ -710,7 +719,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[1];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 				break;
 			}
@@ -746,7 +755,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[1];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 			}
 			break;
@@ -757,7 +766,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				props[1].name = "eye";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -796,7 +805,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				props[1].name = "eye";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -812,7 +821,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				props[1].name = "lit";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -851,7 +860,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				props[1].name = "lit";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -862,6 +871,231 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 
 
 			}
+
+			//blocks that have the "facing" property, dependent on player's yaw and pitch
+			{ {
+		case Item::minecraft_piston:
+		case Item::minecraft_sticky_piston:
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "extended";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "extended";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
+			break;
+		}
+		case Item::minecraft_observer:
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "powered";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "powered";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
+			break;
+		}
+		case Item::minecraft_dispenser:
+		case Item::minecraft_dropper:
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "triggered";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "triggered";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
+			break;
+		}
+				}}
+
+			//blocks that need to have any block or liquid underneath
+			{ {
+		case Item::minecraft_white_carpet:
+		case Item::minecraft_orange_carpet:
+		case Item::minecraft_magenta_carpet:
+		case Item::minecraft_light_blue_carpet:
+		case Item::minecraft_yellow_carpet:
+		case Item::minecraft_lime_carpet:
+		case Item::minecraft_pink_carpet:
+		case Item::minecraft_gray_carpet:
+		case Item::minecraft_light_gray_carpet:
+		case Item::minecraft_cyan_carpet:
+		case Item::minecraft_purple_carpet:
+		case Item::minecraft_blue_carpet:
+		case Item::minecraft_brown_carpet:
+		case Item::minecraft_green_carpet:
+		case Item::minecraft_red_carpet:
+		case Item::minecraft_black_carpet:
+			if (replaceableDirect(targetBlockId))
+			{
+				int groundY = destY - 1;
+				if (!p->world->checkCoordinates(groundY)) return;
+				BlockState groundBlockState = getBlock(destX, groundY, destZ);
+				if (groundBlockState == 0) break;
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				int groundY = destY - 1;
+				if (!p->world->checkCoordinates(groundY)) return;
+				BlockState groundBlockState = getBlock(destX, groundY, destZ);
+				if (groundBlockState == 0) break;
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+			}
+			break;
+				}}
 
 			//slabs ("type" state with "bottom", "top" or "double")
 			{
@@ -1458,22 +1692,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_deepslate_brick_wall:
 		case Item::minecraft_deepslate_tile_wall:
 		case Item::minecraft_light:
-		case Item::minecraft_white_carpet:
-		case Item::minecraft_orange_carpet:
-		case Item::minecraft_magenta_carpet:
-		case Item::minecraft_light_blue_carpet:
-		case Item::minecraft_yellow_carpet:
-		case Item::minecraft_lime_carpet:
-		case Item::minecraft_pink_carpet:
-		case Item::minecraft_gray_carpet:
-		case Item::minecraft_light_gray_carpet:
-		case Item::minecraft_cyan_carpet:
-		case Item::minecraft_purple_carpet:
-		case Item::minecraft_blue_carpet:
-		case Item::minecraft_brown_carpet:
-		case Item::minecraft_green_carpet:
-		case Item::minecraft_red_carpet:
-		case Item::minecraft_black_carpet:
 		case Item::minecraft_structure_void:
 		case Item::minecraft_dirt_path:
 		case Item::minecraft_sunflower:
@@ -1527,8 +1745,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_redstone_torch:
 		case Item::minecraft_repeater:
 		case Item::minecraft_comparator:
-		case Item::minecraft_piston:
-		case Item::minecraft_sticky_piston:
 		case Item::minecraft_observer:
 		case Item::minecraft_hopper:
 		case Item::minecraft_dispenser:
