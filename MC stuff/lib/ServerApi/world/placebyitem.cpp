@@ -9,9 +9,21 @@ enum class slabType : Byte
 	dbl
 };
 
-std::string getFacing(Player* p, float playerYaw)
+float rotationOffset(Item itemId)
 {
-	int yawInt = (int)playerYaw;
+	switch (itemId)
+	{
+	case Item::minecraft_anvil:
+	case Item::minecraft_chipped_anvil:
+	case Item::minecraft_damaged_anvil:
+		return -90.f;
+	}
+	return 0.f;
+}
+std::string getFacing(Player* p, float playerYaw, Item itemId)
+{
+	playerYaw += rotationOffset(itemId);
+	int yawInt = (int)(playerYaw);
 	yawInt -= yawInt % 360;
 	playerYaw -= yawInt;
 	if (playerYaw < 0) playerYaw += 360;
@@ -34,7 +46,6 @@ std::string getFacing(Player* p, float playerYaw)
 		return "south";
 	}
 	return "west";
-
 }
 
 //is this block waterloggable?
@@ -174,6 +185,21 @@ bool rightClickBlock(Player* p, Block bid)
 	case Block::minecraft_chipped_anvil:
 	case Block::minecraft_damaged_anvil:
 		message::play::send::chatMessage(p, Chat("Anvil right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_stonecutter:
+		message::play::send::chatMessage(p, Chat("Stonecutter right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_furnace:
+		message::play::send::chatMessage(p, Chat("Furnace right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_blast_furnace:
+		message::play::send::chatMessage(p, Chat("Blast furnace right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_smoker:
+		message::play::send::chatMessage(p, Chat("Smoker right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_loom:
+		message::play::send::chatMessage(p, Chat("Loom right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return true;
 	}
 	return false;
@@ -657,12 +683,34 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_anvil:
 		case Item::minecraft_chipped_anvil:
 		case Item::minecraft_damaged_anvil:
+		case Item::minecraft_loom:
+		case Item::minecraft_carved_pumpkin:
+		case Item::minecraft_jack_o_lantern:
+		case Item::minecraft_white_glazed_terracotta:
+		case Item::minecraft_orange_glazed_terracotta:
+		case Item::minecraft_magenta_glazed_terracotta:
+		case Item::minecraft_light_blue_glazed_terracotta:
+		case Item::minecraft_yellow_glazed_terracotta:
+		case Item::minecraft_lime_glazed_terracotta:
+		case Item::minecraft_pink_glazed_terracotta:
+		case Item::minecraft_gray_glazed_terracotta:
+		case Item::minecraft_light_gray_glazed_terracotta:
+		case Item::minecraft_cyan_glazed_terracotta:
+		case Item::minecraft_purple_glazed_terracotta:
+		case Item::minecraft_blue_glazed_terracotta:
+		case Item::minecraft_brown_glazed_terracotta:
+		case Item::minecraft_green_glazed_terracotta:
+		case Item::minecraft_red_glazed_terracotta:
+		case Item::minecraft_black_glazed_terracotta:
+		case Item::minecraft_stonecutter:
+		case Item::minecraft_bee_nest:
+		case Item::minecraft_beehive:
 		{
 			if (replaceableDirect(targetBlockId))
 			{
 				BlockProperty* props = new BlockProperty[1];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw);
+				props[0].value = getFacing(p, p->yaw, (Item)itemId);
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 				break;
 			}
@@ -698,7 +746,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[1];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw);
+				props[0].value = getFacing(p, p->yaw, (Item)itemId);
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 			}
 			break;
@@ -709,7 +757,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw);
+				props[0].value = getFacing(p, p->yaw, (Item)itemId);
 				props[1].name = "eye";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -748,7 +796,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = getFacing(p, p->yaw);
+				props[0].value = getFacing(p, p->yaw, (Item)itemId);
 				props[1].name = "eye";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -756,11 +804,68 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			}
 			break;
 		}
+		case Item::minecraft_furnace:
+		case Item::minecraft_smoker:
+		case Item::minecraft_blast_furnace:
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[1].name = "lit";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = getFacing(p, p->yaw, (Item)itemId);
+				props[1].name = "lit";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+			}
+			break;
+		}
+
 
 			}
 
 			//slabs ("type" state with "bottom", "top" or "double")
 			{
+				{
 		case Item::minecraft_cut_copper_slab:
 		case Item::minecraft_exposed_cut_copper_slab:
 		case Item::minecraft_weathered_cut_copper_slab:
@@ -918,6 +1023,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			}
 		}
 		break;
+				}
 			}
 
 			//blocks that have the state "axis" dependent on plcement face (like logs)
@@ -1241,6 +1347,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 
 			//special items
 			{
+				{
 		case Item::minecraft_ender_eye:
 			if (targetBlockId != Block::minecraft_end_portal_frame) break;
 			std::string hasEye = targetBlockState.getState("eye");
@@ -1251,6 +1358,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			//add sound and particles
 			//add actual opening of the end portal if all frames are filled with eyes
 			break;
+				}
 			}
 
 			//unhandled
@@ -1259,29 +1367,11 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_podzol:
 		case Item::minecraft_mycelium:
 
-
 		case Item::minecraft_beacon:
 
 		case Item::minecraft_dead_bush:
 		case Item::minecraft_seagrass:
 		case Item::minecraft_sea_pickle:
-
-		case Item::minecraft_white_glazed_terracotta:
-		case Item::minecraft_orange_glazed_terracotta:
-		case Item::minecraft_magenta_glazed_terracotta:
-		case Item::minecraft_light_blue_glazed_terracotta:
-		case Item::minecraft_yellow_glazed_terracotta:
-		case Item::minecraft_lime_glazed_terracotta:
-		case Item::minecraft_pink_glazed_terracotta:
-		case Item::minecraft_gray_glazed_terracotta:
-		case Item::minecraft_light_gray_glazed_terracotta:
-		case Item::minecraft_cyan_glazed_terracotta:
-		case Item::minecraft_purple_glazed_terracotta:
-		case Item::minecraft_blue_glazed_terracotta:
-		case Item::minecraft_brown_glazed_terracotta:
-		case Item::minecraft_green_glazed_terracotta:
-		case Item::minecraft_red_glazed_terracotta:
-		case Item::minecraft_black_glazed_terracotta:
 
 		case Item::minecraft_shulker_box:
 		case Item::minecraft_white_shulker_box:
@@ -1332,12 +1422,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_warped_fence:
 		case Item::minecraft_chest:
 		case Item::minecraft_farmland:
-		case Item::minecraft_furnace:
 		case Item::minecraft_ladder:
 		case Item::minecraft_snow:
 		case Item::minecraft_cactus:
-		case Item::minecraft_carved_pumpkin:
-		case Item::minecraft_jack_o_lantern:
 		case Item::minecraft_soul_torch:
 		case Item::minecraft_iron_bars:
 		case Item::minecraft_chain:
@@ -1887,7 +1974,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_heart_of_the_sea:
 		case Item::minecraft_crossbow:
 		case Item::minecraft_suspicious_stew:
-		case Item::minecraft_loom:
 		case Item::minecraft_flower_banner_pattern:
 		case Item::minecraft_creeper_banner_pattern:
 		case Item::minecraft_skull_banner_pattern:
@@ -1896,10 +1982,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_piglin_banner_pattern:
 		case Item::minecraft_composter:
 		case Item::minecraft_barrel:
-		case Item::minecraft_smoker:
-		case Item::minecraft_blast_furnace:
 		case Item::minecraft_grindstone:
-		case Item::minecraft_stonecutter:
 		case Item::minecraft_bell:
 		case Item::minecraft_lantern:
 		case Item::minecraft_soul_lantern:
@@ -1907,8 +1990,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_campfire:
 		case Item::minecraft_soul_campfire:
 		case Item::minecraft_honeycomb:
-		case Item::minecraft_bee_nest:
-		case Item::minecraft_beehive:
 		case Item::minecraft_honey_bottle:
 		case Item::minecraft_respawn_anchor:
 		case Item::minecraft_candle:
@@ -1945,6 +2026,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	if (stateJson)
 	{
 		setBlock(destX, destY, destZ, stateJson);
+		Position destLoc = Position(destX, destY + p->world->min_y, destZ);
+		for (Player* seener : p->world->players) if (seener != p && seener->positionInRange(loc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
 	}
 	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 }
