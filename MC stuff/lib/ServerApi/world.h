@@ -26,7 +26,7 @@ public:
 
 	mcString name;
 	std::vector<Player*> players;
-	std::vector<entity::entity*> entities;
+	std::vector<Entity::entity*> entities;
 
 	eidDispenser::Entity eidDispenser;
 

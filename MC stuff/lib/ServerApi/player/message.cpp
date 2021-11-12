@@ -134,11 +134,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	//player initialization
 	//general fields
-	p->uuid = new mcUUID(mcUUID::player);
 	p->username = username;
 	p->viewDistance = Options::viewDistance();
 	p->gm = gamemode::creative;
-	p->eid = Player::eidDispenser.Alloc();
 	//position, rotation ad world
 	//p->world = World::worlds[World::spawnWorld];
 	//p->X = p->world->spawn.X;
@@ -153,13 +151,13 @@ void message::login::receive::start(Player* p, const mcString& username)
 	p->hasDisplayName = false;
 	//p->displayName = new Chat(("[Tester] " + username).c_str());
 
-	Log::txt() << '\n' << p->username << '(' << p->netId() << ") is logging in (eid: " << p->eid << ").";
+	Log::txt() << '\n' << p->username << '(' << p->netId() << ") is logging in (eid: " << p->getEid() << ").";
 
 	login::send::setCompression(p, 128);
 
-	login::send::success(p, *p->uuid, username);
+	login::send::success(p, *p->euuid, username);
 
-	play::send::joinGame(p, (int)p->eid, false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[World::spawnWorld]->characteristics, World::worlds[World::spawnWorld]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, World::worlds[World::spawnWorld]->isFlat);
+	play::send::joinGame(p, (int)p->getEid(), false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[World::spawnWorld]->characteristics, World::worlds[World::spawnWorld]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, World::worlds[World::spawnWorld]->isFlat);
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
@@ -203,7 +201,7 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 	throw protocolError("Encryption not supported");
 }
 
-void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, entity::type type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
+void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, Entity::type type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
 {
 	varInt id = (int)id::spawnEntity;
 	prepareSendMacro(1024 * 1024);
@@ -238,7 +236,7 @@ void message::play::send::spawnXPorb(Player* p, varInt eid, bdouble x, bdouble y
 
 	finishSendMacro;
 }
-void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID& uuid, entity::type type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ)
+void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ)
 {
 	varInt id = (int)id::spawnLivingEntity;
 	prepareSendMacro(1024 * 1024);
@@ -259,7 +257,7 @@ void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID&
 
 	finishSendMacro;
 }
-void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, entity::Painting::motive motive, Position location, entity::direction direction)
+void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, Entity::Painting::motive motive, Position location, Entity::direction direction)
 {
 	varInt id = (int)id::spawnPainting;
 	prepareSendMacro(1024 * 1024);
@@ -289,14 +287,14 @@ void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid,
 
 	finishSendMacro;
 }
-void message::play::send::sculkVibrationSignal(Player* p, Position source, entity::Sculk::destinationType destinationType, entity::Sculk::destination destination, varInt arrivalTime)
+void message::play::send::sculkVibrationSignal(Player* p, Position source, Entity::Sculk::destinationType destinationType, Entity::Sculk::destination destination, varInt arrivalTime)
 {
 	varInt id = (int)id::sculkVibrationSignal;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	source.write(data);
-	if (destinationType == entity::Sculk::block)
+	if (destinationType == Entity::Sculk::block)
 	{
 		mcString("block").write(data);
 		destination.position.write(data);
@@ -310,7 +308,7 @@ void message::play::send::sculkVibrationSignal(Player* p, Position source, entit
 
 	finishSendMacro;
 }
-void message::play::send::entityAnimation(Player* p, varInt eid, entity::animation animation)
+void message::play::send::entityAnimation(Player* p, varInt eid, Entity::animation animation)
 {
 	varInt id = (int)id::entityAnimation;
 	prepareSendMacro(1024 * 1024);
@@ -486,7 +484,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		for (int i = 0; i < playerCount; i++)
 		{
 			Player*& player = players[i];
-			player->uuid->write(data);
+			player->euuid->write(data);
 			player->username.write(data);
 			varInt(0).write(data);
 			varInt((Byte)player->gm).write(data);
@@ -499,7 +497,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		for (int i = 0; i < playerCount; i++)
 		{
 			Player*& player = players[i];
-			player->uuid->write(data);
+			player->euuid->write(data);
 			varInt((Byte)player->gm).write(data);
 		}
 		break;
@@ -507,7 +505,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		for (int i = 0; i < playerCount; i++)
 		{
 			Player*& player = players[i];
-			player->uuid->write(data);
+			player->euuid->write(data);
 			player->ping.write(data);
 		}
 		break;
@@ -515,7 +513,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		for (int i = 0; i < playerCount; i++)
 		{
 			Player*& player = players[i];
-			player->uuid->write(data);
+			player->euuid->write(data);
 			*(data++) = player->hasDisplayName;
 			if (p->hasDisplayName) p->displayName->write(data);
 		}
@@ -524,7 +522,7 @@ void message::play::send::playerInfo(Player* p, varInt action, varInt playerCoun
 		for (int i = 0; i < playerCount; i++)
 		{
 			Player*& player = players[i];
-			player->uuid->write(data);
+			player->euuid->write(data);
 		}
 		break;
 	}
@@ -965,7 +963,7 @@ void message::play::send::displayScoreboard(Player* p, Byte position, const mcSt
 
 	finishSendMacro;
 }
-void message::play::send::entityMetadata(Player* p, entity::Metadata* metadatas) //args should contain all data in array like network buffer style
+void message::play::send::entityMetadata(Player* p, Entity::Metadata* metadatas) //args should contain all data in array like network buffer style
 { //untested!!!
 	varInt id = (int)id::entityMetadata;
 	prepareSendMacro(1024 * 1024);
@@ -1445,7 +1443,7 @@ void message::play::send::respawn(Player* p, const nbt_compound& dimension, cons
 
 	finishSendMacro;
 }
-void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProperties, entity::Property* properties)
+void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProperties, Entity::Property* properties)
 {
 	varInt id = (int)id::entityProperties;
 	prepareSendMacro(1024 * 1024);
@@ -1966,7 +1964,7 @@ void message::play::receive::clientStatus(Player*, varInt actionId)
 {
 
 }
-void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, Hand mainHand, bool disableTextFiltering)
+void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
 {
 	p->locale = locale;
 	p->viewDistance = (p->viewDistance > (int)viewDistance) ? (int)viewDistance : p->viewDistance;
@@ -2021,7 +2019,7 @@ void message::play::receive::chatMessage(Player* p, mcString& content)
 		Chat msg(('<' + p->username + "> " + content).c_str());
 
 		for (Player* pl : Player::players)
-			message::play::send::chatMessage(pl, msg, 0, *p->uuid);
+			message::play::send::chatMessage(pl, msg, 0, *p->euuid);
 	}
 }
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
@@ -2029,7 +2027,7 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPosition(seener, p->eid, short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
 }
@@ -2040,8 +2038,8 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 
 	for (Player* seener : p->seenBy)
 	{
-		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->eid, short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
-		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid, (float)p->yaw));
+		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->getEid(), short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityHeadLook(seener, p->getEid(), (float)p->yaw));
 	}
 	p->updatePosition(X, Y, Z);
 	p->updateRotation(yaw, pitch);
@@ -2051,8 +2049,8 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 {
 	for (Player* seener : p->seenBy)
 	{
-		ignoreExceptions(message::play::send::entityRotation(seener, p->eid, (float)yaw, (float)pitch, onGround));
-		ignoreExceptions(message::play::send::entityHeadLook(seener, p->eid, (float)p->yaw));
+		ignoreExceptions(message::play::send::entityRotation(seener, p->getEid(), (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityHeadLook(seener, p->getEid(), (float)p->yaw));
 	}
 
 	p->updateRotation(yaw, pitch);
@@ -2074,7 +2072,7 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 	eqp[0] = new Equipment(0, p->slots[36 + slot]);
 
 	for (Player* seener : p->seenBy)
-		message::play::send::entityEquipment(seener, p->eid, eqp);
+		message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
 	delete[] eqp;
 }
@@ -2091,18 +2089,18 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 			eqp[0] = new Equipment(0, clickedItem);
 
 			for (Player* seener : p->seenBy)
-				message::play::send::entityEquipment(seener, p->eid, eqp);
+				message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
 			delete[] eqp;
 		}
 	}
 }
-void message::play::receive::animation(Player* p, Hand hand)
+void message::play::receive::animation(Player* p, varInt hand)
 {
-	entity::animation animation = (hand == p->mainHand) ? entity::animation::swingMainArm : entity::animation::swingOffhand;
+	Entity::animation animation = (hand == p->mainHand) ? Entity::animation::swingMainArm : Entity::animation::swingOffhand;
 
 	for (Player* seener : p->seenBy)
-		ignoreExceptions(message::play::send::entityAnimation(seener, p->eid, animation));
+		ignoreExceptions(message::play::send::entityAnimation(seener, p->getEid(), animation));
 }
 void message::play::receive::playerDigging(Player* p, varInt status, Position location, Byte face)
 {
@@ -2455,7 +2453,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			mainHand.read(data);
 			disableTextFiltering = *(data++);
 
-			play::receive::clientSettings(p, locale, viewDistance, (ChatMode)(int)chatMode, chatColors, displayedSkinParts, (Hand)(int)mainHand, disableTextFiltering);
+			play::receive::clientSettings(p, locale, viewDistance, (ChatMode)(int)chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
 		}
 		break;
 		case play::id::tabComplete_serverbound:
@@ -2625,6 +2623,8 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::entityAction:
 		{
+
+
 			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: entity action");
 		}
 		break;
@@ -2737,7 +2737,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		{
 			varInt hand;
 			hand.read(data);
-			play::receive::animation(p, (Hand)(int)hand);
+			play::receive::animation(p, hand);
 		}
 		break;
 		case play::id::spectate:

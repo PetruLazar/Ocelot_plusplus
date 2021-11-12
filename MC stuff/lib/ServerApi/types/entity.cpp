@@ -6,15 +6,13 @@
 #include "../nbt.h"
 #include "particle.h"
 
-using namespace entity;
-
 void Rotation3f::write(char*& buffer) const {
 	x.write(buffer);
 	y.write(buffer);
 	z.write(buffer);
 }
 
-namespace entity 
+namespace Entity 
 {
 	void Modifier::write(char*& buffer) const {
 		uuid.write(buffer);
@@ -154,25 +152,25 @@ namespace eidDispenser
 	Entity::Entity() : General(type::entity) { }
 }
 
-namespace entity //all entity classes functions
+namespace Entity //all entity classes functions
 {
-	entity::entity(eidDispenser::Entity& eidDispenser, Byte attributes, varInt airTicks, Chat customName, bool isCustomNameVisible, bool isSilent, bool hasGravity, pose thePose, varInt ticksFrozen)
-		: attributes(attributes), airTicks(airTicks), customName(customName), isCustomNameVisible(isCustomNameVisible), isSilent(isSilent), hasGravity(hasGravity), thePose(thePose), ticksFrozen(ticksFrozen), euuid(mcUUID::entity), eidDispenser(eidDispenser), eid(eidDispenser.Alloc()) {}
+	entity::entity(eidDispenser::General *eidDispenser, Byte attributes, varInt airTicks, Chat *customName, bool isCustomNameVisible, bool isSilent, bool hasGravity, pose thePose, varInt ticksFrozen)
+		: attributes(attributes), airTicks(airTicks), customName(customName), isCustomNameVisible(isCustomNameVisible), isSilent(isSilent), hasGravity(hasGravity), thePose(thePose), ticksFrozen(ticksFrozen), euuid(new mcUUID(mcUUID::entity)), eidDispenser(eidDispenser), eid(eidDispenser->Alloc()) {}
 
 	entity::entity(const entity& e)
-		: attributes(e.attributes), airTicks(e.airTicks), customName(e.customName), isCustomNameVisible(e.isCustomNameVisible), isSilent(e.isSilent), hasGravity(e.hasGravity), thePose(e.thePose), ticksFrozen(e.ticksFrozen), euuid(mcUUID::entity), eidDispenser(eidDispenser), eid(eidDispenser.Alloc()){}
+		: attributes(e.attributes), airTicks(e.airTicks), customName(e.customName), isCustomNameVisible(e.isCustomNameVisible), isSilent(e.isSilent), hasGravity(e.hasGravity), thePose(e.thePose), ticksFrozen(e.ticksFrozen), euuid(e.euuid), eidDispenser(eidDispenser), eid(e.eid) {}
 
 	entity::~entity() {
-		eidDispenser.Free(eid);
+		eidDispenser->Free(eid);
+		delete euuid;
 	}
 
-	mcUUID entity::getUuid() { return euuid; }
 	varInt entity::getEid() { return eid; }
 
 	void entity::write(char*& buffer) const {
 		*(buffer++) = attributes;
 		airTicks.write(buffer);
-		customName.write(buffer);
+		customName->write(buffer);
 		*(buffer++) = isCustomNameVisible;
 		*(buffer++) = isSilent;
 		*(buffer++) = hasGravity;

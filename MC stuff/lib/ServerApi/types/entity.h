@@ -60,7 +60,7 @@ namespace eidDispenser
 	};
 }
 
-namespace entity {
+namespace Entity {
 	enum class type
 	{
 		minecraft_area_effect_cloud = 0,
@@ -297,29 +297,29 @@ namespace entity {
 
 	struct entity
 	{
-	private:
-		mcUUID euuid;
+	protected:
 		varInt eid;
 
-		eidDispenser::Entity &eidDispenser;
+		eidDispenser::General *eidDispenser;
 
 	public:
+		mcUUID* euuid;
+
 		Byte attributes;
 		varInt airTicks;
-		Chat &customName;
+		Chat *customName;
 		bool isCustomNameVisible;
 		bool isSilent;
 		bool hasGravity;
 		pose thePose;
 		varInt ticksFrozen;
 
-		entity(eidDispenser::Entity &eidDispenser, Byte attributes = 0, varInt airTicks = 300, Chat customName = Chat(""), bool isCustomNameVisible = false, 
+		entity(eidDispenser::General *eidDispenser, Byte attributes = 0, varInt airTicks = 300, Chat *customName = nullptr, bool isCustomNameVisible = false,
 			bool isSilent = false, bool hasGravity = false, pose thePose = pose::standing, varInt ticksFrozen = 0);
 		entity(const entity& e);
 
 		~entity();
 
-		mcUUID getUuid();
 		varInt getEid();
 	
 		void write(char*& buffer) const;
@@ -532,7 +532,7 @@ namespace entity {
 		void write(char*& buffer) const;
 	};
 
-	struct LivingEntity : entity
+	struct LivingEntity : public entity
 	{
 		Byte handState;
 		bfloat health;
@@ -540,22 +540,27 @@ namespace entity {
 		bool isPotionEffectAmbient;
 		Position locationOfBed;
 
-		LivingEntity(entity theEntity, Byte handState = 0, bfloat health = 1, varInt potionEffectColor = 0, bool isPotionEffectAmbient = false, varInt nOfArrowsInEntity = 0, varInt nOfBeeStingersInEntity = 0, Position locationOfBed = Position())
+		LivingEntity(const entity& theEntity, Byte handState = 0, bfloat health = 1, varInt potionEffectColor = 0, bool isPotionEffectAmbient = false, varInt nOfArrowsInEntity = 0, varInt nOfBeeStingersInEntity = 0, Position locationOfBed = Position())
 			: handState(handState), health(health), potionEffectColor(potionEffectColor), isPotionEffectAmbient(isPotionEffectAmbient), nOfArrowsInEntity(nOfArrowsInEntity), nOfBeeStingersInEntity(nOfBeeStingersInEntity), locationOfBed(locationOfBed), entity(theEntity) {}
+
+		using entity::entity;
 	
 		void write(char*& buffer) const;
 	};
 
-	struct player : LivingEntity
+	struct player : public LivingEntity
 	{
+	public:
 		bfloat additionalHearts;
 		varInt score;
 		Byte displayedSkinParts, mainHand;
 		nbt* leftShoulderEntityData;
 		nbt* rightShoulderEntityData;
 
-		player(bfloat additionalHearts, varInt score, Byte displayedSkinParts, Byte mainHand, nbt* leftShoulderEntityData, nbt* rightShoulderEntityData, LivingEntity theLivingEntity)
+		player(const LivingEntity& theLivingEntity, bfloat additionalHearts = 0.0, varInt score = 0, Byte displayedSkinParts = 0, Byte mainHand = 1, nbt* leftShoulderEntityData = nullptr, nbt* rightShoulderEntityData = nullptr)
 			: additionalHearts(additionalHearts), score(score), displayedSkinParts(displayedSkinParts), mainHand(mainHand), leftShoulderEntityData(leftShoulderEntityData), rightShoulderEntityData(rightShoulderEntityData), LivingEntity(theLivingEntity) {}
+
+		using LivingEntity::LivingEntity;
 	
 		void write(char*& buffer) const;
 	};
