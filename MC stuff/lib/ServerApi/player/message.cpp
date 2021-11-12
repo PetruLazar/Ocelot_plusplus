@@ -963,15 +963,18 @@ void message::play::send::displayScoreboard(Player* p, Byte position, const mcSt
 
 	finishSendMacro;
 }
-void message::play::send::entityMetadata(Player* p, Entity::Metadata* metadatas) //args should contain all data in array like network buffer style
+void message::play::send::entityMetadata(Player* p, varInt eid, Entity::Metadata* metadatas) //args should contain all data in array like network buffer style
 { //untested!!!
 	varInt id = (int)id::entityMetadata;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
+	eid.write(data);
 
-	for (int counter = 0; metadatas[counter].index != 0xff; counter++)
-		metadatas[counter].write(data);
+	//for (int counter = 0; metadatas[counter].index != 0xff; counter++)
+		//metadatas[counter].write(data);
+
+	metadatas[0].write(data);
 
 	*(data++) = (Byte)0xff;
 
@@ -2151,6 +2154,41 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 		break;
 	}
 }
+void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId, varInt jumpBoost)
+{
+	switch (actionId) {
+	case 0: //start sneaking
+		p->attributes |= Byte(1) << 0x01;
+		break;
+	case 1: //stop sneaking
+		p->attributes &= ~(Byte(1) << 0x01);
+		break;
+	case 2: //leave bed
+		
+		break;
+	case 3: //start sprinting
+		p->attributes |= Byte(1) << 0x08;
+		break;
+	case 4: //stop sprinting
+		p->attributes &= ~(Byte(1) << 0x08);
+		break;
+	case 5: //start jump with horse
+		
+		break;
+	case 6: //stop jump with horse
+		
+		break;
+	case 7: //open horse inventory
+		
+		break;
+	case 8: //start flying with elytra
+		p->attributes |= Byte(1) << 0x80;
+		break;
+	}
+
+	for (Player* seener : p->seenBy)
+		message::play::send::entityMetadata(seener, eid, new Entity::Metadata(0, 0, &p->attributes));
+}
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
 	std::string text = "playerBlockPlacement: ";
@@ -2623,9 +2661,13 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::entityAction:
 		{
+			varInt eid, actionID, jumpBoost;
+			eid.read(data);
+			actionID.read(data);
+			jumpBoost.read(data);
 
-
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: entity action");
+			play::receive::entityAction(p, eid, actionID, jumpBoost);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: entity action");
 		}
 		break;
 		case play::id::steerVehicle:
