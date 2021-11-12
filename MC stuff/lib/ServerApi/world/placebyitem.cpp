@@ -9,6 +9,8 @@ enum class slabType : Byte
 	dbl
 };
 
+const int waterSurceBlockStateId = 34;
+
 float rotationOffset(Item itemId)
 {
 	switch (itemId)
@@ -17,6 +19,8 @@ float rotationOffset(Item itemId)
 	case Item::minecraft_chipped_anvil:
 	case Item::minecraft_damaged_anvil:
 		return -90.f;
+	case Item::minecraft_observer:
+		return 180.f;
 	}
 	return 0.f;
 }
@@ -111,6 +115,11 @@ bool waterloggable(Block id)
 	case Block::minecraft_polished_deepslate_slab:
 	case Block::minecraft_deepslate_brick_slab:
 	case Block::minecraft_deepslate_tile_slab:
+	case Block::minecraft_small_amethyst_bud:
+	case Block::minecraft_medium_amethyst_bud:
+	case Block::minecraft_large_amethyst_bud:
+	case Block::minecraft_amethyst_cluster:
+	case Block::minecraft_lightning_rod:
 		return true;
 	}
 	return false;
@@ -209,6 +218,34 @@ bool rightClickBlock(Player* p, Block bid)
 		return true;
 	case Block::minecraft_loom:
 		message::play::send::chatMessage(p, Chat("Loom right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_shulker_box:
+	case Block::minecraft_white_shulker_box:
+	case Block::minecraft_orange_shulker_box:
+	case Block::minecraft_magenta_shulker_box:
+	case Block::minecraft_light_blue_shulker_box:
+	case Block::minecraft_yellow_shulker_box:
+	case Block::minecraft_lime_shulker_box:
+	case Block::minecraft_pink_shulker_box:
+	case Block::minecraft_gray_shulker_box:
+	case Block::minecraft_light_gray_shulker_box:
+	case Block::minecraft_cyan_shulker_box:
+	case Block::minecraft_purple_shulker_box:
+	case Block::minecraft_blue_shulker_box:
+	case Block::minecraft_brown_shulker_box:
+	case Block::minecraft_green_shulker_box:
+	case Block::minecraft_red_shulker_box:
+	case Block::minecraft_black_shulker_box:
+		message::play::send::chatMessage(p, Chat("Shulker box right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_barrel:
+		message::play::send::chatMessage(p, Chat("Barrel right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_dispenser:
+		message::play::send::chatMessage(p, Chat("Dispenser right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		return true;
+	case Block::minecraft_dropper:
+		message::play::send::chatMessage(p, Chat("Dropper right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return true;
 	}
 	return false;
@@ -712,8 +749,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_red_glazed_terracotta:
 		case Item::minecraft_black_glazed_terracotta:
 		case Item::minecraft_stonecutter:
-		case Item::minecraft_bee_nest:
-		case Item::minecraft_beehive:
+		case Item::minecraft_bee_nest: //honey_level property missing
+		case Item::minecraft_beehive: //honey_level property missing
 		{
 			if (replaceableDirect(targetBlockId))
 			{
@@ -885,6 +922,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[1].name = "extended";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 				break;
 			}
 			switch (face)
@@ -923,6 +961,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[1].name = "extended";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 			}
 			break;
 		}
@@ -932,10 +971,11 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[0].value = get3DFacing(p, p->yaw, -p->pitch, (Item)itemId);
 				props[1].name = "powered";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 				break;
 			}
 			switch (face)
@@ -970,10 +1010,11 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				BlockProperty* props = new BlockProperty[2];
 				props[0].name = "facing";
-				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[0].value = get3DFacing(p, p->yaw, -p->pitch, (Item)itemId);
 				props[1].name = "powered";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 			}
 			break;
 		}
@@ -988,6 +1029,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[1].name = "triggered";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 				break;
 			}
 			switch (face)
@@ -1026,7 +1068,350 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[1].name = "triggered";
 				props[1].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 			}
+			break;
+		}
+				}}
+
+			//block that have the "facing" propery, dependent on what face it is being placed
+			{ {
+		case Item::minecraft_end_rod:
+		case Item::minecraft_shulker_box:
+		case Item::minecraft_white_shulker_box:
+		case Item::minecraft_orange_shulker_box:
+		case Item::minecraft_magenta_shulker_box:
+		case Item::minecraft_light_blue_shulker_box:
+		case Item::minecraft_yellow_shulker_box:
+		case Item::minecraft_lime_shulker_box:
+		case Item::minecraft_pink_shulker_box:
+		case Item::minecraft_gray_shulker_box:
+		case Item::minecraft_light_gray_shulker_box:
+		case Item::minecraft_cyan_shulker_box:
+		case Item::minecraft_purple_shulker_box:
+		case Item::minecraft_blue_shulker_box:
+		case Item::minecraft_brown_shulker_box:
+		case Item::minecraft_green_shulker_box:
+		case Item::minecraft_red_shulker_box:
+		case Item::minecraft_black_shulker_box:
+		{
+			BlockProperty* props = new BlockProperty[1];
+			if (replaceableDirect(targetBlockId))
+			{
+				props[0].name = "facing";
+				switch (face)
+				{
+				case playerDigging::bottom:
+					props[0].value = "down";
+					break;
+				case playerDigging::top:
+					props[0].value = "up";
+					break;
+				case playerDigging::north:
+					props[0].value = "north";
+					break;
+				case playerDigging::south:
+					props[0].value = "south";
+					break;
+				case playerDigging::west:
+					props[0].value = "west";
+					break;
+				case playerDigging::east:
+					props[0].value = "east";
+				}
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				props[0].value = "up";
+				destY++;
+				break;
+			case playerDigging::bottom:
+				props[0].value = "down";
+				destY--;
+				break;
+			case playerDigging::east:
+				props[0].value = "east";
+				destX++;
+				break;
+			case playerDigging::west:
+				props[0].value = "west";
+				destX--;
+				break;
+			case playerDigging::south:
+				props[0].value = "south";
+				destZ++;
+				break;
+			case playerDigging::north:
+				props[0].value = "north";
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+			{
+				//destY out of world
+				delete[] props;
+				return;
+			}
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				props[0].name = "facing";
+				//props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
+			delete[] props;
+			break;
+		}
+		case Item::minecraft_barrel:
+		{
+			BlockProperty* props = new BlockProperty[2];
+			if (replaceableDirect(targetBlockId))
+			{
+				props[0].name = "facing";
+				switch (face)
+				{
+				case playerDigging::bottom:
+					props[0].value = "down";
+					break;
+				case playerDigging::top:
+					props[0].value = "up";
+					break;
+				case playerDigging::north:
+					props[0].value = "north";
+					break;
+				case playerDigging::south:
+					props[0].value = "south";
+					break;
+				case playerDigging::west:
+					props[0].value = "west";
+					break;
+				case playerDigging::east:
+					props[0].value = "east";
+				}
+				props[1].name = "open";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				props[0].value = "up";
+				destY++;
+				break;
+			case playerDigging::bottom:
+				props[0].value = "down";
+				destY--;
+				break;
+			case playerDigging::east:
+				props[0].value = "east";
+				destX++;
+				break;
+			case playerDigging::west:
+				props[0].value = "west";
+				destX--;
+				break;
+			case playerDigging::south:
+				props[0].value = "south";
+				destZ++;
+				break;
+			case playerDigging::north:
+				props[0].value = "north";
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+			{
+				//destY out of world
+				delete[] props;
+				return;
+			}
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				props[0].name = "facing";
+				props[1].name = "open";
+				props[1].value = "false";
+				//props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
+			delete[] props;
+			break;
+		}
+		case Item::minecraft_amethyst_cluster:
+		case Item::minecraft_large_amethyst_bud:
+		case Item::minecraft_medium_amethyst_bud:
+		case Item::minecraft_small_amethyst_bud:
+		{
+			BlockProperty* props = new BlockProperty[2];
+			if (replaceableDirect(targetBlockId))
+			{
+				props[0].name = "facing";
+				switch (face)
+				{
+				case playerDigging::bottom:
+					props[0].value = "down";
+					break;
+				case playerDigging::top:
+					props[0].value = "up";
+					break;
+				case playerDigging::north:
+					props[0].value = "north";
+					break;
+				case playerDigging::south:
+					props[0].value = "south";
+					break;
+				case playerDigging::west:
+					props[0].value = "west";
+					break;
+				case playerDigging::east:
+					props[0].value = "east";
+				}
+				props[1].name = "waterlogged";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				props[0].value = "up";
+				destY++;
+				break;
+			case playerDigging::bottom:
+				props[0].value = "down";
+				destY--;
+				break;
+			case playerDigging::east:
+				props[0].value = "east";
+				destX++;
+				break;
+			case playerDigging::west:
+				props[0].value = "west";
+				destX--;
+				break;
+			case playerDigging::south:
+				props[0].value = "south";
+				destZ++;
+				break;
+			case playerDigging::north:
+				props[0].value = "north";
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+			{
+				//destY out of world
+				delete[] props;
+				return;
+			}
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				props[0].name = "facing";
+				props[1].name = "waterlogged";
+				props[1].value = oldBlockState.id == waterSurceBlockStateId ? "true" : "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
+			delete[] props;
+			break;
+		}
+		case Item::minecraft_lightning_rod:
+		{
+			BlockProperty* props = new BlockProperty[3];
+			if (replaceableDirect(targetBlockId))
+			{
+				props[0].name = "facing";
+				switch (face)
+				{
+				case playerDigging::bottom:
+					props[0].value = "down";
+					break;
+				case playerDigging::top:
+					props[0].value = "up";
+					break;
+				case playerDigging::north:
+					props[0].value = "north";
+					break;
+				case playerDigging::south:
+					props[0].value = "south";
+					break;
+				case playerDigging::west:
+					props[0].value = "west";
+					break;
+				case playerDigging::east:
+					props[0].value = "east";
+				}
+				props[1].name = "waterlogged";
+				props[1].value = "false";
+				props[2].name = "powered";
+				props[2].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				props[0].value = "up";
+				destY++;
+				break;
+			case playerDigging::bottom:
+				props[0].value = "down";
+				destY--;
+				break;
+			case playerDigging::east:
+				props[0].value = "east";
+				destX++;
+				break;
+			case playerDigging::west:
+				props[0].value = "west";
+				destX--;
+				break;
+			case playerDigging::south:
+				props[0].value = "south";
+				destZ++;
+				break;
+			case playerDigging::north:
+				props[0].value = "north";
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+			{
+				//destY out of world
+				delete[] props;
+				return;
+			}
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				props[0].name = "facing";
+				props[1].name = "waterlogged";
+				props[1].value = oldBlockState.id == waterSurceBlockStateId ? "true" : "false";
+				props[2].name = "powered";
+				props[2].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
+			delete[] props;
 			break;
 		}
 				}}
@@ -1160,6 +1545,36 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			slabType type;
 
 			//test and replace slabs directly
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				switch (face)
+				{
+				case playerDigging::top:
+					props[0].value = "bottom";
+					break;
+				case playerDigging::bottom:
+					props[0].value = "top";
+					break;
+				case playerDigging::south:
+					props[0].value = curY <= .5f ? "bottom" : "top";
+					break;
+				case playerDigging::east:
+					props[0].value = curY <= .5f ? "bottom" : "top";
+					break;
+				case playerDigging::west:
+					props[0].value = curY <= .5f ? "bottom" : "top";
+					break;
+				case playerDigging::north:
+					props[0].value = curY <= .5f ? "bottom" : "top";
+				}
+				props[0].name = "type";
+				props[1].name = "waterlogged";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(heldBlockName, props);
+				delete[] props;
+				break;
+			}
 
 			switch (face)
 			{
@@ -1249,9 +1664,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						props[0].name = "type";
 						props[0].value = type == slabType::bottom ? "bottom" : "top";
 						props[1].name = "waterlogged";
-						//34 is the water source block state id - to do: make it not hardcoded
-						props[1].value = oldBlockState.id == 34 ? "true" : "false";
+						props[1].value = oldBlockState.id == waterSurceBlockStateId ? "true" : "false";
 						stateJson = &Registry::getBlockState(heldBlockName, props);
+						delete[] props;
 					}
 				}
 			}
@@ -1425,6 +1840,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				targetBlockState.setState("waterlogged", "true");
 				setBlock(destX, destY, destZ, targetBlockState);
 				//send the block to the client
+				message::play::send::blockChange(p, loc, targetBlockState.id);
 				return;
 			}
 			if (targetBlockId == Block::minecraft_cauldron)
@@ -1466,6 +1882,14 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
 			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
 
+			if (waterloggable(oldBlockId))
+			{
+				oldBlockState.setState("waterlogged", "true");
+				setBlock(destX, destY, destZ, oldBlockState);
+				//send the block to the client
+				message::play::send::blockChange(p, Position(destX, destY + p->world->min_y, destZ), oldBlockState.id);
+				return;
+			}
 			if (destroyedByWater(oldBlockId) || replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState("minecraft:water");
 			break;
 		}
@@ -1607,24 +2031,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_seagrass:
 		case Item::minecraft_sea_pickle:
 
-		case Item::minecraft_shulker_box:
-		case Item::minecraft_white_shulker_box:
-		case Item::minecraft_orange_shulker_box:
-		case Item::minecraft_magenta_shulker_box:
-		case Item::minecraft_light_blue_shulker_box:
-		case Item::minecraft_yellow_shulker_box:
-		case Item::minecraft_lime_shulker_box:
-		case Item::minecraft_pink_shulker_box:
-		case Item::minecraft_gray_shulker_box:
-		case Item::minecraft_light_gray_shulker_box:
-		case Item::minecraft_cyan_shulker_box:
-		case Item::minecraft_purple_shulker_box:
-		case Item::minecraft_blue_shulker_box:
-		case Item::minecraft_brown_shulker_box:
-		case Item::minecraft_green_shulker_box:
-		case Item::minecraft_red_shulker_box:
-		case Item::minecraft_black_shulker_box:
-
 		case Item::minecraft_spore_blossom:
 		case Item::minecraft_brown_mushroom:
 		case Item::minecraft_red_mushroom:
@@ -1643,7 +2049,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_small_dripleaf:
 		case Item::minecraft_bamboo:
 		case Item::minecraft_torch:
-		case Item::minecraft_end_rod:
 		case Item::minecraft_chorus_plant:
 		case Item::minecraft_chorus_flower:
 		case Item::minecraft_oak_fence:
@@ -1745,13 +2150,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_redstone_torch:
 		case Item::minecraft_repeater:
 		case Item::minecraft_comparator:
-		case Item::minecraft_observer:
 		case Item::minecraft_hopper:
-		case Item::minecraft_dispenser:
-		case Item::minecraft_dropper:
 		case Item::minecraft_lectern:
 		case Item::minecraft_lever:
-		case Item::minecraft_lightning_rod:
 		case Item::minecraft_daylight_detector:
 		case Item::minecraft_sculk_sensor:
 		case Item::minecraft_tripwire_hook:
@@ -2197,7 +2598,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_globe_banner_pattern:
 		case Item::minecraft_piglin_banner_pattern:
 		case Item::minecraft_composter:
-		case Item::minecraft_barrel:
 		case Item::minecraft_grindstone:
 		case Item::minecraft_bell:
 		case Item::minecraft_lantern:
@@ -2225,10 +2625,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_green_candle:
 		case Item::minecraft_red_candle:
 		case Item::minecraft_black_candle:
-		case Item::minecraft_small_amethyst_bud:
-		case Item::minecraft_medium_amethyst_bud:
-		case Item::minecraft_large_amethyst_bud:
-		case Item::minecraft_amethyst_cluster:
 		case Item::minecraft_pointed_dripstone:
 			break;
 		}
