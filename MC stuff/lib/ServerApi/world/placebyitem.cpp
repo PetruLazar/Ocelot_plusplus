@@ -1072,6 +1072,59 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			}
 			break;
 		}
+		case Item::minecraft_barrel:
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "open";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
+				props[1].name = "open";
+				props[1].value = "false";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+			}
+			break;
+		}
 				}}
 
 			//block that have the "facing" propery, dependent on what face it is being placed
@@ -1163,86 +1216,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			if (replaceableIndirect(oldBlockId))
 			{
 				props[0].name = "facing";
-				//props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
-				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
-			}
-			delete[] props;
-			break;
-		}
-		case Item::minecraft_barrel:
-		{
-			BlockProperty* props = new BlockProperty[2];
-			if (replaceableDirect(targetBlockId))
-			{
-				props[0].name = "facing";
-				switch (face)
-				{
-				case playerDigging::bottom:
-					props[0].value = "down";
-					break;
-				case playerDigging::top:
-					props[0].value = "up";
-					break;
-				case playerDigging::north:
-					props[0].value = "north";
-					break;
-				case playerDigging::south:
-					props[0].value = "south";
-					break;
-				case playerDigging::west:
-					props[0].value = "west";
-					break;
-				case playerDigging::east:
-					props[0].value = "east";
-				}
-				props[1].name = "open";
-				props[1].value = "false";
-				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
-				delete[] props;
-				break;
-			}
-			switch (face)
-			{
-			case playerDigging::top:
-				props[0].value = "up";
-				destY++;
-				break;
-			case playerDigging::bottom:
-				props[0].value = "down";
-				destY--;
-				break;
-			case playerDigging::east:
-				props[0].value = "east";
-				destX++;
-				break;
-			case playerDigging::west:
-				props[0].value = "west";
-				destX--;
-				break;
-			case playerDigging::south:
-				props[0].value = "south";
-				destZ++;
-				break;
-			case playerDigging::north:
-				props[0].value = "north";
-				destZ--;
-			}
-			if (!p->world->checkCoordinates(destY))
-			{
-				//destY out of world
-				delete[] props;
-				return;
-			}
-
-			BlockState oldBlockState = getBlock(destX, destY, destZ);
-			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
-			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
-
-			if (replaceableIndirect(oldBlockId))
-			{
-				props[0].name = "facing";
-				props[1].name = "open";
-				props[1].value = "false";
 				//props[0].value = get3DFacing(p, p->yaw, p->pitch, (Item)itemId);
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 			}
