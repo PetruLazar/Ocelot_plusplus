@@ -89,7 +89,7 @@ namespace Entity
 				static_cast<nbt*>(value)->write(buffer);
 				break;
 			case type::_Particle:
-				static_cast<Particle*>(value)->write(buffer);
+				static_cast<particle::Particle*>(value)->write(buffer, true);
 				break;
 			case type::_VillagerData:
 				static_cast<VillagerData*>(value)->write(buffer);

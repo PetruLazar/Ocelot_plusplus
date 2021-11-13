@@ -408,10 +408,10 @@ namespace Entity {
 		bfloat radius;
 		varInt color;
 		bool ignoreRadius;
-		Particle* theParticle;
+		particle::Particle* theParticle;
 
-		areaEffectCloud(entity theEntity, bfloat radius = 0.5, varInt color = 0, bool ignoreRadius = false, Particle* theParticle = nullptr)
-			: radius(radius), color(color), ignoreRadius(ignoreRadius), theParticle(theParticle), entity(theEntity) {}  //CHANGE PARTICLE FROM NULLPTR TO PARTICLE::EFFECT
+		areaEffectCloud(entity theEntity, bfloat radius = 0.5, varInt color = 0, bool ignoreRadius = false, particle::Particle* theParticle = new particle::ParticleEnumed(particle::type::effect))
+			: radius(radius), color(color), ignoreRadius(ignoreRadius), theParticle(theParticle), entity(theEntity) {} 
 	};
 
 	struct fishingHook : entity

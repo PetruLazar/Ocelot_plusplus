@@ -642,7 +642,7 @@ void message::play::send::effect(Player* p, bint effectId, Position location, bi
 
 	finishSendMacro;
 }
-void message::play::send::particle(Player* p, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, Particle* particle = nullptr) {
+void message::play::send::particle(Player* p, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle = nullptr) {
 	varInt id = (int)id::particle;
 	prepareSendMacro(1024 * 1024);
 
@@ -659,7 +659,7 @@ void message::play::send::particle(Player* p, bint particleId, bool longDistance
 	count.write(data);
 
 	if (particle)
-		particle->write(data);
+		particle->write(data, false);
 
 	finishSendMacro;
 }
