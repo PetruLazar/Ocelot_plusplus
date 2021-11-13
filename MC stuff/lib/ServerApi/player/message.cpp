@@ -2156,19 +2156,19 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 {
 	switch (actionId) {
 	case 0: //start sneaking
-		p->attributes |= Byte(1) << 0x01;
+		p->attributes |= 1 << 0x02;
 		break;
 	case 1: //stop sneaking
-		p->attributes &= ~(Byte(1) << 0x01);
+		p->attributes &= ~(1 << 0x02);
 		break;
 	case 2: //leave bed
 		
 		break;
 	case 3: //start sprinting
-		p->attributes |= Byte(1) << 0x08;
+		p->attributes |= 1 << 0x08;
 		break;
 	case 4: //stop sprinting
-		p->attributes &= ~(Byte(1) << 0x08);
+		p->attributes &= ~(1 << 0x08);
 		break;
 	case 5: //start jump with horse
 		
@@ -2180,12 +2180,17 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		
 		break;
 	case 8: //start flying with elytra
-		p->attributes |= Byte(1) << 0x80;
+		p->attributes |= 1 << 0x80;
 		break;
 	}
 
 	for (Player* seener : p->seenBy)
-		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(0, 0, &p->attributes) });
+	{
+		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(0, Entity::Metadata::type::_Byte, &p->attributes) });
+
+		varInt entityPose = (p->attributes >> 0x02) & 1 ? Entity::pose::sneaking : Entity::pose::standing;
+		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(6, Entity::Metadata::type::_Pose, &entityPose) });
+	}
 }
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {

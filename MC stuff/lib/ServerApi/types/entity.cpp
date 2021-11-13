@@ -6,10 +6,18 @@
 #include "../nbt.h"
 #include "particle.h"
 
+#include <type_traits>
+
 void Rotation3f::write(char*& buffer) const {
 	x.write(buffer);
 	y.write(buffer);
 	z.write(buffer);
+}
+
+void VillagerData::write(char*& buffer) const {
+	type.write(buffer);
+	profession.write(buffer);
+	level.write(buffer);
 }
 
 namespace Entity 
@@ -32,77 +40,64 @@ namespace Entity
 		*(buffer++) = index;
 
 		if (index != 0xff) {
-			type.write(buffer);
+			varInt(dataType).write(buffer);
 
-			switch (type) {
-			case 0:
+			switch (dataType) {
+			case type::_Byte:
 				*(buffer++) = *static_cast<Byte*>(value);
 				break;
-			case 1:
+			case type::_varInt:
 				static_cast<varInt*>(value)->write(buffer);
 				break;
-			case 2:
+			case type::_Float:
 				static_cast<bfloat*>(value)->write(buffer);
 				break;
-			case 3:
+			case type::_String:
 				static_cast<mcString*>(value)->write(buffer);
 				break;
-			case 4:
+			case type::_Chat:
 				static_cast<Chat*>(value)->write(buffer);
 				break;
-			case 5:
-				*(buffer++) = (state == 1);
-				if (state)
-					static_cast<Chat*>(value)->write(buffer);
+			case type::_optChat:
+				static_cast<OptVar<Chat>*>(value)->write(buffer);
 				break;
-			case 6:
+			case type::_Slot:
 				static_cast<Slot*>(value)->write(buffer);
 				break;
-			case 7:
+			case type::_Boolean:
 				*(buffer++) = *static_cast<bool*>(value);
 				break;
-			case 8:
-				static_cast<bfloat*>(value)->write(buffer);
-				static_cast<bfloat*>(value)->write(buffer);
-				static_cast<bfloat*>(value)->write(buffer);
+			case type::_Rotation:
+				static_cast<Rotation3f*>(value)->write(buffer);
 				break;
-			case 9:
+			case type::_Position:
 				static_cast<Position*>(value)->write(buffer);
 				break;
-			case 10:
-				*(buffer++) = (state == 1);
-				if (state) {
-					static_cast<bfloat*>(value)->write(buffer);
-					static_cast<bfloat*>(value)->write(buffer);
-					static_cast<bfloat*>(value)->write(buffer);
-				}
+			case type::_OptPosition:
+				static_cast<OptVar<Position>*>(value)->write(buffer);
 				break;
-			case 11:
+			case type::_Direction:
 				static_cast<varInt*>(value)->write(buffer);
 				break;
-			case 12:
-				*(buffer++) = (state == 1);
-				if (state)
-					static_cast<mcUUID*>(value)->write(buffer);
+			case type::_OptUUID:
+				static_cast<OptVar<mcUUID>*>(value)->write(buffer);
 				break;
-			case 13:
+			case type::_OptBlockID:
 				static_cast<varInt*>(value)->write(buffer);
 				break;
-			case 14:
+			case type::_NBT:
 				static_cast<nbt*>(value)->write(buffer);
 				break;
-			case 15:
+			case type::_Particle:
 				static_cast<Particle*>(value)->write(buffer);
 				break;
-			case 16:
-				static_cast<varInt*>(value)->write(buffer);
-				static_cast<varInt*>(value)->write(buffer);
+			case type::_VillagerData:
+				static_cast<VillagerData*>(value)->write(buffer);
+				break;
+			case type::_optVarInt:
 				static_cast<varInt*>(value)->write(buffer);
 				break;
-			case 17:
-				static_cast<varInt*>(value)->write(buffer);
-				break;
-			case 18:
+			case type::_Pose:
 				static_cast<varInt*>(value)->write(buffer);
 				break;
 			default:

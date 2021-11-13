@@ -19,6 +19,33 @@ public:
 	void write(char*& buffer) const;
 };
 
+class VillagerData
+{
+public:
+	varInt type, profession, level;
+
+	VillagerData(varInt type, varInt profession, varInt level) : type(type), profession(profession), level(level) {}
+
+	void write(char*& buffer) const;
+};
+
+template<class T>
+class OptVar
+{
+private:
+	bool present;
+	T obj;
+
+public:
+	OptVar(bool present, const T& obj) : present(present), obj(obj) { }
+
+	void write(char*& buffer) const {
+		*(buffer)++ = present;
+		if (present)
+			obj.write(buffer);
+	}
+};
+
 namespace eidDispenser
 {
 	enum class type
@@ -196,7 +223,7 @@ namespace Entity {
 		magicCriticalEffect
 	};
 	
-	enum class pose
+	enum pose
 	{
 		standing = 0,
 		fall_flying, 
@@ -286,13 +313,13 @@ namespace Entity {
 	class Metadata
 	{
 	public:
-		Byte index;
-		varInt type;
-		void* value;
-		Byte state = 2;
+		enum type { _Byte = 0, _varInt, _Float, _String, _Chat, _optChat, _Slot, _Boolean, _Rotation, _Position, _OptPosition, _Direction, _OptUUID, _OptBlockID, _NBT, _Particle, _VillagerData, _optVarInt, _Pose };
 
-		Metadata(Byte index, varInt type, void* value) : index(index), type(type), value(value) {}
-		Metadata(Byte index, varInt type, bool present, void* value = nullptr) : index(index), type(type), value(value), state(present) {}
+		Byte index;
+		type dataType;
+		void* value;
+
+		Metadata(Byte index, type dataType, void* value) : index(index), dataType(dataType), value(value) {}
 
 		void write(char*& buffer) const;
 	};
@@ -620,11 +647,11 @@ namespace Entity {
 
 	struct AbstractHorse : Animal
 	{
-		Byte attributes;
-		mcUUID owner;
+		Byte horseAttributes;
+		OptVar<mcUUID> owner;
 
-		AbstractHorse(Animal theAnimal, Byte attributes = 0, mcUUID owner = mcUUID(0,0,0,0)) : attributes(attributes), owner(owner), Animal(theAnimal) {}
-	}; //UUID MUST BE ABSENT
+		AbstractHorse(Animal theAnimal, Byte horseAttributes = 0, OptVar<mcUUID> owner = OptVar<mcUUID>(false, mcUUID(0,0,0,0))) : horseAttributes(horseAttributes), owner(owner), Animal(theAnimal) {}
+	};
 
 	struct horse : AbstractHorse
 	{
@@ -666,7 +693,7 @@ namespace Entity {
 	struct traderLlama
 	{
 		traderLlama() {}
-	}; //wtf?
+	}; //wtf? nothing?
 
 	struct mule : chestedHorse
 	{
@@ -684,12 +711,12 @@ namespace Entity {
 	struct fox : Animal
 	{
 		varInt type;
-		Byte attributes;
-		mcUUID firstUUID, secondUUID;
+		Byte foxAttributes;
+		OptVar<mcUUID> firstUUID, secondUUID;
 
-		fox(Animal theAnimal, varInt type = 0, Byte attributes = 0, mcUUID firstUUID = mcUUID(0,0,0,0), mcUUID secondUUID = mcUUID(0, 0, 0, 0))
-			: type(type), attributes(attributes), firstUUID(firstUUID), secondUUID(secondUUID), Animal(theAnimal) {}
-	}; //UUIDs MUST BE ABSENT
+		fox(Animal theAnimal, varInt type = 0, Byte attributes = 0, OptVar<mcUUID> firstUUID = OptVar<mcUUID>(false, mcUUID(0,0,0,0)), OptVar<mcUUID> secondUUID = OptVar<mcUUID>(false, mcUUID(0, 0, 0, 0)))
+			: type(type), foxAttributes(attributes), firstUUID(firstUUID), secondUUID(secondUUID), Animal(theAnimal) {}
+	};
 
 	struct ocelot : Animal
 	{
@@ -781,12 +808,12 @@ namespace Entity {
 
 	struct TameableAnimal : Animal
 	{
-		Byte attributes;
-		mcUUID ownerUUID;
+		Byte tameableAttributes;
+		OptVar<mcUUID> ownerUUID;
 
-		TameableAnimal(Animal theAnimal, Byte attributes = 0, mcUUID ownerUUID = mcUUID(0,0,0,0))
-			: attributes(attributes), ownerUUID(ownerUUID), Animal(theAnimal) {}
-	}; //MCUUID MUST BE ABSENT
+		TameableAnimal(Animal theAnimal, Byte attributes = 0, OptVar<mcUUID> ownerUUID = OptVar<mcUUID>(false, mcUUID(0,0,0,0)))
+			: tameableAttributes(attributes), ownerUUID(ownerUUID), Animal(theAnimal) {}
+	};
 
 	struct cat : TameableAnimal
 	{
@@ -822,11 +849,11 @@ namespace Entity {
 
 	struct villager : AbstractVillager
 	{
-		varInt villagerTyper, villagerProfession, level;
+		VillagerData villagerData;
 
-		villager(AbstractVillager theAbstractVillager, varInt villagerTyper = 0, varInt villagerProfession = 0, varInt level = 1)
-			: villagerTyper(villagerTyper), AbstractVillager(theAbstractVillager) {}
-	}; //redo this
+		villager(AbstractVillager theAbstractVillager, VillagerData villagerData = VillagerData(0, 0, 1))
+			: villagerData(villagerData), AbstractVillager(theAbstractVillager) {}
+	};
 
 	struct wanderingTrader : AbstractVillager
 	{
@@ -855,12 +882,12 @@ namespace Entity {
 	struct shulker : AbstractGolem
 	{
 		direction theDirection;
-		Position attachmentPosition;
+		OptVar<Position> attachmentPosition;
 		Byte shieldHeight, color;
 
-		shulker(AbstractGolem theAbstractGolem, direction theDirection = direction::south, Position attachmentPosition = Position(0, 0, 0), Byte shieldHeight = 0, Byte color = 10)
+		shulker(AbstractGolem theAbstractGolem, direction theDirection = direction::south, OptVar<Position> attachmentPosition = OptVar<Position>(false, Position(0, 0, 0)), Byte shieldHeight = 0, Byte color = 10)
 			: theDirection(theDirection), attachmentPosition(attachmentPosition), shieldHeight(shieldHeight), color(color), AbstractGolem(theAbstractGolem) {}
-	}; //attachmentPosition must be absent
+	};
 
 	struct Monster : PathfinderMob
 	{
@@ -1052,11 +1079,11 @@ namespace Entity {
 	struct zombieVillager : zombie
 	{
 		bool isConverting;
-		varInt villagerTyper, villagerProfession, level;
+		VillagerData villagerData;
 
-		zombieVillager(zombie theZombie, bool isConverting = false, varInt villagerTyper = 0, varInt villagerProfession = 0, varInt level = 1)
-			: isConverting(isConverting), villagerTyper(villagerTyper), villagerProfession(villagerProfession), level(level), zombie(theZombie) {}
-	}; //redo this
+		zombieVillager(zombie theZombie, bool isConverting = false, VillagerData villagerData = VillagerData(0, 0, 1))
+			: isConverting(isConverting), villagerData(villagerData), zombie(theZombie) {}
+	};
 
 	struct husk : zombie
 	{
@@ -1080,7 +1107,7 @@ namespace Entity {
 
 		enderman(Monster theMonster, varInt blockId = 0, bool isScreaming = false, bool isStaring = false)
 			: blockId(blockId), isScreaming(isScreaming), isStaring(isStaring), Monster(theMonster) {}
-	}; //blockId must be absent
+	};
 
 	struct enderDragon : Mob
 	{
