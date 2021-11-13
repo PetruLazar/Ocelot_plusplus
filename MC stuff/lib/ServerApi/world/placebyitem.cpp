@@ -749,8 +749,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_red_glazed_terracotta:
 		case Item::minecraft_black_glazed_terracotta:
 		case Item::minecraft_stonecutter:
-		case Item::minecraft_bee_nest: //honey_level property missing
-		case Item::minecraft_beehive: //honey_level property missing
 		{
 			if (replaceableDirect(targetBlockId))
 			{
@@ -758,6 +756,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[0].name = "facing";
 				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 				break;
 			}
 			switch (face)
@@ -794,6 +793,61 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[0].name = "facing";
 				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+			}
+			break;
+		}
+		case Item::minecraft_bee_nest: //honey_level property missing
+		case Item::minecraft_beehive: //honey_level property missing
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
+				props[1].name = "honey_level";
+				props[1].value = "0";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[2];
+				props[0].name = "facing";
+				props[0].value = getHorizontalFacing(p, p->yaw, (Item)itemId);
+				props[1].name = "honey_level";
+				props[1].value = "0";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 			}
 			break;
 		}
@@ -1691,9 +1745,34 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_quartz_pillar:
 		case Item::minecraft_bone_block:
 		{
-			//todo replace block (direct)
 			BlockProperty* props = new BlockProperty[1];
-			props[0].name = "axis";
+			if (replaceableDirect(targetBlockId))
+			{
+				switch (face)
+				{
+				case playerDigging::top:
+					props[0].value = "y";
+					break;
+				case playerDigging::bottom:
+					props[0].value = "y";
+					break;
+				case playerDigging::east:
+					props[0].value = "x";
+					break;
+				case playerDigging::west:
+					props[0].value = "x";
+					break;
+				case playerDigging::south:
+					props[0].value = "z";
+					break;
+				case playerDigging::north:
+					props[0].value = "z";
+				}
+				props[0].name = "axis";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
 			switch (face)
 			{
 			case playerDigging::top:
@@ -1731,7 +1810,11 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
 			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
 
-			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			if (replaceableIndirect(oldBlockId))
+			{
+				props[0].name = "axis";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+			}
 			delete[] props;
 		}
 		break;
@@ -1739,7 +1822,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			}
 
 			//leaves
-			{
+			{ {
 		case Item::minecraft_oak_leaves:
 		case Item::minecraft_spruce_leaves:
 		case Item::minecraft_birch_leaves:
@@ -1798,7 +1881,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				delete[] props;
 			}
 			break;
-			}
+				}}
 
 			//buckets
 			{
