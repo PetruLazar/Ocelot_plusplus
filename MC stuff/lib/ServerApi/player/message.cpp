@@ -963,18 +963,16 @@ void message::play::send::displayScoreboard(Player* p, Byte position, const mcSt
 
 	finishSendMacro;
 }
-void message::play::send::entityMetadata(Player* p, varInt eid, Entity::Metadata* metadatas) //args should contain all data in array like network buffer style
-{ //untested!!!
+void message::play::send::entityMetadata(Player* p, varInt eid, const std::vector<Entity::Metadata>& metadatas)
+{
 	varInt id = (int)id::entityMetadata;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	eid.write(data);
 
-	//for (int counter = 0; metadatas[counter].index != 0xff; counter++)
-		//metadatas[counter].write(data);
-
-	metadatas[0].write(data);
+	for (const Entity::Metadata& m : metadatas)
+		m.write(data);
 
 	*(data++) = (Byte)0xff;
 
@@ -2187,7 +2185,7 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 	}
 
 	for (Player* seener : p->seenBy)
-		message::play::send::entityMetadata(seener, eid, new Entity::Metadata(0, 0, &p->attributes));
+		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(0, 0, &p->attributes) });
 }
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {

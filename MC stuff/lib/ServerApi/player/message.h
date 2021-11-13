@@ -352,7 +352,7 @@ struct message
 			SERVER_API static void updateViewDistance(Player*, varInt distance);
 			SERVER_API static void spawnPosition(Player*, Position location, bfloat angle);
 			SERVER_API static void displayScoreboard(Player*, Byte position, const mcString& scoreName);
-			SERVER_API static void entityMetadata(Player*, varInt eid, Entity::Metadata* metadatas);
+			SERVER_API static void entityMetadata(Player*, varInt eid, const std::vector<Entity::Metadata>& metadatas);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
