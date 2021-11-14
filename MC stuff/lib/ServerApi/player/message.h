@@ -356,6 +356,7 @@ struct message
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
+			SERVER_API static void entityEquipment(Player*, varInt eid, const std::vector<Equipment>& equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
@@ -417,7 +418,7 @@ struct message
 			SERVER_API static void pong(Player*, bint id);
 			SERVER_API static void setRecipeBookState(Player*, varInt bookid, bool open, bool filterActive);
 			SERVER_API static void setDisplayedRecipe(Player*, const mcString& recipeId);
-			SERVER_API static void nameItem(Player*, const mcString newName);
+			SERVER_API static void nameItem(Player*, const mcString& newName);
 			SERVER_API static void resourcePackStatus(Player*, varInt result);
 			SERVER_API static void advancementTab(Player*, varInt action, const mcString& tabId);
 			SERVER_API static void selectTrade(Player*, varInt selectedSlot);

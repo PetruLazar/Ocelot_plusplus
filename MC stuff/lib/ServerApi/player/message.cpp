@@ -1018,6 +1018,23 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equ
 
 	finishSendMacro;
 }
+void message::play::send::entityEquipment(Player* p, varInt eid, const std::vector<Equipment>& equipments)
+{
+	varInt id = (int)id::entityEquipment;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+
+	for (int i = 0; i < equipments.size() - 1; i++)
+		equipments[i].write(data);
+
+	Equipment e = equipments.back();
+	e.unSet();
+	e.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
 {
 	varInt id = (int)id::declareRecipes;
@@ -2173,11 +2190,58 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 	}
 	break;
 	case playerDigging::dropItemStack:
+	{
+		Slot* playerItem = p->slots[p->selectedSlot + 36];
 
-		break;
+		if (playerItem->count == 0) //empty slot
+			return;
+
+		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
+		p->world->entities.emplace_back(theItem);
+
+		for (Player* seener : p->seenBy) {
+			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+		}
+		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+
+		delete playerItem;
+		p->slots[p->selectedSlot + 36] = new Slot();
+
+		for (Player* seener : p->seenBy)
+			message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot + 36]) });
+	}
+	break;
 	case playerDigging::dropItem:
+	{
+		Slot* playerItem = p->slots[p->selectedSlot + 36];
 
-		break;
+		if (playerItem->count == 0) //empty slot
+			return;
+
+		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
+		theItem->theItem.count = 1;
+
+		p->world->entities.emplace_back(theItem);
+
+		for (Player* seener : p->seenBy) {
+			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+		}
+		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+
+		playerItem->count -= 1;
+		if (playerItem->count == 0) {
+			delete playerItem;
+			p->slots[p->selectedSlot + 36] = new Slot();
+
+			for (Player* seener : p->seenBy)
+				message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot + 36]) });
+		}
+	}
+	break;
 	case playerDigging::shootArrow: //also finish eating
 
 		break;
@@ -2225,6 +2289,10 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		varInt entityPose = (p->attributes >> 0x02) & 1 ? Entity::pose::sneaking : Entity::pose::standing;
 		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(6, Entity::Metadata::type::_Pose, &entityPose) });
 	}
+}
+void message::play::receive::nameItem(Player*, const mcString& newName)
+{
+	//de facut cand o sa am anvilurile disponibile
 }
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
@@ -2757,6 +2825,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::nameItem:
 		{
+			mcString newName;
+			newName.read(data);
+
+			play::receive::nameItem(p, newName);
 			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: name item");
 		}
 		break;

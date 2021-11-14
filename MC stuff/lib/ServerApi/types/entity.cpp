@@ -149,7 +149,7 @@ namespace Entity //all entity classes functions
 		: attributes(attributes), airTicks(airTicks), customName(customName), isCustomNameVisible(isCustomNameVisible), isSilent(isSilent), hasGravity(hasGravity), thePose(thePose), ticksFrozen(ticksFrozen), euuid(new mcUUID(mcUUID::entity)), eidDispenser(eidDispenser), eid(eidDispenser->Alloc()) {}
 
 	entity::entity(const entity& e)
-		: attributes(e.attributes), airTicks(e.airTicks), customName(e.customName), isCustomNameVisible(e.isCustomNameVisible), isSilent(e.isSilent), hasGravity(e.hasGravity), thePose(e.thePose), ticksFrozen(e.ticksFrozen), euuid(e.euuid), eidDispenser(eidDispenser), eid(e.eid) {}
+		: attributes(e.attributes), airTicks(e.airTicks), customName(e.customName), isCustomNameVisible(e.isCustomNameVisible), isSilent(e.isSilent), hasGravity(e.hasGravity), thePose(e.thePose), ticksFrozen(e.ticksFrozen), euuid(new mcUUID(mcUUID::entity)), eidDispenser(e.eidDispenser), eid(e.eidDispenser->Alloc()) {}
 
 	entity::~entity() {
 		eidDispenser->Free(eid);
