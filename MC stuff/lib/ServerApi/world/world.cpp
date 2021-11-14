@@ -380,7 +380,7 @@ World::~World()
 		delete r;
 	}
 	//unload entities
-	for (entity::entity* e : entities)
+	for (Entity::entity* e : entities)
 		delete e;
 	//unload custom generator module if present
 	if (generatorModule) FreeLibrary(generatorModule);

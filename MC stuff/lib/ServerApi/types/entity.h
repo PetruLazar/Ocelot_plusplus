@@ -19,6 +19,33 @@ public:
 	void write(char*& buffer) const;
 };
 
+class VillagerData
+{
+public:
+	varInt type, profession, level;
+
+	VillagerData(varInt type, varInt profession, varInt level) : type(type), profession(profession), level(level) {}
+
+	void write(char*& buffer) const;
+};
+
+template<class T>
+class OptVar
+{
+private:
+	bool present;
+	T obj;
+
+public:
+	OptVar(bool present, const T& obj) : present(present), obj(obj) { }
+
+	void write(char*& buffer) const {
+		*(buffer)++ = present;
+		if (present)
+			obj.write(buffer);
+	}
+};
+
 namespace eidDispenser
 {
 	enum class type
@@ -60,7 +87,7 @@ namespace eidDispenser
 	};
 }
 
-namespace entity {
+namespace Entity {
 	enum class type
 	{
 		minecraft_area_effect_cloud = 0,
@@ -196,7 +223,7 @@ namespace entity {
 		magicCriticalEffect
 	};
 	
-	enum class pose
+	enum pose
 	{
 		standing = 0,
 		fall_flying, 
@@ -286,40 +313,42 @@ namespace entity {
 	class Metadata
 	{
 	public:
+		enum type { _Byte = 0, _varInt, _Float, _String, _Chat, _optChat, _Slot, _Boolean, _Rotation, _Position, _OptPosition, _Direction, _OptUUID, _OptBlockID, _NBT, _Particle, _VillagerData, _optVarInt, _Pose };
+
 		Byte index;
-		varInt type;
+		type dataType;
 		void* value;
 
-		Metadata(Byte index, varInt type, void* value) : index(index), type(type), value(value) {}
+		Metadata(Byte index, type dataType, void* value) : index(index), dataType(dataType), value(value) {}
 
 		void write(char*& buffer) const;
 	};
 
 	struct entity
 	{
-	private:
-		mcUUID euuid;
+	protected:
 		varInt eid;
 
-		eidDispenser::Entity &eidDispenser;
+		eidDispenser::General *eidDispenser;
 
 	public:
+		mcUUID* euuid;
+
 		Byte attributes;
 		varInt airTicks;
-		Chat &customName;
+		Chat *customName;
 		bool isCustomNameVisible;
 		bool isSilent;
 		bool hasGravity;
 		pose thePose;
 		varInt ticksFrozen;
 
-		entity(eidDispenser::Entity &eidDispenser, Byte attributes = 0, varInt airTicks = 300, Chat customName = Chat(""), bool isCustomNameVisible = false, 
+		entity(eidDispenser::General *eidDispenser, Byte attributes = 0, varInt airTicks = 300, Chat *customName = nullptr, bool isCustomNameVisible = false,
 			bool isSilent = false, bool hasGravity = false, pose thePose = pose::standing, varInt ticksFrozen = 0);
 		entity(const entity& e);
 
 		~entity();
 
-		mcUUID getUuid();
 		varInt getEid();
 	
 		void write(char*& buffer) const;
@@ -330,8 +359,6 @@ namespace entity {
 		Slot item;
 
 		thrownEgg(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct thrownEnderPearl : entity
@@ -339,8 +366,6 @@ namespace entity {
 		Slot item;
 
 		thrownEnderPearl(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct thrownExperienceBottle : entity
@@ -348,8 +373,6 @@ namespace entity {
 		Slot item;
 
 		thrownExperienceBottle(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct thrownPotion : entity
@@ -357,8 +380,6 @@ namespace entity {
 		Slot item;
 
 		thrownPotion(entity theEntity, Slot item) : entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct snowball : entity
@@ -366,8 +387,6 @@ namespace entity {
 		Slot item;
 
 		snowball(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct eyeOfEnder : entity
@@ -375,8 +394,6 @@ namespace entity {
 		Slot item;
 
 		eyeOfEnder(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct fallingBlock : entity
@@ -384,8 +401,6 @@ namespace entity {
 		Position position;
 
 		fallingBlock(entity theEntity, Position position = Position(0, 0, 0)) : position(position), entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct areaEffectCloud : entity
@@ -393,12 +408,10 @@ namespace entity {
 		bfloat radius;
 		varInt color;
 		bool ignoreRadius;
-		Particle* theParticle;
+		particle::Particle* theParticle;
 
-		areaEffectCloud(entity theEntity, bfloat radius = 0.5, varInt color = 0, bool ignoreRadius = false, Particle* theParticle = nullptr)
-			: radius(radius), color(color), ignoreRadius(ignoreRadius), theParticle(theParticle), entity(theEntity) {}  //CHANGE PARTICLE FROM NULLPTR TO PARTICLE::EFFECT
-	
-		void write(char*& buffer) const;
+		areaEffectCloud(entity theEntity, bfloat radius = 0.5, varInt color = 0, bool ignoreRadius = false, particle::Particle* theParticle = new particle::ParticleEnumed(particle::type::effect))
+			: radius(radius), color(color), ignoreRadius(ignoreRadius), theParticle(theParticle), entity(theEntity) {} 
 	};
 
 	struct fishingHook : entity
@@ -408,8 +421,6 @@ namespace entity {
 
 		fishingHook(entity theEntity, varInt hookedEntity = 0, bool isCatchable = false)
 			: hookedEntity(hookedEntity), isCatchable(isCatchable), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct AbstractArrow : entity
@@ -419,8 +430,6 @@ namespace entity {
 
 		AbstractArrow(entity theEntity, Byte bitMask = 0, Byte piercingLevel = 0)
 			: bitMask(bitMask), piercingLevel(piercingLevel), entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct arrow : AbstractArrow
@@ -428,8 +437,6 @@ namespace entity {
 		varInt color;
 
 		arrow(AbstractArrow theAbstractArrow, varInt color = -1) : color(color), AbstractArrow(theAbstractArrow) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct spectralArrow : arrow
@@ -443,8 +450,6 @@ namespace entity {
 		bool hasEnchantmentGlint;
 
 		thrownTrident(AbstractArrow theAbstractArrow, varInt loyaltyLevel = 0, bool hasEnchantmentGlint = false) : loyaltyLevel(loyaltyLevel), hasEnchantmentGlint(hasEnchantmentGlint), AbstractArrow(theAbstractArrow) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct boat : entity
@@ -455,8 +460,6 @@ namespace entity {
 
 		boat(entity theEntity, varInt timeSinceLastHit = 0, varInt forwardDirection = 1, bfloat damageTaken = 0, varInt type = 0, bool isLeftPaddleTurning = false, bool isRightPaddleTurning = false, varInt splashTimer = 0)
 			: timeSinceLastHit(timeSinceLastHit), forwardDirection(forwardDirection), damageTaken(damageTaken), type(type), isLeftPaddleTurning(isLeftPaddleTurning), isRightPaddleTurning(isRightPaddleTurning), splashTimer(splashTimer), entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct endCrystal : entity
@@ -465,8 +468,6 @@ namespace entity {
 		bool showBottom;
 
 		endCrystal(entity theEntity, Position beamTarget = Position(), bool showBottom = true) : beamTarget(beamTarget), showBottom(showBottom), entity(theEntity) {}
-	
-		void write(char*& buffer) const;
 	};
 
 	struct dragonFireball : entity
@@ -479,8 +480,6 @@ namespace entity {
 		Slot item;
 
 		smallFireball(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct fireball : entity
@@ -488,8 +487,6 @@ namespace entity {
 		Slot item;
 
 		fireball(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct witherSkull : entity
@@ -497,8 +494,6 @@ namespace entity {
 		bool isInvulnerable;
 
 		witherSkull(entity theEntity, bool isInvulnerable = false) : isInvulnerable(isInvulnerable), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct firework : entity
@@ -509,8 +504,6 @@ namespace entity {
 
 		firework(entity theEntity, Slot fireworkInfo, varInt entityID, bool isShotAtAngle = false)
 			: fireworkInfo(fireworkInfo), entityID(entityID), isShotAtAngle(isShotAtAngle), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct itemFrame : entity
@@ -519,8 +512,6 @@ namespace entity {
 		varInt rotation;
 
 		itemFrame(entity theEntity, Slot theItem = Slot(), varInt rotation = 0) : theItem(theItem), rotation(rotation), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct item : entity
@@ -528,11 +519,9 @@ namespace entity {
 		Slot theItem;
 
 		item(entity theEntity, Slot theItem = Slot()) : theItem(theItem), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
-	struct LivingEntity : entity
+	struct LivingEntity : public entity
 	{
 		Byte handState;
 		bfloat health;
@@ -540,24 +529,25 @@ namespace entity {
 		bool isPotionEffectAmbient;
 		Position locationOfBed;
 
-		LivingEntity(entity theEntity, Byte handState = 0, bfloat health = 1, varInt potionEffectColor = 0, bool isPotionEffectAmbient = false, varInt nOfArrowsInEntity = 0, varInt nOfBeeStingersInEntity = 0, Position locationOfBed = Position())
+		LivingEntity(const entity& theEntity, Byte handState = 0, bfloat health = 1, varInt potionEffectColor = 0, bool isPotionEffectAmbient = false, varInt nOfArrowsInEntity = 0, varInt nOfBeeStingersInEntity = 0, Position locationOfBed = Position())
 			: handState(handState), health(health), potionEffectColor(potionEffectColor), isPotionEffectAmbient(isPotionEffectAmbient), nOfArrowsInEntity(nOfArrowsInEntity), nOfBeeStingersInEntity(nOfBeeStingersInEntity), locationOfBed(locationOfBed), entity(theEntity) {}
-	
-		void write(char*& buffer) const;
+
+		using entity::entity;
 	};
 
-	struct player : LivingEntity
+	struct player : public LivingEntity
 	{
+	public:
 		bfloat additionalHearts;
 		varInt score;
 		Byte displayedSkinParts, mainHand;
 		nbt* leftShoulderEntityData;
 		nbt* rightShoulderEntityData;
 
-		player(bfloat additionalHearts, varInt score, Byte displayedSkinParts, Byte mainHand, nbt* leftShoulderEntityData, nbt* rightShoulderEntityData, LivingEntity theLivingEntity)
+		player(const LivingEntity& theLivingEntity, bfloat additionalHearts = 0.0, varInt score = 0, Byte displayedSkinParts = 0, Byte mainHand = 1, nbt* leftShoulderEntityData = nullptr, nbt* rightShoulderEntityData = nullptr)
 			: additionalHearts(additionalHearts), score(score), displayedSkinParts(displayedSkinParts), mainHand(mainHand), leftShoulderEntityData(leftShoulderEntityData), rightShoulderEntityData(rightShoulderEntityData), LivingEntity(theLivingEntity) {}
-	
-		void write(char*& buffer) const;
+
+		using LivingEntity::LivingEntity;
 	};
 
 	struct armorStand : LivingEntity
@@ -567,8 +557,6 @@ namespace entity {
 
 		armorStand(LivingEntity theLivingEntity, Byte attributes = 0, Rotation3f head = Rotation3f(0, 0, 0), Rotation3f body = Rotation3f(0, 0, 0), Rotation3f leftArm = Rotation3f(-10, 0, -10), Rotation3f rightArm = Rotation3f(-15, 0, 10), Rotation3f leftLeg = Rotation3f(-1, 0, -1), Rotation3f rightLeg = Rotation3f(1, 0, 1))
 			: attributes(attributes), head(head), body(body), leftArm(leftArm), rightArm(rightArm), leftLeg(leftLeg), rightLeg(rightLeg), LivingEntity(theLivingEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct Mob : LivingEntity
@@ -576,8 +564,6 @@ namespace entity {
 		Byte attributes;
 
 		Mob(LivingEntity theLivingEntity, Byte attributes = 0) : attributes(attributes), LivingEntity(theLivingEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct AmbientCreature : Mob
@@ -590,8 +576,6 @@ namespace entity {
 		Byte isHanging;
 
 		bat(AmbientCreature theAmbientCreature, Byte isHanging) : isHanging(isHanging), AmbientCreature(theAmbientCreature) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct PathfinderMob : Mob
@@ -616,8 +600,6 @@ namespace entity {
 
 		dolphin(WaterAnimal theWaterAnimal, Position treasurePosition = Position(0, 0, 0), bool canFindTreasure = false, bool hasFish = false)
 			: treasurePosition(treasurePosition), canFindTreasure(canFindTreasure), hasFish(hasFish), WaterAnimal(theWaterAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct AbstractFish : WaterAnimal
@@ -625,8 +607,6 @@ namespace entity {
 		bool fromBucket;
 
 		AbstractFish(WaterAnimal theWaterAnimal, bool fromBucket = false) : fromBucket(fromBucket), WaterAnimal(theWaterAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct cod : AbstractFish
@@ -639,8 +619,6 @@ namespace entity {
 		varInt puffState;
 
 		pufferFish(AbstractFish theAbstractFish, varInt puffState = 0) : puffState(puffState), AbstractFish(theAbstractFish) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct salmon : AbstractFish
@@ -653,8 +631,6 @@ namespace entity {
 		varInt variant;
 
 		tropicalFish(AbstractFish theAbstractFish, varInt variant = 0) : variant(variant), AbstractFish(theAbstractFish) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct AgeableMob : PathfinderMob
@@ -662,8 +638,6 @@ namespace entity {
 		bool isBaby;
 
 		AgeableMob(PathfinderMob thePathfinderMob, bool isBaby = false) : isBaby(isBaby), PathfinderMob(thePathfinderMob) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct Animal : AgeableMob
@@ -673,21 +647,17 @@ namespace entity {
 
 	struct AbstractHorse : Animal
 	{
-		Byte attributes;
-		mcUUID owner;
+		Byte horseAttributes;
+		OptVar<mcUUID> owner;
 
-		AbstractHorse(Animal theAnimal, Byte attributes = 0, mcUUID owner = mcUUID(0,0,0,0)) : attributes(attributes), owner(owner), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
-	}; //UUID MUST BE ABSENT
+		AbstractHorse(Animal theAnimal, Byte horseAttributes = 0, OptVar<mcUUID> owner = OptVar<mcUUID>(false, mcUUID(0,0,0,0))) : horseAttributes(horseAttributes), owner(owner), Animal(theAnimal) {}
+	};
 
 	struct horse : AbstractHorse
 	{
 		varInt variant;
 
 		horse(AbstractHorse theAbstractHorse, varInt variant = 0) : variant(variant), AbstractHorse(theAbstractHorse) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct zombieHorse : AbstractHorse
@@ -705,8 +675,6 @@ namespace entity {
 		bool hasChest;
 
 		chestedHorse(AbstractHorse theAbstractHorse, bool hasChest = false) : hasChest(hasChest), AbstractHorse(theAbstractHorse) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct donkey : chestedHorse
@@ -720,14 +688,12 @@ namespace entity {
 
 		llama(chestedHorse theChestedHorse, varInt strength = 0, varInt carpetColor = -1, varInt variant = 0)
 			: strength(strength), carpetColor(carpetColor), variant(variant), chestedHorse(theChestedHorse) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct traderLlama
 	{
 		traderLlama() {}
-	}; //wtf?
+	}; //wtf? nothing?
 
 	struct mule : chestedHorse
 	{
@@ -740,29 +706,23 @@ namespace entity {
 		varInt angerTimeTicks;
 
 		bee(Animal theAnimal, Byte attributes = 0, varInt angerTimeTicks = 0) : attributes(attributes), angerTimeTicks(angerTimeTicks), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct fox : Animal
 	{
 		varInt type;
-		Byte attributes;
-		mcUUID firstUUID, secondUUID;
+		Byte foxAttributes;
+		OptVar<mcUUID> firstUUID, secondUUID;
 
-		fox(Animal theAnimal, varInt type = 0, Byte attributes = 0, mcUUID firstUUID = mcUUID(0,0,0,0), mcUUID secondUUID = mcUUID(0, 0, 0, 0))
-			: type(type), attributes(attributes), firstUUID(firstUUID), secondUUID(secondUUID), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
-	}; //UUIDs MUST BE ABSENT
+		fox(Animal theAnimal, varInt type = 0, Byte attributes = 0, OptVar<mcUUID> firstUUID = OptVar<mcUUID>(false, mcUUID(0,0,0,0)), OptVar<mcUUID> secondUUID = OptVar<mcUUID>(false, mcUUID(0, 0, 0, 0)))
+			: type(type), foxAttributes(attributes), firstUUID(firstUUID), secondUUID(secondUUID), Animal(theAnimal) {}
+	};
 
 	struct ocelot : Animal
 	{
 		bool isTrusting;
 
 		ocelot(Animal theAnimal, bool isTrusting = false) : isTrusting(isTrusting), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct panda : Animal
@@ -772,8 +732,6 @@ namespace entity {
 
 		panda(Animal theAnimal, bint breedTimer = 0, bint sneezeTimer = 0, bint eatTimer = 0, Byte mainGene = 0, Byte hiddenGene = 0, Byte attributes = 0)
 			: breedTimer(breedTimer), sneezeTimer(sneezeTimer), eatTimer(eatTimer), mainGene(mainGene), hiddenGene(hiddenGene), attributes(attributes), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct pig : Animal
@@ -783,8 +741,6 @@ namespace entity {
 
 		pig(Animal theAnimal, bool hasSaddle = false, varInt boostCarrotTime = 0)
 			: hasSaddle(hasSaddle), boostCarrotTime(boostCarrotTime), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct rabbit : Animal
@@ -792,8 +748,6 @@ namespace entity {
 		varInt type;
 
 		rabbit(Animal theAnimal, varInt type = 0) : type(type), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct turtle : Animal
@@ -803,8 +757,6 @@ namespace entity {
 
 		turtle(Animal theAnimal, Position homePosition = Position(0,0,0), bool hasEggs = false, bool isLayingEggs = false, Position travelPosition = Position(0, 0, 0), bool isGoingHome = false, bool isTravelling = false)
 			: homePosition(homePosition), hasEggs(hasEggs), isLayingEggs(isLayingEggs), travelPosition(travelPosition), isGoingHome(isGoingHome), isTravelling(isTravelling), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct polarBear : Animal
@@ -812,8 +764,6 @@ namespace entity {
 		bool isStandingUp;
 
 		polarBear(Animal theAnimal, bool isStandingUp = false) : isStandingUp(isStandingUp), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct chicken : Animal
@@ -831,8 +781,6 @@ namespace entity {
 		bool isImmune;
 
 		hoglin(Animal theAnimal, bool isImmune = false) : isImmune(isImmune), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct mooshroom : cow
@@ -840,8 +788,6 @@ namespace entity {
 		mcString variant;
 
 		mooshroom(cow theCow, mcString variant = "red") : variant(variant), cow(theCow) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct sheep : Animal
@@ -849,8 +795,6 @@ namespace entity {
 		Byte attributes;
 
 		sheep(Animal theAnimal, Byte attributes = 0) : attributes(attributes), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct strider : Animal
@@ -860,20 +804,16 @@ namespace entity {
 
 		strider(Animal theAnimal, varInt boostTime = 0, bool isShaking = false, bool hasSaddle = false)
 			: boostTime(boostTime), isShaking(isShaking), hasSaddle(hasSaddle), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct TameableAnimal : Animal
 	{
-		Byte attributes;
-		mcUUID ownerUUID;
+		Byte tameableAttributes;
+		OptVar<mcUUID> ownerUUID;
 
-		TameableAnimal(Animal theAnimal, Byte attributes = 0, mcUUID ownerUUID = mcUUID(0,0,0,0))
-			: attributes(attributes), ownerUUID(ownerUUID), Animal(theAnimal) {}
-
-		void write(char*& buffer) const;
-	}; //MCUUID MUST BE ABSENT
+		TameableAnimal(Animal theAnimal, Byte attributes = 0, OptVar<mcUUID> ownerUUID = OptVar<mcUUID>(false, mcUUID(0,0,0,0)))
+			: tameableAttributes(attributes), ownerUUID(ownerUUID), Animal(theAnimal) {}
+	};
 
 	struct cat : TameableAnimal
 	{
@@ -882,8 +822,6 @@ namespace entity {
 
 		cat(TameableAnimal theTameableAnimal, varInt type = 1, bool isLying = false, bool isRelaxed = false, varInt collarColor = 14)
 			: type(type), isLying(isLying), isRelaxed(isRelaxed), collarColor(collarColor), TameableAnimal(theTameableAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct wolf : TameableAnimal
@@ -893,8 +831,6 @@ namespace entity {
 
 		wolf(TameableAnimal theTameableAnimal, bool isBegging = false, varInt collarColor = 14, varInt angerTime = 0)
 			: isBegging(isBegging), collarColor(collarColor), angerTime(angerTime), TameableAnimal(theTameableAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct parrot : TameableAnimal
@@ -902,8 +838,6 @@ namespace entity {
 		varInt variant;
 
 		parrot(TameableAnimal theTameableAnimal, varInt variant = 0) : variant(variant), TameableAnimal(theTameableAnimal) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct AbstractVillager : AgeableMob
@@ -911,19 +845,15 @@ namespace entity {
 		varInt headShakeTime;
 
 		AbstractVillager(AgeableMob theAgeableMob, varInt headShakeTime = 0) : headShakeTime(headShakeTime), AgeableMob(theAgeableMob) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct villager : AbstractVillager
 	{
-		varInt villagerTyper, villagerProfession, level;
+		VillagerData villagerData;
 
-		villager(AbstractVillager theAbstractVillager, varInt villagerTyper = 0, varInt villagerProfession = 0, varInt level = 1)
-			: villagerTyper(villagerTyper), AbstractVillager(theAbstractVillager) {}
-
-		void write(char*& buffer) const;
-	}; //redo this
+		villager(AbstractVillager theAbstractVillager, VillagerData villagerData = VillagerData(0, 0, 1))
+			: villagerData(villagerData), AbstractVillager(theAbstractVillager) {}
+	};
 
 	struct wanderingTrader : AbstractVillager
 	{
@@ -940,8 +870,6 @@ namespace entity {
 		Byte attributes;
 
 		ironGolem(AbstractGolem theAbstractGolem, Byte attributes = 0) : attributes(attributes), AbstractGolem(theAbstractGolem) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct snowGolem : AbstractGolem
@@ -949,21 +877,17 @@ namespace entity {
 		Byte attributes;
 
 		snowGolem(AbstractGolem theAbstractGolem, Byte attributes = 0) : attributes(attributes), AbstractGolem(theAbstractGolem) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct shulker : AbstractGolem
 	{
 		direction theDirection;
-		Position attachmentPosition;
+		OptVar<Position> attachmentPosition;
 		Byte shieldHeight, color;
 
-		shulker(AbstractGolem theAbstractGolem, direction theDirection = direction::south, Position attachmentPosition = Position(0, 0, 0), Byte shieldHeight = 0, Byte color = 10)
+		shulker(AbstractGolem theAbstractGolem, direction theDirection = direction::south, OptVar<Position> attachmentPosition = OptVar<Position>(false, Position(0, 0, 0)), Byte shieldHeight = 0, Byte color = 10)
 			: theDirection(theDirection), attachmentPosition(attachmentPosition), shieldHeight(shieldHeight), color(color), AbstractGolem(theAbstractGolem) {}
-
-		void write(char*& buffer) const;
-	}; //attachmentPosition must be absent
+	};
 
 	struct Monster : PathfinderMob
 	{
@@ -976,8 +900,6 @@ namespace entity {
 
 		BasePiglin(Monster theMonster, bool isImmune = false)
 			: isImmune(isImmune), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct piglin : BasePiglin
@@ -986,8 +908,6 @@ namespace entity {
 
 		piglin(BasePiglin theBasePiglin, bool isBaby = false, bool isChargingCrossbow = false, bool isDancing = false)
 			: isBaby(isBaby), isChargingCrossbow(isChargingCrossbow), isDancing(isDancing), BasePiglin(theBasePiglin) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct piglinBrute : BasePiglin
@@ -1000,8 +920,6 @@ namespace entity {
 		Byte attributes;
 
 		blaze(Monster theMonster, Byte attributes = 0) : attributes(attributes), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct creeper : Monster
@@ -1011,8 +929,6 @@ namespace entity {
 
 		creeper(Monster theMonster, varInt state = -1, bool isCharged = false, bool isIgnited = false)
 			: state(state), isCharged(isCharged), isIgnited(isIgnited), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct endermite : Monster
@@ -1032,8 +948,6 @@ namespace entity {
 
 		guardian(Monster theMonster, bool isRetractingSpikes = false, varInt targetEid = 0)
 			: isRetractingSpikes(isRetractingSpikes), targetEid(targetEid), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct elderGuardian : guardian
@@ -1051,8 +965,6 @@ namespace entity {
 		bool isCelebrating;
 
 		raider(Monster theMonster, bool isCelebrating = false) : isCelebrating(isCelebrating), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct AbstractIllager : raider
@@ -1070,8 +982,6 @@ namespace entity {
 		bool isCharging;
 
 		pillager(AbstractIllager theAbstractIllager, bool isCharging = false) : isCharging(isCharging), AbstractIllager(theAbstractIllager) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct spellcasterIllager : AbstractIllager
@@ -1079,8 +989,6 @@ namespace entity {
 		Byte spell;
 
 		spellcasterIllager(AbstractIllager theAbstractIllager, Byte spell = 0) : spell(spell), AbstractIllager(theAbstractIllager) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct evoker : AbstractIllager
@@ -1103,8 +1011,6 @@ namespace entity {
 		bool isDrinking;
 
 		witch(raider theRaider, bool isDrinking = false) : isDrinking(isDrinking), raider(theRaider) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct evokerFangs : entity
@@ -1117,8 +1023,6 @@ namespace entity {
 		Byte attributes;
 
 		vex(Monster theMonster, Byte attributes = 0) : attributes(attributes), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct AbstractSkeleton : Monster
@@ -1146,8 +1050,6 @@ namespace entity {
 		Byte attributes;
 
 		spider(Monster theMonster, Byte attributes = 0) : attributes(attributes), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct wither : Monster
@@ -1156,8 +1058,6 @@ namespace entity {
 
 		wither(Monster theMonster, varInt centerTargetEid = 0, varInt leftTargetEid = 0, varInt rightTargetEid = 0, varInt invulnerableTime = 0)
 			: centerTargetEid(centerTargetEid), leftTargetEid(leftTargetEid), rightTargetEid(rightTargetEid), invulnerableTime(invulnerableTime), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct zoglin : Monster
@@ -1165,8 +1065,6 @@ namespace entity {
 		bool isBaby;
 
 		zoglin(Monster theMonster, bool isBaby = 0) : isBaby(isBaby), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct zombie : Monster
@@ -1176,20 +1074,16 @@ namespace entity {
 
 		zombie(Monster theMonster, bool isBaby = 0, varInt unused = 0, bool isBecomingDrowned = false) :
 			isBaby(isBaby), unused(unused), isBecomingDrowned(isBecomingDrowned), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct zombieVillager : zombie
 	{
 		bool isConverting;
-		varInt villagerTyper, villagerProfession, level;
+		VillagerData villagerData;
 
-		zombieVillager(zombie theZombie, bool isConverting = false, varInt villagerTyper = 0, varInt villagerProfession = 0, varInt level = 1)
-			: isConverting(isConverting), villagerTyper(villagerTyper), villagerProfession(villagerProfession), level(level), zombie(theZombie) {}
-
-		void write(char*& buffer) const;
-	}; //redo this
+		zombieVillager(zombie theZombie, bool isConverting = false, VillagerData villagerData = VillagerData(0, 0, 1))
+			: isConverting(isConverting), villagerData(villagerData), zombie(theZombie) {}
+	};
 
 	struct husk : zombie
 	{
@@ -1213,17 +1107,13 @@ namespace entity {
 
 		enderman(Monster theMonster, varInt blockId = 0, bool isScreaming = false, bool isStaring = false)
 			: blockId(blockId), isScreaming(isScreaming), isStaring(isStaring), Monster(theMonster) {}
-
-		void write(char*& buffer) const;
-	}; //blockId must be absent
+	};
 
 	struct enderDragon : Mob
 	{
 		varInt phase;
 
 		enderDragon(Mob theMob, varInt phase = 10) : phase(phase), Mob(theMob) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct Flying : Mob
@@ -1236,8 +1126,6 @@ namespace entity {
 		bool isAttacking;
 
 		ghast(Flying theFlying, bool isAttacking = false) : isAttacking(isAttacking), Flying(theFlying) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct phantom : Flying
@@ -1245,8 +1133,6 @@ namespace entity {
 		varInt size;
 
 		phantom(Flying theFlying, varInt size = 0) : size(size), Flying(theFlying) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct slime : Mob
@@ -1254,8 +1140,6 @@ namespace entity {
 		varInt size;
 
 		slime(Mob theMob, varInt size = 1) : size(size), Mob(theMob) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct llamaSpit : entity
@@ -1271,8 +1155,6 @@ namespace entity {
 
 		AbstractMinecart(entity theEntity, varInt shakingPower = 0, varInt shakingDirection = 1, bfloat shakingMultiplier = 0, varInt customBlockId = 0, varInt customBlockY = 6, bool showCustomBlock = false)
 			: shakingPower(shakingPower), shakingDirection(shakingDirection), shakingMultiplier(shakingMultiplier), customBlockId(customBlockId), customBlockY(customBlockY), showCustomBlock(showCustomBlock), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct minecart : AbstractMinecart
@@ -1300,8 +1182,6 @@ namespace entity {
 		bool hasFuel;
 
 		minecartFurnace(AbstractMinecart theAbstractMinecart, bool hasFuel = false) : hasFuel(hasFuel), AbstractMinecart(theAbstractMinecart) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct minecartTNT : AbstractMinecart
@@ -1321,8 +1201,6 @@ namespace entity {
 
 		minecartCommandBlock(AbstractMinecart theAbstractMinecart, mcString command = "", Chat lastOutput = Chat(""))
 			: command(command), lastOutput(lastOutput), AbstractMinecart(theAbstractMinecart) {}
-
-		void write(char*& buffer) const;
 	};
 
 	struct primedTNT : entity
@@ -1330,7 +1208,5 @@ namespace entity {
 		varInt fuseTime;
 
 		primedTNT(entity theEntity, varInt fuseTime = 80) : fuseTime(fuseTime), entity(theEntity) {}
-
-		void write(char*& buffer) const;
 	};
 }

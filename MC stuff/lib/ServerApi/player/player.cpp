@@ -3,14 +3,16 @@
 #include "../types/error.h"
 #include "../types/enums.h"
 #include "../server/log.h"
+#include "../types/entity.h"
 
 const char* invalidPacketLengthError = "Invalid Packet Length";
 const char* socketError = "Socket error occured";
 const char* socketDisconnected = "Socket Disconnected unexpectedly";
 
 std::vector<Player*> Player::players;
+eidDispenser::Player Player::eidDispenser;
 
-Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket)
+Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser)
 {
 	socket->setBlocking(false);
 
@@ -25,7 +27,6 @@ Player::~Player()
 {
 	delete socket;
 	if (buffer) delete buffer;
-	if (uuid) delete uuid;
 
 	for (int i = 0; i < 46; i++)
 		delete slots[i];
@@ -296,8 +297,8 @@ void Player::changeWorld(const mcString& worldName)
 void Player::enterSight(Player* other)
 {
 	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << other << " entering sight of " << this);
-	ignoreExceptions(message::play::send::spawnPlayer(this, other->eid, *other->uuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
-	ignoreExceptions(message::play::send::entityHeadLook(this, other->eid, (float)other->yaw));
+	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
+	ignoreExceptions(message::play::send::entityHeadLook(this, other->getEid(), (float)other->yaw));
 	seenBy.push_back(other);
 	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
 }
@@ -586,8 +587,6 @@ void Player::schedulePacket(char* buffer, ull size, char* toDelete, bool disconn
 
 bool Player::Connected() { return connected; }
 bool Player::ScheduledDisconnect() { return scheduledDisconnect; }
-
-eidDispenser::Player Player::eidDispenser;
 
 void Player::clearDisconnectedPlayers()
 {

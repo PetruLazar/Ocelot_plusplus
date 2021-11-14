@@ -27,10 +27,9 @@ enum class ChatMode
 	hidden
 };
 
-class Player
+class Player : public Entity::player
 {
 public:
-
 	enum mask : Byte
 	{
 		bufferingLength = 0x01,
@@ -59,8 +58,6 @@ private:
 
 public:
 	mcString username;
-	mcUUID* uuid = 0;
-	varInt eid;
 
 	//ip address + port
 	std::string netId();
@@ -119,8 +116,6 @@ public:
 	int viewDistance;
 	ChatMode chatMode;		//---\/
 	bool chatColors;		//to do: processing chat
-	Byte displayedSkinParts;
-	Hand mainHand;
 	bool disableTextFiltering;
 
 	SERVER_API Player(sf::TcpSocket*);
