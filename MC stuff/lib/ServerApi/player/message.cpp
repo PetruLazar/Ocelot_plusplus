@@ -2012,11 +2012,11 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 		bookData = new nbt_compound("", new nbt * [1]{ new nbt_list("pages", pagesToNbt, count) }, 1);
 
 	if (hasTitle) {
-		delete p->slots[p->selectedSlot + 36];
-		p->slots[p->selectedSlot + 36] = new Slot(true, 943, 1, bookData);
+		delete p->slots[p->selectedSlot];
+		p->slots[p->selectedSlot] = new Slot(true, 943, 1, bookData);
 
 		Equipment** eqp = new Equipment * [1];
-		eqp[0] = new Equipment(0, p->slots[p->selectedSlot + 36]);
+		eqp[0] = new Equipment(0, p->slots[p->selectedSlot]);
 
 		for (Player* seener : p->seenBy)
 			message::play::send::entityEquipment(seener, p->getEid(), eqp);
@@ -2026,7 +2026,7 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 		delete[] eqp;
 	}
 	else {
-		p->slots[p->selectedSlot + 36]->updateNBT(bookData);
+		p->slots[p->selectedSlot]->updateNBT(bookData);
 	}
 }
 void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
@@ -2118,10 +2118,10 @@ void message::play::receive::resourcePackStatus(Player* p, varInt result)
 }
 void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
-	p->selectedSlot = slot;
+	p->selectedSlot = slot + 36;
 
 	Equipment** eqp = new Equipment * [1];
-	eqp[0] = new Equipment(0, p->slots[36 + slot]);
+	eqp[0] = new Equipment(0, p->slots[p->selectedSlot]);
 
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->getEid(), eqp);
@@ -2136,7 +2136,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 	else { //put in inventory
 		p->slots[slot] = clickedItem;
 
-		if (p->selectedSlot == slot - 36) {
+		if (p->selectedSlot == slot) {
 			Equipment** eqp = new Equipment * [1];
 			eqp[0] = new Equipment(0, clickedItem);
 
@@ -2191,7 +2191,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 	break;
 	case playerDigging::dropItemStack:
 	{
-		Slot* playerItem = p->slots[p->selectedSlot + 36];
+		Slot* playerItem = p->slots[p->selectedSlot];
 
 		if (playerItem->count == 0) //empty slot
 			return;
@@ -2207,15 +2207,15 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
 		delete playerItem;
-		p->slots[p->selectedSlot + 36] = new Slot();
+		p->slots[p->selectedSlot] = new Slot();
 
 		for (Player* seener : p->seenBy)
-			message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot + 36]) });
+			message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot]) });
 	}
 	break;
 	case playerDigging::dropItem:
 	{
-		Slot* playerItem = p->slots[p->selectedSlot + 36];
+		Slot* playerItem = p->slots[p->selectedSlot];
 
 		if (playerItem->count == 0) //empty slot
 			return;
@@ -2235,10 +2235,10 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 		playerItem->count -= 1;
 		if (playerItem->count == 0) {
 			delete playerItem;
-			p->slots[p->selectedSlot + 36] = new Slot();
+			p->slots[p->selectedSlot] = new Slot();
 
 			for (Player* seener : p->seenBy)
-				message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot + 36]) });
+				message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot]) });
 		}
 	}
 	break;
@@ -2303,7 +2303,7 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 	{
 	case Hand::main:
 		text += "main ";
-		slot = p->slots[p->selectedSlot + 36];
+		slot = p->slots[p->selectedSlot];
 		break;
 	case Hand::offhand:
 		text += "off";
@@ -2344,12 +2344,12 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 	//play::send::setSlot(p, 0, 12, 36 + p->selectedSlot, *p->slots[p->selectedSlot + 36]);
 }
 void message::play::receive::useItem(Player* p, Hand hand) {
-	switch (p->slots[p->selectedSlot + 36]->getItemId()) {
+	switch (p->slots[p->selectedSlot]->getItemId()) {
 	case 943:
 		message::play::send::openBook(p, hand);
 		break;
 	default:
-		Log::txt() << "\nuseItem unhandled: " << p->slots[p->selectedSlot + 36]->getItemId();
+		Log::txt() << "\nuseItem unhandled: " << p->slots[p->selectedSlot]->getItemId();
 		break;
 	}
 }
