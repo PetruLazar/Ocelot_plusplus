@@ -2109,6 +2109,7 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
+	delete eqp[0];
 	delete[] eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
@@ -2117,6 +2118,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 		Log::txt() << "create!" << "\n";
 	}
 	else { //put in inventory
+		delete p->slots[slot];
 		p->slots[slot] = clickedItem;
 
 		if (p->selectedSlot == slot - 36) {
@@ -2126,6 +2128,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
+			delete eqp[0];
 			delete[] eqp;
 		}
 	}
@@ -2214,7 +2217,7 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		
 		break;
 	case 8: //start flying with elytra
-		p->attributes |= 1 << 0x80;
+		p->attributes |= 0x80;
 		break;
 	}
 

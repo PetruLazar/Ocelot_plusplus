@@ -7,7 +7,7 @@ bool ServerConsole::hasConsole = false;
 
 void ServerConsole::AllocCosole()
 {
-	if (!AllocConsole()) return;
+	if (!::AllocConsole()) return;
 	SetConsoleTitleA("Minecraft Server");
 	freopen_s((FILE**)stdin, "CONIN$", "r", stdin);
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);

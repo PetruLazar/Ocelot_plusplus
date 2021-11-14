@@ -202,5 +202,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 
 	ServerConsole::FreeConsole();
+	Registry::unloadRegistriesAndPalette();
 	return 0;
 }

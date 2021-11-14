@@ -64,6 +64,9 @@ void TagGroup::loadTag(const std::string& tagName)
 
 	//add the tag to the TagGroup
 	tags.push_back(tag);
+
+	//memory cleanup
+	delete& jsonTag;
 }
 
 void TagGroup::loadVanillaTags()

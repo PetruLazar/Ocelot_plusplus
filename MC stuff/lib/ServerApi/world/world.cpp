@@ -507,7 +507,6 @@ Chunk* World::generate_def(World* world, int X, int Z)
 }
 Chunk* World::generate_flat(World* world, int x, int z)
 {
-
 	//heightmap generation
 	int height = world->height;
 	Chunk* chunk = new Chunk(height);
@@ -544,9 +543,6 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		chunk->lightData[(ull)sectionCount + 1].skyLight = lightData;
 		chunk->lightData[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
 	}
-
-	//primary mask initialization
-	chunk->sectionMask = new BitArray(sectionCount, 1);
 
 	if (rand() < 100) for (uint i = 0; i < sectionCount; i++)
 	{
@@ -1096,6 +1092,7 @@ void World::loadAll()
 		worlds.push_back(new World(name));
 	}
 	Log::txt() << "\nFinished loading " << worlds.size() << " worlds!" << Log::flush;
+	worldList.close();
 }
 void World::unloadAll()
 {

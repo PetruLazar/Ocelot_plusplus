@@ -52,4 +52,5 @@ public:
 	SERVER_API static std::string getBlock(const json& blockState);
 
 	SERVER_API static void loadRegistriesAndPalette();
+	SERVER_API static void unloadRegistriesAndPalette();
 };
