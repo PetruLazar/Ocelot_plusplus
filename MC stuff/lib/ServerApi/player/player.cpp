@@ -34,7 +34,7 @@ Player::~Player()
 
 std::string Player::netId()
 {
-	return socket->getRemoteAddress().toString() + std::to_string(socket->getRemotePort());
+	return socket->getRemoteAddress().toString() + ':' + std::to_string(socket->getRemotePort());
 }
 
 void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
@@ -197,6 +197,23 @@ bool Player::positionInRange(Position location)
 	if (cX < chunkX - viewDistance || cX > chunkX + viewDistance ||
 		cZ < chunkZ - viewDistance || cZ > chunkZ + viewDistance) return false;
 	return true;
+}
+
+void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
+{
+	X = tpX;
+	Y = tpY;
+	Z = tpZ;
+	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, yaw, pitch, 0, false);
+}
+void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloat tpPitch)
+{
+	X = tpX;
+	Y = tpY;
+	Z = tpZ;
+	yaw = tpYaw;
+	pitch = tpPitch;
+	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, tpYaw, tpPitch, 0, false);
 }
 
 void Player::setWorld(World* world)
