@@ -72,6 +72,29 @@ namespace CommandHandlers
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
+		case 2:
+		{
+			static int lvl = 0;
+
+			int x = fastfloor((double)executingPlayer->X),
+				y = fastfloor((double)executingPlayer->Y),
+				z = fastfloor((double)executingPlayer->Z);
+
+			y = executingPlayer->world->AbsToRelHeight(y);
+			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+
+			executingPlayer->world->setBlock(x, y, z, 34 + lvl);
+			message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX, executingPlayer->chunkZ, false);
+			message::play::send::chatMessage(executingPlayer, Chat(("Done - " + std::to_string(lvl++)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			if (lvl == 16) lvl = 0;
+		}
+		break;
+		case 3:
+		{
+			executingPlayer->teleport(executingPlayer->X, executingPlayer->Y, executingPlayer->Z, 45.f, executingPlayer->pitch);
+			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		}
+		break;
 		//add tests here - starting at 1
 		default:
 			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
