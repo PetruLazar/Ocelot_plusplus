@@ -1978,6 +1978,40 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 void message::play::receive::closeWindow(Player* p, Byte winId) {
 	message::play::send::closeWindow(p, winId);
 }
+void message::play::receive::editBook(Player* p, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, mcString title) {
+	nbt** pagesToNbt = new nbt*[count];
+	for (int i = 0; i < count; i++)
+		pagesToNbt[i] = new nbt_string(std::to_string(i), pages[i]);
+
+	nbt_compound* bookData;
+
+	if(hasTitle)
+		bookData = new nbt_compound("", new nbt * [3]{ 
+			new nbt_string("author", p->username),
+			new nbt_string("title", title),
+			new nbt_list("pages", pagesToNbt, count) 
+		}, 3);
+	else
+		bookData = new nbt_compound("", new nbt * [1]{ new nbt_list("pages", pagesToNbt, count) }, 1);
+
+	if (hasTitle) {
+		delete p->slots[p->selectedSlot + 36];
+		p->slots[p->selectedSlot + 36] = new Slot(true, 943, 1, bookData);
+
+		Equipment** eqp = new Equipment * [1];
+		eqp[0] = new Equipment(0, p->slots[p->selectedSlot + 36]);
+
+		for (Player* seener : p->seenBy)
+			message::play::send::entityEquipment(seener, p->getEid(), eqp);
+
+		message::play::send::entityEquipment(p, p->getEid(), eqp);
+
+		delete[] eqp;
+	}
+	else {
+		p->slots[p->selectedSlot + 36]->updateNBT(bookData);
+	}
+}
 void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
 {
 
@@ -2240,6 +2274,16 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 	//tmp: increase the id of the held item
 	//((int*)p->slots[p->selectedSlot + 36])[1]++;
 	//play::send::setSlot(p, 0, 12, 36 + p->selectedSlot, *p->slots[p->selectedSlot + 36]);
+}
+void message::play::receive::useItem(Player* p, Hand hand) {
+	switch (p->slots[p->selectedSlot + 36]->getItemId()) {
+	case 943:
+		message::play::send::openBook(p, hand);
+		break;
+	default:
+		Log::txt() << "\nuseItem unhandled: " << p->slots[p->selectedSlot + 36]->getItemId();
+		break;
+	}
 }
 
 void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
@@ -2529,7 +2573,25 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::editBook:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: edit book");
+			varInt hand;
+			varInt count;
+			std::vector<mcString> texts(count);
+			bool hasTitle;
+			mcString title;
+
+			hand.read(data);
+			count.read(data);
+			for (int i = 0; i < count; i++) {
+				mcString t;
+				t.read(data);
+				texts.emplace_back(t);
+			}
+			
+			hasTitle = *(data++);
+			if (hasTitle)
+				title.read(data);
+
+			message::play::receive::editBook(p, hand, count, texts, hasTitle, title);
 		}
 		break;
 		case play::id::queryEntityNbt:
@@ -2554,7 +2616,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			sneaking = *(data++);
 
 			message::play::receive::interactEntity(p, eid, type, targetX, targetY, targetZ, (Hand)(int)mainHand, sneaking);
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: interact entity");
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: interact entity");
 		}
 		break;
 		case play::id::generateStructure:
@@ -2811,7 +2873,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::useItem:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: use item");
+			varInt hand;
+			hand.read(data);
+
+			play::receive::useItem(p, (Hand)(int)hand);
 		}
 		break;
 		default:
