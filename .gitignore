@@ -97,7 +97,7 @@ _pkginfo.txt
 
 # Build
 NetConsole/tcp
-#MC stuff/server.properties
+Build/*/server.properties
 MC stuff/debug.txt
 MC stuff/lib/ServerApi/lib/
 

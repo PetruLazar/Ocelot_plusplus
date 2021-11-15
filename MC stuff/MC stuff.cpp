@@ -79,9 +79,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	Log::txt() << "\nLoading worlds..." << Log::flush;
 	if (!World::loadAll())
 	{
-		Log::txt() << "\nError: Spawn world \"" << Options::mainWorldName() << "\" not found." << Log::flush;
+		Log::txt() << "\nError: Spawn world \"" << Options::mainWorldName() << "\" not found.\n" << Log::flush;
 		system("pause");
 		ServerConsole::FreeConsole();
+		World::unloadAll();
+		Registry::unloadRegistriesAndPalette();
 		return 0;
 	}
 	sf::TcpSocket* buffer = new sf::TcpSocket;
