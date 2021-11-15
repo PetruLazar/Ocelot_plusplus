@@ -2,10 +2,11 @@
 
 #include <Windows.h>
 #include <stdio.h>
+#include <conio.h>
 
 bool ServerConsole::hasConsole = false;
 
-void ServerConsole::AllocCosole()
+void ServerConsole::AllocConsole()
 {
 	if (!::AllocConsole()) return;
 	SetConsoleTitleA("Minecraft Server");
@@ -22,5 +23,6 @@ void ServerConsole::FreeConsole()
 	fclose(stdin);
 	fclose(stderr);
 	::FreeConsole();
+	_kbhit();
 	hasConsole = false;
 }
