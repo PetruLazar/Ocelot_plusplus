@@ -90,11 +90,12 @@ public:
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
 
-	SERVER_API static void loadAll();
+	SERVER_API static bool loadAll();
 	SERVER_API static void unloadAll();
 
 	SERVER_API static std::vector<World*> worlds;
+	SERVER_API static World* getWorld(const mcString& worldName);
 
 	//temporary variable
-	SERVER_API static int spawnWorld;
+	SERVER_API static World* spawnWorld;
 };

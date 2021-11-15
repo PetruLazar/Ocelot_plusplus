@@ -18,7 +18,7 @@ const int terrainHeightAmplitude = 35;
 const double noiseFactor_x = 1. / 128, noiseFactor_z = 1. / 128;
 
 std::vector<World*> World::worlds;
-int World::spawnWorld = 0;
+World* World::spawnWorld;
 
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
@@ -1083,7 +1083,7 @@ void World::setBlock(int x, int y, int z, const BlockState& bl)
 	reg->setBlock(x, y, z, bl);
 }
 
-void World::loadAll()
+bool World::loadAll()
 {
 	ifstream worldList("worlds\\worldList.txt");
 	char name[256];
@@ -1093,8 +1093,17 @@ void World::loadAll()
 	}
 	Log::txt() << "\nFinished loading " << worlds.size() << " worlds!" << Log::flush;
 	worldList.close();
+
+	spawnWorld = getWorld(Options::mainWorldName());
+	return spawnWorld != nullptr;
 }
 void World::unloadAll()
 {
 	for (World* w : worlds) delete w;
+}
+
+World* World::getWorld(const mcString& worldName)
+{
+	for (World* w : worlds) if (worldName == w->name) return w;
+	return nullptr;
 }

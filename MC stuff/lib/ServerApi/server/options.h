@@ -9,7 +9,7 @@ class Options
 
 	static ush _port;
 	static int _max_players;
-	static std::string _level_name, _motd;
+	static std::string _mainWorldName, _motd;
 	static sf::IpAddress _ip;
 	static Byte _viewDistance;
 	static bool _chunkCompression;
@@ -30,7 +30,7 @@ public:
 
 	SERVER_API static ush port();
 	SERVER_API static int max_players();
-	SERVER_API static const std::string& level_name();
+	SERVER_API static const std::string& mainWorldName();
 	SERVER_API static const std::string& motd();
 	SERVER_API static const sf::IpAddress& ip();
 	SERVER_API static Byte viewDistance();

@@ -11,7 +11,7 @@ const char commentChar = '#';
 const char Options::optionsFileName[] = "server.properties";
 ush Options::_port = 25565;
 int Options::_max_players = 100;
-std::string Options::_level_name = "world", Options::_motd = "{\"text\":\"A Minecraft server.\"}";
+std::string Options::_mainWorldName = "world", Options::_motd = "{\"text\":\"A Minecraft server.\"}";
 sf::IpAddress Options::_ip = sf::IpAddress::Any;
 Byte Options::_viewDistance = 10;
 bool Options::_chunkCompression = false;
@@ -154,7 +154,7 @@ Options::Options()
 	{
 		cout << "File \"server.properties\" not found, so one has been generated.\n";
 		ofstream out(optionsFileName);
-		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#level-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10\n#chunk-compression=false\n#network-compression-threshold=-1";
+		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#main-world-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10\n#chunk-compression=false\n#network-compression-threshold=-1";
 		out.close();
 		return;
 	}
@@ -199,6 +199,10 @@ Options::Options()
 		else if (name == "motd")
 		{
 			_motd = value;
+		}
+		else if (name == "main-world-name")
+		{
+			_mainWorldName = value;
 		}
 		else if (name == "view-distance")
 		{
@@ -250,7 +254,7 @@ Options::~Options()
 
 ush Options::port() { return _port; }
 int Options::max_players() { return _max_players; }
-const string& Options::level_name() { return _level_name; }
+const string& Options::mainWorldName() { return _mainWorldName; }
 const string& Options::motd() { return _motd; }
 const sf::IpAddress& Options::ip() { return _ip; }
 Byte Options::viewDistance() { return _viewDistance; }
