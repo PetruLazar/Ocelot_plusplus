@@ -2299,12 +2299,19 @@ void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
 		//test thershold
 		if (size < p->compressionThreshold)
 		{
-			//do not compress
-			//append 0
-			(data--)[-1] = 0;
-			size++;
+			//allocate a smaller block of memory
+			char* toDeleteInit = toDelete;
+			toDelete = new char[size + 6];
+			char* initData = data;
+			data = toDelete + 6;
 
-			//append size before data outside the if
+			//copy data into the smaller block and deallocate the big block
+			for (uint i = 0; i < (uint)size; i++) data[i] = initData[i];
+			delete[] toDeleteInit;
+
+			//prepend 0
+			(--data)[0] = 0;
+			size++;
 		}
 		else
 		{
@@ -2319,7 +2326,7 @@ void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
 			if (!zlibCompressNoAlloc(uncompressedData, uncompressedSize, data, (uint&)size)) throw runtimeError("Zlib compression failed");
 			delete[] toDeleteUnc;
 
-			//append uncompressedSize
+			//prepend uncompressedSize
 			int append = (int)(uint)uncompressedSize;
 			int appendSize = (int)(uint)varInt::size(append);
 			data -= appendSize;
@@ -2327,11 +2334,11 @@ void message::preparePacket(Player* p, char*& data, ull& size, char*& toDelete)
 			size += appendSize;
 			varInt(append).write(buffer);
 
-			//append compressed size before data outside the if
+			//prepend compressed size before data outside the if
 		}
 	}
 
-	//append size before data
+	//prepend size before data
 	int append = (int)(uint)size;
 	int appendSize = (int)(uint)varInt::size(append);
 	data -= appendSize;
