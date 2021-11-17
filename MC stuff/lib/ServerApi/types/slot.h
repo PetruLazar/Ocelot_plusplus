@@ -30,6 +30,7 @@ public:
 	}
 
 	void write(char*& buffer) const;
+	void read(char*& buffer);
 
 	bool isPresent() { return present; }
 	varInt getItemId() { return itemId; }

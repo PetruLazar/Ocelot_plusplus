@@ -393,8 +393,8 @@ struct message
 			SERVER_API static void clientStatus(Player*, varInt actionId);
 			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);
-			SERVER_API static void clickWindowButton(Player*, Byte winId, Byte buttonId);
-			//SERVER_API static void clickWindow(Player*, Byte winId, bshort slot, varInt stateId, Byte button, varInt mode, varInt length, );
+			SERVER_API static void clickWindowButton(Player*, Byte windowID, Byte buttonID);
+			SERVER_API static void clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem);
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, char* data);
 			SERVER_API static void editBook(Player*, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, mcString title);

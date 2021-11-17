@@ -1981,7 +1981,13 @@ void message::play::receive::lockDifficulty(Player* p, bool locked)
 }
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
-	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
+	if (teleportId == p->pendingTpId) 
+		p->pendingTpId = -1;
+}
+void message::play::receive::setDifficulty(Player* p, Byte difficulty)
+{
+	//unused
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: set difficulty");
 }
 void message::play::receive::clientStatus(Player*, varInt actionId)
 {
@@ -1996,6 +2002,14 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 	p->displayedSkinParts = displayedSkinParts;
 	p->mainHand = mainHand;
 	p->disableTextFiltering = disableTextFiltering;
+}
+void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte buttonId)
+{
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: clickWindowButton");
+}
+void message::play::receive::clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
+{
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: clickWindow");
 }
 void message::play::receive::closeWindow(Player* p, Byte winId) {
 	message::play::send::closeWindow(p, winId);
@@ -2609,7 +2623,9 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::setDifficulty:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: set difficulty");
+			bool difficulty;
+			difficulty = *(data++);
+			message::play::receive::setDifficulty(p, difficulty);
 		}
 		break;
 		case play::id::chatMessage_serverbound:
@@ -2653,12 +2669,38 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::clickWindowButton:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: click window button");
+			Byte windowID, buttonID;
+			windowID = *(data++);
+			buttonID = *(data++);
+
+			play::receive::clickWindowButton(p, windowID, buttonID);
 		}
 		break;
 		case play::id::clickWindow:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: click window");
+			Byte windowID, button;
+			varInt stateID, mode, length;
+			bshort clickedSlot;
+			bshort* slotNumbers;
+			Slot** slots;
+			Slot* clickedItem = new Slot();
+
+			windowID = *(data++);
+			stateID.read(data);
+			clickedSlot.read(data);
+			button = *(data++);
+			mode.read(data);
+			length.read(data);
+			slotNumbers = new bshort[length];
+			slots = new Slot * [length];
+			for (int i = 0; i < length; i++) {
+				slotNumbers[i].read(data);
+				slots[i] = new Slot();
+				slots[i]->read(data);
+			}
+			clickedItem->read(data);
+
+			play::receive::clickWindow(p, windowID, stateID, clickedSlot, button, mode, length, slotNumbers, slots, clickedItem);
 		}
 		break;
 		case play::id::closeWindow_serverbound:

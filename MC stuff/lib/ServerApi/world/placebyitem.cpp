@@ -1,6 +1,7 @@
 #include "../world.h"
 #include "../types/item.h"
 #include "../player/message.h"
+#include "../server/log.h"
 
 enum class slabType : Byte
 {
@@ -1321,12 +1322,13 @@ bool replaceableIndirect(Block id)
 	return false;
 }
 
+static int windowID = 0;
 bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, BlockState& state, const Position& loc)
 {
 	switch (bid)
 	{
 	case Block::minecraft_crafting_table:
-		//message::play::send::openWindow(p,)
+		message::play::send::openWindow(p, windowID++, 11, "minecraft:crafting");
 		message::play::send::chatMessage(p, Chat("Crafting table right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return true;
 	case Block::minecraft_enchanting_table:
@@ -1341,12 +1343,14 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	case Block::minecraft_anvil:
 	case Block::minecraft_chipped_anvil:
 	case Block::minecraft_damaged_anvil:
+		message::play::send::openWindow(p, windowID++, 7, "minecraft:anvil");
 		message::play::send::chatMessage(p, Chat("Anvil right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return true;
 	case Block::minecraft_stonecutter:
 		message::play::send::chatMessage(p, Chat("Stonecutter right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return true;
 	case Block::minecraft_furnace:
+		message::play::send::openWindow(p, windowID++, 13, "minecraft:furnace");
 		message::play::send::chatMessage(p, Chat("Furnace right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return true;
 	case Block::minecraft_blast_furnace:
