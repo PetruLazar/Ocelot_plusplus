@@ -102,6 +102,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		{
 			Log::txt() << "\nError (old format): " << err_msg;
 		}
+		catch (const std::exception& e)
+		{
+			Log::txt() << "\nException thrown: " << e.what();
+		}
 		catch (...)
 		{
 			Log::txt() << "\nUnknown error.";
