@@ -16,6 +16,10 @@ void Slot::read(char*& buffer) {
 	if (present) {
 		itemId.read(buffer);
 		count = *(buffer++);
-		nbt_data->read(buffer);
+		nbt::tag tagType;
+		tagType = (nbt::tag) * (buffer++);
+		if (tagType == nbt::tag::End) /*nbt_data is empty*/;
+		else if (tagType == nbt::tag::Compound) nbt_data->read(buffer);
+		else throw std::exception("Invalid slot nbt");
 	}
 }
