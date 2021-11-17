@@ -377,7 +377,7 @@ struct message
 			SERVER_API static void advancements(Player*, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement** advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress** advancementProgresses);
 			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, Entity::Property* properties);
 			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
-			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes); //RECIPES
+			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes, recipe::Recipe** recipes);
 			SERVER_API static void tags(Player*);
 			SERVER_API static void tags(Player*, varInt tagCategoryCount, TagGroup* tags);
 

@@ -165,7 +165,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::playerAbilities(p, true, true, true, p->gm == gamemode::creative, 0.05f, 0.1f);
 
-	play::send::declareRecipes(p, 0);
+	play::send::declareRecipes(p, 0, nullptr); //add recipes!
 
 	std::vector<Player*> inGamePlayers;
 	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.push_back(player);
@@ -1035,13 +1035,15 @@ void message::play::send::entityEquipment(Player* p, varInt eid, const std::vect
 
 	finishSendMacro;
 }
-void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
-{
+void message::play::send::declareRecipes(Player* p, varInt nOfRecipes, recipe::Recipe** recipes)
+{ //not tested!
 	varInt id = (int)id::declareRecipes;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	nOfRecipes.write(data);
+	for (int i = 0; i < nOfRecipes; i++)
+		recipes[i]->write(data);
 
 	finishSendMacro;
 }

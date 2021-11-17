@@ -16,6 +16,7 @@ void Slot::read(char*& buffer) {
 	if (present) {
 		itemId.read(buffer);
 		count = *(buffer++);
+
 		nbt::tag tagType;
 		tagType = (nbt::tag) * (buffer++);
 		if (tagType == nbt::tag::End) /*nbt_data is empty*/;

@@ -1,7 +1,6 @@
 #pragma once
 #include "../nbt.h"
 #include "varData.h"
-#include <iostream>
 
 class Slot
 {
