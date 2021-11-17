@@ -270,6 +270,9 @@
     <ClInclude Include="types\statistics.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
+    <ClInclude Include="types\recipe.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -454,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="world\placebyitem.cpp">
       <Filter>Source Files\world</Filter>
+    </ClCompile>
+    <ClCompile Include="types\recipe.cpp">
+      <Filter>Source Files\types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

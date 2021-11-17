@@ -1609,7 +1609,8 @@ void message::play::send::selectAdvancementTab(Player* p, bool hasId, const mcSt
 
 	id.write(data);
 	*(data++) = hasId;
-	identifier.write(data);
+	if (hasId)
+		identifier.write(data);
 
 	finishSendMacro;
 }
@@ -2154,9 +2155,13 @@ void message::play::receive::pickItem(Player* p, varInt slot)
 }
 void message::play::receive::craftRecipeRequest(Player* p, Byte winId, const mcString& recipe, bool makeAll)
 {
-
+	
 }
 void message::play::receive::resourcePackStatus(Player* p, varInt result)
+{
+
+}
+void message::play::receive::advancementTab(Player*, varInt action, const mcString& tabId)
 {
 
 }
@@ -2856,7 +2861,7 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			message::play::receive::craftRecipeRequest(p, windowID, recipe, makeAll);
 
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: craft recipe request");
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: craft recipe request");
 		}
 		break;
 		case play::id::playerAbilities_serverbound:
@@ -2926,11 +2931,19 @@ void message::dispatch(Player* p, char* data, uint size)
 			result.read(data);
 
 			play::receive::resourcePackStatus(p, result);
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: resource pack status");
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: resource pack status");
 		}
 		break;
 		case play::id::advancementTab:
 		{
+			varInt action;
+			mcString tabID = "";
+
+			action.read(data);
+			if (action == 0)
+				tabID.read(data);
+
+			play::receive::advancementTab(p, action, tabID);
 			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: advancement tab");
 		}
 		break;

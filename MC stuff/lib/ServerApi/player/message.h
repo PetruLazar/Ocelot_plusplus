@@ -339,7 +339,7 @@ struct message
 			SERVER_API static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
 			SERVER_API static void entityHeadLook(Player*, varInt eid, Angle headYaw);
 			SERVER_API static void multiBlockChange(Player*, blong sectionPosition, bool unknown, varInt size, varLong* blocks);
-			SERVER_API static void selectAdvancementTab(Player*, bool hasId, const mcString& id);
+			SERVER_API static void selectAdvancementTab(Player*, bool hasId, const mcString& id = "");
 			SERVER_API static void actionBar(Player*, const Chat& actionBarText);
 			SERVER_API static void worldBorderCenter(Player*, bdouble x, bdouble z);
 			SERVER_API static void worldBorderLerpSize(Player*, bdouble oldDiameter, bdouble newDiameter, varLong speed);
@@ -377,7 +377,7 @@ struct message
 			SERVER_API static void advancements(Player*, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement** advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress** advancementProgresses);
 			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, Entity::Property* properties);
 			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
-			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes);
+			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes); //RECIPES
 			SERVER_API static void tags(Player*);
 			SERVER_API static void tags(Player*, varInt tagCategoryCount, TagGroup* tags);
 

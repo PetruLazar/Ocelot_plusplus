@@ -224,6 +224,7 @@
     <ClInclude Include="types\particle.h" />
     <ClInclude Include="types\position.h" />
     <ClInclude Include="types\queue.h" />
+    <ClInclude Include="types\recipe.h" />
     <ClInclude Include="types\registry.h" />
     <ClInclude Include="types\slot.h" />
     <ClInclude Include="types\statistics.h" />
@@ -289,6 +290,7 @@
     <ClCompile Include="types\particle.cpp" />
     <ClCompile Include="types\position.cpp" />
     <ClCompile Include="types\queue.cpp" />
+    <ClCompile Include="types\recipe.cpp" />
     <ClCompile Include="types\registry.cpp" />
     <ClCompile Include="types\slot.cpp" />
     <ClCompile Include="types\statistics.cpp" />
