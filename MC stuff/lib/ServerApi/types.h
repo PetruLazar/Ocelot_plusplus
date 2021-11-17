@@ -32,3 +32,4 @@
 #include "types/trades.h"
 #include "types/mapIcon.h"
 #include "types/statistics.h"
+#include "types/window.h"

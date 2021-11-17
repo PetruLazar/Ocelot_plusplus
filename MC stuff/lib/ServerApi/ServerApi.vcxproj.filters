@@ -273,6 +273,9 @@
     <ClInclude Include="types\recipe.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
+    <ClInclude Include="types\window.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

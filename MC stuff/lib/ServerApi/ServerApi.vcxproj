@@ -234,6 +234,7 @@
     <ClInclude Include="types\utils.h" />
     <ClInclude Include="types\uuid.h" />
     <ClInclude Include="types\varData.h" />
+    <ClInclude Include="types\window.h" />
     <ClInclude Include="types\winLeanMean.h" />
     <ClInclude Include="world.h" />
     <ClInclude Include="world\block.h" />
