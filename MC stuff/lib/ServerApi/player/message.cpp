@@ -1974,6 +1974,11 @@ void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 	broadcastMessage(send::playerInfo(player_macro, playerInfo::updateLatency, 1, &p));
 	p->lastKeepAliveId = -1;
 }
+void message::play::receive::lockDifficulty(Player* p, bool locked)
+{
+	//unused
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: lock difficulty");
+}
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
 	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
@@ -2079,7 +2084,9 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+	for (Player* seener : p->seenBy) 
+		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+	
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
 }
@@ -2107,6 +2114,29 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
+}
+void message::play::receive::pickItem(Player* p, varInt slot)
+{
+	IF_PROTOCOL_WARNINGS(Log::txt() << "Unhandled packet: pickItem");
+	//Log::txt() << "\npickite";
+	//Log::txt() << "\na: " << p->slots[slot]->getItemId();
+	varInt foundSlot = 0;
+	for (int i = 36; i < 45; i++) { //first search should start from the current slot and loop around it
+		if (!p->slots[i]->isPresent())
+			foundSlot = i;
+	}
+
+	if (!foundSlot)
+	{ //start second search
+
+	}
+
+	if (!foundSlot) //still no good slot found, use the current one
+		foundSlot = slot;
+
+	//message::play::send::setSlot(p, -2, 0, )
+
+	//message::play::send::heldItemChange(p, foundSlot);
 }
 void message::play::receive::craftRecipeRequest(Player* p, Byte winId, const mcString& recipe, bool makeAll)
 {
@@ -2254,19 +2284,19 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 {
 	switch (actionId) {
 	case 0: //start sneaking
-		p->attributes |= 1 << 0x02;
+		p->attributes |= 0x02;
 		break;
 	case 1: //stop sneaking
-		p->attributes &= ~(1 << 0x02);
+		p->attributes &= ~(0x02);
 		break;
 	case 2: //leave bed
 		
 		break;
 	case 3: //start sprinting
-		p->attributes |= 1 << 0x08;
+		p->attributes |= 0x08;
 		break;
 	case 4: //stop sprinting
-		p->attributes &= ~(1 << 0x08);
+		p->attributes &= ~(0x08);
 		break;
 	case 5: //start jump with horse
 		
@@ -2278,7 +2308,7 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		
 		break;
 	case 8: //start flying with elytra
-		p->attributes |= 1 << 0x80;
+		p->attributes |= 0x80;
 		break;
 	}
 
@@ -2289,6 +2319,10 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		varInt entityPose = (p->attributes >> 0x02) & 1 ? Entity::pose::sneaking : Entity::pose::standing;
 		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(6, Entity::Metadata::type::_Pose, &entityPose) });
 	}
+}
+void message::play::receive::pong(Player* p, bint id)
+{
+	message::play::send::ping(p, id);
 }
 void message::play::receive::nameItem(Player*, const mcString& newName)
 {
@@ -2701,7 +2735,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::lockDifficulty:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: lock difficulty");
+			bool locked;
+			locked = *(data++);
+			
+			play::receive::lockDifficulty(p, locked);
 		}
 		break;
 		case play::id::playerPosition:
@@ -2756,7 +2793,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::pickItem:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: pick item");
+			varInt slotToUse;
+			slotToUse.read(data);
+
+			message::play::receive::pickItem(p, slotToUse);
 		}
 		break;
 		case play::id::craftRecipeRequest:
@@ -2810,7 +2850,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::pong:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: pong");
+			bint id;
+			id.read(data);
+
+			play::receive::pong(p, id);
 		}
 		break;
 		case play::id::setRecipeBookState:

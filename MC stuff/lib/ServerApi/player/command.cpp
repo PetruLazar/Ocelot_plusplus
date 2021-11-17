@@ -1,6 +1,7 @@
 #include "command.h"
 #include "player.h"
 #include "message.h"
+#include "../server/log.h"
 
 namespace CommandHandlers
 {
