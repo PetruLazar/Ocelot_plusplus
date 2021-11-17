@@ -157,7 +157,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	login::send::success(p, *p->euuid, username);
 
-	play::send::joinGame(p, (int)p->getEid(), false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::worlds[World::spawnWorld]->characteristics, World::worlds[World::spawnWorld]->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, World::worlds[World::spawnWorld]->isFlat);
+	play::send::joinGame(p, (int)p->getEid(), false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::spawnWorld->characteristics, World::spawnWorld->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, World::spawnWorld->isFlat);
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
@@ -179,7 +179,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::color::yellow), p);
 	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p);
 
-	p->setWorld(World::worlds[World::spawnWorld]);
+	p->setWorld(World::spawnWorld);
 
 	/*play::send::updateViewPosition(p, p->chunkX, p->chunkZ);
 
@@ -2001,18 +2001,18 @@ void message::play::receive::closeWindow(Player* p, Byte winId) {
 	message::play::send::closeWindow(p, winId);
 }
 void message::play::receive::editBook(Player* p, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, mcString title) {
-	nbt** pagesToNbt = new nbt*[count];
+	nbt** pagesToNbt = new nbt * [count];
 	for (int i = 0; i < count; i++)
 		pagesToNbt[i] = new nbt_string(std::to_string(i), pages[i]);
 
 	nbt_compound* bookData;
 
-	if(hasTitle)
-		bookData = new nbt_compound("", new nbt * [3]{ 
+	if (hasTitle)
+		bookData = new nbt_compound("", new nbt * [3]{
 			new nbt_string("author", p->username),
 			new nbt_string("title", title),
-			new nbt_list("pages", pagesToNbt, count) 
-		}, 3);
+			new nbt_list("pages", pagesToNbt, count)
+			}, 3);
 	else
 		bookData = new nbt_compound("", new nbt * [1]{ new nbt_list("pages", pagesToNbt, count) }, 1);
 
@@ -2156,6 +2156,7 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
+	delete eqp[0];
 	delete[] eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
@@ -2164,6 +2165,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 		Log::txt() << "create!" << "\n";
 	}
 	else { //put in inventory
+		delete p->slots[slot];
 		p->slots[slot] = clickedItem;
 
 		if (p->selectedSlot == slot) {
@@ -2173,6 +2175,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
+			delete eqp[0];
 			delete[] eqp;
 		}
 	}
@@ -2290,7 +2293,7 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		p->attributes &= ~(0x02);
 		break;
 	case 2: //leave bed
-		
+
 		break;
 	case 3: //start sprinting
 		p->attributes |= 0x08;
@@ -2299,13 +2302,13 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		p->attributes &= ~(0x08);
 		break;
 	case 5: //start jump with horse
-		
+
 		break;
 	case 6: //stop jump with horse
-		
+
 		break;
 	case 7: //open horse inventory
-		
+
 		break;
 	case 8: //start flying with elytra
 		p->attributes |= 0x80;
@@ -2688,7 +2691,7 @@ void message::dispatch(Player* p, char* data, uint size)
 				t.read(data);
 				texts.emplace_back(t);
 			}
-			
+
 			hasTitle = *(data++);
 			if (hasTitle)
 				title.read(data);

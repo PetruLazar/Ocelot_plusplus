@@ -79,7 +79,6 @@ json& Registry::getBlockState(const std::string& blockName, BlockProperty* prope
 		//no different properties found, return the state
 		return state;
 	}
-	delete[] properties;
 	throw runtimeError("Desired state not found");
 }
 json& Registry::getBlockState(int id)
@@ -150,4 +149,9 @@ void Registry::loadRegistriesAndPalette()
 	json& lastBlockStates = (*globalPalette)[(int)blockCount - 1]["states"];
 	ull lastBlockStateCount = lastBlockStates.getSize();
 	blockStatesCount = lastBlockStates[(int)lastBlockStateCount - 1]["id"].iValue();
+}
+void Registry::unloadRegistriesAndPalette()
+{
+	delete registries;
+	delete globalPalette;
 }

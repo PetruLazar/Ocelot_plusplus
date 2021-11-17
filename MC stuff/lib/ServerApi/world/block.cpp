@@ -36,6 +36,7 @@ void BlockState::setState(const std::string& stateName, const std::string& value
 	}
 	state = &Registry::getBlockState(Registry::getBlock(id), desiredProps);
 	id = (*state)["id"].iValue();
+	delete[] desiredProps;
 }
 
 void BlockState::set(int blockId)

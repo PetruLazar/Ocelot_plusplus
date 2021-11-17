@@ -130,7 +130,8 @@ namespace Commands
 	bool dispatch(Player* executingPlayer, mcString& command)
 	{
 		ArgumentStack argumentStack;
-		return dispatch(executingPlayer, command, &Commands::root, argumentStack);
+		bool ret = dispatch(executingPlayer, command, &Commands::root, argumentStack);
 		for (void* ptr : argumentStack) delete ptr;
+		return ret;
 	}
 }

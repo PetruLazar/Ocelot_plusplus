@@ -18,7 +18,7 @@ const int terrainHeightAmplitude = 35;
 const double noiseFactor_x = 1. / 128, noiseFactor_z = 1. / 128;
 
 std::vector<World*> World::worlds;
-int World::spawnWorld = 0;
+World* World::spawnWorld;
 
 nbt_compound World::dimension_codec("", new nbt* [2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
@@ -507,7 +507,6 @@ Chunk* World::generate_def(World* world, int X, int Z)
 }
 Chunk* World::generate_flat(World* world, int x, int z)
 {
-
 	//heightmap generation
 	int height = world->height;
 	Chunk* chunk = new Chunk(height);
@@ -544,9 +543,6 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		chunk->lightData[(ull)sectionCount + 1].skyLight = lightData;
 		chunk->lightData[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
 	}
-
-	//primary mask initialization
-	chunk->sectionMask = new BitArray(sectionCount, 1);
 
 	if (rand() < 100) for (uint i = 0; i < sectionCount; i++)
 	{
@@ -1087,7 +1083,7 @@ void World::setBlock(int x, int y, int z, const BlockState& bl)
 	reg->setBlock(x, y, z, bl);
 }
 
-void World::loadAll()
+bool World::loadAll()
 {
 	ifstream worldList("worlds\\worldList.txt");
 	char name[256];
@@ -1096,8 +1092,18 @@ void World::loadAll()
 		worlds.push_back(new World(name));
 	}
 	Log::txt() << "\nFinished loading " << worlds.size() << " worlds!" << Log::flush;
+	worldList.close();
+
+	spawnWorld = getWorld(Options::mainWorldName());
+	return spawnWorld != nullptr;
 }
 void World::unloadAll()
 {
 	for (World* w : worlds) delete w;
+}
+
+World* World::getWorld(const mcString& worldName)
+{
+	for (World* w : worlds) if (worldName == w->name) return w;
+	return nullptr;
 }

@@ -20,10 +20,12 @@ using namespace std;
 
 const int mc_zlib_compression_level = 6;
 
+bool keepServerOpen = true;
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
 {
 	Log::initialize();
-	ServerConsole::AllocCosole();
+	ServerConsole::AllocConsole();
 
 	//rand seeding
 	srand((uint)time(nullptr));
@@ -33,6 +35,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	if (listener.listen(Options::port(), Options::ip()) != sockStat::Done)
 	{
 		system("pause");
+		ServerConsole::FreeConsole();
 		return 0;
 	}
 	Log::txt() << "Starting server on " << Options::ip() << ':' << Options::port() << Log::flush;
@@ -47,7 +50,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	TagGroup::loadVanillaTags();
 
 	Log::txt() << "\nLoading worlds..." << Log::flush;
-	World::loadAll();
+	if (!World::loadAll())
+	{
+		Log::txt() << "\nError: Spawn world \"" << Options::mainWorldName() << "\" not found.\n" << Log::flush;
+		system("pause");
+		ServerConsole::FreeConsole();
+		World::unloadAll();
+		Registry::unloadRegistriesAndPalette();
+		return 0;
+	}
 	sf::TcpSocket* buffer = new sf::TcpSocket;
 	Log::txt() << "\nLoad complete." << Log::flush;
 
@@ -55,8 +66,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	//cout << '\n' << World::worlds[1]->get(0, 0)->getBlock(0, 80, 0).id << '\n';
 
 	//main loop
-	bool keepAlive = true;
-	while (keepAlive)
+	while (keepServerOpen)
 	{
 		cycleTime = clock();
 		//accept connections
@@ -74,15 +84,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		}
 		catch (runtimeError obj)
 		{
-			cout << "\nRuntime error: " << obj.msg;
+			Log::txt() << "\nRuntime error: " << obj.msg;
 		}
 		catch (runtimeWarning obj)
 		{
-			cout << "\nRuntime warning: " << obj.msg;
+			Log::txt() << "\nRuntime warning: " << obj.msg;
 		}
 		catch (protocolError obj)
 		{
-			cout << "\nProtocol error: " << obj.msg;
+			Log::txt() << "\nProtocol error: " << obj.msg;
 		}
 		catch (protocolWarning obj)
 		{
@@ -90,31 +100,29 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		}
 		catch (const char* err_msg)
 		{
-			cout << "\nError (old format): " << err_msg;
+			Log::txt() << "\nError (old format): " << err_msg;
 		}
 		catch (...)
 		{
-			cout << "\nUnknown error.";
+			Log::txt() << "\nUnknown error.";
 		}
 		Player::clearDisconnectedPlayers();
+
 		//exit on escape - makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
 		if (_kbhit())
 		{
-			//27 is escape
-			int key = _getch();
-			if (key == 27) break;
-			if (key == 'w')
+			switch (_getch())
 			{
-				World::spawnWorld = -World::spawnWorld + 1;
-				if (World::spawnWorld) cout << "\nPlayers now spawn in world 1";
-				else cout << "\nPlayers now spawn in world 0";
+			case 27: //escape
+				keepServerOpen = false;
+				break;
 			}
 		}
 
 		Log::Flush();
 	}
 
-	cout << "\nKicking players...";
+	Log::txt() << "\nKicking players...";
 	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
 	{
 		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
@@ -122,15 +130,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 	catch (runtimeError obj)
 	{
-		cout << "\nRuntime error: " << obj.msg;
+		Log::txt() << "\nRuntime error: " << obj.msg;
 	}
 	catch (runtimeWarning obj)
 	{
-		cout << "\nRuntime warning: " << obj.msg;
+		Log::txt() << "\nRuntime warning: " << obj.msg;
 	}
 	catch (protocolError obj)
 	{
-		cout << "\nProtocol error: " << obj.msg;
+		Log::txt() << "\nProtocol error: " << obj.msg;
 	}
 	catch (protocolWarning obj)
 	{
@@ -138,11 +146,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 	catch (const char* err_msg)
 	{
-		cout << "\nError: " << err_msg;
+		Log::txt() << "\nError: " << err_msg;
 	}
 	catch (...)
 	{
-		cout << "\nUnknown error.";
+		Log::txt() << "\nUnknown error.";
 	}
 
 	for (int64 i = 0; i < (int64)Player::players.size(); i++)
@@ -154,26 +162,27 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	delete buffer;
 	try
 	{
-		cout << "\nUnloading worlds...";
+		Log::txt() << "\nUnloading worlds...";
 		World::unloadAll();
 	}
 	catch (runtimeError obj)
 	{
-		cout << "\nRuntime error: " << obj.msg;
+		Log::txt() << "\nRuntime error: " << obj.msg;
 	}
 	catch (runtimeWarning obj)
 	{
-		cout << "\nRuntime warning: " << obj.msg;
+		Log::txt() << "\nRuntime warning: " << obj.msg;
 	}
 	catch (protocolError obj)
 	{
-		cout << "\nProtocol error: " << obj.msg;
+		Log::txt() << "\nProtocol error: " << obj.msg;
 	}
 	catch (protocolWarning obj)
 	{
-		cout << "\nProtocol warning: " << obj.msg;
+		Log::txt() << "\nProtocol warning: " << obj.msg;
 	}
 
 	ServerConsole::FreeConsole();
+	Registry::unloadRegistriesAndPalette();
 	return 0;
 }
