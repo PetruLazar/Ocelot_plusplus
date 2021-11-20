@@ -1321,7 +1321,6 @@ bool replaceableIndirect(Block id)
 	return false;
 }
 
-static int windowID = 0;
 bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, BlockState& state, const Position& loc)
 {
 	switch (bid)
