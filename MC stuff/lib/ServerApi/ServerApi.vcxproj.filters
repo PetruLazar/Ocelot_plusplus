@@ -276,6 +276,9 @@
     <ClInclude Include="types\window.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
+    <ClInclude Include="mcexception.h">
+      <Filter>Header Files\debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

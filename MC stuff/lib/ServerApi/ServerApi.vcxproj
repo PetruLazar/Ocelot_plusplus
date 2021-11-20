@@ -178,6 +178,7 @@
     <ClInclude Include="json\json_compound.h" />
     <ClInclude Include="json\json_int.h" />
     <ClInclude Include="json\json_string.h" />
+    <ClInclude Include="mcexception.h" />
     <ClInclude Include="nbt.h" />
     <ClInclude Include="nbt\nbt_base.h" />
     <ClInclude Include="nbt\nbt_byte.h" />
