@@ -10,7 +10,11 @@ private:
 
 public:
 	Equipment(Byte slot, Slot* item) : slot(slot), item(item) {
+		slot |= 0x80;
+	}
 
+	void unSet() {
+		slot &= ~(0x80);
 	}
 
 	void write(char*& buffer) const;

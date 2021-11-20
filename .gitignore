@@ -108,6 +108,7 @@ Build/*/ServerApi*
 
 # Temporary files
 MC stuff/Build
+MC stuff/debug.txt
 MC stuff/lib/ServerApi/Build/
 GlobalPalleteTranslator
 MC stuff/generators/*/Build

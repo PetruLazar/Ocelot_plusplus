@@ -295,7 +295,7 @@ struct message
 			SERVER_API static void declareCommands(Player*);
 			SERVER_API static void declareCommands(Player*, const std::vector<Commands::Node*>& commandGraphNodes, const Commands::RootNode& rootNode);
 			SERVER_API static void closeWindow(Player*, Byte winId);
-			SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried);
+			SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot** slots, Slot* carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);
 			SERVER_API static void setSlot(Player*, Byte winId, varInt stateId, bshort slot, const Slot& data);
 			SERVER_API static void setCooldown(Player*, varInt itemId, varInt cooldown);
@@ -339,7 +339,7 @@ struct message
 			SERVER_API static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
 			SERVER_API static void entityHeadLook(Player*, varInt eid, Angle headYaw);
 			SERVER_API static void multiBlockChange(Player*, blong sectionPosition, bool unknown, varInt size, varLong* blocks);
-			SERVER_API static void selectAdvancementTab(Player*, bool hasId, const mcString& id);
+			SERVER_API static void selectAdvancementTab(Player*, bool hasId, const mcString& id = "");
 			SERVER_API static void actionBar(Player*, const Chat& actionBarText);
 			SERVER_API static void worldBorderCenter(Player*, bdouble x, bdouble z);
 			SERVER_API static void worldBorderLerpSize(Player*, bdouble oldDiameter, bdouble newDiameter, varLong speed);
@@ -356,6 +356,7 @@ struct message
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
+			SERVER_API static void entityEquipment(Player*, varInt eid, const std::vector<Equipment>& equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
@@ -376,7 +377,7 @@ struct message
 			SERVER_API static void advancements(Player*, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement** advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress** advancementProgresses);
 			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, Entity::Property* properties);
 			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
-			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes);
+			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes, recipe::Recipe** recipes);
 			SERVER_API static void tags(Player*);
 			SERVER_API static void tags(Player*, varInt tagCategoryCount, TagGroup* tags);
 
@@ -392,8 +393,8 @@ struct message
 			SERVER_API static void clientStatus(Player*, varInt actionId);
 			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);
-			SERVER_API static void clickWindowButton(Player*, Byte winId, Byte buttonId);
-			//SERVER_API static void clickWindow(Player*, Byte winId, bshort slot, varInt stateId, Byte button, varInt mode, varInt length, );
+			SERVER_API static void clickWindowButton(Player*, Byte windowID, Byte buttonID);
+			SERVER_API static void clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem);
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, char* data);
 			SERVER_API static void editBook(Player*, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, mcString title);
@@ -417,7 +418,7 @@ struct message
 			SERVER_API static void pong(Player*, bint id);
 			SERVER_API static void setRecipeBookState(Player*, varInt bookid, bool open, bool filterActive);
 			SERVER_API static void setDisplayedRecipe(Player*, const mcString& recipeId);
-			SERVER_API static void nameItem(Player*, const mcString newName);
+			SERVER_API static void nameItem(Player*, const mcString& newName);
 			SERVER_API static void resourcePackStatus(Player*, varInt result);
 			SERVER_API static void advancementTab(Player*, varInt action, const mcString& tabId);
 			SERVER_API static void selectTrade(Player*, varInt selectedSlot);

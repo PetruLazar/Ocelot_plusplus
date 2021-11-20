@@ -530,7 +530,7 @@ namespace Entity {
 	{
 		Slot theItem;
 
-		item(entity theEntity, Slot theItem = Slot()) : theItem(theItem), entity(theEntity) {}
+		item(const entity& theEntity, const Slot& theItem = Slot()) : theItem(theItem), entity(theEntity) {}
 	};
 
 	struct LivingEntity : public entity

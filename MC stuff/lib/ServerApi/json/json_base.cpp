@@ -19,6 +19,7 @@ std::string json::to_string() const
 }
 
 int& json::iValue() { throw typeError; }
+double& json::dValue() { throw typeError; }
 bool& json::bValue() { throw typeError; }
 std::string& json::value() { throw typeError; }
 json& json::value(int) { throw typeError; }
@@ -42,6 +43,8 @@ json* json::allocate(type tp)
 		return nullptr;
 	case json::type::integer:
 		return new json_int();
+	case json::type::decimal:
+		return new json_decimal();
 	case json::type::string:
 		return new json_string();
 	case json::type::array:
@@ -142,16 +145,36 @@ json* json::parse(std::fstream& f, bool canHaveName)
 	}
 	else if (ch >= '0' && ch <= '9')
 	{
-		//int
-		int value = ch - '0';
+		//int or decimal
+		double value = ch - '0', point;
+		unsigned decimals = 0;
 		while (true)
 		{
 			ch = f.get();
-			if (ch < '0' || ch>'9') break;
-			value = value * 10 + ch - '0';
+			if (ch == '.')
+				decimals = 1;
+			else if (ch >= '0' && ch <= '9')
+			{
+				if (decimals) //maybe not the most efficient but it works
+				{
+					point = ch - '0';
+					for (unsigned i = 0; i < decimals; i++)
+						point = point / 10;
+					value = value + point;
+					decimals++;
+				}
+				else
+					value = value * 10 + ch - '0';
+			}
+			else
+				break;
 		}
 		f.unget();
-		return new json_int(name, value);
+
+		if(decimals)
+			return new json_decimal(name, value);
+
+		return new json_int(name, (int)value);
 	}
 	else if (ch == 'f' || ch == 't')
 	{

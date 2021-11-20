@@ -19,33 +19,6 @@ namespace fs = std::filesystem;
 using namespace std;
 
 const int mc_zlib_compression_level = 6;
-/*
-class Test1
-{
-public:
-	Test1()
-	{
-		cout << "\ntest1 constructed.";
-	}
-	~Test1()
-	{
-		cout << "\ntest1 destroyed.";
-	}
-} test1;
-
-class Test2
-{
-public:
-	Test2()
-	{
-		cout << "\ntest2 constructed.";
-	}
-	~Test2()
-	{
-		cout << "\ntest2 destroyed.";
-	}
-} test2;
-*/
 
 bool keepServerOpen = true;
 
@@ -128,6 +101,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		catch (const char* err_msg)
 		{
 			Log::txt() << "\nError (old format): " << err_msg;
+		}
+		catch (const std::exception& e)
+		{
+			Log::txt() << "\nException thrown: " << e.what();
 		}
 		catch (...)
 		{

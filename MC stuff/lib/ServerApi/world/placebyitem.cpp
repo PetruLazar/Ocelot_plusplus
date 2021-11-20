@@ -1703,37 +1703,36 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	switch (bid)
 	{
 	case Block::minecraft_crafting_table:
-		//message::play::send::openWindow(p,)
-		message::play::send::chatMessage(p, Chat("Crafting table right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::crafting, "minecraft:crafting");
 		return true;
 	case Block::minecraft_enchanting_table:
-		message::play::send::chatMessage(p, Chat("Enchanting table right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::enchantment, "minecraft:enchantment");
 		return true;
 	case Block::minecraft_cartography_table:
-		message::play::send::chatMessage(p, Chat("Cartography table right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::cartography, "minecraft:cartography");
 		return true;
 	case Block::minecraft_smithing_table:
-		message::play::send::chatMessage(p, Chat("Smithing table right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::smithing, "minecraft:smithing");
 		return true;
 	case Block::minecraft_anvil:
 	case Block::minecraft_chipped_anvil:
 	case Block::minecraft_damaged_anvil:
-		message::play::send::chatMessage(p, Chat("Anvil right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::anvil, "minecraft:anvil");
 		return true;
 	case Block::minecraft_stonecutter:
-		message::play::send::chatMessage(p, Chat("Stonecutter right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::stonecutter, "minecraft:stonecutter");
 		return true;
 	case Block::minecraft_furnace:
-		message::play::send::chatMessage(p, Chat("Furnace right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::furnace, "minecraft:furnace");
 		return true;
 	case Block::minecraft_blast_furnace:
-		message::play::send::chatMessage(p, Chat("Blast furnace right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::blast_furnace, "minecraft:blast_furnace");
 		return true;
 	case Block::minecraft_smoker:
-		message::play::send::chatMessage(p, Chat("Smoker right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::smoker, "minecraft:smoker");
 		return true;
 	case Block::minecraft_loom:
-		message::play::send::chatMessage(p, Chat("Loom right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::loom, "minecraft:loom");
 		return true;
 	case Block::minecraft_shulker_box:
 	case Block::minecraft_white_shulker_box:
@@ -1752,16 +1751,16 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	case Block::minecraft_green_shulker_box:
 	case Block::minecraft_red_shulker_box:
 	case Block::minecraft_black_shulker_box:
-		message::play::send::chatMessage(p, Chat("Shulker box right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::shulker_box, "minecraft:shulker_box");
 		return true;
 	case Block::minecraft_barrel:
-		message::play::send::chatMessage(p, Chat("Barrel right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::generic_9x3, "minecraft:barrel");
 		return true;
 	case Block::minecraft_dispenser:
-		message::play::send::chatMessage(p, Chat("Dispenser right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::generic_3x3, "minecraft:dispenser");
 		return true;
 	case Block::minecraft_dropper:
-		message::play::send::chatMessage(p, Chat("Dropper right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::openWindow(p, window::getID(), window::type::generic_3x3, "minecraft:dropper");
 		return true;
 	case Block::minecraft_oak_trapdoor:
 	case Block::minecraft_spruce_trapdoor:

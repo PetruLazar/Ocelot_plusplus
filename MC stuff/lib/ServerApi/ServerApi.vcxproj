@@ -30,13 +30,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -156,6 +156,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Mc stuff\lib\SFML\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -175,8 +176,10 @@
     <ClInclude Include="json\json_base.h" />
     <ClInclude Include="json\json_boolean.h" />
     <ClInclude Include="json\json_compound.h" />
+    <ClInclude Include="json\json_decimal.h" />
     <ClInclude Include="json\json_int.h" />
     <ClInclude Include="json\json_string.h" />
+    <ClInclude Include="mcexception.h" />
     <ClInclude Include="nbt.h" />
     <ClInclude Include="nbt\nbt_base.h" />
     <ClInclude Include="nbt\nbt_byte.h" />
@@ -223,6 +226,7 @@
     <ClInclude Include="types\particle.h" />
     <ClInclude Include="types\position.h" />
     <ClInclude Include="types\queue.h" />
+    <ClInclude Include="types\recipe.h" />
     <ClInclude Include="types\registry.h" />
     <ClInclude Include="types\slot.h" />
     <ClInclude Include="types\statistics.h" />
@@ -232,6 +236,7 @@
     <ClInclude Include="types\utils.h" />
     <ClInclude Include="types\uuid.h" />
     <ClInclude Include="types\varData.h" />
+    <ClInclude Include="types\window.h" />
     <ClInclude Include="types\winLeanMean.h" />
     <ClInclude Include="world.h" />
     <ClInclude Include="world\block.h" />
@@ -248,6 +253,7 @@
     <ClCompile Include="json\json_base.cpp" />
     <ClCompile Include="json\json_boolean.cpp" />
     <ClCompile Include="json\json_compound.cpp" />
+    <ClCompile Include="json\json_decimal.cpp" />
     <ClCompile Include="json\json_int.cpp" />
     <ClCompile Include="json\json_string.cpp" />
     <ClCompile Include="nbt\nbt.cpp" />
@@ -288,6 +294,7 @@
     <ClCompile Include="types\particle.cpp" />
     <ClCompile Include="types\position.cpp" />
     <ClCompile Include="types\queue.cpp" />
+    <ClCompile Include="types\recipe.cpp" />
     <ClCompile Include="types\registry.cpp" />
     <ClCompile Include="types\slot.cpp" />
     <ClCompile Include="types\statistics.cpp" />

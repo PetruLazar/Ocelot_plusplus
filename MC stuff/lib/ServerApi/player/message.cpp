@@ -165,7 +165,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::playerAbilities(p, true, true, true, p->gm == gamemode::creative, 0.05f, 0.1f);
 
-	play::send::declareRecipes(p, 0);
+	play::send::declareRecipes(p, 0, nullptr); //add recipes!
 
 	std::vector<Player*> inGamePlayers;
 	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.push_back(player);
@@ -1018,13 +1018,32 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equ
 
 	finishSendMacro;
 }
-void message::play::send::declareRecipes(Player* p, varInt nOfRecipes)
+void message::play::send::entityEquipment(Player* p, varInt eid, const std::vector<Equipment>& equipments)
 {
+	varInt id = (int)id::entityEquipment;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+
+	for (int i = 0; i < equipments.size() - 1; i++)
+		equipments[i].write(data);
+
+	Equipment e = equipments.back();
+	e.unSet();
+	e.write(data);
+
+	finishSendMacro;
+}
+void message::play::send::declareRecipes(Player* p, varInt nOfRecipes, recipe::Recipe** recipes)
+{ //not tested!
 	varInt id = (int)id::declareRecipes;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	nOfRecipes.write(data);
+	for (int i = 0; i < nOfRecipes; i++)
+		recipes[i]->write(data);
 
 	finishSendMacro;
 }
@@ -1379,7 +1398,7 @@ void message::play::send::closeWindow(Player* p, Byte winId) {
 
 	finishSendMacro;
 }
-void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried) {
+void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, Slot* carried) {
 	varInt id = (int)id::windowItems;
 	prepareSendMacro(1024 * 1024);
 
@@ -1389,7 +1408,7 @@ void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, var
 	count.write(data);
 	for (int i = 0; i < count; i++)
 		slots[i]->write(data);
-	carried.write(data);
+	carried->write(data);
 
 	finishSendMacro;
 }
@@ -1592,7 +1611,8 @@ void message::play::send::selectAdvancementTab(Player* p, bool hasId, const mcSt
 
 	id.write(data);
 	*(data++) = hasId;
-	identifier.write(data);
+	if (hasId)
+		identifier.write(data);
 
 	finishSendMacro;
 }
@@ -1957,9 +1977,20 @@ void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 	broadcastMessage(send::playerInfo(player_macro, playerInfo::updateLatency, 1, &p));
 	p->lastKeepAliveId = -1;
 }
+void message::play::receive::lockDifficulty(Player* p, bool locked)
+{
+	//unused
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: lock difficulty");
+}
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
-	if (teleportId == p->pendingTpId) p->pendingTpId = -1;
+	if (teleportId == p->pendingTpId) 
+		p->pendingTpId = -1;
+}
+void message::play::receive::setDifficulty(Player* p, Byte difficulty)
+{
+	//unused
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: set difficulty");
 }
 void message::play::receive::clientStatus(Player*, varInt actionId)
 {
@@ -1974,6 +2005,14 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 	p->displayedSkinParts = displayedSkinParts;
 	p->mainHand = mainHand;
 	p->disableTextFiltering = disableTextFiltering;
+}
+void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte buttonId)
+{
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: clickWindowButton");
+}
+void message::play::receive::clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
+{
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: clickWindow");
 }
 void message::play::receive::closeWindow(Player* p, Byte winId) {
 	message::play::send::closeWindow(p, winId);
@@ -1995,11 +2034,11 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 		bookData = new nbt_compound("", new nbt * [1]{ new nbt_list("pages", pagesToNbt, count) }, 1);
 
 	if (hasTitle) {
-		delete p->slots[p->selectedSlot + 36];
-		p->slots[p->selectedSlot + 36] = new Slot(true, 943, 1, bookData);
+		delete p->slots[p->selectedSlot];
+		p->slots[p->selectedSlot] = new Slot(true, 943, 1, bookData);
 
 		Equipment** eqp = new Equipment * [1];
-		eqp[0] = new Equipment(0, p->slots[p->selectedSlot + 36]);
+		eqp[0] = new Equipment(0, p->slots[p->selectedSlot]);
 
 		for (Player* seener : p->seenBy)
 			message::play::send::entityEquipment(seener, p->getEid(), eqp);
@@ -2009,7 +2048,7 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 		delete[] eqp;
 	}
 	else {
-		p->slots[p->selectedSlot + 36]->updateNBT(bookData);
+		p->slots[p->selectedSlot]->updateNBT(bookData);
 	}
 }
 void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
@@ -2062,7 +2101,9 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy) ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+	for (Player* seener : p->seenBy) 
+		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+	
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
 }
@@ -2091,20 +2132,47 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
 }
+void message::play::receive::pickItem(Player* p, varInt slot)
+{
+	IF_PROTOCOL_WARNINGS(Log::txt() << "Unhandled packet: pickItem");
+	//Log::txt() << "\npickite";
+	//Log::txt() << "\na: " << p->slots[slot]->getItemId();
+	varInt foundSlot = 0;
+	for (int i = 36; i < 45; i++) { //first search should start from the current slot and loop around it
+		if (!p->slots[i]->isPresent())
+			foundSlot = i;
+	}
+
+	if (!foundSlot)
+	{ //start second search
+
+	}
+
+	if (!foundSlot) //still no good slot found, use the current one
+		foundSlot = slot;
+
+	//message::play::send::setSlot(p, -2, 0, )
+
+	//message::play::send::heldItemChange(p, foundSlot);
+}
 void message::play::receive::craftRecipeRequest(Player* p, Byte winId, const mcString& recipe, bool makeAll)
 {
-
+	
 }
 void message::play::receive::resourcePackStatus(Player* p, varInt result)
 {
 
 }
+void message::play::receive::advancementTab(Player*, varInt action, const mcString& tabId)
+{
+
+}
 void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
-	p->selectedSlot = slot;
+	p->selectedSlot = slot + 36;
 
 	Equipment** eqp = new Equipment * [1];
-	eqp[0] = new Equipment(0, p->slots[36 + slot]);
+	eqp[0] = new Equipment(0, p->slots[p->selectedSlot]);
 
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->getEid(), eqp);
@@ -2121,7 +2189,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 		delete p->slots[slot];
 		p->slots[slot] = clickedItem;
 
-		if (p->selectedSlot == slot - 36) {
+		if (p->selectedSlot == slot) {
 			Equipment** eqp = new Equipment * [1];
 			eqp[0] = new Equipment(0, clickedItem);
 
@@ -2176,11 +2244,58 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 	}
 	break;
 	case playerDigging::dropItemStack:
+	{
+		Slot* playerItem = p->slots[p->selectedSlot];
 
-		break;
+		if (playerItem->count == 0) //empty slot
+			return;
+
+		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
+		p->world->entities.emplace_back(theItem);
+
+		for (Player* seener : p->seenBy) {
+			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+		}
+		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+
+		delete playerItem;
+		p->slots[p->selectedSlot] = new Slot();
+
+		for (Player* seener : p->seenBy)
+			message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot]) });
+	}
+	break;
 	case playerDigging::dropItem:
+	{
+		Slot* playerItem = p->slots[p->selectedSlot];
 
-		break;
+		if (playerItem->count == 0) //empty slot
+			return;
+
+		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
+		theItem->theItem.count = 1;
+
+		p->world->entities.emplace_back(theItem);
+
+		for (Player* seener : p->seenBy) {
+			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+		}
+		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+
+		playerItem->count -= 1;
+		if (playerItem->count == 0) {
+			delete playerItem;
+			p->slots[p->selectedSlot] = new Slot();
+
+			for (Player* seener : p->seenBy)
+				message::play::send::entityEquipment(seener, p->getEid(), { Equipment(0, p->slots[p->selectedSlot]) });
+		}
+	}
+	break;
 	case playerDigging::shootArrow: //also finish eating
 
 		break;
@@ -2193,19 +2308,19 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 {
 	switch (actionId) {
 	case 0: //start sneaking
-		p->attributes |= 1 << 0x02;
+		p->attributes |= 0x02;
 		break;
 	case 1: //stop sneaking
-		p->attributes &= ~(1 << 0x02);
+		p->attributes &= ~(0x02);
 		break;
 	case 2: //leave bed
 
 		break;
 	case 3: //start sprinting
-		p->attributes |= 1 << 0x08;
+		p->attributes |= 0x08;
 		break;
 	case 4: //stop sprinting
-		p->attributes &= ~(1 << 0x08);
+		p->attributes &= ~(0x08);
 		break;
 	case 5: //start jump with horse
 
@@ -2229,6 +2344,14 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(6, Entity::Metadata::type::_Pose, &entityPose) });
 	}
 }
+void message::play::receive::pong(Player* p, bint id)
+{
+	message::play::send::ping(p, id);
+}
+void message::play::receive::nameItem(Player*, const mcString& newName)
+{
+	//de facut cand o sa am anvilurile disponibile
+}
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
 	std::string text = "playerBlockPlacement: ";
@@ -2238,7 +2361,7 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 	{
 	case Hand::main:
 		text += "main ";
-		slot = p->slots[p->selectedSlot + 36];
+		slot = p->slots[p->selectedSlot];
 		break;
 	case Hand::offhand:
 		text += "off";
@@ -2279,12 +2402,12 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 	//play::send::setSlot(p, 0, 12, 36 + p->selectedSlot, *p->slots[p->selectedSlot + 36]);
 }
 void message::play::receive::useItem(Player* p, Hand hand) {
-	switch (p->slots[p->selectedSlot + 36]->getItemId()) {
+	switch (p->slots[p->selectedSlot]->getItemId()) {
 	case 943:
 		message::play::send::openBook(p, hand);
 		break;
 	default:
-		Log::txt() << "\nuseItem unhandled: " << p->slots[p->selectedSlot + 36]->getItemId();
+		Log::txt() << "\nuseItem unhandled: " << p->slots[p->selectedSlot]->getItemId();
 		break;
 	}
 }
@@ -2514,7 +2637,9 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::setDifficulty:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: set difficulty");
+			bool difficulty;
+			difficulty = *(data++);
+			message::play::receive::setDifficulty(p, difficulty);
 		}
 		break;
 		case play::id::chatMessage_serverbound:
@@ -2558,12 +2683,39 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::clickWindowButton:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: click window button");
+			Byte windowID, buttonID;
+			windowID = *(data++);
+			buttonID = *(data++);
+
+			play::receive::clickWindowButton(p, windowID, buttonID);
 		}
 		break;
 		case play::id::clickWindow:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: click window");
+			Byte windowID, button;
+			varInt stateID, mode, length;
+			bshort clickedSlot;
+			bshort* slotNumbers;
+			Slot** slots;
+			Slot* clickedItem = new Slot();
+
+			windowID = *(data++);
+			stateID.read(data);
+			clickedSlot.read(data);
+			button = *(data++);
+			mode.read(data);
+			length.read(data);
+			slotNumbers = new bshort[length];
+			slots = new Slot * [length];
+			for (int i = 0; i < length; i++) {
+				slotNumbers[i].read(data);
+				slots[i] = new Slot();
+				slots[i]->read(data);
+			}
+			if(mode != 4)
+				clickedItem->read(data);
+
+			play::receive::clickWindow(p, windowID, stateID, clickedSlot, button, mode, length, slotNumbers, slots, clickedItem);
 		}
 		break;
 		case play::id::closeWindow_serverbound:
@@ -2643,7 +2795,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::lockDifficulty:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: lock difficulty");
+			bool locked;
+			locked = *(data++);
+			
+			play::receive::lockDifficulty(p, locked);
 		}
 		break;
 		case play::id::playerPosition:
@@ -2698,7 +2853,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::pickItem:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: pick item");
+			varInt slotToUse;
+			slotToUse.read(data);
+
+			message::play::receive::pickItem(p, slotToUse);
 		}
 		break;
 		case play::id::craftRecipeRequest:
@@ -2713,7 +2871,7 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			message::play::receive::craftRecipeRequest(p, windowID, recipe, makeAll);
 
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: craft recipe request");
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: craft recipe request");
 		}
 		break;
 		case play::id::playerAbilities_serverbound:
@@ -2752,7 +2910,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::pong:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: pong");
+			bint id;
+			id.read(data);
+
+			play::receive::pong(p, id);
 		}
 		break;
 		case play::id::setRecipeBookState:
@@ -2767,6 +2928,10 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::nameItem:
 		{
+			mcString newName;
+			newName.read(data);
+
+			play::receive::nameItem(p, newName);
 			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: name item");
 		}
 		break;
@@ -2776,11 +2941,19 @@ void message::dispatch(Player* p, char* data, uint size)
 			result.read(data);
 
 			play::receive::resourcePackStatus(p, result);
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: resource pack status");
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: resource pack status");
 		}
 		break;
 		case play::id::advancementTab:
 		{
+			varInt action;
+			mcString tabID = "";
+
+			action.read(data);
+			if (action == 0)
+				tabID.read(data);
+
+			play::receive::advancementTab(p, action, tabID);
 			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: advancement tab");
 		}
 		break;

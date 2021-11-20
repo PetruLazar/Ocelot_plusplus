@@ -86,6 +86,7 @@ public:
 	//player inventory
 	Slot* slots[46];
 	bshort selectedSlot = 0; //main hand selected slot
+	Slot* floatingItem;
 
 	//player info
 	varInt ping;
