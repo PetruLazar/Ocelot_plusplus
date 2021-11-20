@@ -22,6 +22,8 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 	for (int i = 0; i < 46; i++) {
 		slots[i] = new Slot();
 	}
+
+	floatingItem = new Slot();
 }
 Player::~Player()
 {

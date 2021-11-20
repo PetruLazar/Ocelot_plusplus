@@ -1398,7 +1398,7 @@ void message::play::send::closeWindow(Player* p, Byte winId) {
 
 	finishSendMacro;
 }
-void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, const Slot& carried) {
+void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, Slot* carried) {
 	varInt id = (int)id::windowItems;
 	prepareSendMacro(1024 * 1024);
 
@@ -1408,7 +1408,7 @@ void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, var
 	count.write(data);
 	for (int i = 0; i < count; i++)
 		slots[i]->write(data);
-	carried.write(data);
+	carried->write(data);
 
 	finishSendMacro;
 }
@@ -2712,7 +2712,8 @@ void message::dispatch(Player* p, char* data, uint size)
 				slots[i] = new Slot();
 				slots[i]->read(data);
 			}
-			clickedItem->read(data);
+			if(mode != 4)
+				clickedItem->read(data);
 
 			play::receive::clickWindow(p, windowID, stateID, clickedSlot, button, mode, length, slotNumbers, slots, clickedItem);
 		}
