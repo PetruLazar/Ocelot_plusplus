@@ -324,6 +324,18 @@ namespace Entity {
 		void write(char*& buffer) const;
 	};
 
+	enum class Attributes : Byte
+	{
+		isOnFire = 0x01,
+		isCrouching = 0x02,
+		//unused = 0x04,
+		isSprinting =0x08,
+		isSwimming =0x10,
+		isInvisible = 0x20,
+		isGlowing = 0x40,
+		usingElytra = 0x80
+	};
+
 	struct entity
 	{
 	protected:
