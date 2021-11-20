@@ -13,7 +13,8 @@ public:
 		string,
 		array,
 		compound,
-		boolean
+		boolean,
+		decimal
 	};
 
 	SERVER_API json(json::type, const std::string& name = "");
@@ -33,6 +34,8 @@ public:
 
 	//get the value of an int json object
 	SERVER_API virtual int& iValue();
+	//get the value of a decimal json object
+	SERVER_API virtual double& dValue();
 	//get the value of a bool json object
 	SERVER_API virtual bool& bValue();
 	//get the value of a string json object

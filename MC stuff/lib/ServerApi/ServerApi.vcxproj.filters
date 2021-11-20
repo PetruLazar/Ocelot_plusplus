@@ -279,6 +279,9 @@
     <ClInclude Include="mcexception.h">
       <Filter>Header Files\debug</Filter>
     </ClInclude>
+    <ClInclude Include="json\json_decimal.h">
+      <Filter>Header Files\json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -466,6 +469,9 @@
     </ClCompile>
     <ClCompile Include="types\recipe.cpp">
       <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_decimal.cpp">
+      <Filter>Source Files\json</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

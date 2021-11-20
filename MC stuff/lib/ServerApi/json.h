@@ -6,6 +6,7 @@
 #include "json/json_base.h"
 #include "json/json_string.h"
 #include "json/json_int.h"
+#include "json/json_decimal.h"
 #include "json/json_array.h"
 #include "json/json_compound.h"
 #include "json/json_boolean.h"
