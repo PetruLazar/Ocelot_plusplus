@@ -95,6 +95,24 @@ namespace CommandHandlers
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
+		case 4:
+		{
+			int x = fastfloor((double)executingPlayer->X),
+				y = fastfloor((double)executingPlayer->Y) - 1,
+				z = fastfloor((double)executingPlayer->Z);
+
+			y = executingPlayer->world->AbsToRelHeight(y);
+			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			for (int blockid = 0; blockid < 898; blockid++)
+			{
+				int row = (blockid / 30 - 14)*3,
+					col = (blockid % 30 - 14)*3;
+				executingPlayer->world->setBlock(x + row, y, z + col, Registry::getBlockState(Registry::getName("minecraft:block", blockid)));
+			}
+			for (int i = -5; i <= 5; i++) for (int j = -5; j <= 5; j++) message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX + i, executingPlayer->chunkZ + j, false);
+			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		}
+		break;
 		//add tests here - starting at 1
 		default:
 			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
