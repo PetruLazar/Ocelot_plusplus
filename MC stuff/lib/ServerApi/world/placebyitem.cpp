@@ -213,7 +213,6 @@ bool fullSolidBlock(Block id)
 	case Block::minecraft_deepslate_diamond_ore:
 	case Block::minecraft_diamond_block:
 	case Block::minecraft_crafting_table:
-		//case Block::minecraft_farmland:
 	case Block::minecraft_furnace:
 	case Block::minecraft_redstone_ore:
 	case Block::minecraft_deepslate_redstone_ore:
@@ -225,7 +224,7 @@ bool fullSolidBlock(Block id)
 	case Block::minecraft_soul_soil:
 	case Block::minecraft_basalt:
 	case Block::minecraft_polished_basalt:
-	case Block::minecraft_glowstone: //?
+	case Block::minecraft_glowstone:
 	case Block::minecraft_white_stained_glass:
 	case Block::minecraft_orange_stained_glass:
 	case Block::minecraft_magenta_stained_glass:
@@ -304,7 +303,6 @@ bool fullSolidBlock(Block id)
 	case Block::minecraft_purpur_block:
 	case Block::minecraft_purpur_pillar:
 	case Block::minecraft_end_stone_bricks:
-		//case Block::minecraft_dirt_path:
 	case Block::minecraft_repeating_command_block:
 	case Block::minecraft_chain_command_block:
 	case Block::minecraft_magma_block:
@@ -454,16 +452,9 @@ bool fullSolidBlock(Block id)
 	case Block::minecraft_dripstone_block:
 		return true;
 
-		//non-full solid blocks
-	//case Block::minecraft_air:
-	//case Block::minecraft_oak_sapling:
-	//case Block::minecraft_spruce_sapling:
-	//case Block::minecraft_birch_sapling:
-	//case Block::minecraft_jungle_sapling:
-	//case Block::minecraft_acacia_sapling:
-	//case Block::minecraft_dark_oak_sapling:
-	//case Block::minecraft_water:
-	//case Block::minecraft_lava:
+		//block that might support some blocks
+	//case Block::minecraft_dirt_path:
+	//case Block::minecraft_farmland:
 	//case Block::minecraft_oak_leaves:
 	//case Block::minecraft_spruce_leaves:
 	//case Block::minecraft_birch_leaves:
@@ -472,194 +463,22 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_dark_oak_leaves:
 	//case Block::minecraft_azalea_leaves:
 	//case Block::minecraft_flowering_azalea_leaves:
-	//case Block::minecraft_white_bed:
-	//case Block::minecraft_orange_bed:
-	//case Block::minecraft_magenta_bed:
-	//case Block::minecraft_light_blue_bed:
-	//case Block::minecraft_yellow_bed:
-	//case Block::minecraft_lime_bed:
-	//case Block::minecraft_pink_bed:
-	//case Block::minecraft_gray_bed:
-	//case Block::minecraft_light_gray_bed:
-	//case Block::minecraft_cyan_bed:
-	//case Block::minecraft_purple_bed:
-	//case Block::minecraft_blue_bed:
-	//case Block::minecraft_brown_bed:
-	//case Block::minecraft_green_bed:
-	//case Block::minecraft_red_bed:
-	//case Block::minecraft_black_bed:
-	//case Block::minecraft_powered_rail:
-	//case Block::minecraft_detector_rail:
 	//case Block::minecraft_cobweb:
-	//case Block::minecraft_grass:
-	//case Block::minecraft_fern:
-	//case Block::minecraft_dead_bush:
-	//case Block::minecraft_seagrass:
-	//case Block::minecraft_tall_seagrass:
 	//case Block::minecraft_piston_head:
-	//case Block::minecraft_moving_piston:
-	//case Block::minecraft_dandelion:
-	//case Block::minecraft_poppy:
-	//case Block::minecraft_blue_orchid:
-	//case Block::minecraft_allium:
-	//case Block::minecraft_azure_bluet:
-	//case Block::minecraft_red_tulip:
-	//case Block::minecraft_orange_tulip:
-	//case Block::minecraft_white_tulip:
-	//case Block::minecraft_pink_tulip:
-	//case Block::minecraft_oxeye_daisy:
-	//case Block::minecraft_cornflower:
-	//case Block::minecraft_wither_rose:
-	//case Block::minecraft_lily_of_the_valley:
-	//case Block::minecraft_brown_mushroom:
-	//case Block::minecraft_red_mushroom:
-	//case Block::minecraft_torch:
-	//case Block::minecraft_wall_torch:
-	//case Block::minecraft_fire:
-	//case Block::minecraft_soul_fire:
-	//case Block::minecraft_oak_stairs:
-	//case Block::minecraft_chest:
-	//case Block::minecraft_redstone_wire:
-	//case Block::minecraft_wheat:
-	//case Block::minecraft_oak_sign:
-	//case Block::minecraft_spruce_sign:
-	//case Block::minecraft_birch_sign:
-	//case Block::minecraft_acacia_sign:
-	//case Block::minecraft_jungle_sign:
-	//case Block::minecraft_dark_oak_sign:
 	//case Block::minecraft_oak_door:
-	//case Block::minecraft_ladder:
-	//case Block::minecraft_rail:
-	//case Block::minecraft_cobblestone_stairs:
-	//case Block::minecraft_oak_wall_sign:
-	//case Block::minecraft_spruce_wall_sign:
-	//case Block::minecraft_birch_wall_sign:
-	//case Block::minecraft_acacia_wall_sign:
-	//case Block::minecraft_jungle_wall_sign:
-	//case Block::minecraft_dark_oak_wall_sign:
-	//case Block::minecraft_lever:
-	//case Block::minecraft_stone_pressure_plate:
-	//case Block::minecraft_iron_door:
-	//case Block::minecraft_oak_pressure_plate:
-	//case Block::minecraft_spruce_pressure_plate:
-	//case Block::minecraft_birch_pressure_plate:
-	//case Block::minecraft_jungle_pressure_plate:
-	//case Block::minecraft_acacia_pressure_plate:
-	//case Block::minecraft_dark_oak_pressure_plate:
-	//case Block::minecraft_redstone_torch:
-	//case Block::minecraft_redstone_wall_torch:
-	//case Block::minecraft_stone_button:
-	//case Block::minecraft_snow:
-	//case Block::minecraft_ice:
-	//case Block::minecraft_cactus:
-	//case Block::minecraft_sugar_cane:
-	//case Block::minecraft_oak_fence:
 	//case Block::minecraft_pumpkin:
-	//case Block::minecraft_soul_torch:
-	//case Block::minecraft_soul_wall_torch:
-	//case Block::minecraft_nether_portal:
 	//case Block::minecraft_carved_pumpkin:
 	//case Block::minecraft_jack_o_lantern:
-	//case Block::minecraft_cake:
-	//case Block::minecraft_repeater:
 	//case Block::minecraft_oak_trapdoor:
 	//case Block::minecraft_spruce_trapdoor:
 	//case Block::minecraft_birch_trapdoor:
 	//case Block::minecraft_jungle_trapdoor:
 	//case Block::minecraft_acacia_trapdoor:
 	//case Block::minecraft_dark_oak_trapdoor:
-	//case Block::minecraft_iron_bars:
-	//case Block::minecraft_chain:
-	//case Block::minecraft_glass_pane:
-	//case Block::minecraft_melon:
-	//case Block::minecraft_attached_pumpkin_stem:
-	//case Block::minecraft_attached_melon_stem:
-	//case Block::minecraft_pumpkin_stem:
-	//case Block::minecraft_melon_stem:
-	//case Block::minecraft_vine:
-	//case Block::minecraft_glow_lichen:
-	//case Block::minecraft_oak_fence_gate:
-	//case Block::minecraft_brick_stairs:
-	//case Block::minecraft_stone_brick_stairs:
-	//case Block::minecraft_lily_pad:
-	//case Block::minecraft_nether_brick_fence:
-	//case Block::minecraft_nether_brick_stairs:
-	//case Block::minecraft_nether_wart:
-	//case Block::minecraft_enchanting_table:
-	//case Block::minecraft_brewing_stand:
-	//case Block::minecraft_cauldron:
-	//case Block::minecraft_water_cauldron:
-	//case Block::minecraft_lava_cauldron:
-	//case Block::minecraft_powder_snow_cauldron:
-	//case Block::minecraft_end_portal:
-	//case Block::minecraft_end_portal_frame:
-	//case Block::minecraft_dragon_egg:
-	//case Block::minecraft_cocoa:
-	//case Block::minecraft_sandstone_stairs:
-	//case Block::minecraft_ender_chest:
-	//case Block::minecraft_tripwire_hook:
-	//case Block::minecraft_tripwire:
-	//case Block::minecraft_spruce_stairs:
-	//case Block::minecraft_birch_stairs:
-	//case Block::minecraft_jungle_stairs:
-	//case Block::minecraft_cobblestone_wall:
-	//case Block::minecraft_mossy_cobblestone_wall:
-	//case Block::minecraft_flower_pot:
-	//case Block::minecraft_potted_oak_sapling:
-	//case Block::minecraft_potted_spruce_sapling:
-	//case Block::minecraft_potted_birch_sapling:
-	//case Block::minecraft_potted_jungle_sapling:
-	//case Block::minecraft_potted_acacia_sapling:
-	//case Block::minecraft_potted_dark_oak_sapling:
-	//case Block::minecraft_potted_fern:
-	//case Block::minecraft_potted_dandelion:
-	//case Block::minecraft_potted_poppy:
-	//case Block::minecraft_potted_blue_orchid:
-	//case Block::minecraft_potted_allium:
-	//case Block::minecraft_potted_azure_bluet:
-	//case Block::minecraft_potted_red_tulip:
-	//case Block::minecraft_potted_orange_tulip:
-	//case Block::minecraft_potted_white_tulip:
-	//case Block::minecraft_potted_pink_tulip:
-	//case Block::minecraft_potted_oxeye_daisy:
-	//case Block::minecraft_potted_cornflower:
-	//case Block::minecraft_potted_lily_of_the_valley:
-	//case Block::minecraft_potted_wither_rose:
-	//case Block::minecraft_potted_red_mushroom:
-	//case Block::minecraft_potted_brown_mushroom:
-	//case Block::minecraft_potted_dead_bush:
-	//case Block::minecraft_potted_cactus:
-	//case Block::minecraft_carrots:
-	//case Block::minecraft_potatoes:
-	//case Block::minecraft_oak_button:
-	//case Block::minecraft_spruce_button:
-	//case Block::minecraft_birch_button:
-	//case Block::minecraft_jungle_button:
-	//case Block::minecraft_acacia_button:
-	//case Block::minecraft_dark_oak_button:
-	//case Block::minecraft_skeleton_skull:
-	//case Block::minecraft_skeleton_wall_skull:
-	//case Block::minecraft_wither_skeleton_skull:
-	//case Block::minecraft_wither_skeleton_wall_skull:
-	//case Block::minecraft_zombie_head:
-	//case Block::minecraft_zombie_wall_head:
-	//case Block::minecraft_player_head:
-	//case Block::minecraft_player_wall_head:
-	//case Block::minecraft_creeper_head:
-	//case Block::minecraft_creeper_wall_head:
-	//case Block::minecraft_dragon_head:
-	//case Block::minecraft_dragon_wall_head:
-	//case Block::minecraft_anvil:
-	//case Block::minecraft_chipped_anvil:
-	//case Block::minecraft_damaged_anvil:
-	//case Block::minecraft_trapped_chest:
-	//case Block::minecraft_light_weighted_pressure_plate:
-	//case Block::minecraft_heavy_weighted_pressure_plate:
-	//case Block::minecraft_comparator:
-	//case Block::minecraft_daylight_detector:
-	//case Block::minecraft_hopper: //?
-	//case Block::minecraft_quartz_stairs:
-	//case Block::minecraft_activator_rail:
+	//case Block::minecraft_cobblestone_stairs:
+	//case Block::minecraft_iron_door:
+	//case Block::minecraft_snow:
+	//case Block::minecraft_ice:
 	//case Block::minecraft_white_stained_glass_pane:
 	//case Block::minecraft_orange_stained_glass_pane:
 	//case Block::minecraft_magenta_stained_glass_pane:
@@ -676,10 +495,28 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_green_stained_glass_pane:
 	//case Block::minecraft_red_stained_glass_pane:
 	//case Block::minecraft_black_stained_glass_pane:
+	//case Block::minecraft_oxidized_cut_copper_stairs:
+	//case Block::minecraft_weathered_cut_copper_stairs:
+	//case Block::minecraft_exposed_cut_copper_stairs:
+	//case Block::minecraft_cut_copper_stairs:
+	//case Block::minecraft_oxidized_cut_copper_slab:
+	//case Block::minecraft_weathered_cut_copper_slab:
+	//case Block::minecraft_exposed_cut_copper_slab:
+	//case Block::minecraft_cut_copper_slab:
+	//case Block::minecraft_waxed_oxidized_cut_copper_stairs:
+	//case Block::minecraft_waxed_weathered_cut_copper_stairs:
+	//case Block::minecraft_waxed_exposed_cut_copper_stairs:
+	//case Block::minecraft_waxed_cut_copper_stairs:
+	//case Block::minecraft_waxed_oxidized_cut_copper_slab:
+	//case Block::minecraft_waxed_weathered_cut_copper_slab:
+	//case Block::minecraft_waxed_exposed_cut_copper_slab:
+	//case Block::minecraft_waxed_cut_copper_slab:
+	//case Block::minecraft_daylight_detector:
+	//case Block::minecraft_hopper: //?
+	//case Block::minecraft_quartz_stairs:
 	//case Block::minecraft_acacia_stairs:
 	//case Block::minecraft_dark_oak_stairs:
 	//case Block::minecraft_barrier:
-	//case Block::minecraft_light:
 	//case Block::minecraft_iron_trapdoor:
 	//case Block::minecraft_prismarine_stairs:
 	//case Block::minecraft_prismarine_brick_stairs:
@@ -687,61 +524,12 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_prismarine_slab:
 	//case Block::minecraft_prismarine_brick_slab:
 	//case Block::minecraft_dark_prismarine_slab:
-	//case Block::minecraft_white_carpet:
-	//case Block::minecraft_orange_carpet:
-	//case Block::minecraft_magenta_carpet:
-	//case Block::minecraft_light_blue_carpet:
-	//case Block::minecraft_yellow_carpet:
-	//case Block::minecraft_lime_carpet:
-	//case Block::minecraft_pink_carpet:
-	//case Block::minecraft_gray_carpet:
-	//case Block::minecraft_light_gray_carpet:
-	//case Block::minecraft_cyan_carpet:
-	//case Block::minecraft_purple_carpet:
-	//case Block::minecraft_blue_carpet:
-	//case Block::minecraft_brown_carpet:
-	//case Block::minecraft_green_carpet:
-	//case Block::minecraft_red_carpet:
-	//case Block::minecraft_black_carpet:
-	//case Block::minecraft_packed_ice: //?
-	//case Block::minecraft_sunflower:
-	//case Block::minecraft_lilac:
-	//case Block::minecraft_rose_bush:
-	//case Block::minecraft_peony:
-	//case Block::minecraft_tall_grass:
-	//case Block::minecraft_large_fern:
-	//case Block::minecraft_white_banner:
-	//case Block::minecraft_orange_banner:
-	//case Block::minecraft_magenta_banner:
-	//case Block::minecraft_light_blue_banner:
-	//case Block::minecraft_yellow_banner:
-	//case Block::minecraft_lime_banner:
-	//case Block::minecraft_pink_banner:
-	//case Block::minecraft_gray_banner:
-	//case Block::minecraft_light_gray_banner:
-	//case Block::minecraft_cyan_banner:
-	//case Block::minecraft_purple_banner:
-	//case Block::minecraft_blue_banner:
-	//case Block::minecraft_brown_banner:
-	//case Block::minecraft_green_banner:
-	//case Block::minecraft_red_banner:
-	//case Block::minecraft_black_banner:
-	//case Block::minecraft_white_wall_banner:
-	//case Block::minecraft_orange_wall_banner:
-	//case Block::minecraft_magenta_wall_banner:
-	//case Block::minecraft_light_blue_wall_banner:
-	//case Block::minecraft_yellow_wall_banner:
-	//case Block::minecraft_lime_wall_banner:
-	//case Block::minecraft_pink_wall_banner:
-	//case Block::minecraft_gray_wall_banner:
-	//case Block::minecraft_light_gray_wall_banner:
-	//case Block::minecraft_cyan_wall_banner:
-	//case Block::minecraft_purple_wall_banner:
-	//case Block::minecraft_blue_wall_banner:
-	//case Block::minecraft_brown_wall_banner:
-	//case Block::minecraft_green_wall_banner:
-	//case Block::minecraft_red_wall_banner:
-	//case Block::minecraft_black_wall_banner:
+	//case Block::minecraft_cauldron:
+	//case Block::minecraft_water_cauldron:
+	//case Block::minecraft_lava_cauldron:
+	//case Block::minecraft_powder_snow_cauldron:
+	//case Block::minecraft_end_portal:
+	//case Block::minecraft_end_portal_frame:
 	//case Block::minecraft_red_sandstone_stairs:
 	//case Block::minecraft_oak_slab:
 	//case Block::minecraft_spruce_slab:
@@ -777,14 +565,9 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_jungle_door:
 	//case Block::minecraft_acacia_door:
 	//case Block::minecraft_dark_oak_door:
-	//case Block::minecraft_end_rod:
-	//case Block::minecraft_chorus_plant: //?
-	//case Block::minecraft_chorus_flower: //?
 	//case Block::minecraft_purpur_stairs:
-	//case Block::minecraft_beetroots:
-	//case Block::minecraft_end_gateway:
-	//case Block::minecraft_frosted_ice: //?
-	//case Block::minecraft_structure_void:
+	//case Block::minecraft_chorus_flower:
+	//case Block::minecraft_frosted_ice:
 	//case Block::minecraft_shulker_box:
 	//case Block::minecraft_white_shulker_box:
 	//case Block::minecraft_orange_shulker_box:
@@ -802,47 +585,6 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_green_shulker_box:
 	//case Block::minecraft_red_shulker_box:
 	//case Block::minecraft_black_shulker_box:
-	//case Block::minecraft_kelp:
-	//case Block::minecraft_kelp_plant:
-	//case Block::minecraft_turtle_egg:
-	//case Block::minecraft_dead_tube_coral:
-	//case Block::minecraft_dead_brain_coral:
-	//case Block::minecraft_dead_bubble_coral:
-	//case Block::minecraft_dead_fire_coral:
-	//case Block::minecraft_dead_horn_coral:
-	//case Block::minecraft_tube_coral:
-	//case Block::minecraft_brain_coral:
-	//case Block::minecraft_bubble_coral:
-	//case Block::minecraft_fire_coral:
-	//case Block::minecraft_horn_coral:
-	//case Block::minecraft_dead_tube_coral_fan:
-	//case Block::minecraft_dead_brain_coral_fan:
-	//case Block::minecraft_dead_bubble_coral_fan:
-	//case Block::minecraft_dead_fire_coral_fan:
-	//case Block::minecraft_dead_horn_coral_fan:
-	//case Block::minecraft_tube_coral_fan:
-	//case Block::minecraft_brain_coral_fan:
-	//case Block::minecraft_bubble_coral_fan:
-	//case Block::minecraft_fire_coral_fan:
-	//case Block::minecraft_horn_coral_fan:
-	//case Block::minecraft_dead_tube_coral_wall_fan:
-	//case Block::minecraft_dead_brain_coral_wall_fan:
-	//case Block::minecraft_dead_bubble_coral_wall_fan:
-	//case Block::minecraft_dead_fire_coral_wall_fan:
-	//case Block::minecraft_dead_horn_coral_wall_fan:
-	//case Block::minecraft_tube_coral_wall_fan:
-	//case Block::minecraft_brain_coral_wall_fan:
-	//case Block::minecraft_bubble_coral_wall_fan:
-	//case Block::minecraft_fire_coral_wall_fan:
-	//case Block::minecraft_horn_coral_wall_fan:
-	//case Block::minecraft_sea_pickle:
-	//case Block::minecraft_conduit:
-	//case Block::minecraft_bamboo_sapling:
-	//case Block::minecraft_bamboo:
-	//case Block::minecraft_potted_bamboo:
-	//case Block::minecraft_void_air:
-	//case Block::minecraft_cave_air:
-	//case Block::minecraft_bubble_column:
 	//case Block::minecraft_polished_granite_stairs:
 	//case Block::minecraft_smooth_red_sandstone_stairs:
 	//case Block::minecraft_mossy_stone_brick_stairs:
@@ -887,8 +629,324 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_lectern:
 	//case Block::minecraft_stonecutter:
 	//case Block::minecraft_bell:
+	//case Block::minecraft_crimson_slab:
+	//case Block::minecraft_warped_slab:
+	//case Block::minecraft_crimson_fence:
+	//case Block::minecraft_warped_fence:
+	//case Block::minecraft_crimson_trapdoor:
+	//case Block::minecraft_warped_trapdoor:
 	//case Block::minecraft_lantern:
 	//case Block::minecraft_soul_lantern:
+	//case Block::minecraft_cobbled_deepslate_stairs:
+	//case Block::minecraft_cobbled_deepslate_slab:
+	//case Block::minecraft_cobbled_deepslate_wall:
+	//case Block::minecraft_polished_deepslate_stairs:
+	//case Block::minecraft_polished_deepslate_slab:
+	//case Block::minecraft_polished_deepslate_wall:
+	//case Block::minecraft_deepslate_tile_stairs:
+	//case Block::minecraft_deepslate_tile_slab:
+	//case Block::minecraft_deepslate_tile_wall:
+	//case Block::minecraft_deepslate_brick_stairs:
+	//case Block::minecraft_deepslate_brick_slab:
+	//case Block::minecraft_deepslate_brick_wall:
+	//case Block::minecraft_sandstone_stairs:
+	//case Block::minecraft_spruce_stairs:
+	//case Block::minecraft_birch_stairs:
+	//case Block::minecraft_jungle_stairs:
+	//case Block::minecraft_cobblestone_wall:
+	//case Block::minecraft_mossy_cobblestone_wall:
+	//case Block::minecraft_anvil:
+	//case Block::minecraft_chipped_anvil:
+	//case Block::minecraft_damaged_anvil:
+	//case Block::minecraft_packed_ice:
+
+		//block that do not support anything
+	//case Block::minecraft_air:
+	//case Block::minecraft_oak_sapling:
+	//case Block::minecraft_spruce_sapling:
+	//case Block::minecraft_birch_sapling:
+	//case Block::minecraft_jungle_sapling:
+	//case Block::minecraft_acacia_sapling:
+	//case Block::minecraft_dark_oak_sapling:
+	//case Block::minecraft_water:
+	//case Block::minecraft_lava:
+	//case Block::minecraft_powered_rail:
+	//case Block::minecraft_detector_rail:
+	//case Block::minecraft_grass:
+	//case Block::minecraft_fern:
+	//case Block::minecraft_dead_bush:
+	//case Block::minecraft_seagrass:
+	//case Block::minecraft_tall_seagrass:
+	//case Block::minecraft_moving_piston:
+	//case Block::minecraft_dandelion:
+	//case Block::minecraft_poppy:
+	//case Block::minecraft_blue_orchid:
+	//case Block::minecraft_allium:
+	//case Block::minecraft_azure_bluet:
+	//case Block::minecraft_red_tulip:
+	//case Block::minecraft_orange_tulip:
+	//case Block::minecraft_white_tulip:
+	//case Block::minecraft_pink_tulip:
+	//case Block::minecraft_oxeye_daisy:
+	//case Block::minecraft_cornflower:
+	//case Block::minecraft_wither_rose:
+	//case Block::minecraft_lily_of_the_valley:
+	//case Block::minecraft_brown_mushroom:
+	//case Block::minecraft_red_mushroom:
+	//case Block::minecraft_torch:
+	//case Block::minecraft_wall_torch:
+	//case Block::minecraft_flower_pot:
+	//case Block::minecraft_potted_oak_sapling:
+	//case Block::minecraft_potted_spruce_sapling:
+	//case Block::minecraft_potted_birch_sapling:
+	//case Block::minecraft_potted_jungle_sapling:
+	//case Block::minecraft_potted_acacia_sapling:
+	//case Block::minecraft_potted_dark_oak_sapling:
+	//case Block::minecraft_potted_fern:
+	//case Block::minecraft_potted_dandelion:
+	//case Block::minecraft_potted_poppy:
+	//case Block::minecraft_potted_blue_orchid:
+	//case Block::minecraft_potted_allium:
+	//case Block::minecraft_potted_azure_bluet:
+	//case Block::minecraft_potted_red_tulip:
+	//case Block::minecraft_potted_orange_tulip:
+	//case Block::minecraft_potted_white_tulip:
+	//case Block::minecraft_potted_pink_tulip:
+	//case Block::minecraft_potted_oxeye_daisy:
+	//case Block::minecraft_potted_cornflower:
+	//case Block::minecraft_potted_lily_of_the_valley:
+	//case Block::minecraft_potted_wither_rose:
+	//case Block::minecraft_potted_red_mushroom:
+	//case Block::minecraft_potted_brown_mushroom:
+	//case Block::minecraft_potted_dead_bush:
+	//case Block::minecraft_potted_cactus:
+	//case Block::minecraft_rail:
+	//case Block::minecraft_lever:
+	//case Block::minecraft_stone_pressure_plate:
+	//case Block::minecraft_oak_pressure_plate:
+	//case Block::minecraft_spruce_pressure_plate:
+	//case Block::minecraft_birch_pressure_plate:
+	//case Block::minecraft_jungle_pressure_plate:
+	//case Block::minecraft_acacia_pressure_plate:
+	//case Block::minecraft_dark_oak_pressure_plate:
+	//case Block::minecraft_redstone_torch:
+	//case Block::minecraft_redstone_wall_torch:
+	//case Block::minecraft_stone_button:
+	//case Block::minecraft_fire:
+	//case Block::minecraft_soul_fire:
+	//case Block::minecraft_redstone_wire:
+	//case Block::minecraft_wheat:
+	//case Block::minecraft_oak_button:
+	//case Block::minecraft_spruce_button:
+	//case Block::minecraft_birch_button:
+	//case Block::minecraft_jungle_button:
+	//case Block::minecraft_acacia_button:
+	//case Block::minecraft_dark_oak_button:
+	//case Block::minecraft_white_carpet:
+	//case Block::minecraft_orange_carpet:
+	//case Block::minecraft_magenta_carpet:
+	//case Block::minecraft_light_blue_carpet:
+	//case Block::minecraft_yellow_carpet:
+	//case Block::minecraft_lime_carpet:
+	//case Block::minecraft_pink_carpet:
+	//case Block::minecraft_gray_carpet:
+	//case Block::minecraft_light_gray_carpet:
+	//case Block::minecraft_cyan_carpet:
+	//case Block::minecraft_purple_carpet:
+	//case Block::minecraft_blue_carpet:
+	//case Block::minecraft_brown_carpet:
+	//case Block::minecraft_green_carpet:
+	//case Block::minecraft_red_carpet:
+	//case Block::minecraft_black_carpet:
+	//case Block::minecraft_soul_torch:
+	//case Block::minecraft_soul_wall_torch:
+	//case Block::minecraft_nether_portal:
+	//case Block::minecraft_activator_rail:
+	//case Block::minecraft_light:
+	//case Block::minecraft_sunflower:
+	//case Block::minecraft_lilac:
+	//case Block::minecraft_rose_bush:
+	//case Block::minecraft_peony:
+	//case Block::minecraft_tall_grass:
+	//case Block::minecraft_large_fern:
+	//case Block::minecraft_candle:
+	//case Block::minecraft_white_candle:
+	//case Block::minecraft_orange_candle:
+	//case Block::minecraft_magenta_candle:
+	//case Block::minecraft_light_blue_candle:
+	//case Block::minecraft_yellow_candle:
+	//case Block::minecraft_lime_candle:
+	//case Block::minecraft_pink_candle:
+	//case Block::minecraft_gray_candle:
+	//case Block::minecraft_light_gray_candle:
+	//case Block::minecraft_cyan_candle:
+	//case Block::minecraft_purple_candle:
+	//case Block::minecraft_blue_candle:
+	//case Block::minecraft_brown_candle:
+	//case Block::minecraft_green_candle:
+	//case Block::minecraft_red_candle:
+	//case Block::minecraft_black_candle:
+
+		//not sure about the category of this blocks
+	//case Block::minecraft_white_bed:
+	//case Block::minecraft_orange_bed:
+	//case Block::minecraft_magenta_bed:
+	//case Block::minecraft_light_blue_bed:
+	//case Block::minecraft_yellow_bed:
+	//case Block::minecraft_lime_bed:
+	//case Block::minecraft_pink_bed:
+	//case Block::minecraft_gray_bed:
+	//case Block::minecraft_light_gray_bed:
+	//case Block::minecraft_cyan_bed:
+	//case Block::minecraft_purple_bed:
+	//case Block::minecraft_blue_bed:
+	//case Block::minecraft_brown_bed:
+	//case Block::minecraft_green_bed:
+	//case Block::minecraft_red_bed:
+	//case Block::minecraft_black_bed:
+	//case Block::minecraft_oak_sign:
+	//case Block::minecraft_spruce_sign:
+	//case Block::minecraft_birch_sign:
+	//case Block::minecraft_acacia_sign:
+	//case Block::minecraft_jungle_sign:
+	//case Block::minecraft_dark_oak_sign:
+	//case Block::minecraft_oak_wall_sign:
+	//case Block::minecraft_spruce_wall_sign:
+	//case Block::minecraft_birch_wall_sign:
+	//case Block::minecraft_acacia_wall_sign:
+	//case Block::minecraft_jungle_wall_sign:
+	//case Block::minecraft_dark_oak_wall_sign:
+
+
+		//to be cateogorized
+	//case Block::minecraft_oak_stairs:
+	//case Block::minecraft_chest:
+	//case Block::minecraft_ladder:
+	//case Block::minecraft_cactus:
+	//case Block::minecraft_sugar_cane:
+	//case Block::minecraft_oak_fence:
+	//case Block::minecraft_cake:
+	//case Block::minecraft_repeater:
+	//case Block::minecraft_iron_bars:
+	//case Block::minecraft_chain:
+	//case Block::minecraft_glass_pane:
+	//case Block::minecraft_melon:
+	//case Block::minecraft_attached_pumpkin_stem:
+	//case Block::minecraft_attached_melon_stem:
+	//case Block::minecraft_pumpkin_stem:
+	//case Block::minecraft_melon_stem:
+	//case Block::minecraft_vine:
+	//case Block::minecraft_glow_lichen:
+	//case Block::minecraft_oak_fence_gate:
+	//case Block::minecraft_brick_stairs:
+	//case Block::minecraft_stone_brick_stairs:
+	//case Block::minecraft_lily_pad:
+	//case Block::minecraft_nether_brick_fence:
+	//case Block::minecraft_nether_brick_stairs:
+	//case Block::minecraft_nether_wart:
+	//case Block::minecraft_enchanting_table:
+	//case Block::minecraft_brewing_stand:
+	//case Block::minecraft_dragon_egg:
+	//case Block::minecraft_cocoa:
+	//case Block::minecraft_ender_chest:
+	//case Block::minecraft_tripwire_hook:
+	//case Block::minecraft_tripwire:
+	//case Block::minecraft_carrots:
+	//case Block::minecraft_potatoes:
+	//case Block::minecraft_skeleton_skull:
+	//case Block::minecraft_skeleton_wall_skull:
+	//case Block::minecraft_wither_skeleton_skull:
+	//case Block::minecraft_wither_skeleton_wall_skull:
+	//case Block::minecraft_zombie_head:
+	//case Block::minecraft_zombie_wall_head:
+	//case Block::minecraft_player_head:
+	//case Block::minecraft_player_wall_head:
+	//case Block::minecraft_creeper_head:
+	//case Block::minecraft_creeper_wall_head:
+	//case Block::minecraft_dragon_head:
+	//case Block::minecraft_dragon_wall_head:
+	//case Block::minecraft_trapped_chest:
+	//case Block::minecraft_light_weighted_pressure_plate:
+	//case Block::minecraft_heavy_weighted_pressure_plate:
+	//case Block::minecraft_comparator:
+	//case Block::minecraft_white_banner:
+	//case Block::minecraft_orange_banner:
+	//case Block::minecraft_magenta_banner:
+	//case Block::minecraft_light_blue_banner:
+	//case Block::minecraft_yellow_banner:
+	//case Block::minecraft_lime_banner:
+	//case Block::minecraft_pink_banner:
+	//case Block::minecraft_gray_banner:
+	//case Block::minecraft_light_gray_banner:
+	//case Block::minecraft_cyan_banner:
+	//case Block::minecraft_purple_banner:
+	//case Block::minecraft_blue_banner:
+	//case Block::minecraft_brown_banner:
+	//case Block::minecraft_green_banner:
+	//case Block::minecraft_red_banner:
+	//case Block::minecraft_black_banner:
+	//case Block::minecraft_white_wall_banner:
+	//case Block::minecraft_orange_wall_banner:
+	//case Block::minecraft_magenta_wall_banner:
+	//case Block::minecraft_light_blue_wall_banner:
+	//case Block::minecraft_yellow_wall_banner:
+	//case Block::minecraft_lime_wall_banner:
+	//case Block::minecraft_pink_wall_banner:
+	//case Block::minecraft_gray_wall_banner:
+	//case Block::minecraft_light_gray_wall_banner:
+	//case Block::minecraft_cyan_wall_banner:
+	//case Block::minecraft_purple_wall_banner:
+	//case Block::minecraft_blue_wall_banner:
+	//case Block::minecraft_brown_wall_banner:
+	//case Block::minecraft_green_wall_banner:
+	//case Block::minecraft_red_wall_banner:
+	//case Block::minecraft_black_wall_banner:
+	//case Block::minecraft_end_rod:
+	//case Block::minecraft_chorus_plant:
+	//case Block::minecraft_beetroots:
+	//case Block::minecraft_end_gateway:
+	//case Block::minecraft_structure_void:
+	//case Block::minecraft_kelp:
+	//case Block::minecraft_kelp_plant:
+	//case Block::minecraft_turtle_egg:
+	//case Block::minecraft_dead_tube_coral:
+	//case Block::minecraft_dead_brain_coral:
+	//case Block::minecraft_dead_bubble_coral:
+	//case Block::minecraft_dead_fire_coral:
+	//case Block::minecraft_dead_horn_coral:
+	//case Block::minecraft_tube_coral:
+	//case Block::minecraft_brain_coral:
+	//case Block::minecraft_bubble_coral:
+	//case Block::minecraft_fire_coral:
+	//case Block::minecraft_horn_coral:
+	//case Block::minecraft_dead_tube_coral_fan:
+	//case Block::minecraft_dead_brain_coral_fan:
+	//case Block::minecraft_dead_bubble_coral_fan:
+	//case Block::minecraft_dead_fire_coral_fan:
+	//case Block::minecraft_dead_horn_coral_fan:
+	//case Block::minecraft_tube_coral_fan:
+	//case Block::minecraft_brain_coral_fan:
+	//case Block::minecraft_bubble_coral_fan:
+	//case Block::minecraft_fire_coral_fan:
+	//case Block::minecraft_horn_coral_fan:
+	//case Block::minecraft_dead_tube_coral_wall_fan:
+	//case Block::minecraft_dead_brain_coral_wall_fan:
+	//case Block::minecraft_dead_bubble_coral_wall_fan:
+	//case Block::minecraft_dead_fire_coral_wall_fan:
+	//case Block::minecraft_dead_horn_coral_wall_fan:
+	//case Block::minecraft_tube_coral_wall_fan:
+	//case Block::minecraft_brain_coral_wall_fan:
+	//case Block::minecraft_bubble_coral_wall_fan:
+	//case Block::minecraft_fire_coral_wall_fan:
+	//case Block::minecraft_horn_coral_wall_fan:
+	//case Block::minecraft_sea_pickle:
+	//case Block::minecraft_conduit:
+	//case Block::minecraft_bamboo_sapling:
+	//case Block::minecraft_bamboo:
+	//case Block::minecraft_potted_bamboo:
+	//case Block::minecraft_void_air:
+	//case Block::minecraft_cave_air:
+	//case Block::minecraft_bubble_column:
 	//case Block::minecraft_campfire:
 	//case Block::minecraft_soul_campfire:
 	//case Block::minecraft_sweet_berry_bush:
@@ -901,14 +959,8 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_twisting_vines:
 	//case Block::minecraft_twisting_vines_plant:
 	//case Block::minecraft_crimson_roots:
-	//case Block::minecraft_crimson_slab:
-	//case Block::minecraft_warped_slab:
 	//case Block::minecraft_crimson_pressure_plate:
 	//case Block::minecraft_warped_pressure_plate:
-	//case Block::minecraft_crimson_fence:
-	//case Block::minecraft_warped_fence:
-	//case Block::minecraft_crimson_trapdoor:
-	//case Block::minecraft_warped_trapdoor:
 	//case Block::minecraft_crimson_fence_gate:
 	//case Block::minecraft_warped_fence_gate:
 	//case Block::minecraft_crimson_stairs:
@@ -938,23 +990,6 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_polished_blackstone_pressure_plate:
 	//case Block::minecraft_polished_blackstone_button:
 	//case Block::minecraft_polished_blackstone_wall:
-	//case Block::minecraft_candle:
-	//case Block::minecraft_white_candle:
-	//case Block::minecraft_orange_candle:
-	//case Block::minecraft_magenta_candle:
-	//case Block::minecraft_light_blue_candle:
-	//case Block::minecraft_yellow_candle:
-	//case Block::minecraft_lime_candle:
-	//case Block::minecraft_pink_candle:
-	//case Block::minecraft_gray_candle:
-	//case Block::minecraft_light_gray_candle:
-	//case Block::minecraft_cyan_candle:
-	//case Block::minecraft_purple_candle:
-	//case Block::minecraft_blue_candle:
-	//case Block::minecraft_brown_candle:
-	//case Block::minecraft_green_candle:
-	//case Block::minecraft_red_candle:
-	//case Block::minecraft_black_candle:
 	//case Block::minecraft_candle_cake:
 	//case Block::minecraft_white_candle_cake:
 	//case Block::minecraft_orange_candle_cake:
@@ -978,22 +1013,6 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_small_amethyst_bud:
 	//case Block::minecraft_powder_snow:
 	//case Block::minecraft_sculk_sensor:
-	//case Block::minecraft_oxidized_cut_copper_stairs:
-	//case Block::minecraft_weathered_cut_copper_stairs:
-	//case Block::minecraft_exposed_cut_copper_stairs:
-	//case Block::minecraft_cut_copper_stairs:
-	//case Block::minecraft_oxidized_cut_copper_slab:
-	//case Block::minecraft_weathered_cut_copper_slab:
-	//case Block::minecraft_exposed_cut_copper_slab:
-	//case Block::minecraft_cut_copper_slab:
-	//case Block::minecraft_waxed_oxidized_cut_copper_stairs:
-	//case Block::minecraft_waxed_weathered_cut_copper_stairs:
-	//case Block::minecraft_waxed_exposed_cut_copper_stairs:
-	//case Block::minecraft_waxed_cut_copper_stairs:
-	//case Block::minecraft_waxed_oxidized_cut_copper_slab:
-	//case Block::minecraft_waxed_weathered_cut_copper_slab:
-	//case Block::minecraft_waxed_exposed_cut_copper_slab:
-	//case Block::minecraft_waxed_cut_copper_slab:
 	//case Block::minecraft_lightning_rod:
 	//case Block::minecraft_pointed_dripstone:
 	//case Block::minecraft_cave_vines:
@@ -1006,38 +1025,614 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_big_dripleaf_stem:
 	//case Block::minecraft_small_dripleaf:
 	//case Block::minecraft_hanging_roots:
-	//case Block::minecraft_cobbled_deepslate_stairs:
-	//case Block::minecraft_cobbled_deepslate_slab:
-	//case Block::minecraft_cobbled_deepslate_wall:
-	//case Block::minecraft_polished_deepslate_stairs:
-	//case Block::minecraft_polished_deepslate_slab:
-	//case Block::minecraft_polished_deepslate_wall:
-	//case Block::minecraft_deepslate_tile_stairs:
-	//case Block::minecraft_deepslate_tile_slab:
-	//case Block::minecraft_deepslate_tile_wall:
-	//case Block::minecraft_deepslate_brick_stairs:
-	//case Block::minecraft_deepslate_brick_slab:
 	//case Block::minecraft_potted_flowering_azalea_bush:
-	//case Block::minecraft_deepslate_brick_wall:
 	//case Block::minecraft_potted_azalea_bush:
 	}
 	return false;
 }
+
 //does
-bool woodenFencesConnectible(Block id, playerDigging::face, const BlockState state)
+bool genericFenceConnectible(Block id, playerDigging::face face, const BlockState& state)
 {
 	if (fullSolidBlock(id)) return true;
+	switch (id)
+	{
+	case Block::minecraft_ice:
+	case Block::minecraft_packed_ice:
+	case Block::minecraft_chorus_flower:
+	case Block::minecraft_frosted_ice:
+	case Block::minecraft_composter:
+		return true;
+		//test all the blocks below
+
+		//double slabs
+	case Block::minecraft_cut_copper_slab:
+	case Block::minecraft_exposed_cut_copper_slab:
+	case Block::minecraft_weathered_cut_copper_slab:
+	case Block::minecraft_oxidized_cut_copper_slab:
+	case Block::minecraft_waxed_cut_copper_slab:
+	case Block::minecraft_waxed_exposed_cut_copper_slab:
+	case Block::minecraft_waxed_weathered_cut_copper_slab:
+	case Block::minecraft_waxed_oxidized_cut_copper_slab:
+	case Block::minecraft_oak_slab:
+	case Block::minecraft_spruce_slab:
+	case Block::minecraft_birch_slab:
+	case Block::minecraft_jungle_slab:
+	case Block::minecraft_acacia_slab:
+	case Block::minecraft_dark_oak_slab:
+	case Block::minecraft_crimson_slab:
+	case Block::minecraft_warped_slab:
+	case Block::minecraft_stone_slab:
+	case Block::minecraft_smooth_stone_slab:
+	case Block::minecraft_sandstone_slab:
+	case Block::minecraft_cut_sandstone_slab:
+	case Block::minecraft_petrified_oak_slab:
+	case Block::minecraft_cobblestone_slab:
+	case Block::minecraft_brick_slab:
+	case Block::minecraft_stone_brick_slab:
+	case Block::minecraft_nether_brick_slab:
+	case Block::minecraft_quartz_slab:
+	case Block::minecraft_red_sandstone_slab:
+	case Block::minecraft_cut_red_sandstone_slab:
+	case Block::minecraft_purpur_slab:
+	case Block::minecraft_prismarine_slab:
+	case Block::minecraft_prismarine_brick_slab:
+	case Block::minecraft_dark_prismarine_slab:
+	case Block::minecraft_polished_granite_slab:
+	case Block::minecraft_smooth_red_sandstone_slab:
+	case Block::minecraft_mossy_stone_brick_slab:
+	case Block::minecraft_polished_diorite_slab:
+	case Block::minecraft_mossy_cobblestone_slab:
+	case Block::minecraft_end_stone_brick_slab:
+	case Block::minecraft_smooth_sandstone_slab:
+	case Block::minecraft_smooth_quartz_slab:
+	case Block::minecraft_granite_slab:
+	case Block::minecraft_andesite_slab:
+	case Block::minecraft_red_nether_brick_slab:
+	case Block::minecraft_polished_andesite_slab:
+	case Block::minecraft_diorite_slab:
+	case Block::minecraft_cobbled_deepslate_slab:
+	case Block::minecraft_polished_deepslate_slab:
+	case Block::minecraft_deepslate_brick_slab:
+	case Block::minecraft_deepslate_tile_slab:
+	case Block::minecraft_blackstone_slab:
+	case Block::minecraft_polished_blackstone_slab:
+	case Block::minecraft_polished_blackstone_brick_slab:
+		return state.getState("type") == "double";
+
+		//back of stairs
+	case Block::minecraft_cut_copper_stairs:
+	case Block::minecraft_exposed_cut_copper_stairs:
+	case Block::minecraft_weathered_cut_copper_stairs:
+	case Block::minecraft_oxidized_cut_copper_stairs:
+	case Block::minecraft_waxed_cut_copper_stairs:
+	case Block::minecraft_waxed_exposed_cut_copper_stairs:
+	case Block::minecraft_waxed_weathered_cut_copper_stairs:
+	case Block::minecraft_waxed_oxidized_cut_copper_stairs:
+	case Block::minecraft_purpur_stairs:
+	case Block::minecraft_oak_stairs:
+	case Block::minecraft_spruce_stairs:
+	case Block::minecraft_birch_stairs:
+	case Block::minecraft_jungle_stairs:
+	case Block::minecraft_crimson_stairs:
+	case Block::minecraft_warped_stairs:
+	case Block::minecraft_cobblestone_stairs:
+	case Block::minecraft_acacia_stairs:
+	case Block::minecraft_dark_oak_stairs:
+	case Block::minecraft_brick_stairs:
+	case Block::minecraft_stone_brick_stairs:
+	case Block::minecraft_nether_brick_stairs:
+	case Block::minecraft_sandstone_stairs:
+	case Block::minecraft_quartz_stairs:
+	case Block::minecraft_prismarine_stairs:
+	case Block::minecraft_prismarine_brick_stairs:
+	case Block::minecraft_dark_prismarine_stairs:
+	case Block::minecraft_red_sandstone_stairs:
+	case Block::minecraft_polished_granite_stairs:
+	case Block::minecraft_smooth_red_sandstone_stairs:
+	case Block::minecraft_mossy_stone_brick_stairs:
+	case Block::minecraft_polished_diorite_stairs:
+	case Block::minecraft_mossy_cobblestone_stairs:
+	case Block::minecraft_end_stone_brick_stairs:
+	case Block::minecraft_stone_stairs:
+	case Block::minecraft_smooth_sandstone_stairs:
+	case Block::minecraft_smooth_quartz_stairs:
+	case Block::minecraft_granite_stairs:
+	case Block::minecraft_andesite_stairs:
+	case Block::minecraft_red_nether_brick_stairs:
+	case Block::minecraft_polished_andesite_stairs:
+	case Block::minecraft_diorite_stairs:
+	case Block::minecraft_cobbled_deepslate_stairs:
+	case Block::minecraft_polished_deepslate_stairs:
+	case Block::minecraft_deepslate_brick_stairs:
+	case Block::minecraft_deepslate_tile_stairs:
+	case Block::minecraft_blackstone_stairs:
+	case Block::minecraft_polished_blackstone_stairs:
+	case Block::minecraft_polished_blackstone_brick_stairs:
+	{
+		std::string shape = state.getState("shape");
+		if (shape[0] == 'o') return false; //if outer, ret false
+		std::string facing = state.getState("facing");
+		switch (face)
+		{
+		case playerDigging::north:
+			if (facing[0] == 'n') return true; //if north, ret true
+			if (shape[0] == 's') return false; //if straight, ret false
+			if ((shape[6] == 'l' && facing[0] == 'e') || (shape[6] == 'r' && facing[0] == 'w')) return true;
+			break;
+		case playerDigging::south:
+			if (facing[0] == 's') return true; //if south, ret true
+			if (shape[0] == 's') return false; //if straight, ret false
+			if ((shape[6] == 'l' && facing[0] == 'w') || (shape[6] == 'r' && facing[0] == 'e')) return true;
+			break;
+		case playerDigging::west:
+			if (facing[0] == 'w') return true; //if west, ret true
+			if (shape[0] == 's') return false; //if straight, ret false
+			if ((shape[6] == 'l' && facing[0] == 'n') || (shape[6] == 'r' && facing[0] == 's')) return true;
+			break;
+		case playerDigging::east:
+			if (facing[0] == 'e') return true; //if east, ret true
+			if (shape[0] == 's') return false; //if straight, ret false
+			if ((shape[6] == 'l' && facing[0] == 's') || (shape[6] == 'r' && facing[0] == 'n')) return true;
+		}
+		return false;
+	}
+
+	//ladder on back
+	case Block::minecraft_ladder:
+	{
+		std::string facing = state.getState("facing");
+		switch (face)
+		{
+		case playerDigging::east:
+			if (facing[0] == 'e') return true;
+			return false;
+		case playerDigging::west:
+			if (facing[0] == 'w') return true;
+			return false;
+		case playerDigging::north:
+			if (facing[0] == 'n') return true;
+			return false;
+		case playerDigging::south:
+			if (facing[0] == 's') return true;
+		}
+		return false;
+	}
+
+	//certain state trapdoors
+	case Block::minecraft_iron_trapdoor:
+	case Block::minecraft_oak_trapdoor:
+	case Block::minecraft_spruce_trapdoor:
+	case Block::minecraft_birch_trapdoor:
+	case Block::minecraft_jungle_trapdoor:
+	case Block::minecraft_acacia_trapdoor:
+	case Block::minecraft_dark_oak_trapdoor:
+	case Block::minecraft_crimson_trapdoor:
+	case Block::minecraft_warped_trapdoor:
+	{
+		if (state.getState("open")[0] == 'f') return false;
+		std::string facing = state.getState("facing");
+		switch (face)
+		{
+		case playerDigging::east:
+			if (facing[0] == 'w') return true;
+			return false;
+		case playerDigging::west:
+			if (facing[0] == 'e') return true;
+			return false;
+		case playerDigging::north:
+			if (facing[0] == 's') return true;
+			return false;
+		case playerDigging::south:
+			if (facing[0] == 'n') return true;
+		}
+		return false;
+	}
+
+
+	//certain state doors
+	case Block::minecraft_iron_door:
+	case Block::minecraft_oak_door:
+	case Block::minecraft_spruce_door:
+	case Block::minecraft_birch_door:
+	case Block::minecraft_jungle_door:
+	case Block::minecraft_acacia_door:
+	case Block::minecraft_dark_oak_door:
+	case Block::minecraft_crimson_door:
+	case Block::minecraft_warped_door:
+	{
+		char open = state.getState("open")[0];
+		char facing = state.getState("facing")[0];
+		switch (face)
+		{
+		case playerDigging::east:
+			if (open == 'f')
+			{
+				return facing == 'w';
+			}
+			char hinge = state.getState("hinge")[0];
+			return hinge == 'l' && facing == 's' || hinge == 'r' && facing == 'n';
+		case playerDigging::west:
+			if (open == 'f')
+			{
+				return facing == 'e';
+			}
+			char hinge = state.getState("hinge")[0];
+			return hinge == 'l' && facing == 'n' || hinge == 'r' && facing == 's';
+		case playerDigging::north:
+			if (open == 'f')
+			{
+				return facing == 's';
+			}
+			char hinge = state.getState("hinge")[0];
+			return hinge == 'l' && facing == 'e' || hinge == 'r' && facing == 'v';
+		case playerDigging::south:
+			if (open == 'f')
+			{
+				return facing == 's';
+			}
+			char hinge = state.getState("hinge")[0];
+			return hinge == 'l' && facing == 'e' || hinge == 'r' && facing == 'v';
+		}
+		return false;
+	}
+
+	//piston head
+	case Block::minecraft_piston_head:
+	{
+		std::string facing = state.getState("facing");
+		switch (face)
+		{
+		case playerDigging::east:
+			if (facing[0] == 'e') return true;
+			return false;
+		case playerDigging::west:
+			if (facing[0] == 'w') return true;
+			return false;
+		case playerDigging::north:
+			if (facing[0] == 'n') return true;
+			return false;
+		case playerDigging::south:
+			if (facing[0] == 's') return true;
+		}
+		return false;
+	}
+	}
+	return false;
 }
-bool netherBricksConnectible(Block id, playerDigging::face, const BlockState state)
+//bool isWoodenFence(Block id)
+//{
+//	switch (id)
+//	{
+//	case Block::minecraft_oak_fence:
+//	case Block::minecraft_spruce_fence:
+//	case Block::minecraft_birch_fence:
+//	case Block::minecraft_jungle_fence:
+//	case Block::minecraft_acacia_fence:
+//	case Block::minecraft_dark_oak_fence:
+//	case Block::minecraft_crimson_fence:
+//	case Block::minecraft_warped_fence:
+//		return true;
+//	}
+//	return false;
+//}
+bool woodenFencesConnectible(Block id, playerDigging::face face, const BlockState& state)
 {
-	//switch (id)
-	if (fullSolidBlock(id)) return true;
+	if (genericFenceConnectible(id, face, state)) return true;
+	switch (id)
+	{
+	case Block::minecraft_oak_fence:
+	case Block::minecraft_spruce_fence:
+	case Block::minecraft_birch_fence:
+	case Block::minecraft_jungle_fence:
+	case Block::minecraft_acacia_fence:
+	case Block::minecraft_dark_oak_fence:
+	case Block::minecraft_crimson_fence:
+	case Block::minecraft_warped_fence:
+		return true;
+	case Block::minecraft_oak_fence_gate:
+	case Block::minecraft_spruce_fence_gate:
+	case Block::minecraft_birch_fence_gate:
+	case Block::minecraft_jungle_fence_gate:
+	case Block::minecraft_acacia_fence_gate:
+	case Block::minecraft_dark_oak_fence_gate:
+	case Block::minecraft_crimson_fence_gate:
+	case Block::minecraft_warped_fence_gate:
+		//check state
+		return false;
+	}
+	return false;
 }
-bool wallsConnectible(Block id, playerDigging::face, const BlockState state)
+bool netherFencesConnectible(Block id, playerDigging::face face, const BlockState& state)
 {
-	if (fullSolidBlock(id)) return true;
+	if (genericFenceConnectible(id, face, state)) return true;
+	switch (id)
+	{
+	case Block::minecraft_nether_brick_fence:
+		return true;
+	case Block::minecraft_oak_fence_gate:
+	case Block::minecraft_spruce_fence_gate:
+	case Block::minecraft_birch_fence_gate:
+	case Block::minecraft_jungle_fence_gate:
+	case Block::minecraft_acacia_fence_gate:
+	case Block::minecraft_dark_oak_fence_gate:
+	case Block::minecraft_crimson_fence_gate:
+	case Block::minecraft_warped_fence_gate:
+		//check state
+		return false;
+	}
+	return false;
 }
-bool canSupportTorch(Block id, playerDigging::face, const BlockState state)
+//bool isWall(Block id)
+//{
+//	switch (id)
+//	{
+//	case Block::minecraft_cobblestone_wall:
+//	case Block::minecraft_mossy_cobblestone_wall:
+//	case Block::minecraft_brick_wall:
+//	case Block::minecraft_prismarine_wall:
+//	case Block::minecraft_red_sandstone_wall:
+//	case Block::minecraft_mossy_stone_brick_wall:
+//	case Block::minecraft_granite_wall:
+//	case Block::minecraft_stone_brick_wall:
+//	case Block::minecraft_nether_brick_wall:
+//	case Block::minecraft_andesite_wall:
+//	case Block::minecraft_red_nether_brick_wall:
+//	case Block::minecraft_sandstone_wall:
+//	case Block::minecraft_end_stone_brick_wall:
+//	case Block::minecraft_diorite_wall:
+//	case Block::minecraft_blackstone_wall:
+//	case Block::minecraft_polished_blackstone_wall:
+//	case Block::minecraft_polished_blackstone_brick_wall:
+//	case Block::minecraft_cobbled_deepslate_wall:
+//	case Block::minecraft_polished_deepslate_wall:
+//	case Block::minecraft_deepslate_brick_wall:
+//	case Block::minecraft_deepslate_tile_wall:
+//		return true;
+//	}
+//	return false;
+//}
+bool wallsConnectible(Block id, playerDigging::face face, const BlockState& state)
+{
+	if (genericFenceConnectible(id, face, state)) return true;
+	switch (id)
+	{
+	case Block::minecraft_cobblestone_wall:
+	case Block::minecraft_mossy_cobblestone_wall:
+	case Block::minecraft_brick_wall:
+	case Block::minecraft_prismarine_wall:
+	case Block::minecraft_red_sandstone_wall:
+	case Block::minecraft_mossy_stone_brick_wall:
+	case Block::minecraft_granite_wall:
+	case Block::minecraft_stone_brick_wall:
+	case Block::minecraft_nether_brick_wall:
+	case Block::minecraft_andesite_wall:
+	case Block::minecraft_red_nether_brick_wall:
+	case Block::minecraft_sandstone_wall:
+	case Block::minecraft_end_stone_brick_wall:
+	case Block::minecraft_diorite_wall:
+	case Block::minecraft_blackstone_wall:
+	case Block::minecraft_polished_blackstone_wall:
+	case Block::minecraft_polished_blackstone_brick_wall:
+	case Block::minecraft_cobbled_deepslate_wall:
+	case Block::minecraft_polished_deepslate_wall:
+	case Block::minecraft_deepslate_brick_wall:
+	case Block::minecraft_deepslate_tile_wall:
+	case Block::minecraft_iron_bars:
+	case Block::minecraft_glass_pane:
+	case Block::minecraft_white_stained_glass_pane:
+	case Block::minecraft_orange_stained_glass_pane:
+	case Block::minecraft_magenta_stained_glass_pane:
+	case Block::minecraft_light_blue_stained_glass_pane:
+	case Block::minecraft_yellow_stained_glass_pane:
+	case Block::minecraft_lime_stained_glass_pane:
+	case Block::minecraft_pink_stained_glass_pane:
+	case Block::minecraft_gray_stained_glass_pane:
+	case Block::minecraft_light_gray_stained_glass_pane:
+	case Block::minecraft_cyan_stained_glass_pane:
+	case Block::minecraft_purple_stained_glass_pane:
+	case Block::minecraft_blue_stained_glass_pane:
+	case Block::minecraft_brown_stained_glass_pane:
+	case Block::minecraft_green_stained_glass_pane:
+	case Block::minecraft_red_stained_glass_pane:
+	case Block::minecraft_black_stained_glass_pane:
+		return true;
+		//gates
+	}
+	return false;
+}
+//bool isGlassPane(Block id)
+//{
+//	switch (id)
+//	{
+//	case Block::minecraft_glass_pane:
+//	case Block::minecraft_white_stained_glass_pane:
+//	case Block::minecraft_orange_stained_glass_pane:
+//	case Block::minecraft_magenta_stained_glass_pane:
+//	case Block::minecraft_light_blue_stained_glass_pane:
+//	case Block::minecraft_yellow_stained_glass_pane:
+//	case Block::minecraft_lime_stained_glass_pane:
+//	case Block::minecraft_pink_stained_glass_pane:
+//	case Block::minecraft_gray_stained_glass_pane:
+//	case Block::minecraft_light_gray_stained_glass_pane:
+//	case Block::minecraft_cyan_stained_glass_pane:
+//	case Block::minecraft_purple_stained_glass_pane:
+//	case Block::minecraft_blue_stained_glass_pane:
+//	case Block::minecraft_brown_stained_glass_pane:
+//	case Block::minecraft_green_stained_glass_pane:
+//	case Block::minecraft_red_stained_glass_pane:
+//	case Block::minecraft_black_stained_glass_pane:
+//		return true;
+//	}
+//	return false;
+//}
+bool glassPaneConnectible(Block id, playerDigging::face face, const BlockState& state)
+{
+	if (genericFenceConnectible(id, face, state)) return true;
+	switch (id)
+	{
+	case Block::minecraft_cobblestone_wall:
+	case Block::minecraft_mossy_cobblestone_wall:
+	case Block::minecraft_brick_wall:
+	case Block::minecraft_prismarine_wall:
+	case Block::minecraft_red_sandstone_wall:
+	case Block::minecraft_mossy_stone_brick_wall:
+	case Block::minecraft_granite_wall:
+	case Block::minecraft_stone_brick_wall:
+	case Block::minecraft_nether_brick_wall:
+	case Block::minecraft_andesite_wall:
+	case Block::minecraft_red_nether_brick_wall:
+	case Block::minecraft_sandstone_wall:
+	case Block::minecraft_end_stone_brick_wall:
+	case Block::minecraft_diorite_wall:
+	case Block::minecraft_blackstone_wall:
+	case Block::minecraft_polished_blackstone_wall:
+	case Block::minecraft_polished_blackstone_brick_wall:
+	case Block::minecraft_cobbled_deepslate_wall:
+	case Block::minecraft_polished_deepslate_wall:
+	case Block::minecraft_deepslate_brick_wall:
+	case Block::minecraft_deepslate_tile_wall:
+	case Block::minecraft_iron_bars:
+	case Block::minecraft_glass_pane:
+	case Block::minecraft_white_stained_glass_pane:
+	case Block::minecraft_orange_stained_glass_pane:
+	case Block::minecraft_magenta_stained_glass_pane:
+	case Block::minecraft_light_blue_stained_glass_pane:
+	case Block::minecraft_yellow_stained_glass_pane:
+	case Block::minecraft_lime_stained_glass_pane:
+	case Block::minecraft_pink_stained_glass_pane:
+	case Block::minecraft_gray_stained_glass_pane:
+	case Block::minecraft_light_gray_stained_glass_pane:
+	case Block::minecraft_cyan_stained_glass_pane:
+	case Block::minecraft_purple_stained_glass_pane:
+	case Block::minecraft_blue_stained_glass_pane:
+	case Block::minecraft_brown_stained_glass_pane:
+	case Block::minecraft_green_stained_glass_pane:
+	case Block::minecraft_red_stained_glass_pane:
+	case Block::minecraft_black_stained_glass_pane:
+		return true;
+	}
+	return false;
+}
+bool ironBarsConnectible(Block id, playerDigging::face face, const BlockState& state)
+{
+	if (genericFenceConnectible(id, face, state)) return true;
+	switch (id)
+	{
+	case Block::minecraft_cobblestone_wall:
+	case Block::minecraft_mossy_cobblestone_wall:
+	case Block::minecraft_brick_wall:
+	case Block::minecraft_prismarine_wall:
+	case Block::minecraft_red_sandstone_wall:
+	case Block::minecraft_mossy_stone_brick_wall:
+	case Block::minecraft_granite_wall:
+	case Block::minecraft_stone_brick_wall:
+	case Block::minecraft_nether_brick_wall:
+	case Block::minecraft_andesite_wall:
+	case Block::minecraft_red_nether_brick_wall:
+	case Block::minecraft_sandstone_wall:
+	case Block::minecraft_end_stone_brick_wall:
+	case Block::minecraft_diorite_wall:
+	case Block::minecraft_blackstone_wall:
+	case Block::minecraft_polished_blackstone_wall:
+	case Block::minecraft_polished_blackstone_brick_wall:
+	case Block::minecraft_cobbled_deepslate_wall:
+	case Block::minecraft_polished_deepslate_wall:
+	case Block::minecraft_deepslate_brick_wall:
+	case Block::minecraft_deepslate_tile_wall:
+	case Block::minecraft_iron_bars:
+	case Block::minecraft_glass_pane:
+	case Block::minecraft_white_stained_glass_pane:
+	case Block::minecraft_orange_stained_glass_pane:
+	case Block::minecraft_magenta_stained_glass_pane:
+	case Block::minecraft_light_blue_stained_glass_pane:
+	case Block::minecraft_yellow_stained_glass_pane:
+	case Block::minecraft_lime_stained_glass_pane:
+	case Block::minecraft_pink_stained_glass_pane:
+	case Block::minecraft_gray_stained_glass_pane:
+	case Block::minecraft_light_gray_stained_glass_pane:
+	case Block::minecraft_cyan_stained_glass_pane:
+	case Block::minecraft_purple_stained_glass_pane:
+	case Block::minecraft_blue_stained_glass_pane:
+	case Block::minecraft_brown_stained_glass_pane:
+	case Block::minecraft_green_stained_glass_pane:
+	case Block::minecraft_red_stained_glass_pane:
+	case Block::minecraft_black_stained_glass_pane:
+		return true;
+	}
+	return false;
+}
+bool generalConnectible(Item fenceItem, Block id, playerDigging::face face, const BlockState& state)
+{
+	switch (fenceItem)
+	{
+		//iron bars
+	case Item::minecraft_iron_bars:
+		return ironBarsConnectible(id, face, state);
+
+		//glass panes
+	case Item::minecraft_glass_pane:
+	case Item::minecraft_white_stained_glass_pane:
+	case Item::minecraft_orange_stained_glass_pane:
+	case Item::minecraft_magenta_stained_glass_pane:
+	case Item::minecraft_light_blue_stained_glass_pane:
+	case Item::minecraft_yellow_stained_glass_pane:
+	case Item::minecraft_lime_stained_glass_pane:
+	case Item::minecraft_pink_stained_glass_pane:
+	case Item::minecraft_gray_stained_glass_pane:
+	case Item::minecraft_light_gray_stained_glass_pane:
+	case Item::minecraft_cyan_stained_glass_pane:
+	case Item::minecraft_purple_stained_glass_pane:
+	case Item::minecraft_blue_stained_glass_pane:
+	case Item::minecraft_brown_stained_glass_pane:
+	case Item::minecraft_green_stained_glass_pane:
+	case Item::minecraft_red_stained_glass_pane:
+	case Item::minecraft_black_stained_glass_pane:
+		return glassPaneConnectible(id, face, state);
+
+		//walls
+	case Item::minecraft_cobblestone_wall:
+	case Item::minecraft_mossy_cobblestone_wall:
+	case Item::minecraft_brick_wall:
+	case Item::minecraft_prismarine_wall:
+	case Item::minecraft_red_sandstone_wall:
+	case Item::minecraft_mossy_stone_brick_wall:
+	case Item::minecraft_granite_wall:
+	case Item::minecraft_stone_brick_wall:
+	case Item::minecraft_nether_brick_wall:
+	case Item::minecraft_andesite_wall:
+	case Item::minecraft_red_nether_brick_wall:
+	case Item::minecraft_sandstone_wall:
+	case Item::minecraft_end_stone_brick_wall:
+	case Item::minecraft_diorite_wall:
+	case Item::minecraft_blackstone_wall:
+	case Item::minecraft_polished_blackstone_wall:
+	case Item::minecraft_polished_blackstone_brick_wall:
+	case Item::minecraft_cobbled_deepslate_wall:
+	case Item::minecraft_polished_deepslate_wall:
+	case Item::minecraft_deepslate_brick_wall:
+	case Item::minecraft_deepslate_tile_wall:
+		return wallsConnectible(id, face, state);
+
+		//nether fence
+	case Item::minecraft_nether_brick_fence:
+		return netherFencesConnectible(id, face, state);
+
+		//wooden fence
+	case Item::minecraft_oak_fence:
+	case Item::minecraft_spruce_fence:
+	case Item::minecraft_birch_fence:
+	case Item::minecraft_jungle_fence:
+	case Item::minecraft_acacia_fence:
+	case Item::minecraft_dark_oak_fence:
+	case Item::minecraft_crimson_fence:
+	case Item::minecraft_warped_fence:
+		return woodenFencesConnectible(id, face, state);
+	}
+	return false;
+}
+
+bool canSupportTorch(Block id, playerDigging::face face, const BlockState& state)
 {
 	if (fullSolidBlock(id)) return true;
 	switch (id)
@@ -1048,10 +1643,6 @@ bool canSupportTorch(Block id, playerDigging::face, const BlockState state)
 		return true;
 	}
 	return false;
-}
-bool glassPaneConnectible(Block id, playerDigging::face, const BlockState state)
-{
-	if (fullSolidBlock(id)) return true;
 }
 
 bool isDoorLower(Block id, const BlockState& state)
@@ -2171,7 +2762,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			}
 
 			//blocks that need to be placed on dirt
-
 			{ {
 			case Item::minecraft_grass:
 			case Item::minecraft_fern:
@@ -3938,8 +4528,280 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				}
 			}
 
-			//beds
+			//fences / walls / glass panes / iron bars
 			{
+				{
+		case Item::minecraft_glass_pane:
+		case Item::minecraft_white_stained_glass_pane:
+		case Item::minecraft_orange_stained_glass_pane:
+		case Item::minecraft_magenta_stained_glass_pane:
+		case Item::minecraft_light_blue_stained_glass_pane:
+		case Item::minecraft_yellow_stained_glass_pane:
+		case Item::minecraft_lime_stained_glass_pane:
+		case Item::minecraft_pink_stained_glass_pane:
+		case Item::minecraft_gray_stained_glass_pane:
+		case Item::minecraft_light_gray_stained_glass_pane:
+		case Item::minecraft_cyan_stained_glass_pane:
+		case Item::minecraft_purple_stained_glass_pane:
+		case Item::minecraft_blue_stained_glass_pane:
+		case Item::minecraft_brown_stained_glass_pane:
+		case Item::minecraft_green_stained_glass_pane:
+		case Item::minecraft_red_stained_glass_pane:
+		case Item::minecraft_black_stained_glass_pane:
+		case Item::minecraft_iron_bars:
+		case Item::minecraft_nether_brick_fence:
+		case Item::minecraft_oak_fence:
+		case Item::minecraft_spruce_fence:
+		case Item::minecraft_birch_fence:
+		case Item::minecraft_jungle_fence:
+		case Item::minecraft_acacia_fence:
+		case Item::minecraft_dark_oak_fence:
+		case Item::minecraft_crimson_fence:
+		case Item::minecraft_warped_fence:
+			//walls left
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				BlockProperty* props = new BlockProperty[5];
+				//east connection
+				{
+					props[0].name = "east";
+					BlockState blockState = getBlock(destX + 1, destY, destZ);
+					Block blockId = stateToBlock(blockState);
+					if (generalConnectible((Item)itemId, blockId, playerDigging::face::west, blockState)) props[0].value = "true";
+					else props[0].value = "false";
+				}
+				//north connection
+				{
+					props[1].name = "north";
+					BlockState blockState = getBlock(destX, destY, destZ - 1);
+					Block blockId = stateToBlock(blockState);
+					if (generalConnectible((Item)itemId, blockId, playerDigging::face::south, blockState)) props[1].value = "true";
+					else props[1].value = "false";
+				}
+				//south connection
+				{
+					props[2].name = "south";
+					BlockState blockState = getBlock(destX, destY, destZ + 1);
+					Block blockId = stateToBlock(blockState);
+					if (generalConnectible((Item)itemId, blockId, playerDigging::face::north, blockState)) props[2].value = "true";
+					else props[2].value = "false";
+				}
+				props[3].name = "waterlogged";
+				props[4].value = "false";
+				//west connection
+				{
+					props[4].name = "west";
+					BlockState blockState = getBlock(destX - 1, destY, destZ);
+					Block blockId = stateToBlock(blockState);
+					if (generalConnectible((Item)itemId, blockId, playerDigging::face::east, blockState)) props[4].value = "true";
+					else props[4].value = "false";
+				}
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				BlockProperty* props = new BlockProperty[5];
+				props[0].name = "east";
+				props[1].name = "north";
+				props[2].name = "south";
+				props[3].name = "waterlogged";
+				props[4].value = oldBlockState.id == waterSurceBlockStateId ? "true" : "false";
+				props[4].name = "west";
+				switch (face)
+				{
+				case playerDigging::north:
+				{
+					//east connection
+					{
+						BlockState blockState = getBlock(destX + 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::west, blockState)) props[0].value = "true";
+						else props[0].value = "false";
+					}
+					//north connetion
+					{
+						BlockState blockState = getBlock(destX, destY, destZ - 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::south, blockState)) props[1].value = "true";
+						else props[1].value = "false";
+					}
+					//south connection
+					{
+						if (generalConnectible((Item)itemId, targetBlockId, playerDigging::face::north, targetBlockState)) props[2].value = "true";
+						else props[2].value = "false";
+					}
+					//west connection
+					{
+						BlockState blockState = getBlock(destX - 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::east, blockState)) props[4].value = "true";
+						else props[4].value = "false";
+					}
+				}
+				break;
+				case playerDigging::south:
+				{
+					//east connection
+					{
+						BlockState blockState = getBlock(destX + 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::west, blockState)) props[0].value = "true";
+						else props[0].value = "false";
+					}
+					//north connetion
+					{
+						if (generalConnectible((Item)itemId, targetBlockId, playerDigging::face::south, targetBlockState)) props[1].value = "true";
+						else props[1].value = "false";
+					}
+					//south connection
+					{
+						BlockState blockState = getBlock(destX, destY, destZ + 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::north, blockState)) props[2].value = "true";
+						else props[2].value = "false";
+					}
+					//west connection
+					{
+						BlockState blockState = getBlock(destX - 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::east, blockState)) props[4].value = "true";
+						else props[4].value = "false";
+					}
+				}
+				break;
+				case playerDigging::west:
+				{
+					//east connection
+					{
+						if (generalConnectible((Item)itemId, targetBlockId, playerDigging::face::west, targetBlockState)) props[0].value = "true";
+						else props[0].value = "false";
+					}
+					//north connetion
+					{
+						BlockState blockState = getBlock(destX, destY, destZ - 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::south, blockState)) props[1].value = "true";
+						else props[1].value = "false";
+					}
+					//south connection
+					{
+						BlockState blockState = getBlock(destX, destY, destZ + 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::north, blockState)) props[2].value = "true";
+						else props[2].value = "false";
+					}
+					//west connection
+					{
+						BlockState blockState = getBlock(destX - 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::east, blockState)) props[4].value = "true";
+						else props[4].value = "false";
+					}
+				}
+				break;
+				case playerDigging::east:
+				{
+					//east connection
+					{
+						BlockState blockState = getBlock(destX + 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::west, blockState)) props[0].value = "true";
+						else props[0].value = "false";
+					}
+					//north connection
+					{
+						BlockState blockState = getBlock(destX, destY, destZ - 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::south, blockState)) props[1].value = "true";
+						else props[1].value = "false";
+					}
+					//south connection
+					{
+						BlockState blockState = getBlock(destX, destY, destZ + 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::north, blockState)) props[2].value = "true";
+						else props[2].value = "false";
+					}
+					//west connection
+					{
+						if (generalConnectible((Item)itemId, targetBlockId, playerDigging::face::east, targetBlockState)) props[4].value = "true";
+						else props[4].value = "false";
+					}
+				}
+				break;
+				default:
+				{
+					//east connection
+					{
+						BlockState blockState = getBlock(destX + 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::west, blockState)) props[0].value = "true";
+						else props[0].value = "false";
+					}
+					//north connection
+					{
+						BlockState blockState = getBlock(destX, destY, destZ - 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::south, blockState)) props[1].value = "true";
+						else props[1].value = "false";
+					}
+					//south connection
+					{
+						BlockState blockState = getBlock(destX, destY, destZ + 1);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::north, blockState)) props[2].value = "true";
+						else props[2].value = "false";
+					}
+					//west connection
+					{
+						BlockState blockState = getBlock(destX - 1, destY, destZ);
+						Block blockId = stateToBlock(blockState);
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::east, blockState)) props[4].value = "true";
+						else props[4].value = "false";
+					}
+				}
+				}
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+			}
+			break;
+		}
+				}
+			}
+
+			//beds
+			{ {
 		case Item::minecraft_white_bed:
 		case Item::minecraft_orange_bed:
 		case Item::minecraft_magenta_bed:
@@ -3957,7 +4819,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_red_bed:
 		case Item::minecraft_black_bed:
 			break;
-			}
+				}}
 
 			//special items
 			{
@@ -4007,27 +4869,16 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_torch:
 		case Item::minecraft_chorus_plant:
 		case Item::minecraft_chorus_flower:
-		case Item::minecraft_oak_fence:
-		case Item::minecraft_spruce_fence:
-		case Item::minecraft_birch_fence:
-		case Item::minecraft_jungle_fence:
-		case Item::minecraft_acacia_fence:
-		case Item::minecraft_dark_oak_fence:
-		case Item::minecraft_crimson_fence:
-		case Item::minecraft_warped_fence:
 		case Item::minecraft_chest:
 		case Item::minecraft_farmland:
 		case Item::minecraft_ladder:
 		case Item::minecraft_snow:
 		case Item::minecraft_cactus:
 		case Item::minecraft_soul_torch:
-		case Item::minecraft_iron_bars:
 		case Item::minecraft_chain:
-		case Item::minecraft_glass_pane:
 		case Item::minecraft_vine:
 		case Item::minecraft_glow_lichen:
 		case Item::minecraft_lily_pad:
-		case Item::minecraft_nether_brick_fence:
 		case Item::minecraft_dragon_egg:
 		case Item::minecraft_ender_chest:
 		case Item::minecraft_command_block:
@@ -4061,22 +4912,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_peony:
 		case Item::minecraft_tall_grass:
 		case Item::minecraft_large_fern:
-		case Item::minecraft_white_stained_glass_pane:
-		case Item::minecraft_orange_stained_glass_pane:
-		case Item::minecraft_magenta_stained_glass_pane:
-		case Item::minecraft_light_blue_stained_glass_pane:
-		case Item::minecraft_yellow_stained_glass_pane:
-		case Item::minecraft_lime_stained_glass_pane:
-		case Item::minecraft_pink_stained_glass_pane:
-		case Item::minecraft_gray_stained_glass_pane:
-		case Item::minecraft_light_gray_stained_glass_pane:
-		case Item::minecraft_cyan_stained_glass_pane:
-		case Item::minecraft_purple_stained_glass_pane:
-		case Item::minecraft_blue_stained_glass_pane:
-		case Item::minecraft_brown_stained_glass_pane:
-		case Item::minecraft_green_stained_glass_pane:
-		case Item::minecraft_red_stained_glass_pane:
-		case Item::minecraft_black_stained_glass_pane:
 		case Item::minecraft_repeating_command_block:
 		case Item::minecraft_chain_command_block:
 		case Item::minecraft_turtle_egg:

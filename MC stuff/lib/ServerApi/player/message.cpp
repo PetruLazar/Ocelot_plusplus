@@ -2354,21 +2354,21 @@ void message::play::receive::nameItem(Player*, const mcString& newName)
 }
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
-	std::string text = "playerBlockPlacement: ";
+	//std::string text = "playerBlockPlacement: ";
 	Slot* slot = nullptr;
 
 	switch (hand)
 	{
 	case Hand::main:
-		text += "main ";
+		//text += "main ";
 		slot = p->slots[p->selectedSlot];
 		break;
 	case Hand::offhand:
-		text += "off";
+		//text += "off";
 		slot = p->slots[45];
 	}
 
-	text += "hand, ";
+	/*text += "hand, ";
 
 	switch (face)
 	{
@@ -2393,7 +2393,7 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, Position
 
 	text += ", (" + std::to_string(curX) + ' ' + std::to_string(curY) + ' ' + std::to_string(curZ) + "), ";
 
-	Log::txt() << '\n' << p->username << " - " << text;
+	Log::txt() << '\n' << p->username << " - " << text;*/
 	//play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
 	p->world->setBlockByItem(p, slot, location, face, curX, curY, curZ);
