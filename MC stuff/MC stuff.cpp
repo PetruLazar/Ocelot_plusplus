@@ -49,6 +49,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	Log::txt() << "\nLoading vanilla tags..." << Log::flush;
 	TagGroup::loadVanillaTags();
 
+	//loading recipies
+	Log::txt() << "\nLoading vanilla recipies..." << Log::flush;
+	recipe::Manager::loadRecipes();
+
 	Log::txt() << "\nLoading worlds..." << Log::flush;
 	if (!World::loadAll())
 	{
@@ -188,5 +192,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 
 	ServerConsole::FreeConsole();
 	Registry::unloadRegistriesAndPalette();
+	recipe::Manager::unloadRecipes();
 	return 0;
 }

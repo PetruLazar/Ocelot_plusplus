@@ -15,6 +15,8 @@ public:
 	void SERVER_API write(char*&) const;
 	void SERVER_API write(std::fstream&) const;
 
+	bool has(const std::string& i);
+
 	SERVER_API json& value(int i);
 	SERVER_API json& operator[](int i);
 	SERVER_API json& value(const std::string& i);

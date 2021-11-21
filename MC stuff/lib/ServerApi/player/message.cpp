@@ -165,7 +165,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::playerAbilities(p, true, true, true, p->gm == gamemode::creative, 0.05f, 0.1f);
 
-	play::send::declareRecipes(p, 0, nullptr); //add recipes!
+	play::send::declareRecipes(p, recipe::Manager::recipes->size(), recipe::Manager::recipes);
+	play::send::unlockRecipes(p, 0, false, false, false, false, false, false, false, false, recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs, recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs);
 
 	std::vector<Player*> inGamePlayers;
 	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.push_back(player);
@@ -681,7 +682,7 @@ void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEn
 
 	finishSendMacro;
 }
-void message::play::send::unlockRecipes(Player* p, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, mcString* array1, varInt size2, mcString* array2)
+void message::play::send::unlockRecipes(Player* p, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, std::vector<mcString>* array1, varInt size2, std::vector<mcString>* array2)
 {
 	varInt id = (int)id::unlockRecipes;
 	prepareSendMacro(1024 * 1024);
@@ -698,12 +699,12 @@ void message::play::send::unlockRecipes(Player* p, varInt action, bool bookOpen,
 	*(data++) = smokerFilter;
 	size1.write(data);
 	for (int i = 0; i < size1; i++)
-		array1[i].write(data);
+		(*array1)[i].write(data);
 
 	if (action == 0) {
 		size2.write(data);
 		for (int i = 0; i < size2; i++)
-			array2[i].write(data);
+			(*array2)[i].write(data);
 	}
 
 	finishSendMacro;
@@ -1035,15 +1036,15 @@ void message::play::send::entityEquipment(Player* p, varInt eid, const std::vect
 
 	finishSendMacro;
 }
-void message::play::send::declareRecipes(Player* p, varInt nOfRecipes, recipe::Recipe** recipes)
-{ //not tested!
+void message::play::send::declareRecipes(Player* p, varInt nOfRecipes, std::vector<recipe::Recipe*>* recipes)
+{
 	varInt id = (int)id::declareRecipes;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	nOfRecipes.write(data);
 	for (int i = 0; i < nOfRecipes; i++)
-		recipes[i]->write(data);
+		(*recipes)[i]->write(data);
 
 	finishSendMacro;
 }
@@ -2012,7 +2013,150 @@ void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte butt
 }
 void message::play::receive::clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
 {
-	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: clickWindow");
+	Log::txt() << "\nm: " << mode<<" b: "<<(int)button<<" cs: "<<(int)clickedSlot<<" l: "<<length;
+	for (int i = 0; i < length; i++) {
+		Log::txt() << "\n-i: " << i << " sn: " << slotNumbers[i];
+	}
+	Log::txt() << "\n";
+
+	int inventoryFirstSlotIndex = 0;
+
+	switch (windowID) {
+	case window::type::generic_9x1:
+	case window::type::generic_3x3:
+		inventoryFirstSlotIndex = 9;
+		break;
+	case window::type::generic_9x2:
+		inventoryFirstSlotIndex = 18;
+		break;
+	case window::type::shulker_box:
+	case window::type::generic_9x3:
+		inventoryFirstSlotIndex = 27;
+		break;
+	case window::type::generic_9x4:
+		inventoryFirstSlotIndex = 36;
+		break;
+	case window::type::generic_9x5:
+		inventoryFirstSlotIndex = 45;
+		break;
+	case window::type::generic_9x6:
+		inventoryFirstSlotIndex = 54;
+		break;
+	case window::type::beacon:
+	case window::type::lectern:
+		inventoryFirstSlotIndex = 1;
+		break;
+	case window::type::anvil:
+	case window::type::smoker:
+	case window::type::furnace:
+	case window::type::blast_furnace:
+	case window::type::cartography:
+	case window::type::grindstone:
+	case window::type::smithing:
+	case window::type::merchant:
+		inventoryFirstSlotIndex = 3;
+		break;
+	case window::type::brewing_stand:
+	case window::type::hopper:
+		inventoryFirstSlotIndex = 5;
+		break;
+	case window::type::crafting:
+		inventoryFirstSlotIndex = 10;
+		break;
+	case window::type::loom:
+		inventoryFirstSlotIndex = 4;
+		break;
+	case window::type::enchantment:
+	case window::type::stonecutter:
+		inventoryFirstSlotIndex = 2;
+		break;
+	}
+
+	switch (mode) {
+	case 0:
+		if (button == 0) {
+			if (clickedSlot == -999) { //drop whole slot
+
+			}
+			else { //select whole slot
+
+			}
+		}
+		else { //button == 1
+			if (clickedSlot == -999) { //drop one item from slot
+
+			}
+			else { //select half from slot
+
+			}
+		}
+		break;
+	case 1:
+		//button 0 and 1 are doing identical behaviors
+		//move whole slot to appropiate slot
+		
+		break;
+	case 2:
+		if (button == 40) { //offhand swap
+
+		}
+		else { //button is hotbar index from 0
+
+		}
+		break;
+	case 3:
+		//button is always 2
+		//middle click, for creative players in non-player inventories
+
+		break;
+	case 4:
+		if (clickedSlot != -999) { //the player clicked outside empty-handed
+			if (button == 0) { //drop one from whole slot
+
+			}
+			else { //button == 1 drop whole slot
+
+			}
+		}
+		break;
+	case 5:
+		switch (button) {
+		case 0: //start left mouse drag
+
+			break;
+		case 4: //start right mouse drag
+
+			break;
+		case 8: //start middle mouse drag (creative players in non-creative players) (bugged)
+
+			break;
+		case 1: //add slot left mouse drag
+
+			break;
+		case 5: //add slot right mouse drag
+
+			break;
+		case 9: //add slot middle mouse drag (creative players in non-creative players) (bugged)
+
+			break;
+		case 2: //end left mouse drag
+
+			break;
+		case 6: //end right mouse drag
+
+			break;
+		case 10: //end slot middle mouse drag (creative players in non-creative players) (bugged)
+
+			break;
+		}
+		break;
+	case 6:
+		//double click
+
+		break;
+	}
+
+	IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: clickWindow");
 }
 void message::play::receive::closeWindow(Player* p, Byte winId) {
 	message::play::send::closeWindow(p, winId);
@@ -2158,6 +2302,8 @@ void message::play::receive::pickItem(Player* p, varInt slot)
 void message::play::receive::craftRecipeRequest(Player* p, Byte winId, const mcString& recipe, bool makeAll)
 {
 	
+	//not finished!
+	message::play::send::craftRecipeResponse(p, winId, recipe);
 }
 void message::play::receive::resourcePackStatus(Player* p, varInt result)
 {
@@ -2335,6 +2481,8 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		p->attributes |= 0x80;
 		break;
 	}
+
+	Log::txt() <<'\n'<< (p->attributes & 0x02);
 
 	for (Player* seener : p->seenBy)
 	{

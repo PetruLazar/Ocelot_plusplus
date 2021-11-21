@@ -27,13 +27,23 @@ namespace recipe
 	protected:
 		mcString type, recipeID;
 
+	public:
 		Recipe(mcString type, mcString recipeID) : type(type), recipeID(recipeID) {}
 
+		virtual void write(char*& buffer) const;
+	};
+
+	class Manager
+	{
 	public:
-		void write(char*& buffer) const;
+		static std::vector<Recipe*>* recipes;
+		static std::vector<mcString>* recipesIDs;
+
+		SERVER_API static void loadRecipes();
+		SERVER_API static void unloadRecipes();
 	};
 	
-	class crafting_shapeless : Recipe
+	class crafting_shapeless : public Recipe
 	{
 	public:
 		mcString group;
