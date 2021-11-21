@@ -61,3 +61,28 @@ void Position::set(sf::Vector3i v3)
 {
 	v = (ull(v3.x & 0x3ffffff) << 38) | (ull(v3.z & 0x3ffffff) << 12) | ((ull)v3.y & 0xfff);
 }
+
+void Position::incX()
+{
+	setX(x() + 1);
+}
+void Position::incY()
+{
+	setY(y() + 1);
+}
+void Position::incZ()
+{
+	setZ(z() + 1);
+}
+void Position::decX()
+{
+	setX(x() - 1);
+}
+void Position::decY()
+{
+	setY(y() - 1);
+}
+void Position::decZ()
+{
+	setZ(z() - 1);
+}

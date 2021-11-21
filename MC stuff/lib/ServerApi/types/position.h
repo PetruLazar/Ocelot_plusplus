@@ -27,5 +27,12 @@ public:
 	SERVER_API void setY(int);
 	SERVER_API void setZ(int);
 	SERVER_API void set(sf::Vector3i);
+
+	SERVER_API void incX();
+	SERVER_API void incY();
+	SERVER_API void incZ();
+	SERVER_API void decX();
+	SERVER_API void decY();
+	SERVER_API void decZ();
 };
 

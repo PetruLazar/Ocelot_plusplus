@@ -1246,33 +1246,41 @@ bool genericFenceConnectible(Block id, playerDigging::face face, const BlockStat
 		switch (face)
 		{
 		case playerDigging::east:
+		{
 			if (open == 'f')
 			{
 				return facing == 'w';
 			}
 			char hinge = state.getState("hinge")[0];
 			return hinge == 'l' && facing == 's' || hinge == 'r' && facing == 'n';
+		}
 		case playerDigging::west:
+		{
 			if (open == 'f')
 			{
 				return facing == 'e';
 			}
 			char hinge = state.getState("hinge")[0];
 			return hinge == 'l' && facing == 'n' || hinge == 'r' && facing == 's';
+		}
 		case playerDigging::north:
+		{
 			if (open == 'f')
 			{
 				return facing == 's';
 			}
 			char hinge = state.getState("hinge")[0];
 			return hinge == 'l' && facing == 'e' || hinge == 'r' && facing == 'v';
+		}
 		case playerDigging::south:
+		{
 			if (open == 'f')
 			{
 				return facing == 's';
 			}
 			char hinge = state.getState("hinge")[0];
 			return hinge == 'l' && facing == 'e' || hinge == 'r' && facing == 'v';
+		}
 		}
 		return false;
 	}
@@ -4462,7 +4470,10 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[4].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 				props[1].value = "upper";
-				setBlock(destX, destY + 1, destZ, Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props));
+				BlockState upperDoorState = Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				setBlock(destX, destY + 1, destZ, upperDoorState);
+				loc.incX();
+				for (Player* seener : players) if (seener != p && seener->positionInRange(loc)) message::play::send::blockChange(seener, loc, upperDoorState.id);
 				delete[] props;
 				break;
 			}
@@ -4519,7 +4530,10 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[4].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 				props[1].value = "upper";
-				setBlock(destX, destY + 1, destZ, Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props));
+				BlockState upperDoorState = Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				setBlock(destX, destY + 1, destZ, upperDoorState);
+				Position upperDoorPos(destX, destY + 1 + min_y, destZ);
+				for (Player* seener : players) if (seener != p && seener->positionInRange(upperDoorPos)) message::play::send::blockChange(seener, upperDoorPos, upperDoorState.id);
 				delete[] props;
 			}
 			break;
@@ -5395,7 +5409,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	{
 		setBlock(destX, destY, destZ, stateJson);
 		Position destLoc = Position(destX, destY + p->world->min_y, destZ);
-		for (Player* seener : players) if (seener != p && seener->positionInRange(loc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
+		for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
 	}
 	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 }
