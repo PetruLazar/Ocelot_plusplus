@@ -28,4 +28,9 @@ public:
 	SERVER_API static bool checkTagEntry(const mcString& tagType, const mcString& tagName, varInt entry);
 	SERVER_API static void loadVanillaTags();
 
+	SERVER_API static const std::string blockTags,
+		itemTags,
+		fluidTags,
+		entityTypeTags,
+		gameEvents;
 };

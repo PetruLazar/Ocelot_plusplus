@@ -12,6 +12,12 @@ using namespace std::filesystem;
 
 std::vector<TagGroup> TagGroup::defaultTags;
 
+const std::string TagGroup::blockTags = "minecraft:block",
+TagGroup::itemTags = "minecraft:item",
+TagGroup::fluidTags = "minecraft:fluid",
+TagGroup::entityTypeTags = "minecraft:entity_type",
+TagGroup::gameEvents = "minecraft:game_event";
+
 const TagGroup::Tag* TagGroup::getTag(const std::string& name)
 {
 	for (const Tag& tag : tags) if (tag.name == name) return &tag;
@@ -85,8 +91,7 @@ void TagGroup::loadVanillaTags()
 		if (!tagGroup.is_directory()) continue;
 
 		//create the tag group
-		defaultTags.push_back(TagGroup());
-		TagGroup& group = defaultTags.back();
+		TagGroup& group = defaultTags.emplace_back();
 		group.tagType = "minecraft:" + tagGroup.path().stem().string();
 		group.tagType.pop_back();
 
