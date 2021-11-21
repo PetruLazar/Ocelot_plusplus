@@ -5,23 +5,43 @@ Minecraft server implemented in c++
 https://wiki.vg/Protocol
 
 # To-do
-class for 'Chat'
+finish 'Chat' class
 
-classes for world/region/chunk (in progress)
+Futures about worlds:
 
 	- Arrange regions in order in a world, and implement binary search
 
 	- Save regions/chunks to file when needed
 
-Increase code efficiency for world generation/load/unload/etc.
+	- allow custom generators to add new biomes
 
-Better exceptions system - based on std::exception
+	- overhaul code optimization
+
+	- block updates
+
+	- block entities
+
+Increase code efficiency for world generation/load/unload/etc.
 
 System for recipes
 
-Better system for biomes, so that custom generators can have custom biomes
-
 Split logging into log.txt (normal log) and debug.txt (for protocol/runtime warnings and error)
+
+Features about players:
+	
+	- check for moving too fast
+
+	- store player info into a file on quit (and every now and then), and read that info when rejoining, if available
+
+	- when changing world, resend the items if needed
+
+	- control player sightings while moving
+
+Commands - implement suggestions
+
+Encryption support
+
+Console - implement command input and show/hide functionality
 
 code related to the following packets (either implement the packet itself or code to ease the use of the packet or other infrastructure):
 
@@ -43,13 +63,10 @@ code related to the following packets (either implement the packet itself or cod
 	play::receive::queryEntityNbt
 	play::receive::generateStructure
 	play::receive::lockDifficulty
-	play::receive::playerMovement
 	play::receive::vehicleMove
 	play::receive::steerBoat
 	play::receive::pickItem
 	play::receive::playerAbilities
-	play::receive::playerDigging
-	play::receive::entityAction
 	play::receive::steerVehicle
 	play::receive::pong
 	play::receive::setRecipeBookState
@@ -64,5 +81,3 @@ code related to the following packets (either implement the packet itself or cod
 	play::receive::updateStructureBlock
 	play::receive::updateSign
 	play::receive::spectate
-	play::receive::playerBlockPlacement
-	play::receive::useItem
