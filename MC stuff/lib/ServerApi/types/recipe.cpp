@@ -64,7 +64,17 @@ namespace recipe
 		return new Ingredient(slotArraySize, slotArray);
 	}
 
-	static unsigned recipeID = 0;
+	const Recipe* Manager::getRecipe(std::string recipeID)
+	{
+		for (Recipe* recipe : *recipes)
+		{
+			if (recipe->getRecipeID() == recipeID)
+				return recipe;
+		}
+
+		return nullptr;
+	}
+
 	void Manager::loadRecipes()
 	{
 		recipes = new std::vector<Recipe*>();

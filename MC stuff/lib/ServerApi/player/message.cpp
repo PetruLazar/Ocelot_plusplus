@@ -166,6 +166,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	play::send::playerAbilities(p, true, true, true, p->gm == gamemode::creative, 0.05f, 0.1f);
 
 	play::send::declareRecipes(p, recipe::Manager::recipes->size(), recipe::Manager::recipes);
+	//unlock all recipes by default
 	play::send::unlockRecipes(p, 0, false, false, false, false, false, false, false, false, recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs, recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs);
 
 	std::vector<Player*> inGamePlayers;
@@ -2482,8 +2483,6 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 		break;
 	}
 
-	Log::txt() <<'\n'<< (p->attributes & 0x02);
-
 	for (Player* seener : p->seenBy)
 	{
 		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(0, Entity::Metadata::type::_Byte, &p->attributes) });
@@ -2495,6 +2494,10 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 void message::play::receive::pong(Player* p, bint id)
 {
 	message::play::send::ping(p, id);
+}
+void message::play::receive::setDisplayedRecipe(Player*, const mcString& recipeId)
+{
+
 }
 void message::play::receive::nameItem(Player*, const mcString& newName)
 {
@@ -3071,7 +3074,11 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::setDisplayedRecipe:
 		{
-			IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: set displayed recipe");
+			mcString recipeID;
+			recipeID.read(data);
+
+			play::receive::setDisplayedRecipe(p, recipeID);
+			IF_PROTOCOL_WARNINGS(Log::txt() << "\nPartially handled packet: set displayed recipe");
 		}
 		break;
 		case play::id::nameItem:

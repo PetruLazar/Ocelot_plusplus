@@ -36,6 +36,9 @@ namespace recipe
 			crafting_special_banneraddpattern, crafting_special_shielddecoration, crafting_special_shulkerboxcoloring, crafting_special_suspiciousstew;
 		
 		virtual void write(char*& buffer) const;
+
+		const mcString& getType() { return type; }
+		const mcString& getRecipeID() { return recipeID; }
 	};
 
 	class Manager
@@ -46,6 +49,8 @@ namespace recipe
 	public:
 		static std::vector<Recipe*>* recipes;
 		static std::vector<mcString>* recipesIDs;
+
+		SERVER_API static const Recipe* getRecipe(std::string recipeID);
 
 		SERVER_API static void loadRecipes();
 		SERVER_API static void unloadRecipes();
