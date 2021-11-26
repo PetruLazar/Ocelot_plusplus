@@ -69,7 +69,6 @@ namespace CommandHandlers
 			y = executingPlayer->world->AbsToRelHeight(y);
 			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
 			executingPlayer->world->setBlock(x, y, z, 1);
-			message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX, executingPlayer->chunkZ, false);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
@@ -85,7 +84,6 @@ namespace CommandHandlers
 			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
 
 			executingPlayer->world->setBlock(x, y, z, 34 + lvl);
-			message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX, executingPlayer->chunkZ, false);
 			message::play::send::chatMessage(executingPlayer, Chat(("Done - " + std::to_string(lvl++)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 			if (lvl == 16) lvl = 0;
 		}
@@ -98,19 +96,43 @@ namespace CommandHandlers
 		break;
 		case 4:
 		{
+			World* wld = executingPlayer->world;
+
 			int x = fastfloor((double)executingPlayer->X),
 				y = fastfloor((double)executingPlayer->Y) - 1,
 				z = fastfloor((double)executingPlayer->Z);
 
-			y = executingPlayer->world->AbsToRelHeight(y);
-			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			int yloc = y;
+			y = wld->AbsToRelHeight(y);
+			if (!wld->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
 			for (int blockid = 0; blockid < 898; blockid++)
 			{
-				int row = (blockid / 30 - 14)*3,
-					col = (blockid % 30 - 14)*3;
-				executingPlayer->world->setBlock(x + row, y, z + col, Registry::getBlockState(Registry::getName("minecraft:block", blockid)));
+				int row = (blockid / 30 - 14) * 3,
+					col = (blockid % 30 - 14) * 3;
+				BlockState state = &Registry::getBlockState(Registry::getName(Registry::blockRegistry, blockid));
+				wld->setBlock(x + row, y, z + col, state);
 			}
-			for (int i = -5; i <= 5; i++) for (int j = -5; j <= 5; j++) message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX + i, executingPlayer->chunkZ + j, false);
+			//for (int i = -5; i <= 5; i++) for (int j = -5; j <= 5; j++) message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX + i, executingPlayer->chunkZ + j, false);
+			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		}
+		break;
+		case 5:
+		{
+			World* wld = executingPlayer->world;
+
+			int x = fastfloor((double)executingPlayer->X),
+				y = fastfloor((double)executingPlayer->Y) - 1,
+				z = fastfloor((double)executingPlayer->Z);
+
+			int yloc = y;
+			y = wld->AbsToRelHeight(y);
+			if (!wld->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			for (int blockid = 0; blockid < 898; blockid++)
+			{
+				int row = (blockid / 30 - 14) * 3,
+					col = (blockid % 30 - 14) * 3;
+				wld->setBlock(x + row, y, z + col, 1);
+			}
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
