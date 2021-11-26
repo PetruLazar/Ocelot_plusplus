@@ -38,7 +38,7 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 		section.blockCount = 0;
 		section.bitsPerBlock = 4;
 		section.useGlobalPallete = false;
-		section.palette.emplace_back(PaletteEntry(BlockState("minecraft:air"), 0x1000));
+		section.palette.emplace_back(BlockState("minecraft:air"), 0x1000);
 		section.blockStates = new BitArray(4096, section.bitsPerBlock);
 
 		//biome data
