@@ -123,6 +123,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "debug", "debug", "{967CAC5D
 		Build\Debug\data\registries.json = Build\Debug\data\registries.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "generators", "generators", "{6C899C8E-4143-465D-9A10-37EACB8928DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -159,6 +161,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{86701DF5-CB2B-4BC2-8F00-1A4076CA44B3} = {82457F40-BCF0-424F-98FD-76DC3C2C0768}
+		{8FAE53BE-D663-4284-A161-DC55CFF67137} = {6C899C8E-4143-465D-9A10-37EACB8928DC}
 		{0860646D-74A5-4242-AC5E-00152CC9AC1B} = {82457F40-BCF0-424F-98FD-76DC3C2C0768}
 		{967CAC5D-8BC8-4AF1-BD24-FF65C84FB9A1} = {82457F40-BCF0-424F-98FD-76DC3C2C0768}
 	EndGlobalSection
