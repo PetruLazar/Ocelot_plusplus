@@ -83,6 +83,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Build\$(Configuration)\worlds\custom\</OutDir>
     <TargetName>generator</TargetName>
+    <IntDir>Build\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
