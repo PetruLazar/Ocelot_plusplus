@@ -2219,7 +2219,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 		sf::Vector3i v = location.get();
 		v.y = p->world->AbsToRelHeight(v.y);
 		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
-		p->world->setBlock(v.x, v.y, v.z, 0);
+		p->world->setBlockNoBroadcast(v.x, v.y, v.z, 0);
 		//to do: send "acknowledge player digging" instead of "block change"
 		for (Player* other : p->world->players)
 			if (other != p/* && other->positionInRange(location)*/)
@@ -2235,7 +2235,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, Position lo
 		sf::Vector3i v = location.get();
 		v.y = p->world->AbsToRelHeight(v.y);
 		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
-		p->world->setBlock(v.x, v.y, v.z, 0);
+		p->world->setBlockNoBroadcast(v.x, v.y, v.z, 0);
 		//to do: send "acknowledge player digging" instead of "block change"
 		for (Player* other : p->world->players)
 			if (other != p/* && other->positionInRange(location)*/)

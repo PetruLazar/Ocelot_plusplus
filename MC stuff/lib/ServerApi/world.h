@@ -50,7 +50,8 @@ public:
 	* has_ceiling - Byte
 	*/
 	nbt_compound characteristics;
-	struct {
+	struct
+	{
 		Position Absolute;
 
 		bdouble X, Y, Z;
@@ -80,7 +81,8 @@ public:
 	SERVER_API BlockState& getPaletteEntry(int x, int y, int z);
 	SERVER_API BlockState& getPaletteEntry(int cx, int cy, int cz, int paletteIndex);
 	SERVER_API BlockState getBlock(int x, int y, int z);
-	SERVER_API void setBlock(int x, int y, int z, const BlockState&);
+	SERVER_API void setBlock(int x, int y, int z, const BlockState&, Player* broadcastException = nullptr);
+	SERVER_API void setBlockNoBroadcast(int x, int y, int z, const BlockState&);
 	SERVER_API void setBlockByItem(Player*, Slot*, Position, playerDigging::face, bfloat curX, bfloat curY, bfloat curZ);
 
 	//generator

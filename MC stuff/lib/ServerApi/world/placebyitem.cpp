@@ -2372,7 +2372,6 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 		message::play::send::chatMessage(p, Chat("Trapdoor right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		state.setState("open", state.getState("open") == "true" ? "false" : "true");
 		p->world->setBlock(destX, destY, destZ, state);
-		for (Player* seener : p->world->players) if (seener != p && seener->positionInRange(loc)) message::play::send::blockChange(seener, loc, state.id);
 		//send the opening to other players + sound
 		return true;
 	case Block::minecraft_oak_door:
@@ -2399,16 +2398,6 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 			if (stateToBlock(upperState) != bid) throw std::exception("Upper half of door not found");
 			upperState.setState("open", inverseOpen);
 			wld->setBlock(destX, destY, destZ, upperState);
-			Position loc2 = loc;
-			loc2.setY(loc2.y() + 1);
-			for (Player* seener : wld->players)
-			{
-				if (seener != p && seener->positionInRange(loc))
-				{
-					message::play::send::blockChange(seener, loc, state.id);
-					message::play::send::blockChange(seener, loc2, upperState.id);
-				}
-			}
 		}
 		else
 		{
@@ -2422,16 +2411,6 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 			if (stateToBlock(lowerState) != bid) throw std::exception("Lower half of door not found");
 			lowerState.setState("open", inverseOpen);
 			wld->setBlock(destX, destY, destZ, lowerState);
-			Position loc2 = loc;
-			loc2.setY(loc2.y() - 1);
-			for (Player* seener : wld->players)
-			{
-				if (seener != p && seener->positionInRange(loc))
-				{
-					message::play::send::blockChange(seener, loc, state.id);
-					message::play::send::blockChange(seener, loc2, lowerState.id);
-				}
-			}
 		}
 		return true;
 	}
@@ -4147,8 +4126,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				targetBlockState.setState("waterlogged", "true");
 				setBlock(destX, destY, destZ, targetBlockState);
-				//send the block to the client
-				message::play::send::blockChange(p, loc, targetBlockState.id);
 				return;
 			}
 			if (targetBlockId == Block::minecraft_cauldron)
@@ -4194,8 +4171,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 				oldBlockState.setState("waterlogged", "true");
 				setBlock(destX, destY, destZ, oldBlockState);
-				//send the block to the client
-				message::play::send::blockChange(p, Position(destX, destY + p->world->min_y, destZ), oldBlockState.id);
 				return;
 			}
 			if (destroyedByWater(oldBlockId) || replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState("minecraft:water");
@@ -4472,8 +4447,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[1].value = "upper";
 				BlockState upperDoorState = Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 				setBlock(destX, destY + 1, destZ, upperDoorState);
-				loc.incX();
-				for (Player* seener : players) if (seener != p && seener->positionInRange(loc)) message::play::send::blockChange(seener, loc, upperDoorState.id);
 				delete[] props;
 				break;
 			}
@@ -4532,8 +4505,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				props[1].value = "upper";
 				BlockState upperDoorState = Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 				setBlock(destX, destY + 1, destZ, upperDoorState);
-				Position upperDoorPos(destX, destY + 1 + min_y, destZ);
-				for (Player* seener : players) if (seener != p && seener->positionInRange(upperDoorPos)) message::play::send::blockChange(seener, upperDoorPos, upperDoorState.id);
 				delete[] props;
 			}
 			break;
@@ -5408,8 +5379,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	if (stateJson)
 	{
 		setBlock(destX, destY, destZ, stateJson);
-		Position destLoc = Position(destX, destY + p->world->min_y, destZ);
-		for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
+		//Position destLoc = Position(destX, destY + p->world->min_y, destZ);
+		//for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
 	}
 	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 }

@@ -6,6 +6,7 @@
 #include "../types/basic.h"
 #include "../server/log.h"
 #include "../server/options.h"
+#include "../player/message.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ const double noiseFactor_x = 1. / 128, noiseFactor_z = 1. / 128;
 std::vector<World*> World::worlds;
 World* World::spawnWorld;
 
-nbt_compound World::dimension_codec("", new nbt* [2]{
+nbt_compound World::dimension_codec("", new nbt*[2]{
 	new nbt_compound("minecraft:dimension_type",new nbt * [2]{
 		new nbt_string("type","minecraft:dimension_type"),
 		new nbt_list("value",new nbt * [2]{
@@ -1072,7 +1073,25 @@ BlockState World::getBlock(int x, int y, int z)
 	}
 	throw std::exception("World::getBlock: region not loaded");
 }
-void World::setBlock(int x, int y, int z, const BlockState& bl)
+void World::setBlock(int x, int y, int z, const BlockState& bl, Player* broadcastException)
+{
+	Position loc(x, y + min_y, z);
+
+	int rX = x >> 9,
+		rZ = z >> 9;
+	x &= 0x1ff; z &= 0x1ff;
+
+	Region* reg = getRegion(rX, rZ);
+	if (!reg) throw std::exception("World::setBlock: region not loaded");
+	reg->setBlock(x, y, z, bl);
+
+	for (Player* p : players) if (p != broadcastException && p->positionInRange(loc)) message::play::send::blockChange(p, loc, bl.id);
+
+	//setBlock(destX, destY, destZ, stateJson);
+	//Position destLoc = Position(destX, destY + p->world->min_y, destZ);
+	//for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
+}
+void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl)
 {
 	int rX = x >> 9,
 		rZ = z >> 9;
