@@ -7,6 +7,12 @@ https://wiki.vg/Protocol
 # To-do
 finish 'Chat' class
 
+Known bugs:
+
+	- When placing a bucket of water on an already waterlogged block, the server tries to waterlog the block again instead of trating it like a solid block
+
+	- When joining the server, items in the first hotbar slot are not seen unless the player scrolls through their hotbar
+
 Futures about worlds:
 
 	- Arrange regions in order in a world, and implement binary search
