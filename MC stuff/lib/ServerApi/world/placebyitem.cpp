@@ -5422,8 +5422,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	if (stateJson)
 	{
 		setBlock(destX, destY, destZ, stateJson, p);
-		destY += 3;
-		if (checkCoordinates(destY)) setBlock(destX, destY, destZ, stateJson);
+		/*destY += 3;
+		if (checkCoordinates(destY)) setBlock(destX, destY, destZ, stateJson);*/
 	}
 	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 };
