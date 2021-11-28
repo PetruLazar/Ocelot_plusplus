@@ -183,8 +183,6 @@ bool fullSolidBlock(Block id)
 	case Block::minecraft_chiseled_sandstone:
 	case Block::minecraft_cut_sandstone:
 	case Block::minecraft_note_block:
-	case Block::minecraft_sticky_piston:
-	case Block::minecraft_piston:
 	case Block::minecraft_white_wool:
 	case Block::minecraft_orange_wool:
 	case Block::minecraft_magenta_wool:
@@ -464,6 +462,8 @@ bool fullSolidBlock(Block id)
 	//case Block::minecraft_azalea_leaves:
 	//case Block::minecraft_flowering_azalea_leaves:
 	//case Block::minecraft_cobweb:
+	//case Block::minecraft_piston
+	//case Block::minecraft_sticky_piston:
 	//case Block::minecraft_piston_head:
 	//case Block::minecraft_oak_door:
 	//case Block::minecraft_pumpkin:
@@ -1045,6 +1045,34 @@ bool genericFenceConnectible(Block id, playerDigging::face face, const BlockStat
 		return true;
 		//test all the blocks below
 
+		//full snow layers
+	case Block::minecraft_snow:
+		if (state.getState("layers")[0] == '8') return true;
+		return false;
+
+		//pistons
+	case Block::minecraft_piston:
+	case Block::minecraft_sticky_piston:
+		if (state.getState("extended")[0] == 'f') return true;
+		{
+			std::string facing = state.getState("facing");
+			switch (face)
+			{
+			case playerDigging::north:
+				if (facing[0] == 's') return true; //if north, ret true
+				break;
+			case playerDigging::south:
+				if (facing[0] == 'n') return true; //if south, ret true
+				break;
+			case playerDigging::west:
+				if (facing[0] == 'e') return true; //if west, ret true
+				break;
+			case playerDigging::east:
+				if (facing[0] == 'w') return true;
+			}
+		}
+		return false;
+
 		//double slabs
 	case Block::minecraft_cut_copper_slab:
 	case Block::minecraft_exposed_cut_copper_slab:
@@ -1185,16 +1213,16 @@ bool genericFenceConnectible(Block id, playerDigging::face face, const BlockStat
 		switch (face)
 		{
 		case playerDigging::east:
-			if (facing[0] == 'e') return true;
-			return false;
-		case playerDigging::west:
 			if (facing[0] == 'w') return true;
 			return false;
+		case playerDigging::west:
+			if (facing[0] == 'e') return true;
+			return false;
 		case playerDigging::north:
-			if (facing[0] == 'n') return true;
+			if (facing[0] == 's') return true;
 			return false;
 		case playerDigging::south:
-			if (facing[0] == 's') return true;
+			if (facing[0] == 'n') return true;
 		}
 		return false;
 	}
@@ -1228,7 +1256,6 @@ bool genericFenceConnectible(Block id, playerDigging::face face, const BlockStat
 		}
 		return false;
 	}
-
 
 	//certain state doors
 	case Block::minecraft_iron_door:
@@ -1270,16 +1297,16 @@ bool genericFenceConnectible(Block id, playerDigging::face face, const BlockStat
 				return facing == 's';
 			}
 			char hinge = state.getState("hinge")[0];
-			return hinge == 'l' && facing == 'e' || hinge == 'r' && facing == 'v';
+			return hinge == 'l' && facing == 'e' || hinge == 'r' && facing == 'w';
 		}
 		case playerDigging::south:
 		{
 			if (open == 'f')
 			{
-				return facing == 's';
+				return facing == 'n';
 			}
 			char hinge = state.getState("hinge")[0];
-			return hinge == 'l' && facing == 'e' || hinge == 'r' && facing == 'v';
+			return hinge == 'l' && facing == 'w' || hinge == 'r' && facing == 'e';
 		}
 		}
 		return false;
@@ -1752,12 +1779,17 @@ bool canSupportDoor(Block id, const BlockState& state)
 	case Block::minecraft_flowering_azalea:
 		return true;
 
+	case Block::minecraft_piston:
+	case Block::minecraft_sticky_piston:
+		if (state.getState("extended")[0] == 'f' || state.getState("facing")[0] == 'd') return true;
+		return false;
+
 	case Block::minecraft_piston_head:
 		if (state.getState("facing") == "up") return true;
 		return false;
 
 	case Block::minecraft_snow:
-		if (state.getState("layers") == "8") return true;
+		if (state.getState("layers")[0] == '8') return true;
 		return false;
 
 	case Block::minecraft_crimson_trapdoor:
@@ -2166,7 +2198,7 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 }
 
 //is this block waterloggable?
-bool waterloggable(Block id)
+bool waterloggable(Block id, const BlockState& state)
 {
 	switch (id)
 	{
@@ -2219,6 +2251,8 @@ bool waterloggable(Block id)
 	case Block::minecraft_polished_deepslate_slab:
 	case Block::minecraft_deepslate_brick_slab:
 	case Block::minecraft_deepslate_tile_slab:
+		if (state.getState("waterlogged")[0] == 'f' && state.getState("type")[0] != 'd') return true;
+		return false;
 	case Block::minecraft_small_amethyst_bud:
 	case Block::minecraft_medium_amethyst_bud:
 	case Block::minecraft_large_amethyst_bud:
@@ -2233,7 +2267,7 @@ bool waterloggable(Block id)
 	case Block::minecraft_dark_oak_trapdoor:
 	case Block::minecraft_crimson_trapdoor:
 	case Block::minecraft_warped_trapdoor:
-		return true;
+		return state.getState("waterlogged")[0] == 'f';
 	}
 	return false;
 }
@@ -4127,7 +4161,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		}
 		case Item::minecraft_water_bucket:
 		{
-			if (waterloggable(targetBlockId))
+			if (waterloggable(targetBlockId, targetBlockState))
 			{
 				targetBlockState.setState("waterlogged", "true");
 				setBlock(destX, destY, destZ, targetBlockState);
@@ -4172,7 +4206,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
 			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
 
-			if (waterloggable(oldBlockId))
+			if (waterloggable(oldBlockId, oldBlockState))
 			{
 				oldBlockState.setState("waterlogged", "true");
 				setBlock(destX, destY, destZ, oldBlockState);
@@ -5388,8 +5422,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	if (stateJson)
 	{
 		setBlock(destX, destY, destZ, stateJson, p);
-		//Position destLoc = Position(destX, destY + p->world->min_y, destZ);
-		//for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
+		/*destY += 3;
+		if (checkCoordinates(destY)) setBlock(destX, destY, destZ, stateJson);*/
 	}
 	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-}
+};
