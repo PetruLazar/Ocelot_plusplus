@@ -85,7 +85,7 @@ public:
 
 	//player inventory
 	Slot* slots[46];
-	bshort selectedSlot = 0; //main hand selected slot
+	bshort selectedSlot = 36; //main hand selected slot 
 	Slot* floatingItem;
 
 	//player info

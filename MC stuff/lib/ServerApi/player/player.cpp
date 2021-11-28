@@ -19,7 +19,8 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 	//player initializations
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
 
-	for (int i = 0; i < 46; i++) {
+	for (int i = 0; i < 46; i++)
+	{
 		slots[i] = new Slot();
 	}
 
@@ -244,6 +245,11 @@ void Player::setWorld(World* world)
 		//message::play::send::updateLight(this, x, z);
 		//message::play::send::chunkData(this, x, z);
 	}
+
+	//send the selected slot
+	message::play::send::heldItemChange(this, selectedSlot - 36);
+
+	//send old items
 
 	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
 
