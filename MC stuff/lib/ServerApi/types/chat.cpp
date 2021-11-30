@@ -5,11 +5,10 @@ using namespace std;
 
 Chat::optionalComponent::optionalComponent() {}
 Chat::optionalComponent::optionalComponent(json* comp) : comps({ comp }) {}
-Chat::optionalComponent Chat::optionalComponent::operator|(const optionalComponent& other) const
+Chat::optionalComponent& Chat::optionalComponent::operator|(const optionalComponent& other)
 {
-	optionalComponent ret(other.comps[0]);
-	ret.comps.insert(ret.comps.begin(), comps.begin(), comps.end());
-	return ret;
+	comps.emplace_back(other.comps[0]);
+	return *this;
 }
 void Chat::optionalComponent::addCompsToChat(Chat& chat) const
 {
@@ -40,11 +39,11 @@ Chat::color::yellow::yellow() : optionalComponent(new json_string("color", "yell
 Chat::color::white::white() : optionalComponent(new json_string("color", "white")) {}
 Chat::color::reset::reset() : optionalComponent(new json_string("color", "reset")) {}
 
-Chat::obfuscated::obfuscated(bool b) : optionalComponent(new json_boolean("obfuscated", b)) {}
-Chat::bold::bold(bool b) : optionalComponent(new json_boolean("bold", b)) {}
-Chat::strikethrough::strikethrough(bool b) : optionalComponent(new json_boolean("strikethrough", b)) {}
-Chat::underlined::underlined(bool b) : optionalComponent(new json_boolean("underlined", b)) {}
-Chat::italic::italic(bool b) : optionalComponent(new json_boolean("italic", b)) {}
+Chat::style::obfuscated::obfuscated(bool b) : optionalComponent(new json_boolean("obfuscated", b)) {}
+Chat::style::bold::bold(bool b) : optionalComponent(new json_boolean("bold", b)) {}
+Chat::style::strikethrough::strikethrough(bool b) : optionalComponent(new json_boolean("strikethrough", b)) {}
+Chat::style::underlined::underlined(bool b) : optionalComponent(new json_boolean("underlined", b)) {}
+Chat::style::italic::italic(bool b) : optionalComponent(new json_boolean("italic", b)) {}
 
 Chat::Chat() :
 	json_compound("", new json*[1]{

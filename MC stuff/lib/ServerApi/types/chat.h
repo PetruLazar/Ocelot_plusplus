@@ -18,7 +18,7 @@ public:
 		optionalComponent(json* jsonComp);
 
 	public:
-		SERVER_API optionalComponent operator|(const optionalComponent& other) const;
+		SERVER_API optionalComponent& operator|(const optionalComponent& other);
 
 		SERVER_API void addCompsToChat(Chat& chat) const;
 
@@ -121,30 +121,37 @@ public:
 		};
 	};
 
-	class obfuscated : public optionalComponent
+	class style
 	{
+		//private constructor - no objects allowed
+		style();
+
 	public:
-		SERVER_API obfuscated(bool);
-	};
-	class bold : public optionalComponent
-	{
-	public:
-		SERVER_API bold(bool);
-	};
-	class strikethrough : public optionalComponent
-	{
-	public:
-		SERVER_API strikethrough(bool);
-	};
-	class underlined : public optionalComponent
-	{
-	public:
-		SERVER_API underlined(bool);
-	};
-	class italic : public optionalComponent
-	{
-	public:
-		SERVER_API italic(bool);
+		class obfuscated : public optionalComponent
+		{
+		public:
+			SERVER_API obfuscated(bool);
+		};
+		class bold : public optionalComponent
+		{
+		public:
+			SERVER_API bold(bool);
+		};
+		class strikethrough : public optionalComponent
+		{
+		public:
+			SERVER_API strikethrough(bool);
+		};
+		class underlined : public optionalComponent
+		{
+		public:
+			SERVER_API underlined(bool);
+		};
+		class italic : public optionalComponent
+		{
+		public:
+			SERVER_API italic(bool);
+		};
 	};
 
 	SERVER_API Chat();
