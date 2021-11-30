@@ -666,7 +666,7 @@ namespace Commands
 	Node::~Node() { }
 	void Node::execute(Player* executingPlayer, ArgumentStack& argumentStack)
 	{
-		throw Chat("Unknown command", Chat::color::red);
+		throw Chat("Unknown command", Chat::color::red());
 	}
 
 	RootNode::RootNode(std::vector<varInt> children) : Node(children) { }
@@ -712,7 +712,7 @@ namespace Commands
 	}
 	void LiteralNode::execute(Player* executingPlayer, ArgumentStack& argumentStack)
 	{
-		if (!handler) throw Chat("Command not executable", Chat::color::red);
+		if (!handler) throw Chat("Command not executable", Chat::color::red());
 		handler(executingPlayer, argumentStack);
 	}
 

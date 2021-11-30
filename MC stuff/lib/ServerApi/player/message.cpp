@@ -176,7 +176,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::declareCommands(p);
 
-	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::color::yellow), p);
+	Player::broadcastChat(Chat((p->username + " joined the game").c_str(), Chat::color::yellow()), p);
 	broadcastMessageOmit(play::send::playerInfo(player_macro, playerInfo::addPlayer, 1, &p), p);
 
 	p->setWorld(World::spawnWorld);
@@ -2069,7 +2069,7 @@ void message::play::receive::chatMessage(Player* p, mcString& content)
 			content.erase(0, 1);
 			try
 			{
-				if (!Commands::dispatch(p, content)) throw Chat("Unknown command", Chat::color::red);
+				if (!Commands::dispatch(p, content)) throw Chat("Unknown command", Chat::color::red());
 			}
 			catch (const Chat& msg)
 			{
@@ -2077,7 +2077,7 @@ void message::play::receive::chatMessage(Player* p, mcString& content)
 			}
 			catch (...)
 			{
-				send::chatMessage(p, Chat("Internal error occured", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+				send::chatMessage(p, Chat("Internal error occured", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 			}
 		}
 		catch (const Chat& errormessage)

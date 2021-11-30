@@ -35,7 +35,7 @@ namespace CommandHandlers
 		mcString& arg0 = *(mcString*)argumentStack[0];
 		if (executingPlayer->world->name == arg0)
 		{
-			message::play::send::chatMessage(executingPlayer, Chat("You already are in that world", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			message::play::send::chatMessage(executingPlayer, Chat("You already are in that world", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 			return;
 		}
 		for (World* wld : World::worlds)
@@ -46,7 +46,7 @@ namespace CommandHandlers
 				return;
 			}
 		}
-		message::play::send::chatMessage(executingPlayer, Chat("World not found", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::chatMessage(executingPlayer, Chat("World not found", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 	}
 	void tellWorld(CommandHandlerArguments)
 	{
@@ -67,7 +67,7 @@ namespace CommandHandlers
 				z = fastfloor((double)executingPlayer->Z);
 
 			y = executingPlayer->world->AbsToRelHeight(y);
-			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
 			executingPlayer->world->setBlock(x, y, z, 1);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
@@ -81,7 +81,7 @@ namespace CommandHandlers
 				z = fastfloor((double)executingPlayer->Z);
 
 			y = executingPlayer->world->AbsToRelHeight(y);
-			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
 
 			executingPlayer->world->setBlock(x, y, z, 34 + lvl);
 			message::play::send::chatMessage(executingPlayer, Chat(("Done - " + std::to_string(lvl++)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
@@ -104,7 +104,7 @@ namespace CommandHandlers
 
 			int yloc = y;
 			y = wld->AbsToRelHeight(y);
-			if (!wld->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			if (!wld->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
 			for (int blockid = 0; blockid < 898; blockid++)
 			{
 				int row = (blockid / 30 - 14) * 3,
@@ -126,7 +126,7 @@ namespace CommandHandlers
 
 			int yloc = y;
 			y = wld->AbsToRelHeight(y);
-			if (!wld->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red);
+			if (!wld->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
 			for (int blockid = 0; blockid < 898; blockid++)
 			{
 				int row = (blockid / 30 - 14) * 3,
@@ -138,7 +138,7 @@ namespace CommandHandlers
 		break;
 		//add tests here - starting at 1
 		default:
-			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 	}
 }

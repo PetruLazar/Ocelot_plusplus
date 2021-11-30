@@ -136,7 +136,7 @@ blockFacing getHorizontalFacing(Player* p, float playerYaw, Item itemId)
 
 	//temp
 	if (playerYaw == 45.f || playerYaw == 135.f || playerYaw == 225.f || playerYaw == 315.f)
-		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
 	if (playerYaw < 45 || playerYaw>315)
 	{
@@ -155,7 +155,7 @@ blockFacing getHorizontalFacing(Player* p, float playerYaw, Item itemId)
 blockFacing get3DFacing(Player* p, float playerYaw, float playerPitch, Item itemId)
 {
 	if (playerPitch == 45.f || playerPitch == -45.f)
-		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
 	if (playerPitch >= 45.f) return blockFacing::up;
 	if (playerPitch <= -45.f) return blockFacing::down;
@@ -4968,7 +4968,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			}
 			if (targetBlockId == Block::minecraft_cauldron)
 			{
-				message::play::send::chatMessage(p, Chat("No water in cauldrons allowed!", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)); //temp
+				message::play::send::chatMessage(p, Chat("No water in cauldrons allowed!", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)); //temp
 				//BlockProperty* props = new BlockProperty[1];
 				//props[0].name = "level";
 				//props[0].value = "3";
@@ -5018,7 +5018,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		{
 			if (targetBlockId == Block::minecraft_cauldron)
 			{
-				message::play::send::chatMessage(p, Chat("No lava in cauldrons allowed!", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)); //temp
+				message::play::send::chatMessage(p, Chat("No lava in cauldrons allowed!", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)); //temp
 				//BlockProperty* props = new BlockProperty[1];
 				//props[0].name = "level";
 				//props[0].value = "3";
@@ -5062,7 +5062,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		{
 			if (targetBlockId == Block::minecraft_cauldron)
 			{
-				message::play::send::chatMessage(p, Chat("No powder snow in cauldrons allowed!", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)); //temp
+				message::play::send::chatMessage(p, Chat("No powder snow in cauldrons allowed!", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)); //temp
 				//BlockProperty* props = new BlockProperty[1];
 				//props[0].name = "level";
 				//props[0].value = "3";
@@ -6313,7 +6313,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	}
 	catch (...)
 	{
-		message::play::send::chatMessage(p, Chat("Debug: error occured in setBlockByItem: switch", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		message::play::send::chatMessage(p, Chat("Debug: error occured in setBlockByItem: switch", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		throw;
 	}
 
@@ -6323,5 +6323,5 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		/*destY += 3;
 		if (checkCoordinates(destY)) setBlock(destX, destY, destZ, stateJson);*/
 	}
-	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 };
