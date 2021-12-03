@@ -2657,6 +2657,235 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 	throw std::exception("Could not choose door hinge");
 }
 
+bool isStair(Block id)
+{
+	switch (id)
+	{
+	case Block::minecraft_cut_copper_stairs:
+	case Block::minecraft_exposed_cut_copper_stairs:
+	case Block::minecraft_weathered_cut_copper_stairs:
+	case Block::minecraft_oxidized_cut_copper_stairs:
+	case Block::minecraft_waxed_cut_copper_stairs:
+	case Block::minecraft_waxed_exposed_cut_copper_stairs:
+	case Block::minecraft_waxed_weathered_cut_copper_stairs:
+	case Block::minecraft_waxed_oxidized_cut_copper_stairs:
+	case Block::minecraft_purpur_stairs:
+	case Block::minecraft_oak_stairs:
+	case Block::minecraft_spruce_stairs:
+	case Block::minecraft_birch_stairs:
+	case Block::minecraft_jungle_stairs:
+	case Block::minecraft_crimson_stairs:
+	case Block::minecraft_warped_stairs:
+	case Block::minecraft_cobblestone_stairs:
+	case Block::minecraft_acacia_stairs:
+	case Block::minecraft_dark_oak_stairs:
+	case Block::minecraft_brick_stairs:
+	case Block::minecraft_stone_brick_stairs:
+	case Block::minecraft_nether_brick_stairs:
+	case Block::minecraft_sandstone_stairs:
+	case Block::minecraft_quartz_stairs:
+	case Block::minecraft_prismarine_stairs:
+	case Block::minecraft_prismarine_brick_stairs:
+	case Block::minecraft_dark_prismarine_stairs:
+	case Block::minecraft_red_sandstone_stairs:
+	case Block::minecraft_polished_granite_stairs:
+	case Block::minecraft_smooth_red_sandstone_stairs:
+	case Block::minecraft_mossy_stone_brick_stairs:
+	case Block::minecraft_polished_diorite_stairs:
+	case Block::minecraft_mossy_cobblestone_stairs:
+	case Block::minecraft_end_stone_brick_stairs:
+	case Block::minecraft_stone_stairs:
+	case Block::minecraft_smooth_sandstone_stairs:
+	case Block::minecraft_smooth_quartz_stairs:
+	case Block::minecraft_granite_stairs:
+	case Block::minecraft_andesite_stairs:
+	case Block::minecraft_red_nether_brick_stairs:
+	case Block::minecraft_polished_andesite_stairs:
+	case Block::minecraft_diorite_stairs:
+	case Block::minecraft_cobbled_deepslate_stairs:
+	case Block::minecraft_polished_deepslate_stairs:
+	case Block::minecraft_deepslate_brick_stairs:
+	case Block::minecraft_deepslate_tile_stairs:
+	case Block::minecraft_blackstone_stairs:
+	case Block::minecraft_polished_blackstone_stairs:
+	case Block::minecraft_polished_blackstone_brick_stairs:
+		return true;
+	}
+	return false;
+}
+bool isStairFacing(World* wld, int refX, int refY, int refZ, char facing, char half)
+{
+	BlockState state = wld->getBlock(refX, refY, refZ);
+	return isStair(stateToBlock(state)) && state.getState("half")[0] == half && state.getState("facing")[0] == facing;
+}
+std::string getStairShape(World* wld, blockFacing refStairFacing, char half, int refX, int refY, int refZ)
+{
+	switch (refStairFacing)
+	{
+	case blockFacing::north:
+	//check back stair
+	{
+		BlockState state = wld->getBlock(refX, refY, refZ - 1);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 'e':
+				//if no stair on left
+				if (isStairFacing(wld, refX - 1, refY, refZ, 'n', half)) break;
+				return "outer_right";
+			case 'w':
+				//if no stair on right
+				if (isStairFacing(wld, refX + 1, refY, refZ, 'n', half)) break;
+				return "outer_left";
+			}
+		}
+	}
+	//check front stair
+	{
+		BlockState state = wld->getBlock(refX, refY, refZ + 1);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 'e':
+				//if no stair on right
+				if (isStairFacing(wld, refX + 1, refY, refZ, 'n', half)) break;
+				return "inner_right";
+			case 'w':
+				//if no stair on left
+				if (isStairFacing(wld, refX - 1, refY, refZ, 'n', half)) break;
+				return "inner_left";
+			}
+		}
+	}
+	break;
+	case blockFacing::south:
+	//check back stair
+	{
+		BlockState state = wld->getBlock(refX, refY, refZ + 1);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 'e':
+				//if no stair on right
+				if (isStairFacing(wld, refX - 1, refY, refZ, 's', half)) break;
+				return "outer_left";
+			case'w':
+				//if no stair on left
+				if (isStairFacing(wld, refX + 1, refY, refZ, 's', half)) break;
+				return "outer_right";
+			}
+		}
+	}
+	//check front stair
+	{
+		BlockState state = wld->getBlock(refX, refY, refZ - 1);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 'e':
+				//if no stair on left
+				if (isStairFacing(wld, refX + 1, refY, refZ, 's', half)) break;
+				return "inner_left";
+			case 'w':
+				//if no stair on right
+				if (isStairFacing(wld, refX - 1, refY, refZ, 's', half)) break;
+				return "inner_right";
+			}
+		}
+	}
+	break;
+	case blockFacing::east:
+	//check back stair
+	{
+		BlockState state = wld->getBlock(refX + 1, refY, refZ);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 's':
+				//if no stair on left
+				if (isStairFacing(wld, refX, refY, refZ - 1, 'e', half)) break;
+				return "outer_right";
+			case 'n':
+				//if no stair on right
+				if (isStairFacing(wld, refX, refY, refZ + 1, 'e', half)) break;
+				return "outer_left";
+			}
+		}
+	}
+	//check front stair
+	{
+		BlockState state = wld->getBlock(refX - 1, refY, refZ);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 'n':
+				//if no stair on left
+				if (isStairFacing(wld, refX, refY, refZ - 1, 'e', half)) break;
+				return "inner_left";
+			case 's':
+				//if no stair on right
+				if (isStairFacing(wld, refX, refY, refZ + 1, 'e', half)) break;
+				return "inner_right";
+			}
+		}
+	}
+	break;
+	case blockFacing::west:
+	//check back stair
+	{
+		BlockState state = wld->getBlock(refX - 1, refY, refZ);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 'n':
+				//if no stair on left
+				if (isStairFacing(wld, refX, refY, refZ + 1, 'w', half)) break;
+				return "outer_right";
+			case 's':
+				//if no stair on right
+				if (isStairFacing(wld, refX, refY, refZ - 1, 'w', half)) break;
+				return "outer_left";
+			}
+		}
+	}
+	//check front stair
+	{
+		BlockState state = wld->getBlock(refX + 1, refY, refZ);
+		Block block = stateToBlock(state);
+		if (isStair(block) && state.getState("half")[0] == half)
+		{
+			switch (state.getState("facing")[0])
+			{
+			case 's':
+				//if no stair on left
+				if (isStairFacing(wld, refX, refY, refZ + 1, 'w', half)) break;
+				return "inner_left";
+			case 'n':
+				//if no stair on right
+				if (isStairFacing(wld, refX, refY, refZ - 1, 'w', half)) break;
+				return "inner_right";
+			}
+		}
+	}
+	break;
+	}
+	return "straight";
+}
+
 //is this block waterloggable?
 bool waterloggable(Block id, const BlockState& state)
 {
@@ -2837,209 +3066,6 @@ bool replaceableIndirect(Block id)
 	return false;
 }
 
-bool isStair(Block id)
-{
-	switch (id)
-	{
-	case Block::minecraft_cut_copper_stairs:
-	case Block::minecraft_exposed_cut_copper_stairs:
-	case Block::minecraft_weathered_cut_copper_stairs:
-	case Block::minecraft_oxidized_cut_copper_stairs:
-	case Block::minecraft_waxed_cut_copper_stairs:
-	case Block::minecraft_waxed_exposed_cut_copper_stairs:
-	case Block::minecraft_waxed_weathered_cut_copper_stairs:
-	case Block::minecraft_waxed_oxidized_cut_copper_stairs:
-	case Block::minecraft_purpur_stairs:
-	case Block::minecraft_oak_stairs:
-	case Block::minecraft_spruce_stairs:
-	case Block::minecraft_birch_stairs:
-	case Block::minecraft_jungle_stairs:
-	case Block::minecraft_crimson_stairs:
-	case Block::minecraft_warped_stairs:
-	case Block::minecraft_cobblestone_stairs:
-	case Block::minecraft_acacia_stairs:
-	case Block::minecraft_dark_oak_stairs:
-	case Block::minecraft_brick_stairs:
-	case Block::minecraft_stone_brick_stairs:
-	case Block::minecraft_nether_brick_stairs:
-	case Block::minecraft_sandstone_stairs:
-	case Block::minecraft_quartz_stairs:
-	case Block::minecraft_prismarine_stairs:
-	case Block::minecraft_prismarine_brick_stairs:
-	case Block::minecraft_dark_prismarine_stairs:
-	case Block::minecraft_red_sandstone_stairs:
-	case Block::minecraft_polished_granite_stairs:
-	case Block::minecraft_smooth_red_sandstone_stairs:
-	case Block::minecraft_mossy_stone_brick_stairs:
-	case Block::minecraft_polished_diorite_stairs:
-	case Block::minecraft_mossy_cobblestone_stairs:
-	case Block::minecraft_end_stone_brick_stairs:
-	case Block::minecraft_stone_stairs:
-	case Block::minecraft_smooth_sandstone_stairs:
-	case Block::minecraft_smooth_quartz_stairs:
-	case Block::minecraft_granite_stairs:
-	case Block::minecraft_andesite_stairs:
-	case Block::minecraft_red_nether_brick_stairs:
-	case Block::minecraft_polished_andesite_stairs:
-	case Block::minecraft_diorite_stairs:
-	case Block::minecraft_cobbled_deepslate_stairs:
-	case Block::minecraft_polished_deepslate_stairs:
-	case Block::minecraft_deepslate_brick_stairs:
-	case Block::minecraft_deepslate_tile_stairs:
-	case Block::minecraft_blackstone_stairs:
-	case Block::minecraft_polished_blackstone_stairs:
-	case Block::minecraft_polished_blackstone_brick_stairs:
-		return true;
-	}
-	return false;
-}
-std::string getStairShape(World* wld, blockFacing refStairFacing, int refX, int refY, int refZ)
-{
-	switch (refStairFacing)
-	{
-	case blockFacing::north:
-	//check back stair
-	{
-		refZ--;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 'e':
-				return "outer_right";
-			case'w':
-				return "outer_left";
-			}
-
-		}
-	}
-	//check front stair
-	{
-		refZ += 2;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 'e':
-				return "inner_right";
-			case 'w':
-				return "inner_left";
-			}
-		}
-	}
-	break;
-	case blockFacing::south:
-	//check back stair
-	{
-		refZ++;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 'e':
-				return "outer_left";
-			case'w':
-				return "outer_right";
-			}
-
-		}
-	}
-	//check front stair
-	{
-		refZ -= 2;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 'e':
-				return "inner_left";
-			case 'w':
-				return "inner_right";
-			}
-		}
-	}
-	break;
-	case blockFacing::east:
-	//check back stair
-	{
-		refX++;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 's':
-				return "outer_right";
-			case 'n':
-				return "outer_left";
-			}
-
-		}
-	}
-	//check front stair
-	{
-		refX -= 2;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 'n':
-				return "inner_right";
-			case 's':
-				return "inner_left";
-			}
-		}
-	}
-	break;
-	case blockFacing::west:
-	//check back stair
-	{
-		refX--;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 'n':
-				return "outer_right";
-			case 's':
-				return "outer_left";
-			}
-
-		}
-	}
-	//check front stair
-	{
-		refX += 2;
-		BlockState state = wld->getBlock(refX, refY, refZ);
-		Block block = stateToBlock(state);
-		if (isStair(block))
-		{
-			switch (state.getState("facing")[0])
-			{
-			case 's':
-				return "inner_right";
-			case 'n':
-				return "inner_left";
-			}
-		}
-	}
-	break;
-	}
-	return "straight";
-}
 bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, BlockState& state, Position loc)
 {
 	//cannot right-click while crouching
@@ -3630,7 +3656,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_polished_blackstone_stairs:
 		case Item::minecraft_polished_blackstone_brick_stairs:
 			if (curY == .5f && face != playerDigging::bottom && face != playerDigging::top) message::play::send::chatMessage(p, Chat("Are you a robot?"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-			return;
+			//return;
 			if (replaceableDirect(targetBlockId))
 			{
 				BlockProperty* props = new BlockProperty[4];
@@ -3651,7 +3677,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					props[1].value = curY < .5f ? "bottom" : "top";
 				}
 				props[2].name = "shape";
-				props[2].value = getStairShape(this, facing, destX, destY, destZ);
+				props[2].value = getStairShape(this, facing, props[1].value[0], destX, destY, destZ);
 				props[3].name = "waterlogged";
 				props[3].value = "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -3706,7 +3732,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					props[1].value = curY < .5f ? "bottom" : "top";
 				}
 				props[2].name = "shape";
-				props[2].value = getStairShape(this, facing, destX, destY, destZ);
+				props[2].value = getStairShape(this, facing, props[1].value[0], destX, destY, destZ);
 				props[3].name = "waterlogged";
 				props[3].value = oldBlockState.id == waterSurceBlockStateId ? "true" : "false";
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -6319,7 +6345,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 
 	if (stateJson)
 	{
-		setBlock(destX, destY, destZ, stateJson/*, p*/);
+		setBlock(destX, destY, destZ, stateJson, p);
 		/*destY += 3;
 		if (checkCoordinates(destY)) setBlock(destX, destY, destZ, stateJson);*/
 	}

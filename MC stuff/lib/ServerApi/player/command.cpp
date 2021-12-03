@@ -138,7 +138,7 @@ namespace CommandHandlers
 		break;
 		//add tests here - starting at 1
 		default:
-			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red() | Chat::style::bold(true) | Chat::style::underlined(true)), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 	}
 }
