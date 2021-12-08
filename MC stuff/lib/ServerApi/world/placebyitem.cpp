@@ -1421,8 +1421,19 @@ bool woodenFencesConnectible(Block id, playerDigging::face face, const BlockStat
 	case Block::minecraft_dark_oak_fence_gate:
 	case Block::minecraft_crimson_fence_gate:
 	case Block::minecraft_warped_fence_gate:
-		//check state
-		return false;
+	{
+		char facing = state.getState("facing")[0];
+		switch (facing)
+		{
+		case 'w':
+		case 'e':
+			return face == playerDigging::north || face == playerDigging::south;
+		case 'n':
+		case 's':
+			return face == playerDigging::east || face == playerDigging::west;
+		}
+	}
+	return false;
 	}
 	return false;
 }
@@ -1441,8 +1452,19 @@ bool netherFencesConnectible(Block id, playerDigging::face face, const BlockStat
 	case Block::minecraft_dark_oak_fence_gate:
 	case Block::minecraft_crimson_fence_gate:
 	case Block::minecraft_warped_fence_gate:
-		//check state
-		return false;
+	{
+		char facing = state.getState("facing")[0];
+		switch (facing)
+		{
+		case 'w':
+		case 'e':
+			return face == playerDigging::north || face == playerDigging::south;
+		case 'n':
+		case 's':
+			return face == playerDigging::east || face == playerDigging::west;
+		}
+	}
+	return false;
 	}
 	return false;
 }
@@ -1520,7 +1542,27 @@ bool wallsConnectible(Block id, playerDigging::face face, const BlockState& stat
 	case Block::minecraft_red_stained_glass_pane:
 	case Block::minecraft_black_stained_glass_pane:
 		return true;
-		//gates
+	case Block::minecraft_oak_fence_gate:
+	case Block::minecraft_spruce_fence_gate:
+	case Block::minecraft_birch_fence_gate:
+	case Block::minecraft_jungle_fence_gate:
+	case Block::minecraft_acacia_fence_gate:
+	case Block::minecraft_dark_oak_fence_gate:
+	case Block::minecraft_crimson_fence_gate:
+	case Block::minecraft_warped_fence_gate:
+	{
+		char facing = state.getState("facing")[0];
+		switch (facing)
+		{
+		case 'w':
+		case 'e':
+			return face == playerDigging::north || face == playerDigging::south;
+		case 'n':
+		case 's':
+			return face == playerDigging::east || face == playerDigging::west;
+		}
+	}
+	return false;
 	}
 	return false;
 }
@@ -5656,13 +5698,89 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			{
 		case Item::minecraft_torch:
 		case Item::minecraft_soul_torch:
-		case Item::minecraft_redstone_torch:
 		{
-			message::play::send::chatMessage(p, Chat("No torches allowed"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-			return;
 			if (replaceableDirect(targetBlockId))
 			{
-				//stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+				//try down
+				{
+					if (checkCoordinates(destY - 1))
+					{
+						BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+						{
+							stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							break;
+						}
+					}
+				}
+
+				std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+				itemName.insert(itemName.length() - 5, "wall_");
+				//try south
+				{
+					BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[1];
+						props[0].name = "facing";
+						props[0].value = "north";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
+
+				//try west
+				{
+					BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[1];
+						props[0].name = "facing";
+						props[0].value = "east";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
+
+				//try north
+				{
+					BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[1];
+						props[0].name = "facing";
+						props[0].value = "south";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
+
+				//try east
+				{
+					BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[1];
+						props[0].name = "facing";
+						props[0].value = "west";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
 				break;
 			}
 			switch (face)
@@ -5693,9 +5811,1097 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
 			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
 
-			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
-			break;
+			if (replaceableIndirect(oldBlockId))
+			{
+				switch (face)
+				{
+				case playerDigging::bottom:
+				case playerDigging::top:
+				{
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								break;
+							}
+						}
+					}
 
+					std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+					itemName.insert(itemName.length() - 5, "wall_");
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "north";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "east";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "south";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "west";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::north:
+				{
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "north";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								break;
+							}
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "east";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "south";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "west";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::south:
+				{
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "south";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								break;
+							}
+						}
+					}
+
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "north";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "east";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "west";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::west:
+				{
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "west";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								break;
+							}
+						}
+					}
+
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "north";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "east";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "south";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::east:
+				{
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "east";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								break;
+							}
+						}
+					}
+
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "north";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "south";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[1];
+							props[0].name = "facing";
+							props[0].value = "west";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				}
+			}
+			break;
+		}
+		case Item::minecraft_redstone_torch:
+		{
+			if (replaceableDirect(targetBlockId))
+			{
+				//try down
+				{
+					if (checkCoordinates(destY - 1))
+					{
+						BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+						{
+							BlockProperty* props = new BlockProperty[1];
+							props[0].name = "lit";
+							props[0].value = "true";
+							stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+
+				std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+				itemName.insert(itemName.length() - 5, "wall_");
+				//try south
+				{
+					BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[2];
+						props[0].name = "facing";
+						props[0].value = "north";
+						props[1].name = "lit";
+						props[1].value = "true";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
+
+				//try west
+				{
+					BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[2];
+						props[0].name = "facing";
+						props[0].value = "east";
+						props[1].name = "lit";
+						props[1].value = "true";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
+
+				//try north
+				{
+					BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[2];
+						props[0].name = "facing";
+						props[0].value = "south";
+						props[1].name = "lit";
+						props[1].value = "true";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
+
+				//try east
+				{
+					BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+					Block supportBlock = stateToBlock(supportBlockState);
+					if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+					{
+						BlockProperty*props = new BlockProperty[2];
+						props[0].name = "facing";
+						props[0].value = "west";
+						props[1].name = "lit";
+						props[1].value = "true";
+						stateJson = &Registry::getBlockState(itemName, props);
+						message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+						delete[] props;
+						break;
+					}
+				}
+				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				switch (face)
+				{
+				case playerDigging::bottom:
+				case playerDigging::top:
+				{
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								BlockProperty* props = new BlockProperty[1];
+								props[0].name = "lit";
+								props[0].value = "true";
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								delete[] props;
+								break;
+							}
+						}
+					}
+
+					std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+					itemName.insert(itemName.length() - 5, "wall_");
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "north";
+							props[1].name = "lit";
+							props[1].value = "true";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "east";
+							props[1].name = "lit";
+							props[1].value = "true";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "south";
+							props[1].name = "lit";
+							props[1].value = "true";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "west";
+							props[1].name = "lit";
+							props[1].value = "true";
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::north:
+				{
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "north";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								BlockProperty* props = new BlockProperty[1];
+								props[0].name = "lit";
+								props[0].value = "true";
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								delete[] props;
+								break;
+							}
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "east";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "south";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "west";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::south:
+				{
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "south";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								BlockProperty* props = new BlockProperty[1];
+								props[0].name = "lit";
+								props[0].value = "true";
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								delete[] props;
+								break;
+							}
+						}
+					}
+
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "north";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "east";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "west";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::west:
+				{
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "west";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								BlockProperty*props = new BlockProperty[1];
+								props[0].name = "lit";
+								props[0].value = "true";
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								delete[] props;
+								break;
+							}
+						}
+					}
+
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "north";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "east";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "south";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				case playerDigging::east:
+				{
+					//try west
+					{
+						BlockState supportBlockState = getBlock(destX - 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "east";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try down
+					{
+						if (checkCoordinates(destY - 1))
+						{
+							BlockState supportBlockState = getBlock(destX, destY - 1, destZ);
+							Block supportBlock = stateToBlock(supportBlockState);
+							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
+							{
+								BlockProperty*props = new BlockProperty[1];
+								props[0].name = "lit";
+								props[0].value = "true";
+								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+								message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+								delete[] props;
+								break;
+							}
+						}
+					}
+
+					//try south
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ + 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "north";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try north
+					{
+						BlockState supportBlockState = getBlock(destX, destY, destZ - 1);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "south";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+
+					//try east
+					{
+						BlockState supportBlockState = getBlock(destX + 1, destY, destZ);
+						Block supportBlock = stateToBlock(supportBlockState);
+						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
+						{
+							BlockProperty*props = new BlockProperty[2];
+							props[0].name = "facing";
+							props[0].value = "west";
+							props[1].name = "lit";
+							props[1].value = "true";
+							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
+							itemName.insert(itemName.length() - 5, "wall_");
+							stateJson = &Registry::getBlockState(itemName, props);
+							message::play::send::blockChange(p, Position(destX, destY + min_y, destZ), (*stateJson)["id"].iValue());
+							delete[] props;
+							break;
+						}
+					}
+				}
+				break;
+				}
+			}
+			break;
 		}
 			}
 
