@@ -102,6 +102,22 @@ float rotationOffset(Item itemId)
 	case Item::minecraft_blackstone_stairs:
 	case Item::minecraft_polished_blackstone_stairs:
 	case Item::minecraft_polished_blackstone_brick_stairs:
+	case Item::minecraft_white_bed:
+	case Item::minecraft_orange_bed:
+	case Item::minecraft_magenta_bed:
+	case Item::minecraft_light_blue_bed:
+	case Item::minecraft_yellow_bed:
+	case Item::minecraft_lime_bed:
+	case Item::minecraft_pink_bed:
+	case Item::minecraft_gray_bed:
+	case Item::minecraft_light_gray_bed:
+	case Item::minecraft_cyan_bed:
+	case Item::minecraft_purple_bed:
+	case Item::minecraft_blue_bed:
+	case Item::minecraft_brown_bed:
+	case Item::minecraft_green_bed:
+	case Item::minecraft_red_bed:
+	case Item::minecraft_black_bed:
 		return 180.f;
 	}
 	return 0.f;
@@ -2181,6 +2197,142 @@ bool canSupportTorch(Block id, playerDigging::face face, const BlockState& state
 	return false;
 }
 
+bool canSupportSnow(Block id, const BlockState& state)
+{
+	if (fullSolidBlock(id)) return true;
+	switch (id)
+	{
+	case Block::minecraft_chorus_flower:
+	case Block::minecraft_honey_block:
+	case Block::minecraft_scaffolding:
+	case Block::minecraft_oak_leaves:
+	case Block::minecraft_spruce_leaves:
+	case Block::minecraft_birch_leaves:
+	case Block::minecraft_jungle_leaves:
+	case Block::minecraft_acacia_leaves:
+	case Block::minecraft_dark_oak_leaves:
+	case Block::minecraft_azalea_leaves:
+	case Block::minecraft_flowering_azalea_leaves:
+	case Block::minecraft_soul_sand:
+		return true;
+	case Block::minecraft_snow:
+		return state.getState("level")[0] == '8';
+	case Block::minecraft_iron_trapdoor:
+	case Block::minecraft_oak_trapdoor:
+	case Block::minecraft_spruce_trapdoor:
+	case Block::minecraft_birch_trapdoor:
+	case Block::minecraft_jungle_trapdoor:
+	case Block::minecraft_acacia_trapdoor:
+	case Block::minecraft_dark_oak_trapdoor:
+	case Block::minecraft_crimson_trapdoor:
+	case Block::minecraft_warped_trapdoor:
+		return state.getState("half")[0] == 't' && state.getState("open")[0] == 'f'; //?
+	case Block::minecraft_cut_copper_stairs:
+	case Block::minecraft_exposed_cut_copper_stairs:
+	case Block::minecraft_weathered_cut_copper_stairs:
+	case Block::minecraft_oxidized_cut_copper_stairs:
+	case Block::minecraft_waxed_cut_copper_stairs:
+	case Block::minecraft_waxed_exposed_cut_copper_stairs:
+	case Block::minecraft_waxed_weathered_cut_copper_stairs:
+	case Block::minecraft_waxed_oxidized_cut_copper_stairs:
+	case Block::minecraft_purpur_stairs:
+	case Block::minecraft_oak_stairs:
+	case Block::minecraft_spruce_stairs:
+	case Block::minecraft_birch_stairs:
+	case Block::minecraft_jungle_stairs:
+	case Block::minecraft_crimson_stairs:
+	case Block::minecraft_warped_stairs:
+	case Block::minecraft_cobblestone_stairs:
+	case Block::minecraft_acacia_stairs:
+	case Block::minecraft_dark_oak_stairs:
+	case Block::minecraft_brick_stairs:
+	case Block::minecraft_stone_brick_stairs:
+	case Block::minecraft_nether_brick_stairs:
+	case Block::minecraft_sandstone_stairs:
+	case Block::minecraft_quartz_stairs:
+	case Block::minecraft_prismarine_stairs:
+	case Block::minecraft_prismarine_brick_stairs:
+	case Block::minecraft_dark_prismarine_stairs:
+	case Block::minecraft_red_sandstone_stairs:
+	case Block::minecraft_polished_granite_stairs:
+	case Block::minecraft_smooth_red_sandstone_stairs:
+	case Block::minecraft_mossy_stone_brick_stairs:
+	case Block::minecraft_polished_diorite_stairs:
+	case Block::minecraft_mossy_cobblestone_stairs:
+	case Block::minecraft_end_stone_brick_stairs:
+	case Block::minecraft_stone_stairs:
+	case Block::minecraft_smooth_sandstone_stairs:
+	case Block::minecraft_smooth_quartz_stairs:
+	case Block::minecraft_granite_stairs:
+	case Block::minecraft_andesite_stairs:
+	case Block::minecraft_red_nether_brick_stairs:
+	case Block::minecraft_polished_andesite_stairs:
+	case Block::minecraft_diorite_stairs:
+	case Block::minecraft_cobbled_deepslate_stairs:
+	case Block::minecraft_polished_deepslate_stairs:
+	case Block::minecraft_deepslate_brick_stairs:
+	case Block::minecraft_deepslate_tile_stairs:
+	case Block::minecraft_blackstone_stairs:
+	case Block::minecraft_polished_blackstone_stairs:
+	case Block::minecraft_polished_blackstone_brick_stairs:
+		return state.getState("half")[0] == 't';
+	case Block::minecraft_cut_copper_slab:
+	case Block::minecraft_exposed_cut_copper_slab:
+	case Block::minecraft_weathered_cut_copper_slab:
+	case Block::minecraft_oxidized_cut_copper_slab:
+	case Block::minecraft_waxed_cut_copper_slab:
+	case Block::minecraft_waxed_exposed_cut_copper_slab:
+	case Block::minecraft_waxed_weathered_cut_copper_slab:
+	case Block::minecraft_waxed_oxidized_cut_copper_slab:
+	case Block::minecraft_oak_slab:
+	case Block::minecraft_spruce_slab:
+	case Block::minecraft_birch_slab:
+	case Block::minecraft_jungle_slab:
+	case Block::minecraft_acacia_slab:
+	case Block::minecraft_dark_oak_slab:
+	case Block::minecraft_crimson_slab:
+	case Block::minecraft_warped_slab:
+	case Block::minecraft_stone_slab:
+	case Block::minecraft_smooth_stone_slab:
+	case Block::minecraft_sandstone_slab:
+	case Block::minecraft_cut_sandstone_slab:
+	case Block::minecraft_petrified_oak_slab:
+	case Block::minecraft_cobblestone_slab:
+	case Block::minecraft_brick_slab:
+	case Block::minecraft_stone_brick_slab:
+	case Block::minecraft_nether_brick_slab:
+	case Block::minecraft_quartz_slab:
+	case Block::minecraft_red_sandstone_slab:
+	case Block::minecraft_cut_red_sandstone_slab:
+	case Block::minecraft_purpur_slab:
+	case Block::minecraft_prismarine_slab:
+	case Block::minecraft_prismarine_brick_slab:
+	case Block::minecraft_dark_prismarine_slab:
+	case Block::minecraft_polished_granite_slab:
+	case Block::minecraft_smooth_red_sandstone_slab:
+	case Block::minecraft_mossy_stone_brick_slab:
+	case Block::minecraft_polished_diorite_slab:
+	case Block::minecraft_mossy_cobblestone_slab:
+	case Block::minecraft_end_stone_brick_slab:
+	case Block::minecraft_smooth_sandstone_slab:
+	case Block::minecraft_smooth_quartz_slab:
+	case Block::minecraft_granite_slab:
+	case Block::minecraft_andesite_slab:
+	case Block::minecraft_red_nether_brick_slab:
+	case Block::minecraft_polished_andesite_slab:
+	case Block::minecraft_diorite_slab:
+	case Block::minecraft_cobbled_deepslate_slab:
+	case Block::minecraft_polished_deepslate_slab:
+	case Block::minecraft_deepslate_brick_slab:
+	case Block::minecraft_deepslate_tile_slab:
+	case Block::minecraft_blackstone_slab:
+	case Block::minecraft_polished_blackstone_slab:
+	case Block::minecraft_polished_blackstone_brick_slab:
+		return state.getState("type")[0] != 'b';
+	}
+	return false;
+}
+
 bool isDoorLower(Block id, const BlockState& state)
 {
 	switch (id)
@@ -3195,6 +3347,7 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	case Block::minecraft_dark_oak_door:
 	case Block::minecraft_crimson_door:
 	case Block::minecraft_warped_door:
+	{
 		message::play::send::chatMessage(p, Chat("Door right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		std::string open = state.getState("open"),
 			inverseOpen = (open == "true" ? "false" : "true");
@@ -3225,6 +3378,25 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 			lowerState.setState("open", inverseOpen);
 			wld->setBlock(destX, destY, destZ, lowerState);
 		}
+	}
+	return true;
+	case Block::minecraft_white_bed:
+	case Block::minecraft_orange_bed:
+	case Block::minecraft_magenta_bed:
+	case Block::minecraft_light_blue_bed:
+	case Block::minecraft_yellow_bed:
+	case Block::minecraft_lime_bed:
+	case Block::minecraft_pink_bed:
+	case Block::minecraft_gray_bed:
+	case Block::minecraft_light_gray_bed:
+	case Block::minecraft_cyan_bed:
+	case Block::minecraft_purple_bed:
+	case Block::minecraft_blue_bed:
+	case Block::minecraft_brown_bed:
+	case Block::minecraft_green_bed:
+	case Block::minecraft_red_bed:
+	case Block::minecraft_black_bed:
+		message::play::send::chatMessage(p, Chat("Bed right-clicked"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return true;
 	}
 	return false;
@@ -5696,6 +5868,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 
 			//torches
 			{
+				{
 		case Item::minecraft_torch:
 		case Item::minecraft_soul_torch:
 		{
@@ -6903,10 +7076,11 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			}
 			break;
 		}
-			}
+				}}
 
 			//snowy blocks
 			{
+				{
 		case Item::minecraft_grass_block:
 		case Item::minecraft_podzol:
 		case Item::minecraft_mycelium:
@@ -6960,44 +7134,140 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				delete[] props;
 			}
 			break;
+				}
 			}
 
 			//beds
 			{
 				{
-			case Item::minecraft_white_bed:
-			case Item::minecraft_orange_bed:
-			case Item::minecraft_magenta_bed:
-			case Item::minecraft_light_blue_bed:
-			case Item::minecraft_yellow_bed:
-			case Item::minecraft_lime_bed:
-			case Item::minecraft_pink_bed:
-			case Item::minecraft_gray_bed:
-			case Item::minecraft_light_gray_bed:
-			case Item::minecraft_cyan_bed:
-			case Item::minecraft_purple_bed:
-			case Item::minecraft_blue_bed:
-			case Item::minecraft_brown_bed:
-			case Item::minecraft_green_bed:
-			case Item::minecraft_red_bed:
-			case Item::minecraft_black_bed:
+		case Item::minecraft_white_bed:
+		case Item::minecraft_orange_bed:
+		case Item::minecraft_magenta_bed:
+		case Item::minecraft_light_blue_bed:
+		case Item::minecraft_yellow_bed:
+		case Item::minecraft_lime_bed:
+		case Item::minecraft_pink_bed:
+		case Item::minecraft_gray_bed:
+		case Item::minecraft_light_gray_bed:
+		case Item::minecraft_cyan_bed:
+		case Item::minecraft_purple_bed:
+		case Item::minecraft_blue_bed:
+		case Item::minecraft_brown_bed:
+		case Item::minecraft_green_bed:
+		case Item::minecraft_red_bed:
+		case Item::minecraft_black_bed:
+			if (replaceableDirect(targetBlockId))
+			{
+				blockFacing facing = getHorizontalFacing(p, p->yaw, (Item)itemId);
+				int headX = destX, headZ = destZ;
+				switch (facing)
+				{
+				case blockFacing::north:
+					headZ--;
+					break;
+				case blockFacing::south:
+					headZ++;
+					break;
+				case blockFacing::west:
+					headX--;
+					break;
+				case blockFacing::east:
+					headX++;
+				}
+
+				if (!replaceableIndirect(stateToBlock(getBlock(headX, destY, headZ)))) break;
+
+				BlockProperty* props = new BlockProperty[3];
+				props[0].name = "facing";
+				props[0].value = facingToString(facing);
+				props[1].name = "occupied";
+				props[1].value = "false";
+				props[2].name = "part";
+				props[2].value = "head";
+				setBlock(headX, destY, headZ, Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props));
+				props[2].value = "foot";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
 				break;
+			}
+			switch (face)
+			{
+			case playerDigging::top:
+				destY++;
+				break;
+			case playerDigging::bottom:
+				destY--;
+				break;
+			case playerDigging::east:
+				destX++;
+				break;
+			case playerDigging::west:
+				destX--;
+				break;
+			case playerDigging::south:
+				destZ++;
+				break;
+			case playerDigging::north:
+				destZ--;
+			}
+			if (!p->world->checkCoordinates(destY))
+				//destY out of world
+				return;
+
+			BlockState oldBlockState = getBlock(destX, destY, destZ);
+			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
+			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
+
+			if (replaceableIndirect(oldBlockId))
+			{
+				blockFacing facing = getHorizontalFacing(p, p->yaw, (Item)itemId);
+				int headX = destX, headZ = destZ;
+				switch (facing)
+				{
+				case blockFacing::north:
+					headZ--;
+					break;
+				case blockFacing::south:
+					headZ++;
+					break;
+				case blockFacing::west:
+					headX--;
+					break;
+				case blockFacing::east:
+					headX++;
+				}
+
+				if (!replaceableIndirect(stateToBlock(getBlock(headX, destY, headZ)))) break;
+
+				BlockProperty* props = new BlockProperty[3];
+				props[0].name = "facing";
+				props[0].value = facingToString(facing);
+				props[1].name = "occupied";
+				props[1].value = "false";
+				props[2].name = "part";
+				props[2].value = "head";
+				setBlock(headX, destY, headZ, Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props));
+				props[2].value = "foot";
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
+				delete[] props;
+			}
+			break;
 				}
 			}
 
 			//special items
 			{
 				{
-			case Item::minecraft_ender_eye:
-				if (targetBlockId != Block::minecraft_end_portal_frame) break;
-				std::string hasEye = targetBlockState.getState("eye");
-				if (hasEye == "true") break;
-				targetBlockState.setState("eye", "true");
-				stateJson = targetBlockState.getJsonState();
-				message::play::send::blockChange(p, loc, targetBlockState.id);
-				//add sound and particles
-				//add actual opening of the end portal if all frames are filled with eyes
-				break;
+		case Item::minecraft_ender_eye:
+			if (targetBlockId != Block::minecraft_end_portal_frame) break;
+			std::string hasEye = targetBlockState.getState("eye");
+			if (hasEye == "true") break;
+			targetBlockState.setState("eye", "true");
+			stateJson = targetBlockState.getJsonState();
+			message::play::send::blockChange(p, loc, targetBlockState.id);
+			//add sound and particles
+			//add actual opening of the end portal if all frames are filled with eyes
+			break;
 				}
 			}
 
