@@ -20,11 +20,11 @@ public:
 
 	varInt biomes[4][4][4];
 
-	bshort blockCount;
-	Byte bitsPerBlock;
-
-	bool useGlobalPallete;
 	std::vector<PaletteEntry> palette;
+	bool useGlobalPallete;
+
+	Byte bitsPerBlock;
+	bshort blockCount;
 
 	varInt dataLength;
 	BitArray* blockStates;
