@@ -64,7 +64,7 @@ namespace recipe
 		return new Ingredient(slotArraySize, slotArray);
 	}
 
-	const Recipe* Manager::getRecipe(std::string recipeID)
+	const Recipe* Manager::getRecipe(const std::string& recipeID)
 	{
 		for (Recipe* recipe : *recipes)
 		{

@@ -33,7 +33,7 @@ namespace Entity
 		value.write(buffer);
 		nOfModifiers.write(buffer);
 		for (int i = 0; i < nOfModifiers; i++)
-			modifiers[i].write(buffer);
+			modifiers[i]->write(buffer);
 	}
 
 	void Metadata::write(char*& buffer) const {

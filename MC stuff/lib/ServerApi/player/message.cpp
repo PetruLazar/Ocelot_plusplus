@@ -259,7 +259,7 @@ void message::play::send::spawnLivingEntity(Player* p, varInt eid, const mcUUID&
 
 	finishSendMacro;
 }
-void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, Entity::Painting::motive motive, Position location, Entity::direction direction)
+void message::play::send::spawnPainting(Player* p, varInt eid, const mcUUID& uuid, Entity::Painting::motive motive, const Position& location, Entity::direction direction)
 {
 	varInt id = (int)id::spawnPainting;
 	prepareSendMacro(1024 * 1024);
@@ -289,7 +289,7 @@ void message::play::send::spawnPlayer(Player* p, varInt eid, const mcUUID& uuid,
 
 	finishSendMacro;
 }
-void message::play::send::sculkVibrationSignal(Player* p, Position source, Entity::Sculk::destinationType destinationType, Entity::Sculk::destination destination, varInt arrivalTime)
+void message::play::send::sculkVibrationSignal(Player* p, const Position& source, Entity::Sculk::destinationType destinationType, const Entity::Sculk::destination& destination, varInt arrivalTime)
 {
 	varInt id = (int)id::sculkVibrationSignal;
 	prepareSendMacro(1024 * 1024);
@@ -321,7 +321,7 @@ void message::play::send::entityAnimation(Player* p, varInt eid, Entity::animati
 
 	finishSendMacro;
 }
-void message::play::send::acknowledgePlayerDigging(Player* p, Position location, varInt block, varInt status, bool successful)
+void message::play::send::acknowledgePlayerDigging(Player* p, const Position& location, varInt block, varInt status, bool successful)
 {
 	varInt id = (int)id::acknowledgePlayerDigging;
 	prepareSendMacro(1024 * 1024);
@@ -334,7 +334,7 @@ void message::play::send::acknowledgePlayerDigging(Player* p, Position location,
 
 	finishSendMacro;
 }
-void message::play::send::blockBreakAnimation(Player* p, varInt eid, Position location, Byte destroyStage)
+void message::play::send::blockBreakAnimation(Player* p, varInt eid, const Position& location, Byte destroyStage)
 {
 	varInt id = (int)id::blockBreakAnimation;
 	prepareSendMacro(1024 * 1024);
@@ -346,7 +346,7 @@ void message::play::send::blockBreakAnimation(Player* p, varInt eid, Position lo
 
 	finishSendMacro;
 }
-void message::play::send::blockEntityData(Player* p, Position location, blockEntityData::action action, const nbt& blockData)
+void message::play::send::blockEntityData(Player* p, const Position& location, blockEntityData::action action, const nbt& blockData)
 {
 	varInt id = (int)id::blockEntityData;
 	prepareSendMacro(1024 * 1024);
@@ -358,7 +358,7 @@ void message::play::send::blockEntityData(Player* p, Position location, blockEnt
 
 	finishSendMacro;
 }
-void message::play::send::blockAction(Player* p, Position location, Byte actionId, Byte actionParam, varInt blockType)
+void message::play::send::blockAction(Player* p, const Position& location, Byte actionId, Byte actionParam, varInt blockType)
 {
 	varInt id = (int)id::blockAction;
 	prepareSendMacro(1024 * 1024);
@@ -371,7 +371,7 @@ void message::play::send::blockAction(Player* p, Position location, Byte actionI
 
 	finishSendMacro;
 }
-void message::play::send::blockChange(Player* p, Position location, varInt blockId)
+void message::play::send::blockChange(Player* p, const Position& location, varInt blockId)
 {
 	varInt id = (int)id::blockChange;
 	prepareSendMacro(1024 * 1024);
@@ -632,7 +632,7 @@ void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskL
 
 	finishSendMacro;
 }
-void message::play::send::effect(Player* p, bint effectId, Position location, bint extraData, bool disableRelativeVolume)
+void message::play::send::effect(Player* p, bint effectId, const Position& location, bint extraData, bool disableRelativeVolume)
 {
 	varInt id = (int)id::effect;
 	prepareSendMacro(1024 * 1024);
@@ -943,7 +943,7 @@ void message::play::send::serverDifficulty(Player* p, Byte difficulty, bool isLo
 
 	finishSendMacro;
 }
-void message::play::send::spawnPosition(Player* p, Position location, bfloat angle)
+void message::play::send::spawnPosition(Player* p, const Position& location, bfloat angle)
 {
 	varInt id = (int)id::spawnPosition;
 	prepareSendMacro(1024 * 1024);
@@ -1020,7 +1020,7 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equ
 
 	finishSendMacro;
 }
-void message::play::send::entityEquipment(Player* p, varInt eid, const std::vector<Equipment>& equipments)
+void message::play::send::entityEquipment(Player* p, varInt eid, const std::vector<Equipment*>& equipments)
 {
 	varInt id = (int)id::entityEquipment;
 	prepareSendMacro(1024 * 1024);
@@ -1029,11 +1029,10 @@ void message::play::send::entityEquipment(Player* p, varInt eid, const std::vect
 	eid.write(data);
 
 	for (int i = 0; i < equipments.size() - 1; i++)
-		equipments[i].write(data);
+		equipments[i]->write(data);
 
-	Equipment e = equipments.back();
-	e.unSet();
-	e.write(data);
+	equipments.back()->unSet();
+	equipments.back()->write(data);
 
 	finishSendMacro;
 }
@@ -1792,7 +1791,7 @@ void message::play::send::openWindow(Player* p, varInt winId, varInt winType, co
 
 	finishSendMacro;
 }
-void message::play::send::openSignEditor(Player* p, Position location)
+void message::play::send::openSignEditor(Player* p, const Position& location)
 {
 	varInt id = (int)id::openSignEditor;
 	prepareSendMacro(1024 * 1024);
@@ -1879,10 +1878,10 @@ void message::play::send::sendFullChunk(Player* p, int cX, int cZ, bool incLoadC
 	chunk->emptyBlockLightMask->write(data);
 	//sky light array count
 	varInt c;
-	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i)) c++;
+	for (int i = 0; i < sectionCount; ++i) if (chunk->skyLightMask->getElement(i)) c++;
 	c.write(data);
 	//sky light arrays
-	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i))
+	for (int i = 0; i < sectionCount; ++i) if (chunk->skyLightMask->getElement(i))
 	{
 		LightSection::lightArrayLength.write(data);
 		ull size = chunk->lightData[i].skyLight->getCompactedSize();
@@ -2080,7 +2079,11 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 
 			}
 			else { //select whole slot
-
+				//if (p->floatingItem == nullptr) {
+				//	p->floatingItem = p->slots[clickedSlot - inventoryFirstSlotIndex];
+				//	p->slots[clickedSlot - inventoryFirstSlotIndex] = nullptr;
+				//}
+				
 			}
 		}
 		else { //button == 1
@@ -2162,7 +2165,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 void message::play::receive::closeWindow(Player* p, Byte winId) {
 	message::play::send::closeWindow(p, winId);
 }
-void message::play::receive::editBook(Player* p, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, mcString title) {
+void message::play::receive::editBook(Player* p, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, const mcString& title) {
 	nbt** pagesToNbt = new nbt * [count];
 	for (int i = 0; i < count; i++)
 		pagesToNbt[i] = new nbt_string(std::to_string(i), pages[i]);
@@ -2349,7 +2352,7 @@ void message::play::receive::animation(Player* p, varInt hand)
 	for (Player* seener : p->seenBy)
 		ignoreExceptions(message::play::send::entityAnimation(seener, p->getEid(), animation));
 }
-void message::play::receive::playerDigging(Player* p, varInt status, Position location, Byte face)
+void message::play::receive::playerDigging(Player* p, varInt status, const Position& location, Byte face)
 {
 	switch (status)
 	{

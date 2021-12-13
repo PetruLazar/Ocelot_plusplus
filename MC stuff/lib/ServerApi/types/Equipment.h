@@ -10,7 +10,7 @@ private:
 
 public:
 	Equipment(Byte slot, Slot* item) : slot(slot), item(item) {
-		slot |= 0x80;
+		this->slot |= 0x80;
 	}
 
 	void unSet() {

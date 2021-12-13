@@ -50,7 +50,7 @@ namespace recipe
 		static std::vector<Recipe*>* recipes;
 		static std::vector<mcString>* recipesIDs;
 
-		SERVER_API static const Recipe* getRecipe(std::string recipeID);
+		SERVER_API static const Recipe* getRecipe(const std::string& recipeID);
 
 		SERVER_API static void loadRecipes();
 		SERVER_API static void unloadRecipes();
