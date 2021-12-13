@@ -303,6 +303,7 @@
     <ClCompile Include="types\utils.cpp" />
     <ClCompile Include="types\uuid.cpp" />
     <ClCompile Include="types\varData.cpp" />
+    <ClCompile Include="types\window.cpp" />
     <ClCompile Include="world\block.cpp" />
     <ClCompile Include="world\chunk.cpp" />
     <ClCompile Include="world\noise.cpp" />

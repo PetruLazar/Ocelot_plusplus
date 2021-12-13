@@ -2012,7 +2012,7 @@ void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte butt
 {
 	IF_PROTOCOL_WARNINGS(Log::txt() << "\nUnhandled packet: clickWindowButton");
 }
-void message::play::receive::clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
+void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
 {
 	Log::txt() << "\nm: " << mode<<" b: "<<(int)button<<" cs: "<<(int)clickedSlot<<" l: "<<length;
 	for (int i = 0; i < length; i++) {
@@ -2022,7 +2022,7 @@ void message::play::receive::clickWindow(Player*, Byte windowID, varInt stateID,
 
 	int inventoryFirstSlotIndex = 0;
 
-	switch (windowID) {
+	switch (window::getWindowType(windowID)) {
 	case window::type::generic_9x1:
 	case window::type::generic_3x3:
 		inventoryFirstSlotIndex = 9;
