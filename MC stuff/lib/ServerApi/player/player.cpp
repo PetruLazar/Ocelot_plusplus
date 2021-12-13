@@ -19,19 +19,14 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 	//player initializations
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
 
-	for (int i = 0; i < 46; i++) {
-		slots[i] = new Slot();
-	}
-
-	floatingItem = new Slot();
+	inventory = new _inventory();
 }
 Player::~Player()
 {
 	delete socket;
 	if (buffer) delete buffer;
 
-	for (int i = 0; i < 46; i++)
-		delete slots[i];
+	delete inventory;
 }
 
 std::string Player::netId()
@@ -199,6 +194,53 @@ bool Player::positionInRange(Position location)
 	if (cX < chunkX - viewDistance || cX > chunkX + viewDistance ||
 		cZ < chunkZ - viewDistance || cZ > chunkZ + viewDistance) return false;
 	return true;
+}
+
+Player::_inventory::_inventory() {
+	for (int i = 0; i < 46; i++) {
+		slots[i] = new Slot();
+	}
+
+	floatingItem = new Slot();
+}
+
+Player::_inventory::~_inventory() {
+	for (int i = 0; i < 46; i++)
+		delete slots[i];
+
+	delete floatingItem;
+}
+
+void Player::_inventory::setSelectedSlot(bshort selectedSlot) {
+	this->selectedHotbar = selectedSlot;
+}
+
+bshort Player::_inventory::getSelectedIndex(bool raw) {
+	if(!raw)
+		return this->selectedHotbar;
+
+	return 36 + this->selectedHotbar;
+}
+
+Slot*& Player::_inventory::getSelectedSlot() {
+	return this->slots[36 + selectedHotbar];
+}
+
+Slot*& Player::_inventory::getOffhandSlot() {
+	return this->slots[45];
+}
+
+Slot*& Player::_inventory::getHotbarSlot(bshort index) {
+	return this->slots[36 + index];
+}
+
+Slot*& Player::_inventory::getInventorySlot(bshort index) {
+	return this->slots[selectedHotbar];
+}
+
+void Player::_inventory::setInventorySlot(bshort index, Slot* slot) {
+	delete this->slots[index];
+	this->slots[index] = slot;
 }
 
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)

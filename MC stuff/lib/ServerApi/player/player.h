@@ -83,10 +83,26 @@ public:
 	void updateRotation(bfloat yaw, bfloat pitch);
 	bool positionInRange(Position);
 
-	//player inventory
-	Slot* slots[46];
-	bshort selectedSlot = 0; //main hand selected slot
-	Slot* floatingItem;
+	class _inventory {
+	private:
+		Slot* slots[46];
+		bshort selectedHotbar = 0; //main hand selected slot
+		Slot* floatingItem;
+
+	public:
+		_inventory();
+		~_inventory();
+
+		void setSelectedSlot(bshort selectedSlot);
+		bshort getSelectedIndex(bool raw = false);
+
+		Slot*& getSelectedSlot();
+		Slot*& getOffhandSlot();
+		Slot*& getHotbarSlot(bshort index);
+		Slot*& getInventorySlot(bshort index);
+
+		void setInventorySlot(bshort index, Slot* slot);
+	} *inventory;
 
 	//player info
 	varInt ping;
