@@ -170,7 +170,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	play::send::unlockRecipes(p, 0, false, false, false, false, false, false, false, false, recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs, recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs);
 
 	std::vector<Player*> inGamePlayers;
-	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.push_back(player);
+	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.emplace_back(player);
 	Player** playerInfoList = inGamePlayers.data();
 	play::send::playerInfo(p, playerInfo::addPlayer, (int)inGamePlayers.size(), playerInfoList);
 

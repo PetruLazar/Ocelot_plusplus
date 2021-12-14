@@ -110,7 +110,7 @@ json* json::parse(std::fstream& f, bool canHaveName)
 		std::vector<json*> elems;
 		do
 		{
-			elems.push_back(parse(f, false));
+			elems.emplace_back(parse(f, false));
 			ch = skipInJsonFile(f);
 		} while (ch == ',');
 

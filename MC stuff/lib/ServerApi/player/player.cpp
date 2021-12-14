@@ -197,9 +197,8 @@ bool Player::positionInRange(Position location)
 }
 
 Player::_inventory::_inventory() {
-	for (int i = 0; i < 46; i++) {
+	for (int i = 0; i < 46; i++)
 		slots[i] = new Slot();
-	}
 
 	floatingItem = new Slot();
 }
@@ -264,7 +263,7 @@ void Player::setWorld(World* world)
 {
 	IF_DEBUG_SIGHT(Log::txt() << '\n' << this << " is entering world " << world->name);
 	//set world and position
-	Player::world = world;
+	this->world = world;
 	X = world->spawn.X;
 	Y = world->spawn.Y;
 	Z = world->spawn.Z;
@@ -289,6 +288,11 @@ void Player::setWorld(World* world)
 
 	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
 
+	//send the selected slot
+	message::play::send::heldItemChange(this, inventory->getSelectedIndex());
+
+	//send old items
+
 	//check for players in sight
 	for (Player* otherP : world->players)
 	{
@@ -299,7 +303,7 @@ void Player::setWorld(World* world)
 		}
 	}
 	//add the player to the world's player list
-	world->players.push_back(this);
+	world->players.emplace_back(this);
 	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer list for " << world->name << " is now " << world->players.size());
 }
 void Player::leaveWorld(World* world)
@@ -343,7 +347,7 @@ void Player::enterSight(Player* other)
 	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << other << " entering sight of " << this);
 	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
 	ignoreExceptions(message::play::send::entityHeadLook(this, other->getEid(), (float)other->yaw));
-	seenBy.push_back(other);
+	seenBy.emplace_back(other);
 	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
 }
 void Player::exitSight(Player* other)

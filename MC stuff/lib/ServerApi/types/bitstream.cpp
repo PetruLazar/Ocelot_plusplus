@@ -15,7 +15,7 @@ BitStream::BitStream(Byte bitsPerEntry, bool rightPadded) : rightPadded(rightPad
 void BitStream::clear()
 {
 	entries.clear();
-	entries.push_back(0);
+	entries.emplace_back(0);
 	lastEntry = 0;
 }
 ull BitStream::size() const
@@ -35,7 +35,7 @@ BitStream& BitStream::operator<<(ull v)
 {
 	if (lastEntry + bitsPerEntry > 64)
 	{
-		entries.push_back(v & mask);
+		entries.emplace_back(v & mask);
 		sz++;
 		lastEntry = bitsPerEntry;
 		return *this;
