@@ -131,9 +131,11 @@ public:
 	//user settings
 	mcString locale = "en_US";
 	int viewDistance;
+	int simulationDistance;
 	ChatMode chatMode;		//---\/
 	bool chatColors;		//to do: processing chat
-	bool disableTextFiltering;
+	bool enableTextFiltering;
+	bool allowServerListings;
 
 	SERVER_API Player(sf::TcpSocket*);
 	SERVER_API ~Player();

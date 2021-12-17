@@ -45,6 +45,7 @@ void TagGroup::loadTag(const std::string& tagName)
 	//take each entry of "values"
 	json& values = jsonTag["values"];
 	ull size = values.getSize();
+	tags.reserve(size);
 	for (ull i = 0; i < size; i++)
 	{
 		std::string value = values[(int)i].value();

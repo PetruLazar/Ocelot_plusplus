@@ -18,6 +18,22 @@
 //broadcasting destionation is "player_macro"
 #define broadcastMessageOmitSafe(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr && player_macro->connected) ignoreExceptions(msg_f_call);
 
+struct blockEntity {
+	Byte packedXY;
+	bshort Y;
+	varInt type;
+	nbt_compound* nbt;
+
+	blockEntity(Byte packedXY, bshort Y, varInt type, nbt_compound* nbt) : packedXY(packedXY), Y(Y), type(type), nbt(nbt) {}
+
+	void write(char*& buffer) const {
+		*(buffer++) = packedXY;
+		Y.write(buffer);
+		type.write(buffer);
+		nbt->write(buffer);
+	}
+};
+
 namespace blockEntityData
 {
 	enum class action
@@ -152,7 +168,7 @@ struct message
 			openHorseWindow,
 			initializeWorldBorder,
 			keepAlive_clientbound,
-			chunkData,
+			chunkDataAndLight,
 			effect,
 			particle,
 			updateLight,
@@ -205,6 +221,7 @@ struct message
 			setPassengers,
 			teams,
 			updateScore,
+			updateSimulationDistance,
 			setTitleSubtitle,
 			timeUpdate,
 			setTitleText,
@@ -309,11 +326,12 @@ struct message
 			SERVER_API static void openHorseWindow(Player*, Byte winId, varInt slotCount, bint eid);
 			SERVER_API static void initializeWorldBorder(Player*, bdouble x, bdouble z, bdouble oldDiameter, bdouble newDiameter, varLong speed, varInt portalTeleportBoundary, varInt warningBlocks, varInt warningTime);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
-			SERVER_API static void chunkData(Player*, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes, varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities);
+			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
 			SERVER_API static void effect(Player*, bint effectId, const Position& location, bint data, bool disableRelativeVolume);
 			SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle);
-			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
-			SERVER_API static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
+			//SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
+			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
+			SERVER_API static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, varInt simulationDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
 			SERVER_API static void mapData(Player*, varInt mapId, Byte scale, bool locked, bool trackingPosition, varInt iconCount, map::icon* icons, Byte optColumns, Byte optRows, Byte optX, Byte optZ, varInt optLength, Byte* data);
 			SERVER_API static void tradeList(Player*, varInt winId, Byte size, trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock);
 			SERVER_API static void entityPosition(Player*, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, bool onGround);
@@ -363,6 +381,7 @@ struct message
 			SERVER_API static void setPassengers(Player*, varInt vehicleEid, varInt count, varInt* passengers);
 			SERVER_API static void teams(Player*, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode);
 			SERVER_API static void updateScore(Player*, const mcString& name, Byte action, const mcString& objective, varInt value);
+			SERVER_API static void updateSimulationDistance(Player*, varInt value);
 			SERVER_API static void setTitleSubtitle(Player*, const Chat& subtitle);
 			SERVER_API static void timeUpdate(Player*, blong worldAge, blong timeOfDay);
 			SERVER_API static void setTitleText(Player*, const Chat& title);
@@ -391,7 +410,7 @@ struct message
 			SERVER_API static void setDifficulty(Player*, Byte difficulty);
 			SERVER_API static void chatMessage(Player*, mcString& content);
 			SERVER_API static void clientStatus(Player*, varInt actionId);
-			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
+			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool enableTextFiltering, bool allowServerListings);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);
 			SERVER_API static void clickWindowButton(Player*, Byte windowID, Byte buttonID);
 			SERVER_API static void clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem);

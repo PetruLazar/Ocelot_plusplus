@@ -53,25 +53,10 @@ void message::status::send::pong(Player* p, blong payload)
 	finishSendAndDisconnect;
 }
 
-/*
-{
-	"version": {
-		"name": "1.17.1",
-		"protocol": 756
-	},
-	"players": {
-		"max": 100,
-		"online": 5
-	},
-	"description": {
-		"text": "Hello world"
-	}
-}
-*/
 void message::status::receive::request(Player* p)
 {
 	Log::txt() << '\n' << p->netId() << " is pinging the server.";
-	message::status::send::respose(p, "{" + Options::version + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"Tim\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
+	message::status::send::respose(p, "{" + Options::version + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"CosminPerRam\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
 }
 void message::status::receive::ping(Player* p, blong payload)
 {
@@ -128,7 +113,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	}
 	if (p->protocolVersion != Options::currentProtocol)
 	{
-		login::send::disconnect(p, "{\"text\":\"Use 1.17.1, " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
+		login::send::disconnect(p, "{\"text\":\"Use 1.18.1, " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
 		return;
 	}
 
@@ -136,6 +121,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	//general fields
 	p->username = username;
 	p->viewDistance = Options::viewDistance();
+	p->simulationDistance = Options::simulationDistance();
 	p->gm = gamemode::creative;
 	//position, rotation ad world
 	//p->world = World::worlds[World::spawnWorld];
@@ -156,8 +142,8 @@ void message::login::receive::start(Player* p, const mcString& username)
 	login::send::setCompression(p, 128);
 
 	login::send::success(p, *p->euuid, username);
-
-	play::send::joinGame(p, (int)p->getEid(), false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::spawnWorld->characteristics, World::spawnWorld->name, 0x5f19a34be6c9129a, 0, p->viewDistance, false, false, false, World::spawnWorld->isFlat);
+	
+	play::send::joinGame(p, (int)p->getEid(), false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::spawnWorld->characteristics, World::spawnWorld->name, 0x5f19a34be6c9129a, 0, p->viewDistance, p->simulationDistance, false, false, false, World::spawnWorld->isFlat);
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
 
@@ -353,7 +339,7 @@ void message::play::send::blockEntityData(Player* p, const Position& location, b
 
 	id.write(data);
 	location.write(data);
-	*(data++) = (Byte)action;
+	varInt((int)action).write(data);
 	blockData.write(data);
 
 	finishSendMacro;
@@ -404,7 +390,7 @@ void message::play::send::keepAlive(Player* p, blong keepAlive_id)
 	finishSendMacro;
 }
 void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec,
-	const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat)
+	const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, varInt simulationDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat)
 {
 	varInt id = (int)id::joinGame;
 	prepareSendMacro(1024 * 1024);
@@ -422,6 +408,7 @@ void message::play::send::joinGame(Player* p, bint eid, bool isHardcore, gamemod
 	*(((int64*&)data)++) = hashedSeedHigh;
 	maxPlayers.write(data);
 	viewDistance.write(data);
+	simulationDistance.write(data);
 	*(data++) = reducedDebugInfo;
 	*(data++) = respawnScreen;
 	*(data++) = isDebug;
@@ -549,86 +536,18 @@ void message::play::send::facePlayer(Player* p, varInt pivot, bdouble targetX, b
 
 	finishSendMacro;
 }
-/*void message::play::send::chunkData(Player* p, bint cX, bint cZ)
+void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities,
+	bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, 
+	varInt blockLightArrayCount, char** blockLightArrays) 
 {
-	varInt id = (int)id::chunkData;
-	prepareSendMacro(1024*1024);
-
-	id.write(data);
-	cX.write(data);
-	cZ.write(data);
-
-	Chunk* chunk = p->world->get(cX, cZ);
-	int worldHeight = World::worlds[0]->characteristics["height"].vInt();
-	int sectionCount = worldHeight >> 4;
-
-	//primary bitmask length
-	varInt((int)chunk->sectionMask->getCompactedSize()).write(data);
-	//primary bitmask
-	chunk->sectionMask->write(data);
-	//heightMaps
-	nbt_compound nbt_heightmap("", new nbt * [1]{
-		new nbt_long_array("MOTION_BLOCKING",*chunk->heightmaps)
-		}, 1);
-	nbt_heightmap.write(data);
-	//biomes length
-	varInt(uint(64 * chunk->sections.size())).write(data);
-	//biomes
-	for (int s = 0; s < chunk->sections.size(); s++)
-		for (int y = 0; y < 4; y++)
-			for (int z = 0; z < 4; z++)
-				for (int x = 0; x < 4; x++)
-					chunk->sections[s].biomes[x][y][z].write(data);
-
-	//data preparation
-	char* dataBuffer = new char[1024024], * dataStart = dataBuffer;
-	for (int i = 0; i < sectionCount; i++)
-	{
-		Section& section = chunk->sections[i];
-		if (section.blockCount)
-		{
-			section.blockCount.write(dataBuffer);
-			*(dataBuffer++) = section.bitsPerBlock;
-			if (!section.useGlobalPallete)
-			{
-				varInt((uint)section.pallete.size()).write(dataBuffer);
-				for (varInt val : section.pallete) val.write(dataBuffer);
-			}
-			varInt((uint)section.blockStates->getCompactedSize()).write(dataBuffer);
-			section.blockStates->write(dataBuffer);
-		}
-	}
-	uint size = (uint)(dataBuffer - dataStart);
-	//size
-	varInt(size).write(data);
-	//data
-	for (uint i = 0; i < size; i++) *(data++) = dataStart[i];
-	delete[] dataStart;
-
-	//nOfBlockEntities
-	chunk->nOfBlockEntities.write(data);
-	//blockEntities
-
-	finishSendMacro;
-}*/
-void message::play::send::chunkData(Player* p, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes,
-	varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities)
-{
-	varInt id = (int)id::chunkData;
+	varInt id = (int)id::chunkDataAndLight;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	cX.write(data);
 	cZ.write(data);
-	bitMaskLength.write(data);
-	for (int i = 0; i < bitMaskLength; i++) bitMask[i].write(data);
-	heightMaps.write(data);
-	biomesLength.write(data);
-	for (int i = 0; i < biomesLength; i++) biomes[i].write(data);
-	dataSize.write(data);
-	for (int i = 0; i < dataSize; i++) *(data++) = chunkData[i];
-	nOfBlockEntities.write(data);
-	for (int i = 0; i < nOfBlockEntities; i++) blockEntities[i].write(data);
+	
+	//DO DIS
 
 	finishSendMacro;
 }
@@ -1069,60 +988,7 @@ void message::play::send::updateViewDistance(Player* p, varInt distance)
 
 	finishSendMacro;
 }
-/*void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
-{
-	Chunk* chunk = p->world->get(cX, cZ);
-	int sectionCount = (int)chunk->lightData.size();
-
-	varInt id = (int)id::updateLight;
-	prepareSendMacro(1024*1024);
-
-	id.write(data);
-	cX.write(data);
-	cZ.write(data);
-	*(data++) = true;
-	//sky light mask length
-	varInt((int)chunk->skyLightMask->getCompactedSize()).write(data);
-	//sky light mask
-	chunk->skyLightMask->write(data);
-	//block light mask length
-	varInt((int)chunk->blockLightMask->getCompactedSize()).write(data);
-	//block light mask
-	chunk->blockLightMask->write(data);
-	//empty sky light mask length
-	varInt((int)chunk->emptySkyLightMask->getCompactedSize()).write(data);
-	//empty sky light mask
-	chunk->emptySkyLightMask->write(data);
-	//empty block light mask length
-	varInt((int)chunk->emptyBlockLightMask->getCompactedSize()).write(data);
-	//empty block light mask
-	chunk->emptyBlockLightMask->write(data);
-	//sky light array count
-	varInt c;
-	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i)) c++;
-	c.write(data);
-	//sky light arrays
-	for (int i = 0; i < sectionCount; i++) if (chunk->skyLightMask->getElement(i))
-	{
-		LightSection::lightArrayLength.write(data);
-		chunk->lightData[i].skyLight->write(data);
-	}
-	//block light array count
-	c = 0;
-	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i)) c++;
-	c.write(data);
-	//block light arrays
-	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i))
-	{
-		LightSection::lightArrayLength.write(data);
-		chunk->lightData[i].blockLight->write(data);
-	}
-
-	finishSendMacro;
-}*/
-void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges,
-	varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask,
-	varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask,
+void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask,
 	varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays)
 {
 	varInt id = (int)id::updateLight;
@@ -1132,33 +998,8 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 	cX.write(data);
 	cZ.write(data);
 	*(data++) = trustEdges;
-	length1.write(data);
-	for (int i = 0; i < length1; i++) skyLightMask[i].write(data);
-	length2.write(data);
-	for (int i = 0; i < length2; i++) blockLightMask[i].write(data);
-	length3.write(data);
-	for (int i = 0; i < length3; i++) emptySkyLightMask[i].write(data);
-	length4.write(data);
-	for (int i = 0; i < length4; i++) emptyBlockLightMask[i].write(data);
 
-	skyLightArrayCount.write(data);
-	for (int i = 0; i < skyLightArrayCount; i++)
-	{
-		varInt(2048).write(data);
-		for (int j = 0; j < 2048; j++)
-		{
-			*(data++) = skyLightArrays[i][j];
-		}
-	}
-	blockLightArrayCount.write(data);
-	for (int i = 0; i < blockLightArrayCount; i++)
-	{
-		varInt(2048).write(data);
-		for (int j = 0; j < 2048; j++)
-		{
-			*(data++) = blockLightArrays[i][j];
-		}
-	}
+	//DO DIS
 
 	finishSendMacro;
 }
@@ -1242,7 +1083,7 @@ void message::play::send::openHorseWindow(Player* p, Byte winId, varInt slotCoun
 	id.write(data);
 	*(data++) = winId;
 	slotCount.write(data);
-	eid.write(data);
+	eid.write(data);	//dont open gui if the entity is not a horse
 
 	finishSendMacro;
 }
@@ -1571,6 +1412,16 @@ void message::play::send::updateScore(Player* p, const mcString& name, Byte acti
 
 	finishSendMacro;
 }
+void message::play::send::updateSimulationDistance(Player* p, varInt value)
+{
+	varInt id = (int)id::updateSimulationDistance;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	value.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::setTitleSubtitle(Player* p, const Chat& subtitle) {
 	varInt id = (int)id::setTitleSubtitle;
 	prepareSendMacro(1024 * 1024);
@@ -1848,127 +1699,22 @@ void message::translateLight()
 }*/
 void message::play::send::sendFullChunk(Player* p, int cX, int cZ, bool incLoadCount)
 {
+	varInt id = (int)id::updateLight; //use message::play::send::updateLight instead of coding dis here?
+	prepareSendMacro(1024 * 1024);
+
 	Chunk* chunk = p->world->get(cX, cZ, incLoadCount);
 
 	//update light
 	int sectionCount = (int)chunk->lightData.size();
 
-	varInt id = (int)id::updateLight;
-	prepareSendMacro(1024 * 1024);
-
 	id.write(data);
 	varInt(cX).write(data);
 	varInt(cZ).write(data);
 	*(data++) = true;
-	//sky light mask length
-	varInt((int)chunk->skyLightMask->getCompactedSize()).write(data);
-	//sky light mask
-	chunk->skyLightMask->write(data);
-	//block light mask length
-	varInt((int)chunk->blockLightMask->getCompactedSize()).write(data);
-	//block light mask
-	chunk->blockLightMask->write(data);
-	//empty sky light mask length
-	varInt((int)chunk->emptySkyLightMask->getCompactedSize()).write(data);
-	//empty sky light mask
-	chunk->emptySkyLightMask->write(data);
-	//empty block light mask length
-	varInt((int)chunk->emptyBlockLightMask->getCompactedSize()).write(data);
-	//empty block light mask
-	chunk->emptyBlockLightMask->write(data);
-	//sky light array count
-	varInt c;
-	for (int i = 0; i < sectionCount; ++i) if (chunk->skyLightMask->getElement(i)) c++;
-	c.write(data);
-	//sky light arrays
-	for (int i = 0; i < sectionCount; ++i) if (chunk->skyLightMask->getElement(i))
-	{
-		LightSection::lightArrayLength.write(data);
-		ull size = chunk->lightData[i].skyLight->getCompactedSize();
-		blong* lightArray = chunk->lightData[i].skyLight->getCompactedValues();
-		for (ull i = 0; i < size; i++)
-		{
-			*(((ull*&)(data))++) = lightArray[i];
-		}
-	}
-	//block light array count
-	c = 0;
-	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i)) c++;
-	c.write(data);
-	//block light arrays
-	for (int i = 0; i < sectionCount; i++) if (chunk->blockLightMask->getElement(i))
-	{
-		LightSection::lightArrayLength.write(data);
-		ull size = chunk->lightData[i].blockLight->getCompactedSize();
-		blong* lightArray = chunk->lightData[i].blockLight->getCompactedValues();
-		for (ull i = 0; i < size; i++)
-		{
-			*(((ull*&)(data))++) = lightArray[i];
-		}
-	}
+	
+	//DO DIS
 
 	finishSendMacro;
-
-	//chunk data
-	id = (int)id::chunkData;
-	prepareSendMacroNoDecl(1024 * 1024);
-
-	id.write(data);
-	bint(cX).write(data);
-	bint(cZ).write(data);
-
-	//Chunk* chunk = p->world->get(cX, cZ);
-	int worldHeight = p->world->height;
-	sectionCount = worldHeight >> 4;
-
-	//primary bitmask length
-	varInt((int)chunk->sectionMask->getCompactedSize()).write(data);
-	//primary bitmask
-	chunk->sectionMask->write(data);
-	//heightMaps
-	nbt_compound nbt_heightmap("", new nbt * [1]{
-		new nbt_long_array("MOTION_BLOCKING",*chunk->heightmaps)
-		}, 1);
-	nbt_heightmap.write(data);
-	//biomes length
-	varInt(uint(64 * chunk->sections.size())).write(data);
-	//biomes
-	for (int s = 0; s < chunk->sections.size(); s++)
-		for (int y = 0; y < 4; y++)
-			for (int z = 0; z < 4; z++)
-				for (int x = 0; x < 4; x++)
-					chunk->sections[s].biomes[x][y][z].write(data);
-
-	//data preparation
-	char* dataBuffer = new char[1024024], * dataStart = dataBuffer;
-	for (int i = 0; i < sectionCount; i++)
-	{
-		Section& section = chunk->sections[i];
-		if (section.blockCount)
-		{
-			section.blockCount.write(dataBuffer);
-			*(dataBuffer++) = section.bitsPerBlock;
-			if (!section.useGlobalPallete)
-			{
-				varInt((uint)section.palette.size()).write(dataBuffer);
-				for (const PaletteEntry val : section.palette) val.block.id.write(dataBuffer);
-			}
-			varInt((uint)section.blockStates->getCompactedSize()).write(dataBuffer);
-			section.blockStates->write(dataBuffer);
-		}
-	}
-	uint dataSize = (uint)(dataBuffer - dataStart);
-	//size
-	varInt(dataSize).write(data);
-	//data
-	for (uint i = 0; i < dataSize; i++) *(data++) = dataStart[i];
-	delete[] dataStart;
-
-	//nOfBlockEntities
-	chunk->nOfBlockEntities.write(data);
-	//blockEntities
-
-	finishSendMacroNoDecl;
 }
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
@@ -1997,7 +1743,7 @@ void message::play::receive::clientStatus(Player*, varInt actionId)
 {
 
 }
-void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering)
+void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool enableTextFiltering, bool allowServerListings)
 {
 	p->locale = locale;
 	p->viewDistance = (p->viewDistance > (int)viewDistance) ? (int)viewDistance : p->viewDistance;
@@ -2005,7 +1751,8 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 	p->chatColors = chatColors;
 	p->displayedSkinParts = displayedSkinParts;
 	p->mainHand = mainHand;
-	p->disableTextFiltering = disableTextFiltering;
+	p->enableTextFiltering = enableTextFiltering;
+	p->allowServerListings = allowServerListings;
 }
 void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte buttonId)
 {
@@ -2813,7 +2560,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			mcString locale;
 			Byte viewDistance, displayedSkinParts;
 			varInt chatMode, mainHand;
-			bool chatColors, disableTextFiltering;
+			bool chatColors, enableTextFiltering, allowServerListings;
 
 			locale.read(data);
 			viewDistance = *(data++);
@@ -2821,9 +2568,10 @@ void message::dispatch(Player* p, char* data, uint size)
 			chatColors = *(data++);
 			displayedSkinParts = *(data++);
 			mainHand.read(data);
-			disableTextFiltering = *(data++);
+			enableTextFiltering = *(data++);
+			allowServerListings = *(data++);
 
-			play::receive::clientSettings(p, locale, viewDistance, (ChatMode)(int)chatMode, chatColors, displayedSkinParts, mainHand, disableTextFiltering);
+			play::receive::clientSettings(p, locale, viewDistance, (ChatMode)(int)chatMode, chatColors, displayedSkinParts, mainHand, enableTextFiltering, allowServerListings);
 		}
 		break;
 		case play::id::tabComplete_serverbound:
