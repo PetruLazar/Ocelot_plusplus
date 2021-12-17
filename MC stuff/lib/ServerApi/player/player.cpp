@@ -261,7 +261,7 @@ void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloa
 
 void Player::setWorld(World* world)
 {
-	IF_DEBUG_SIGHT(Log::txt() << '\n' << this << " is entering world " << world->name);
+	IF_DEBUG_SIGHT(Log::info() << '\n' << this << " is entering world " << world->name);
 	//set world and position
 	this->world = world;
 	X = world->spawn.X;
@@ -304,11 +304,11 @@ void Player::setWorld(World* world)
 	}
 	//add the player to the world's player list
 	world->players.emplace_back(this);
-	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer list for " << world->name << " is now " << world->players.size());
+	IF_DEBUG_SIGHT(Log::info() << "Player list for " << world->name << " is now " << world->players.size() << Log::endl);
 }
 void Player::leaveWorld(World* world)
 {
-	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << this << " is leaving world " << world->name);
+	IF_DEBUG_SIGHT(Log::info() << "Player " << this << " is leaving world " << world->name << Log::endl);
 	//unload chunks in the world
 	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) ignoreExceptions(world->unload(x, z));
 
@@ -327,7 +327,7 @@ void Player::leaveWorld(World* world)
 		world->players.erase(world->players.begin() + i);
 		break;
 	}
-	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer list of " << world->name << " is now " << world->players.size());
+	IF_DEBUG_SIGHT(Log::info() << "Player list of " << world->name << " is now " << world->players.size() << Log::endl);
 }
 void Player::changeWorld(World* newWorld)
 {
@@ -344,11 +344,11 @@ void Player::changeWorld(const mcString& worldName)
 
 void Player::enterSight(Player* other)
 {
-	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << other << " entering sight of " << this);
+	IF_DEBUG_SIGHT(Log::info() << "Player " << other << " entering sight of " << this << Log::endl);
 	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
 	ignoreExceptions(message::play::send::entityHeadLook(this, other->getEid(), (float)other->yaw));
 	seenBy.emplace_back(other);
-	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
+	IF_DEBUG_SIGHT(Log::info() << "Sight of " << this << " is now " << seenBy.size() << Log::endl);
 }
 void Player::exitSight(Player* other)
 {
@@ -361,10 +361,10 @@ void Player::exitSight(Player* other)
 }
 void Player::exitSight(ull otherI)
 {
-	IF_DEBUG_SIGHT(Log::txt() << "\nPlayer " << seenBy[otherI] << " exiting sight of " << this);
+	IF_DEBUG_SIGHT(Log::info() << "Player " << seenBy[otherI] << " exiting sight of " << this << Log::endl);
 	ignoreExceptions(message::play::send::destroyEntities(this, 1, &seenBy[otherI]->eid));
 	seenBy.erase(seenBy.begin() + otherI);
-	IF_DEBUG_SIGHT(Log::txt() << "\nSight of " << this << " is now " << seenBy.size());
+	IF_DEBUG_SIGHT(Log::info() << "Sight of " << this << " is now " << seenBy.size() << Log::endl);
 }
 
 void Player::disconnect()
@@ -374,7 +374,7 @@ void Player::disconnect()
 	if (state == ConnectionState::play)
 	{
 		leaveWorld(world);
-		Log::txt() << '\n' << username << " (" << netId() << ", eid: " << eid << ") disconnected.";
+		Log::info() << username << " (" << netId() << ", eid: " << eid << ") disconnected.\n";
 		Player::eidDispenser.Free(eid);
 		broadcastChat(Chat((username + " left the game").c_str(), Chat::color::yellow), this);
 		Player* p = this;
@@ -395,7 +395,7 @@ void Player::updateNet()
 	else if ((lastKeepAliveId != -1 || state != ConnectionState::play) && cycleTime > keepAliveTimeoutPoint)
 	{
 		disconnect();
-		Log::txt() << '\n' << username << " was timed out.";
+		Log::info() << '\n' << username << " was timed out.";
 		return;
 	}
 

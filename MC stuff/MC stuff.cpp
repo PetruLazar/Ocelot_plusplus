@@ -38,36 +38,42 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		ServerConsole::FreeConsole();
 		return 0;
 	}
-	Log::txt() << "Starting server on " << Options::ip() << ':' << Options::port() << Log::flush;
+	Log::Bench("server");
+	Log::info() << "Starting server on " << Options::ip() << ':' << Options::port() << "..." << Log::flush;
 	listener.setBlocking(false);
 
 	//loading registries...
-	Log::txt() << "\nLoading registries..." << Log::flush;
+	Log::Bench("registries");
+	Log::info() << "Loading registries... ";
 	Registry::loadRegistriesAndPalette();
+	Log::none() << Log::Bench("registries") << Log::flush;
 
 	//loading vanilla tags
-	Log::txt() << "\nLoading vanilla tags..." << Log::flush;
+	Log::Bench("tags");
+	Log::info() << "Loading vanilla tags... ";
 	TagGroup::loadVanillaTags();
+	Log::none() << Log::Bench("tags") << Log::flush;
 
 	//loading recipies
-	Log::txt() << "\nLoading vanilla recipies..." << Log::flush;
+	Log::Bench("recipies");
+	Log::info() << "Loading vanilla recipies... ";
 	recipe::Manager::loadRecipes();
+	Log::none() << Log::Bench("recipies") << Log::flush;
 
-	Log::txt() << "\nLoading worlds..." << Log::flush;
+	Log::Bench("worlds");
+	Log::info() << "Loading worlds..." << Log::flush;
 	if (!World::loadAll())
 	{
-		Log::txt() << "\nError: Spawn world \"" << Options::mainWorldName() << "\" not found.\n" << Log::flush;
-		system("pause");
+		Log::info() << "Error: Spawn world \"" << Options::mainWorldName() << "\" not found." << Log::flush;
 		ServerConsole::FreeConsole();
 		World::unloadAll();
 		Registry::unloadRegistriesAndPalette();
 		return 0;
 	}
-	sf::TcpSocket* buffer = new sf::TcpSocket;
-	Log::txt() << "\nLoad complete." << Log::flush;
 
-	//testing...
-	//cout << '\n' << World::worlds[1]->get(0, 0)->getBlock(0, 80, 0).id << '\n';
+	sf::TcpSocket* buffer = new sf::TcpSocket;
+	
+	Log::info() << "Server started! " << Log::Bench("server") << Log::flush;
 
 	//main loop
 	while (keepServerOpen)
@@ -77,7 +83,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
 			Player::players.emplace_back(new Player(buffer));
-			IF_LOG_ALL_CONNECTIONS(Log::txt() << '\n' << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.");
+			IF_LOG_ALL_CONNECTIONS(Log::info() << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.\n");
 			buffer = new sf::TcpSocket;
 		}
 
@@ -88,31 +94,31 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		}
 		catch (runtimeError obj)
 		{
-			Log::txt() << "\nRuntime error: " << obj.msg;
+			Log::info() << "Runtime error: " << obj.msg << Log::endl;
 		}
 		catch (runtimeWarning obj)
 		{
-			Log::txt() << "\nRuntime warning: " << obj.msg;
+			Log::info() << "Runtime warning: " << obj.msg << Log::endl;
 		}
 		catch (protocolError obj)
 		{
-			Log::txt() << "\nProtocol error: " << obj.msg;
+			Log::info() << "Protocol error: " << obj.msg << Log::endl;
 		}
 		catch (protocolWarning obj)
 		{
-			Log::txt() << "\nProtocol warning: " << obj.msg;
+			Log::info() << "Protocol warning: " << obj.msg << Log::endl;
 		}
 		catch (const char* err_msg)
 		{
-			Log::txt() << "\nError (old format): " << err_msg;
+			Log::info() << "Error (old format): " << err_msg << Log::endl;
 		}
 		catch (const std::exception& e)
 		{
-			Log::txt() << "\nException thrown: " << e.what();
+			Log::info() << "Exception thrown: " << e.what() << Log::endl;
 		}
 		catch (...)
 		{
-			Log::txt() << "\nUnknown error.";
+			Log::info() << "Unknown error." << Log::endl;
 		}
 		Player::clearDisconnectedPlayers();
 
@@ -130,7 +136,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::Flush();
 	}
 
-	Log::txt() << "\nKicking players...";
+	Log::info() << "Kicking players...";
 	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
 	{
 		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
@@ -138,27 +144,27 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 	catch (runtimeError obj)
 	{
-		Log::txt() << "\nRuntime error: " << obj.msg;
+		Log::info() << "Runtime error: " << obj.msg << Log::endl;
 	}
 	catch (runtimeWarning obj)
 	{
-		Log::txt() << "\nRuntime warning: " << obj.msg;
+		Log::info() << "Runtime warning: " << obj.msg << Log::endl;
 	}
 	catch (protocolError obj)
 	{
-		Log::txt() << "\nProtocol error: " << obj.msg;
+		Log::info() << "Protocol error: " << obj.msg << Log::endl;
 	}
 	catch (protocolWarning obj)
 	{
-		Log::txt() << "\nProtocol warning: " << obj.msg;
+		Log::info() << "Protocol warning: " << obj.msg << Log::endl;
 	}
 	catch (const char* err_msg)
 	{
-		Log::txt() << "\nError: " << err_msg;
+		Log::info() << "Error: " << err_msg << Log::endl;
 	}
 	catch (...)
 	{
-		Log::txt() << "\nUnknown error.";
+		Log::info() << "Unknown error." << Log::endl;
 	}
 
 	for (int64 i = 0; i < (int64)Player::players.size(); i++)
@@ -170,24 +176,24 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	delete buffer;
 	try
 	{
-		Log::txt() << "\nUnloading worlds...";
+		Log::info() << "Unloading worlds..." << Log::endl;
 		World::unloadAll();
 	}
 	catch (runtimeError obj)
 	{
-		Log::txt() << "\nRuntime error: " << obj.msg;
+		Log::info() << "Runtime error: " << obj.msg << Log::endl;
 	}
 	catch (runtimeWarning obj)
 	{
-		Log::txt() << "\nRuntime warning: " << obj.msg;
+		Log::info() << "Runtime warning: " << obj.msg << Log::endl;
 	}
 	catch (protocolError obj)
 	{
-		Log::txt() << "\nProtocol error: " << obj.msg;
+		Log::info() << "Protocol error: " << obj.msg << Log::endl;
 	}
 	catch (protocolWarning obj)
 	{
-		Log::txt() << "\nProtocol warning: " << obj.msg;
+		Log::info() << "Protocol warning: " << obj.msg << Log::endl;
 	}
 
 	ServerConsole::FreeConsole();
