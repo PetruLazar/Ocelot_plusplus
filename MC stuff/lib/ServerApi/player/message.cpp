@@ -9,6 +9,7 @@
 #include "../types/enums.h"
 #include "../types/basic.h"
 #include "../server/log.h"
+#include "../mcexception.h"
 
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
 #define prepareSendMacroNoDecl(x) data = new char[x] + 6; start = data
@@ -142,7 +143,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 	login::send::setCompression(p, 128);
 
 	login::send::success(p, *p->euuid, username);
-	
+
 	play::send::joinGame(p, (int)p->getEid(), false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::spawnWorld->characteristics, World::spawnWorld->name, 0x5f19a34be6c9129a, 0, p->viewDistance, p->simulationDistance, false, false, false, World::spawnWorld->isFlat);
 
 	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
@@ -368,7 +369,8 @@ void message::play::send::blockChange(Player* p, const Position& location, varIn
 
 	finishSendMacro;
 }
-void message::play::send::bossBar(Player* p, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField) {
+void message::play::send::bossBar(Player* p, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField)
+{
 	varInt id = (int)id::bossBar;
 	prepareSendMacro(1024 * 1024);
 
@@ -431,7 +433,8 @@ void message::play::send::mapData(Player* p, varInt mapId, Byte scale, bool lock
 		icons[i].write(data);
 
 	*(data++) = optColumns;
-	if (optColumns > 0) {
+	if (optColumns > 0)
+	{
 		*(data++) = optRows;
 		*(data++) = optX;
 		*(data++) = optZ;
@@ -529,7 +532,8 @@ void message::play::send::facePlayer(Player* p, varInt pivot, bdouble targetX, b
 	targetY.write(data);
 	targetZ.write(data);
 	*(data++) = isEntity;
-	if (isEntity) {
+	if (isEntity)
+	{
 		eid.write(data);
 		targetPivot.write(data);
 	}
@@ -537,19 +541,95 @@ void message::play::send::facePlayer(Player* p, varInt pivot, bdouble targetX, b
 	finishSendMacro;
 }
 void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities,
-	bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, 
-	varInt blockLightArrayCount, char** blockLightArrays) 
+	bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask, varInt skyLightArrayCount, BitArray** skyLightArrays,
+	varInt blockLightArrayCount, BitArray** blockLightArrays)
 {
 	varInt id = (int)id::chunkDataAndLight;
-	prepareSendMacro(1024 * 1024);
+	prepareSendMacro(2048 * 1024);
 
 	id.write(data);
 	cX.write(data);
 	cZ.write(data);
-	
-	//DO DIS
+
+	//chunk data
+	heightMaps.write(data);
+	dataSize.write(data);
+	std::memmove(data, chunkData, dataSize);
+	nOfBlockEntities.write(data);
+	for (int i = 0; i < nOfBlockEntities; i++)
+	{
+		blockEntities[i]->write(data);
+	}
+
+	//light data
+	*(data++) = trustEdges;
+	varInt((uint)skyLightMask.getCompactedSize()).write(data);
+	skyLightMask.write(data);
+	varInt((uint)blockLightMask.getCompactedSize()).write(data);
+	blockLightMask.write(data);
+	varInt((uint)emptySkyLightMask.getCompactedSize()).write(data);
+	emptySkyLightMask.write(data);
+	varInt((uint)emptyBlockLightMask.getCompactedSize()).write(data);
+	emptyBlockLightMask.write(data);
+
+	skyLightArrayCount.write(data);
+	for (int i = 0; i < skyLightArrayCount; i++)
+	{
+		LightSection::lightArrayLength.write(data);
+		skyLightArrays[i]->write(data);
+	}
+
+	blockLightArrayCount.write(data);
+	for (int i = 0; i < blockLightArrayCount; i++)
+	{
+		LightSection::lightArrayLength.write(data);
+		blockLightArrays[i]->write(data);
+	}
 
 	finishSendMacro;
+}
+void message::play::send::chunkDataAndLight(Player*p, bint cX, bint cZ, bool increaseLoadCount)
+{
+	Chunk* chunk = p->world->get(cX, cZ, increaseLoadCount);
+	uint sectionCount = chunk->sections.size();
+
+	//build the heightmaps
+	nbt_compound heightMaps("", new nbt * [1]{
+		new nbt_long_array("MOTION_BLOCKING",*chunk->heightmaps)
+		}, 1);
+
+	//build the chunkData
+	char* chunkData = new char[0xfffff],
+		*chunkDataStart = chunkData;
+	for (int i = 0; i < sectionCount; i++)
+	{
+		Section& section = chunk->sections[i];
+		if (section.blockCount)
+		{
+			section.blockCount.write(chunkData);
+			/*(chunkData++) = section.bitsPerBlock;
+			if (!section.useGlobalPallete)
+			{
+				varInt((uint)section.palette.size()).write(dataBuffer);
+				for (const PaletteEntry val : section.palette) val.block.id.write(dataBuffer);
+			}
+			varInt((uint)section.blockStates->getCompactedSize()).write(dataBuffer);
+			section.blockStates->write(dataBuffer);*/
+		}
+	}
+	uint dataSize = (uint)(chunkData - chunkDataStart);
+
+	//change value to be ready for light sections
+	sectionCount += 2;
+	std::vector<BitArray*> skyLightArrays, blockLightArrays;
+	for (uint i = 0; i < sectionCount; i++)
+	{
+		if (chunk->skyLightMask->getElement(i)) skyLightArrays.emplace_back(chunk->lightData[i].skyLight);
+		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightData[i].blockLight);
+	}
+
+	chunkDataAndLight(p, cX, cZ, heightMaps, dataSize, chunkDataStart, 0, nullptr, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, skyLightArrays.size(), skyLightArrays.data(), blockLightArrays.size(), blockLightArrays.data());
+	delete[] chunkDataStart;
 }
 void message::play::send::effect(Player* p, bint effectId, const Position& location, bint extraData, bool disableRelativeVolume)
 {
@@ -563,7 +643,8 @@ void message::play::send::effect(Player* p, bint effectId, const Position& locat
 
 	finishSendMacro;
 }
-void message::play::send::particle(Player* p, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle = nullptr) {
+void message::play::send::particle(Player* p, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle = nullptr)
+{
 	varInt id = (int)id::particle;
 	prepareSendMacro(1024 * 1024);
 
@@ -621,7 +702,8 @@ void message::play::send::unlockRecipes(Player* p, varInt action, bool bookOpen,
 	for (int i = 0; i < size1; i++)
 		(*array1)[i].write(data);
 
-	if (action == 0) {
+	if (action == 0)
+	{
 		size2.write(data);
 		for (int i = 0; i < size2; i++)
 			(*array2)[i].write(data);
@@ -684,7 +766,8 @@ void message::play::send::timeUpdate(Player* p, blong worldAge, blong timeOfDay)
 
 	finishSendMacro;
 }
-void message::play::send::setTitleText(Player* p, const Chat& title) {
+void message::play::send::setTitleText(Player* p, const Chat& title)
+{
 	varInt id = (int)id::setTitleText;
 	prepareSendMacro(1024 * 1024);
 
@@ -693,7 +776,8 @@ void message::play::send::setTitleText(Player* p, const Chat& title) {
 
 	finishSendMacro;
 }
-void message::play::send::setTitleTimes(Player* p, bint fadeIn, bint stay, bint fadeOut) {
+void message::play::send::setTitleTimes(Player* p, bint fadeIn, bint stay, bint fadeOut)
+{
 	varInt id = (int)id::setTitleTimes;
 	prepareSendMacro(1024 * 1024);
 
@@ -743,7 +827,8 @@ void message::play::send::stopSound(Player* p, Byte flags, varInt source, const 
 
 	finishSendMacro;
 }
-void message::play::send::playerListHeaderAndFooter(Player* p, const Chat& header, const Chat& footer) {
+void message::play::send::playerListHeaderAndFooter(Player* p, const Chat& header, const Chat& footer)
+{
 	varInt id = (int)id::playerListHeaderAndFooter;
 	prepareSendMacro(1024 * 1024);
 
@@ -753,7 +838,8 @@ void message::play::send::playerListHeaderAndFooter(Player* p, const Chat& heade
 
 	finishSendMacro;
 }
-void message::play::send::nbtQueryResponse(Player* p, varInt transactionId, const nbt& tag) {
+void message::play::send::nbtQueryResponse(Player* p, varInt transactionId, const nbt& tag)
+{
 	varInt id = (int)id::nbtQueryResponse;
 	prepareSendMacro(1024 * 1024);
 
@@ -763,7 +849,8 @@ void message::play::send::nbtQueryResponse(Player* p, varInt transactionId, cons
 
 	finishSendMacro;
 }
-void message::play::send::collectItem(Player* p, varInt collectedEid, varInt collectorEid, varInt pickupCount) {
+void message::play::send::collectItem(Player* p, varInt collectedEid, varInt collectorEid, varInt pickupCount)
+{
 	varInt id = (int)id::collectItem;
 	prepareSendMacro(1024 * 1024);
 
@@ -774,7 +861,8 @@ void message::play::send::collectItem(Player* p, varInt collectedEid, varInt col
 
 	finishSendMacro;
 }
-void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround) {
+void message::play::send::entityTeleport(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround)
+{
 	varInt id = (int)id::entityTeleport;
 	prepareSendMacro(1024 * 1024);
 
@@ -796,7 +884,8 @@ void message::play::send::advancements(Player* p, bool reset, varInt mappingSize
 
 	*(data++) = reset;
 	mappingSize.write(data);
-	for (int i = 0; i < mappingSize; i++) {
+	for (int i = 0; i < mappingSize; i++)
+	{
 		advancementsIdentifiers[i].write(data);
 		advancements[i]->write(data);
 	}
@@ -806,7 +895,8 @@ void message::play::send::advancements(Player* p, bool reset, varInt mappingSize
 		removedIdentifiers[i].write(data);
 
 	progressSize.write(data);
-	for (int i = 0; i < progressSize; i++) {
+	for (int i = 0; i < progressSize; i++)
+	{
 		progressIdentifiers[i].write(data);
 		advancementProgresses[i]->write(data);
 	}
@@ -988,8 +1078,8 @@ void message::play::send::updateViewDistance(Player* p, varInt distance)
 
 	finishSendMacro;
 }
-void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask,
-	varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays)
+void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask,
+	varInt skyLightArrayCount, BitArray** skyLightArrays, varInt blockLightArrayCount, BitArray** blockLightArrays)
 {
 	varInt id = (int)id::updateLight;
 	prepareSendMacro(1024 * 1024);
@@ -999,9 +1089,43 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 	cZ.write(data);
 	*(data++) = trustEdges;
 
-	//DO DIS
+	varInt((uint)skyLightMask.getCompactedSize()).write(data);
+	skyLightMask.write(data);
+	varInt((uint)blockLightMask.getCompactedSize()).write(data);
+	blockLightMask.write(data);
+	varInt((uint)emptySkyLightMask.getCompactedSize()).write(data);
+	emptySkyLightMask.write(data);
+	varInt((uint)emptyBlockLightMask.getCompactedSize()).write(data);
+	emptyBlockLightMask.write(data);
+
+	skyLightArrayCount.write(data);
+	for (int i = 0; i < skyLightArrayCount; i++)
+	{
+		LightSection::lightArrayLength.write(data);
+		skyLightArrays[i]->write(data);
+	}
+
+	blockLightArrayCount.write(data);
+	for (int i = 0; i < blockLightArrayCount; i++)
+	{
+		LightSection::lightArrayLength.write(data);
+		blockLightArrays[i]->write(data);
+	}
 
 	finishSendMacro;
+}
+void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
+{
+	Chunk* chunk = p->world->get(cX, cZ);
+	uint sectionCount = chunk->lightData.size();
+
+	std::vector<BitArray*> skyLightArrays, blockLightArrays;
+	for (uint i = 0; i < sectionCount; i++)
+	{
+		if (chunk->skyLightMask->getElement(i)) skyLightArrays.emplace_back(chunk->lightData[i].skyLight);
+		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightData[i].blockLight);
+	}
+	updateLight(p, cX, cZ, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, skyLightArrays.size(), skyLightArrays.data(), blockLightArrays.size(), blockLightArrays.data());
 }
 void message::play::send::disconnect(Player* p, const Chat& reason)
 {
@@ -1055,7 +1179,8 @@ void message::play::send::chatMessage(Player* p, const Chat& msg, Byte position,
 
 	finishSendMacro;
 }
-void message::play::send::clearTitles(Player* p, bool reset) {
+void message::play::send::clearTitles(Player* p, bool reset)
+{
 	varInt id = (int)id::clearTitles;
 	prepareSendMacro(1024 * 1024);
 
@@ -1231,7 +1356,8 @@ void message::play::send::declareCommands(Player* p, const std::vector<Commands:
 
 	finishSendMacro;
 }
-void message::play::send::closeWindow(Player* p, Byte winId) {
+void message::play::send::closeWindow(Player* p, Byte winId)
+{
 	varInt id = (int)id::closeWindow; //to do: send this packet when "a window is forcibly closed, such as when a chest is destroyed while it's open."
 	prepareSendMacro(1024 * 1024);
 
@@ -1240,7 +1366,8 @@ void message::play::send::closeWindow(Player* p, Byte winId) {
 
 	finishSendMacro;
 }
-void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, Slot* carried) {
+void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, varInt count, Slot** slots, Slot* carried)
+{
 	varInt id = (int)id::windowItems;
 	prepareSendMacro(1024 * 1024);
 
@@ -1254,7 +1381,8 @@ void message::play::send::windowItems(Player* p, Byte winId, varInt stateId, var
 
 	finishSendMacro;
 }
-void message::play::send::windowProperty(Player* p, Byte winId, bshort property, bshort value) {
+void message::play::send::windowProperty(Player* p, Byte winId, bshort property, bshort value)
+{
 	varInt id = (int)id::windowProperty;
 	prepareSendMacro(1024 * 1024);
 
@@ -1278,7 +1406,8 @@ void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort 
 
 	finishSendMacro;
 }
-void message::play::send::setCooldown(Player* p, varInt itemId, varInt cooldown) {
+void message::play::send::setCooldown(Player* p, varInt itemId, varInt cooldown)
+{
 	varInt id = (int)id::setCooldown;
 	prepareSendMacro(1024 * 1024);
 
@@ -1365,7 +1494,8 @@ void message::play::send::scoreboardObjective(Player* p, const mcString& name, B
 	name.write(data);
 	*(data++) = mode;
 
-	if (mode != 1) {
+	if (mode != 1)
+	{
 		value.write(data);
 		type.write(data);
 	}
@@ -1422,7 +1552,8 @@ void message::play::send::updateSimulationDistance(Player* p, varInt value)
 
 	finishSendMacro;
 }
-void message::play::send::setTitleSubtitle(Player* p, const Chat& subtitle) {
+void message::play::send::setTitleSubtitle(Player* p, const Chat& subtitle)
+{
 	varInt id = (int)id::setTitleSubtitle;
 	prepareSendMacro(1024 * 1024);
 
@@ -1689,33 +1820,6 @@ void message::play::send::entityPositionAndRotation(Player* p, varInt eid, bshor
 
 	finishSendMacro;
 }
-/*void message::translateChunk()
-{
-
-}
-void message::translateLight()
-{
-
-}*/
-void message::play::send::sendFullChunk(Player* p, int cX, int cZ, bool incLoadCount)
-{
-	varInt id = (int)id::updateLight; //use message::play::send::updateLight instead of coding dis here?
-	prepareSendMacro(1024 * 1024);
-
-	Chunk* chunk = p->world->get(cX, cZ, incLoadCount);
-
-	//update light
-	int sectionCount = (int)chunk->lightData.size();
-
-	id.write(data);
-	varInt(cX).write(data);
-	varInt(cZ).write(data);
-	*(data++) = true;
-	
-	//DO DIS
-
-	finishSendMacro;
-}
 
 void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 {
@@ -1731,7 +1835,7 @@ void message::play::receive::lockDifficulty(Player* p, bool locked)
 }
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
-	if (teleportId == p->pendingTpId) 
+	if (teleportId == p->pendingTpId)
 		p->pendingTpId = -1;
 }
 void message::play::receive::setDifficulty(Player* p, Byte difficulty)
@@ -1761,14 +1865,16 @@ void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte butt
 void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
 {
 	Log::info() << "m: " << mode << " b : " << (int)button << " cs : " << (int)clickedSlot << " l : " << length << Log::endl;
-	for (int i = 0; i < length; i++) {
-		Log::info() << "-i: " << i << " sn: " << slotNumbers[i]<<Log::endl;
+	for (int i = 0; i < length; i++)
+	{
+		Log::info() << "-i: " << i << " sn: " << slotNumbers[i] << Log::endl;
 	}
 	Log::info() << Log::endl;
 
 	int inventoryFirstSlotIndex = 0;
 
-	switch (window::getWindowType(windowID)) {
+	switch (window::getWindowType(windowID))
+	{
 	case window::type::generic_9x1:
 	case window::type::generic_3x3:
 		inventoryFirstSlotIndex = 9;
@@ -1819,25 +1925,32 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		break;
 	}
 
-	switch (mode) {
+	switch (mode)
+	{
 	case 0:
-		if (button == 0) {
-			if (clickedSlot == -999) { //drop whole slot
+		if (button == 0)
+		{
+			if (clickedSlot == -999)
+			{ //drop whole slot
 
 			}
-			else { //select whole slot
-				//if (p->floatingItem == nullptr) {
-				//	p->floatingItem = p->slots[clickedSlot - inventoryFirstSlotIndex];
-				//	p->slots[clickedSlot - inventoryFirstSlotIndex] = nullptr;
-				//}
-				
+			else
+			{ //select whole slot
+		  //if (p->floatingItem == nullptr) {
+		  //	p->floatingItem = p->slots[clickedSlot - inventoryFirstSlotIndex];
+		  //	p->slots[clickedSlot - inventoryFirstSlotIndex] = nullptr;
+		  //}
+
 			}
 		}
-		else { //button == 1
-			if (clickedSlot == -999) { //drop one item from slot
+		else
+		{ //button == 1
+			if (clickedSlot == -999)
+			{ //drop one item from slot
 
 			}
-			else { //select half from slot
+			else
+			{ //select half from slot
 
 			}
 		}
@@ -1845,13 +1958,15 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	case 1:
 		//button 0 and 1 are doing identical behaviors
 		//move whole slot to appropiate slot
-		
+
 		break;
 	case 2:
-		if (button == 40) { //offhand swap
+		if (button == 40)
+		{ //offhand swap
 
 		}
-		else { //button is hotbar index from 0
+		else
+		{ //button is hotbar index from 0
 
 		}
 		break;
@@ -1861,17 +1976,21 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 
 		break;
 	case 4:
-		if (clickedSlot != -999) { //the player clicked outside empty-handed
-			if (button == 0) { //drop one from whole slot
+		if (clickedSlot != -999)
+		{ //the player clicked outside empty-handed
+			if (button == 0)
+			{ //drop one from whole slot
 
 			}
-			else { //button == 1 drop whole slot
+			else
+			{ //button == 1 drop whole slot
 
 			}
 		}
 		break;
 	case 5:
-		switch (button) {
+		switch (button)
+		{
 		case 0: //start left mouse drag
 
 			break;
@@ -1907,12 +2026,14 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		break;
 	}
 
-	IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: clickWindow"<<Log::endl);
+	IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: clickWindow" << Log::endl);
 }
-void message::play::receive::closeWindow(Player* p, Byte winId) {
+void message::play::receive::closeWindow(Player* p, Byte winId)
+{
 	message::play::send::closeWindow(p, winId);
 }
-void message::play::receive::editBook(Player* p, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, const mcString& title) {
+void message::play::receive::editBook(Player* p, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, const mcString& title)
+{
 	nbt** pagesToNbt = new nbt * [count];
 	for (int i = 0; i < count; i++)
 		pagesToNbt[i] = new nbt_string(std::to_string(i), pages[i]);
@@ -1928,7 +2049,8 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 	else
 		bookData = new nbt_compound("", new nbt * [1]{ new nbt_list("pages", pagesToNbt, count) }, 1);
 
-	if (hasTitle) {
+	if (hasTitle)
+	{
 		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot(true, 943, 1, bookData));
 
 		Equipment** eqp = new Equipment * [1];
@@ -1941,14 +2063,16 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 
 		delete[] eqp;
 	}
-	else {
+	else
+	{
 		p->inventory->getSelectedSlot()->updateNBT(bookData);
 	}
 }
 void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
 {
 
-	if (type == 2) {
+	if (type == 2)
+	{
 
 	}
 
@@ -1983,7 +2107,8 @@ void message::play::receive::chatMessage(Player* p, mcString& content)
 			throw;
 		}
 	}
-	else {
+	else
+	{
 		Chat msg(('<' + p->username + "> " + content).c_str());
 
 		for (Player* pl : Player::players)
@@ -1995,9 +2120,9 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy) 
+	for (Player* seener : p->seenBy)
 		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
-	
+
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
 }
@@ -2032,7 +2157,8 @@ void message::play::receive::pickItem(Player* p, varInt slot)
 	//Log::info() << "pickite";
 	//Log::info() << "a: " << p->slots[slot]->getItemId();
 	varInt foundSlot = 0;
-	for (int i = 0; i < 9; i++) { //first search should start from the current slot and loop around it
+	for (int i = 0; i < 9; i++)
+	{ //first search should start from the current slot and loop around it
 		if (!p->inventory->getHotbarSlot(i)->isPresent())
 			foundSlot = i;
 	}
@@ -2051,7 +2177,7 @@ void message::play::receive::pickItem(Player* p, varInt slot)
 }
 void message::play::receive::craftRecipeRequest(Player* p, Byte winId, const mcString& recipe, bool makeAll)
 {
-	
+
 	//not finished!
 	message::play::send::craftRecipeResponse(p, winId, recipe);
 }
@@ -2076,13 +2202,16 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
-	if (slot == -1) { //throw away from inventory, create entity
+	if (slot == -1)
+	{ //throw away from inventory, create entity
 		Log::info() << "create!" << "\n";
 	}
-	else { //put in inventory
+	else
+	{ //put in inventory
 		p->inventory->setInventorySlot(slot, clickedItem);
 
-		if (p->inventory->getSelectedIndex() == slot) {
+		if (p->inventory->getSelectedIndex() == slot)
+		{
 			std::vector<Equipment*> eqp = { new Equipment(0, clickedItem) };
 
 			for (Player* seener : p->seenBy)
@@ -2144,7 +2273,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
 		p->world->entities.emplace_back(theItem);
 
-		for (Player* seener : p->seenBy) {
+		for (Player* seener : p->seenBy)
+		{
 			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
 			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
@@ -2172,7 +2302,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 
 		p->world->entities.emplace_back(theItem);
 
-		for (Player* seener : p->seenBy) {
+		for (Player* seener : p->seenBy)
+		{
 			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
 			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
@@ -2180,7 +2311,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
 		playerItem->count -= 1;
-		if (playerItem->count == 0) {
+		if (playerItem->count == 0)
+		{
 			p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
 
 			std::vector<Equipment*> eqp = { new Equipment(0, p->inventory->getSelectedSlot()) };
@@ -2201,7 +2333,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 }
 void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId, varInt jumpBoost)
 {
-	switch (actionId) {
+	switch (actionId)
+	{
 	case 0: //start sneaking
 		p->attributes |= 0x02;
 		break;
@@ -2256,11 +2389,13 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Po
 	std::string text = "playerBlockPlacement: ";
 	Slot* slot = nullptr;
 
-	if (hand == Hand::main) {
+	if (hand == Hand::main)
+	{
 		text += "main ";
 		slot = p->inventory->getSelectedSlot();
 	}
-	else { //hand == Hand::offhand
+	else
+	{ //hand == Hand::offhand
 		text += "off";
 		slot = p->inventory->getOffhandSlot();
 	}
@@ -2298,8 +2433,10 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Po
 	//((int*)p->slots[p->selectedSlot + 36])[1]++;
 	//play::send::setSlot(p, 0, 12, 36 + p->selectedSlot, *p->slots[p->selectedSlot + 36]);
 }
-void message::play::receive::useItem(Player* p, Hand hand) {
-	switch (p->inventory->getSelectedSlot()->getItemId()) {
+void message::play::receive::useItem(Player* p, Hand hand)
+{
+	switch (p->inventory->getSelectedSlot()->getItemId())
+	{
 	case 943:
 		message::play::send::openBook(p, hand);
 		break;
@@ -2605,12 +2742,13 @@ void message::dispatch(Player* p, char* data, uint size)
 			length.read(data);
 			slotNumbers = new bshort[length];
 			slots = new Slot * [length];
-			for (int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++)
+			{
 				slotNumbers[i].read(data);
 				slots[i] = new Slot();
 				slots[i]->read(data);
 			}
-			if(mode != 4)
+			if (mode != 4)
 				clickedItem->read(data);
 
 			play::receive::clickWindow(p, windowID, stateID, clickedSlot, button, mode, length, slotNumbers, slots, clickedItem);
@@ -2641,7 +2779,8 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			hand.read(data);
 			count.read(data);
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < count; i++)
+			{
 				mcString t;
 				t.read(data);
 				texts.emplace_back(t);
@@ -2667,7 +2806,8 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			eid.read(data);
 			type.read(data);
-			if (type == 2) {
+			if (type == 2)
+			{
 				targetX.read(data);
 				targetY.read(data);
 				targetZ.read(data);
@@ -2695,7 +2835,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		{
 			bool locked;
 			locked = *(data++);
-			
+
 			play::receive::lockDifficulty(p, locked);
 		}
 		break;
@@ -2898,7 +3038,8 @@ void message::dispatch(Player* p, char* data, uint size)
 			nbt_compound* item_data = new nbt_compound();
 
 			present = *(data++);
-			if (present) {
+			if (present)
+			{
 				itemId.read(data);
 				count = *(data++);
 

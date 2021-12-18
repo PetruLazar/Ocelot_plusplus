@@ -18,7 +18,8 @@
 //broadcasting destionation is "player_macro"
 #define broadcastMessageOmitSafe(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr && player_macro->connected) ignoreExceptions(msg_f_call);
 
-struct blockEntity {
+struct blockEntity
+{
 	Byte packedXY;
 	bshort Y;
 	varInt type;
@@ -26,7 +27,8 @@ struct blockEntity {
 
 	blockEntity(Byte packedXY, bshort Y, varInt type, nbt_compound* nbt) : packedXY(packedXY), Y(Y), type(type), nbt(nbt) {}
 
-	void write(char*& buffer) const {
+	void write(char*& buffer) const
+	{
 		*(buffer++) = packedXY;
 		Y.write(buffer);
 		type.write(buffer);
@@ -326,11 +328,13 @@ struct message
 			SERVER_API static void openHorseWindow(Player*, Byte winId, varInt slotCount, bint eid);
 			SERVER_API static void initializeWorldBorder(Player*, bdouble x, bdouble z, bdouble oldDiameter, bdouble newDiameter, varLong speed, varInt portalTeleportBoundary, varInt warningBlocks, varInt warningTime);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
-			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
+			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities, bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask, varInt skyLightArrayCount, BitArray** skyLightArrays, varInt blockLightArrayCount, BitArray** blockLightArrays);
+			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, bool increaseLoadCount = true);
 			SERVER_API static void effect(Player*, bint effectId, const Position& location, bint data, bool disableRelativeVolume);
 			SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle);
 			//SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
-			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
+			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask, varInt skyLightArrayCount, BitArray** skyLightArrays, varInt blockLightArrayCount, BitArray** blockLightArrays);
+			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ);
 			SERVER_API static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, varInt simulationDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
 			SERVER_API static void mapData(Player*, varInt mapId, Byte scale, bool locked, bool trackingPosition, varInt iconCount, map::icon* icons, Byte optColumns, Byte optRows, Byte optX, Byte optZ, varInt optLength, Byte* data);
 			SERVER_API static void tradeList(Player*, varInt winId, Byte size, trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock);
@@ -399,9 +403,6 @@ struct message
 			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes, std::vector<recipe::Recipe*>* recipes);
 			SERVER_API static void tags(Player*);
 			SERVER_API static void tags(Player*, varInt tagCategoryCount, TagGroup* tags);
-
-			//SERVER_API static void scheduleFullChunk(Player* p, int cX, int cZ);
-			SERVER_API static void sendFullChunk(Player*, int cX, int cZ, bool incLoadCount = true);
 		};
 		struct receive
 		{

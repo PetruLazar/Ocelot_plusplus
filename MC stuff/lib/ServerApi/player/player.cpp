@@ -54,12 +54,12 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadX = newChunkX - viewDistance;
 			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
 			{
-				message::play::send::sendFullChunk(this, (int)loadX, z);
+				message::play::send::chunkDataAndLight(this, (int)loadX, z);
 			}
 			bint loadZ = newChunkZ - viewDistance;
 			for (int x = newChunkX - viewDistance + 1; x <= newChunkX + viewDistance; x++)
 			{
-				message::play::send::sendFullChunk(this, x, (int)loadZ);
+				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
 			}
 		}
 		else if (newChunkX < chunkX)
@@ -74,12 +74,12 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadX = newChunkX - viewDistance;
 			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
 			{
-				message::play::send::sendFullChunk(this, (int)loadX, z);
+				message::play::send::chunkDataAndLight(this, (int)loadX, z);
 			}
 			bint loadZ = newChunkZ + viewDistance;
 			for (int x = newChunkX - viewDistance + 1; x <= newChunkX + viewDistance; x++)
 			{
-				message::play::send::sendFullChunk(this, x, (int)loadZ);
+				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
 			}
 		}
 		else if (newChunkZ < chunkZ)
@@ -94,12 +94,12 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadX = newChunkX + viewDistance;
 			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
 			{
-				message::play::send::sendFullChunk(this, (int)loadX, z);
+				message::play::send::chunkDataAndLight(this, (int)loadX, z);
 			}
 			bint loadZ = newChunkZ - viewDistance;
 			for (int x = newChunkX - viewDistance; x < newChunkX + viewDistance; x++)
 			{
-				message::play::send::sendFullChunk(this, x, (int)loadZ);
+				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
 			}
 		}
 		else
@@ -114,12 +114,12 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadX = newChunkX + viewDistance;
 			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
 			{
-				message::play::send::sendFullChunk(this, (int)loadX, z);
+				message::play::send::chunkDataAndLight(this, (int)loadX, z);
 			}
 			bint loadZ = newChunkZ + viewDistance;
 			for (int x = newChunkX - viewDistance; x < newChunkX + viewDistance; x++)
 			{
-				message::play::send::sendFullChunk(this, x, (int)loadZ);
+				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
 			}
 		}
 	}
@@ -134,7 +134,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadX = newChunkX - viewDistance;
 			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
 			{
-				message::play::send::sendFullChunk(this, (int)loadX, z);
+				message::play::send::chunkDataAndLight(this, (int)loadX, z);
 			}
 		}
 		else
@@ -145,7 +145,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadX = newChunkX + viewDistance;
 			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
 			{
-				message::play::send::sendFullChunk(this, (int)loadX, z);
+				message::play::send::chunkDataAndLight(this, (int)loadX, z);
 			}
 		}
 	}
@@ -160,7 +160,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadZ = newChunkZ - viewDistance;
 			for (int x = newChunkX - viewDistance; x <= newChunkX + viewDistance; x++)
 			{
-				message::play::send::sendFullChunk(this, x, (int)loadZ);
+				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
 			}
 		}
 		else
@@ -171,7 +171,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			bint loadZ = newChunkZ + viewDistance;
 			for (int x = newChunkX - viewDistance; x <= newChunkX + viewDistance; x++)
 			{
-				message::play::send::sendFullChunk(this, x, (int)loadZ);
+				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
 			}
 		}
 	}
@@ -196,48 +196,57 @@ bool Player::positionInRange(Position location)
 	return true;
 }
 
-Player::_inventory::_inventory() {
+Player::_inventory::_inventory()
+{
 	for (int i = 0; i < 46; i++)
 		slots[i] = new Slot();
 
 	floatingItem = new Slot();
 }
 
-Player::_inventory::~_inventory() {
+Player::_inventory::~_inventory()
+{
 	for (int i = 0; i < 46; i++)
 		delete slots[i];
 
 	delete floatingItem;
 }
 
-void Player::_inventory::setSelectedSlot(bshort selectedSlot) {
+void Player::_inventory::setSelectedSlot(bshort selectedSlot)
+{
 	this->selectedHotbar = selectedSlot;
 }
 
-bshort Player::_inventory::getSelectedIndex(bool raw) {
-	if(!raw)
+bshort Player::_inventory::getSelectedIndex(bool raw)
+{
+	if (!raw)
 		return this->selectedHotbar;
 
 	return 36 + this->selectedHotbar;
 }
 
-Slot*& Player::_inventory::getSelectedSlot() {
+Slot*& Player::_inventory::getSelectedSlot()
+{
 	return this->slots[36 + selectedHotbar];
 }
 
-Slot*& Player::_inventory::getOffhandSlot() {
+Slot*& Player::_inventory::getOffhandSlot()
+{
 	return this->slots[45];
 }
 
-Slot*& Player::_inventory::getHotbarSlot(bshort index) {
+Slot*& Player::_inventory::getHotbarSlot(bshort index)
+{
 	return this->slots[36 + index];
 }
 
-Slot*& Player::_inventory::getInventorySlot(bshort index) {
+Slot*& Player::_inventory::getInventorySlot(bshort index)
+{
 	return this->slots[selectedHotbar];
 }
 
-void Player::_inventory::setInventorySlot(bshort index, Slot* slot) {
+void Player::_inventory::setInventorySlot(bshort index, Slot* slot)
+{
 	delete this->slots[index];
 	this->slots[index] = slot;
 }
@@ -281,7 +290,7 @@ void Player::setWorld(World* world)
 
 	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++)
 	{
-		message::play::send::sendFullChunk(this, x, z);
+		message::play::send::chunkDataAndLight(this, x, z, true);
 		//message::play::send::updateLight(this, x, z);
 		//message::play::send::chunkData(this, x, z);
 	}
