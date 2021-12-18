@@ -473,6 +473,9 @@
     <ClCompile Include="json\json_decimal.cpp">
       <Filter>Source Files\json</Filter>
     </ClCompile>
+    <ClCompile Include="types\window.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

@@ -6,7 +6,7 @@ const char notFound[] = "No element found by that name.";
 json_compound::json_compound(const std::string& name, const std::vector<json*>& values) : json(json::type::compound, name), v(values) { }
 json_compound::json_compound(const std::string& name, json** values, ull s) : json(json::type::compound, name)
 {
-	for (ull i = 0; i < s; i++) v.push_back(values[i]);
+	for (ull i = 0; i < s; i++) v.emplace_back(values[i]);
 	delete[] values;
 }
 json_compound::~json_compound()
@@ -32,6 +32,15 @@ void json_compound::write(std::fstream& is) const
 	mcString(stringValue()).write(is);
 }
 
+bool json_compound::has(const std::string& i) {
+	for (json* e : v) {
+		if (e->getName() == i)
+			return true;
+	}
+
+	return false;
+}
+
 json& json_compound::value(int i) { return *v[i]; }
 json& json_compound::operator[](int i) { return *v[i]; }
 json& json_compound::value(const std::string& i)
@@ -46,7 +55,7 @@ json& json_compound::operator[](const std::string& i)
 }
 
 ull json_compound::getSize() { return v.size(); }
-void json_compound::add(json* elem) { v.push_back(elem); }
+void json_compound::add(json* elem) { v.emplace_back(elem); }
 void json_compound::remove(json* elem)
 {
 	ull s = v.size();

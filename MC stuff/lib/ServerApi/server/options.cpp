@@ -14,12 +14,13 @@ int Options::_max_players = 100;
 std::string Options::_mainWorldName = "world", Options::_motd = "{\"text\":\"A Minecraft server.\"}";
 sf::IpAddress Options::_ip = sf::IpAddress::Any;
 Byte Options::_viewDistance = 10;
+Byte Options::_simulationDistance = 10;
 bool Options::_chunkCompression = false;
 short Options::_networkCompression = -1;
 
 Options Options::options;
 
-const string Options::version = "\"version\":{\"name\":\"1.17.1\",\"protocol\":756}";
+const string Options::version = "\"version\":{\"name\":\"1.18.1\",\"protocol\":757}";
 bool Options::allowJoin = true;
 
 ull parseUnsigned(const string& name, const string& value, ull linenumber)
@@ -214,6 +215,16 @@ Options::Options()
 			{
 			}
 		}
+		else if (name == "view-distance")
+		{
+			try
+			{
+				_simulationDistance = parseByte(name, value, linenumber);
+			}
+			catch (...)
+			{
+			}
+		}
 		else if (name == "chunk-compression")
 		{
 			if (value == "true")
@@ -258,5 +269,6 @@ const string& Options::mainWorldName() { return _mainWorldName; }
 const string& Options::motd() { return _motd; }
 const sf::IpAddress& Options::ip() { return _ip; }
 Byte Options::viewDistance() { return _viewDistance; }
+Byte Options::simulationDistance() { return _simulationDistance; }
 bool Options::chunkCompression() { return _chunkCompression; }
 short Options::networkCompression() { return _networkCompression; }

@@ -302,16 +302,16 @@ nbt_compound World::dimension_codec("", new nbt*[2]{
 
 World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 {
-	IF_WORLD_LOAD_DEBUG(Log::txt() << "\nLoading world \"" << c_name << "\"..." << Log::flush);
+	IF_WORLD_LOAD_DEBUG(Log::info() << "Loading world \"" << c_name << "\"..." << Log::flush);
 	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::in);
 	if (!worldMain.is_open())
 	{
-		Log::txt() << "Error: cannot open charactestics.bin\n" << Log::flush;
+		Log::info() << "Error: cannot open charactestics.bin" << Log::flush;
 		throw 0;
 	}
 	if (!nbt::checkTag(worldMain))
 	{
-		Log::txt() << "Error: charactestics.bin has an invalid format\n" << Log::flush;
+		Log::info() << "Error: charactestics.bin has an invalid format" << Log::flush;
 		throw 0;
 	}
 	characteristics.read(worldMain);
@@ -359,7 +359,7 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 		}
 		catch (...)
 		{
-			Log::txt() << "\nCould not load custom generator for world \"" << c_name << "\", using default instead." << Log::flush;
+			Log::info() << "Could not load custom generator for world \"" << c_name << "\", using default instead." << Log::flush;
 			generatorFunction = generate_def;
 		}
 		break;
@@ -373,13 +373,13 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 		Log::txt() << "\nCreated \"regions\" directory for world " << name << Log::flush;
 	}
 
-	IF_WORLD_LOAD_DEBUG(Log::txt() << "\nLoading spawn area..." << Log::flush);
+	IF_WORLD_LOAD_DEBUG(Log::info() << "Loading spawn area..." << Log::flush);
 	for (int x = spawn.ChunkX - Options::viewDistance(); x <= spawn.ChunkX + Options::viewDistance(); x++)
 		for (int z = spawn.ChunkZ - Options::viewDistance(); z <= spawn.ChunkZ + Options::viewDistance(); z++)
 			get(x, z, true);
 
 	spawn.Y = double(characteristics["min_y"].vInt()) + get(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
-	IF_WORLD_LOAD_DEBUG(Log::txt() << "\nDone!" << Log::flush);
+	IF_WORLD_LOAD_DEBUG(Log::info() << "Done!" << Log::flush);
 }
 
 World::~World()
@@ -469,8 +469,8 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
 
-		section.palette.push_back(PaletteEntry(BlockState("minecraft:air"), 0));
-		section.palette.push_back(PaletteEntry(BlockState("minecraft:stone"), 0));
+		section.palette.emplace_back(PaletteEntry(BlockState("minecraft:air"), 0));
+		section.palette.emplace_back(PaletteEntry(BlockState("minecraft:stone"), 0));
 
 		for (int z = 0; z < 16; z++)
 			for (int x = 0; x < 16; x++)
@@ -576,8 +576,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(34), 0xf00));
-			section.palette.push_back(PaletteEntry(BlockState(33), 0x100));
+			section.palette.emplace_back(PaletteEntry(BlockState(34), 0xf00));
+			section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
 				blocks[j] = 1;
@@ -602,7 +602,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(34), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(34), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -621,7 +621,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(34), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(34), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -640,7 +640,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -677,8 +677,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(50), 0xf00));
-			section.palette.push_back(PaletteEntry(BlockState(33), 0x100));
+			section.palette.emplace_back(PaletteEntry(BlockState(50), 0xf00));
+			section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
 				blocks[j] = 1;
@@ -703,7 +703,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(50), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(50), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -722,7 +722,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(50), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(50), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -741,7 +741,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -758,7 +758,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -795,8 +795,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(1), 0xf00));
-			section.palette.push_back(PaletteEntry(BlockState(33), 0x100));
+			section.palette.emplace_back(PaletteEntry(BlockState(1), 0xf00));
+			section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
 				blocks[j] = 1;
@@ -821,7 +821,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(1), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(1), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -840,9 +840,9 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x1000;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(1), 0xd00));
-			section.palette.push_back(PaletteEntry(BlockState(10), 0x200));
-			section.palette.push_back(PaletteEntry(BlockState(9), 0x100));
+			section.palette.emplace_back(PaletteEntry(BlockState(1), 0xd00));
+			section.palette.emplace_back(PaletteEntry(BlockState(10), 0x200));
+			section.palette.emplace_back(PaletteEntry(BlockState(9), 0x100));
 			for (int y0 = 0; y0 < 13; y0++) for (int j = 0; j < 256; j++)
 			{
 				blocks[y0 * 256 + j] = 0;
@@ -873,7 +873,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 			section.blockCount = 0x0;
 			section.bitsPerBlock = 4;
 			section.useGlobalPallete = false;
-			section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
+			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
 				blocks[j] = 0;
@@ -951,7 +951,7 @@ Chunk* World::generate_void(World* world, int x, int z)
 		section.blockCount = 0x0;
 		section.bitsPerBlock = 4;
 		section.useGlobalPallete = false;
-		section.palette.push_back(PaletteEntry(BlockState(0), 0x1000));
+		section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 		for (int j = 0; j < 4096; j++)
 		{
 			skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
@@ -984,12 +984,12 @@ void World::unload(int x, int z)
 		if (!region->hasChunksLoaded())
 		{
 			regions.erase(regions.begin() + i);
-			IF_REGION_DEBUG(std::cout << "\nRegions is now " << regions.size());
+			IF_REGION_DEBUG(Log::txt() << "Regions is now " << regions.size() << Log::endl);
 		}
 		return;
 	}
 
-	std::cout << "\nIncorrect chunk unload at [" << x << ", " << z << "]";
+	Log::info() << "Incorrect chunk unload at [" << x << ", " << z << "]" << Log::endl;
 	throw runtimeWarning("Tried to unload a chunk in an unloaded region");
 }
 Chunk* World::get(int x, int z, bool increaseLoadCount)
@@ -1007,32 +1007,33 @@ Chunk* World::get(int x, int z, bool increaseLoadCount)
 		Chunk* chunk = regions[i]->get(this, relX, relZ, increaseLoadCount);
 		if (chunk)
 		{
-			IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] extracted(" << chunk->loadCount << ")" << Log::flush;);
+			IF_CHUNK_DEBUG(Log::info() << "Chunk [" << x << ", " << z << "] extracted(" << chunk->loadCount << ")" << Log::flush;);
 			return chunk;
 		}
 		//chunk not found in region, generate
 		chunk = generatorFunction(this, x, z);
 		chunk->loadCount = 1;
-		IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;);
+		IF_CHUNK_DEBUG(Log::info() << "Chunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;);
 		regions[i]->set(relX, relZ, chunk);
 		return chunk;
 	}
 
 	//region not found, create region and load chunk
 	Region* region = new Region(name, rX, rZ);
-	regions.push_back(region);
-	IF_REGION_DEBUG(Log::txt() << "\nRegions is now " << regions.size() << Log::flush;);
+	regions.emplace_back(region);
+	IF_REGION_DEBUG(Log::info() << "Regions is now " << regions.size() << Log::flush;);
 	//try to load the chunk from the region
 	Chunk* chunk = region->get(this, relX, relZ, increaseLoadCount);
 	if (chunk)
 	{
-		IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] extracted(" << chunk->loadCount << ")" << Log::flush;);
+		IF_CHUNK_DEBUG(Log::info() << "Chunk [" << x << ", " << z << "] extracted(" << chunk->loadCount << ")" << Log::flush;);
 		return chunk;
 	}
 	//chunk could not be loaded, generate
 	chunk = generatorFunction(this, x, z);
 	chunk->loadCount = 1;
-	IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;);
+	IF_CHUNK_DEBUG(Log::info() << "Chunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;);
+
 	region->set(relX, relZ, chunk);
 	return chunk;
 }
@@ -1124,10 +1125,9 @@ bool World::loadAll()
 	ifstream worldList("worlds\\worldList.txt");
 	char name[256];
 	while (worldList >> name)
-	{
-		worlds.push_back(new World(name));
-	}
-	Log::txt() << "\nFinished loading " << worlds.size() << " worlds!" << Log::flush;
+		worlds.emplace_back(new World(name));
+
+	Log::info() << "Finished loading " << worlds.size() << " worlds! " << Log::Bench("worlds") << Log::flush;
 	worldList.close();
 
 	spawnWorld = getWorld(Options::mainWorldName());

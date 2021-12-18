@@ -3,7 +3,7 @@
 nbt_compound::nbt_compound(const std::string& name, const std::vector <nbt*>& v) : nbt(tag::Compound, name), values(v) { }
 nbt_compound::nbt_compound(const std::string& name, nbt** v, uint s) : nbt(tag::Compound, name)
 {
-	for (uint i = 0; i < s; i++) values.push_back(v[i]);
+	for (uint i = 0; i < s; i++) values.emplace_back(v[i]);
 	delete[] v;
 }
 nbt_compound::~nbt_compound()
@@ -51,7 +51,7 @@ void nbt_compound::read(std::fstream& is, const std::string& name)
 		if (t == tag::End) break;
 		nbt* v = getTagP(t);
 		v->read(is);
-		values.push_back(v);
+		values.emplace_back(v);
 	}
 }
 void nbt_compound::write(char*& buffer, bool iNT) const
@@ -93,7 +93,7 @@ void nbt_compound::read(char*& end, const std::string& name)
 		if (t == nbt::tag::End) break;
 		nbt* v = getTagP(t);
 		v->read(end);
-		values.push_back(v);
+		values.emplace_back(v);
 	}
 }
 std::string nbt_compound::getStringValue() const
@@ -124,7 +124,7 @@ nbt& nbt_compound::operator[](const std::string& n)
 uint nbt_compound::getSize() const { return (uint)values.size(); }
 void nbt_compound::add(nbt* newElem)
 {
-	values.push_back(newElem);
+	values.emplace_back(newElem);
 }
 void nbt_compound::remove(nbt* elem)
 {

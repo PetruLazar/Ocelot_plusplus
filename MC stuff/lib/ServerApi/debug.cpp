@@ -16,7 +16,7 @@ void* operator new(size_t s)
 	if (bid == TARGET_MEMORY_BLOCK)
 		std::cout << "";
 #endif
-	if (log::txt().is_open()) log::txt() << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (Log::info().is_open()) Log::info() << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 	return p;
 }
 void* operator new[](size_t s)
@@ -27,7 +27,7 @@ void* operator new[](size_t s)
 	if (bid == TARGET_MEMORY_BLOCK)
 		std::cout << "";
 #endif
-	if (log::txt().is_open()) log::txt() << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (Log::info().is_open()) Log::info() << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 	return p;
 }
 
@@ -39,7 +39,7 @@ void operator delete(void* p, size_t s)
 		std::cout << "";
 #endif
 	free(p);
-	if (log::txt().is_open()) log::txt() << "Freed object at:     " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (Log::info().is_open()) Log::info() << "Freed object at:     " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 }
 void operator delete[](void* p, size_t s)
 {
@@ -49,7 +49,7 @@ void operator delete[](void* p, size_t s)
 		std::cout << "";
 #endif
 	free(p);
-	if (log::txt().is_open()) log::txt() << "Freed block at:      " << p << " (size " << s << ", block id " << bid << ")\n";
+	if (Log::info().is_open()) Log::info() << "Freed block at:      " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 }
 
 #endif

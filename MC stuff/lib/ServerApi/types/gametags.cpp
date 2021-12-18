@@ -12,13 +12,15 @@ using namespace std::filesystem;
 
 std::vector<TagGroup> TagGroup::defaultTags;
 
-const TagGroup::Tag* TagGroup::getTag(const std::string& category, const std::string& name)
+const std::string TagGroup::blockTags = "minecraft:block",
+TagGroup::itemTags = "minecraft:item",
+TagGroup::fluidTags = "minecraft:fluid",
+TagGroup::entityTypeTags = "minecraft:entity_type",
+TagGroup::gameEvents = "minecraft:game_event";
+
+const TagGroup::Tag* TagGroup::getTag(const std::string& name)
 {
-	for (const TagGroup& tagGroup : TagGroup::defaultTags) if (tagGroup.tagType == category)
-	{
-		for (const Tag& tag : tagGroup.tags) if (tag.name == name) return &tag;
-		return nullptr;
-	}
+	for (const Tag& tag : tags) if (tag.name == name) return &tag;
 	return nullptr;
 }
 void TagGroup::loadTag(const std::string& tagName)
@@ -43,6 +45,7 @@ void TagGroup::loadTag(const std::string& tagName)
 	//take each entry of "values"
 	json& values = jsonTag["values"];
 	ull size = values.getSize();
+	tags.reserve(size);
 	for (ull i = 0; i < size; i++)
 	{
 		std::string value = values[(int)i].value();
@@ -53,22 +56,31 @@ void TagGroup::loadTag(const std::string& tagName)
 			const Tag* refTag = getTag(tagType, (value.c_str() + 1));
 			if (!&refTag)
 				throw;
-			for (const varInt& v : refTag->entries) tag.entries.push_back(v);
+			for (const varInt& v : refTag->entries) tag.entries.emplace_back(v);
 		}
 		else
 		{
 			//value is literal, add it to the tag
-			tag.entries.push_back(Registry::getId(tagType, value));
+			tag.entries.emplace_back(Registry::getId(tagType, value));
 		}
 	}
 
 	//add the tag to the TagGroup
-	tags.push_back(tag);
+	tags.emplace_back(tag);
 
 	//memory cleanup
 	delete& jsonTag;
 }
 
+const TagGroup::Tag* TagGroup::getTag(const std::string& category, const std::string& tagName)
+{
+	for (const TagGroup& tagGroup : TagGroup::defaultTags) if (tagGroup.tagType == category)
+	{
+		for (const Tag& tag : tagGroup.tags) if (tag.name == tagName) return &tag;
+		return nullptr;
+	}
+	return nullptr;
+}
 void TagGroup::loadVanillaTags()
 {
 	directory_iterator tagsDir("data/tags");
@@ -80,8 +92,7 @@ void TagGroup::loadVanillaTags()
 		if (!tagGroup.is_directory()) continue;
 
 		//create the tag group
-		defaultTags.push_back(TagGroup());
-		TagGroup& group = defaultTags.back();
+		TagGroup& group = defaultTags.emplace_back();
 		group.tagType = "minecraft:" + tagGroup.path().stem().string();
 		group.tagType.pop_back();
 

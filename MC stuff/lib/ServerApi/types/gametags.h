@@ -21,9 +21,16 @@ public:
 	SERVER_API static std::vector<TagGroup> defaultTags;
 
 	//get a pointer to a loaded tag (nullptr if the tag is not loaded)
-	SERVER_API const Tag* getTag(const std::string& category, const std::string& tag);
+	SERVER_API const Tag* getTag(const std::string& tagName);
 	SERVER_API void loadTag(const std::string& tag);
 
+	SERVER_API static const Tag* getTag(const std::string& category, const std::string& tag);
 	SERVER_API static bool checkTagEntry(const mcString& tagType, const mcString& tagName, varInt entry);
 	SERVER_API static void loadVanillaTags();
+
+	SERVER_API static const std::string blockTags,
+		itemTags,
+		fluidTags,
+		entityTypeTags,
+		gameEvents;
 };

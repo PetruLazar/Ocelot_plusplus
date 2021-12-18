@@ -202,11 +202,11 @@ void Region::unload(World* parent, int relX, int relZ)
 	Chunk*& chunk = chunks[relX][relZ];
 	if (!(chunk))
 	{
-		std::cout << "\nIncorrect chunk unload at [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "]";
+		Log::info() << "Incorrect chunk unload at [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "]" << Log::endl;
 		throw runtimeWarning("Tried to unload a chunk the was not loaded");
 	}
 	chunk->loadCount--;
-	IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] unloaded (" << chunk->loadCount << ")");
+	IF_CHUNK_DEBUG(Log::info() << "Chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] unloaded (" << chunk->loadCount << ")" << Log::endl);
 	if (!chunk->loadCount)
 	{
 		//write the chunk to file
@@ -223,7 +223,7 @@ void Region::set(int relX, int relZ, Chunk* p)
 	Chunk*& chunk = chunks[relX][relZ];
 	if (chunk)
 	{
-		Log::txt() << "\nIncorrect chunk set in region [ " << rX << ", " << rX << "], relative chunk [" << relX << ", " << relZ << "]";
+		Log::info() << "Incorrect chunk set in region [ " << rX << ", " << rX << "], relative chunk [" << relX << ", " << relZ << "]" << Log::endl;
 		//throw runtimeError("Tried to set a chunk when chunk was already set");
 		return;
 	}

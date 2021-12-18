@@ -11,8 +11,8 @@ json_array::json_array(const std::string& name, json** values, ull size) : json(
 		v = nullptr;
 		return;
 	}
-	childType = v[0]->getType();
-	for (ull i = 1; i < s; i++) if (v[i]->getType() != childType) throw invalidArrayElements;
+
+	//check for other types?
 }
 json_array::~json_array()
 {
@@ -41,17 +41,6 @@ json& json_array::operator[](int i)
 	return *v[i]; 
 }
 
-json::type json_array::getChildType() { return childType; }
-void json_array::changeType(type newType)
-{
-	if (childType == newType) return;
-	childType = newType;
-	for (ull i = 0; i < s; i++)
-	{
-		if (v[i]) delete v[i];
-		v[i] = allocate(childType);
-	}
-}
 ull json_array::getSize() { return s; }
 void json_array::resize(ull ns)
 {
@@ -60,7 +49,7 @@ void json_array::resize(ull ns)
 	ull mins = s < ns ? s : ns;
 	for (ull i = 0; i < mins; i++) nv[i] = v[i];
 	for (ull i = mins; i < s; i++) if (v[i]) delete v[i];
-	for (ull i = mins; i < ns; i++) nv[i] = allocate(childType);
+	//for (ull i = mins; i < ns; i++) nv[i] = allocate(childType); broke it?
 
 	if (v) delete[] v;
 	v = nv;

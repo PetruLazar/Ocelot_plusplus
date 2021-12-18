@@ -3267,36 +3267,36 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	switch (bid)
 	{
 	case Block::minecraft_crafting_table:
-		message::play::send::openWindow(p, window::getID(), window::type::crafting, "minecraft:crafting");
+		message::play::send::openWindow(p, window::getID(window::type::crafting), window::type::crafting, "Crafting");
 		return true;
 	case Block::minecraft_enchanting_table:
-		message::play::send::openWindow(p, window::getID(), window::type::enchantment, "minecraft:enchantment");
+		message::play::send::openWindow(p, window::getID(window::type::enchantment), window::type::enchantment, "Enchantment");
 		return true;
 	case Block::minecraft_cartography_table:
-		message::play::send::openWindow(p, window::getID(), window::type::cartography, "minecraft:cartography");
+		message::play::send::openWindow(p, window::getID(window::type::cartography), window::type::cartography, "Cartography");
 		return true;
 	case Block::minecraft_smithing_table:
-		message::play::send::openWindow(p, window::getID(), window::type::smithing, "minecraft:smithing");
+		message::play::send::openWindow(p, window::getID(window::type::smithing), window::type::smithing, "Smithing");
 		return true;
 	case Block::minecraft_anvil:
 	case Block::minecraft_chipped_anvil:
 	case Block::minecraft_damaged_anvil:
-		message::play::send::openWindow(p, window::getID(), window::type::anvil, "minecraft:anvil");
+		message::play::send::openWindow(p, window::getID(window::type::anvil), window::type::anvil, "Anvil");
 		return true;
 	case Block::minecraft_stonecutter:
-		message::play::send::openWindow(p, window::getID(), window::type::stonecutter, "minecraft:stonecutter");
+		message::play::send::openWindow(p, window::getID(window::type::stonecutter), window::type::stonecutter, "Stonecutter");
 		return true;
 	case Block::minecraft_furnace:
-		message::play::send::openWindow(p, window::getID(), window::type::furnace, "minecraft:furnace");
+		message::play::send::openWindow(p, window::getID(window::type::furnace), window::type::furnace, "Furnace");
 		return true;
 	case Block::minecraft_blast_furnace:
-		message::play::send::openWindow(p, window::getID(), window::type::blast_furnace, "minecraft:blast_furnace");
+		message::play::send::openWindow(p, window::getID(window::type::blast_furnace), window::type::blast_furnace, "Blast_furnace");
 		return true;
 	case Block::minecraft_smoker:
-		message::play::send::openWindow(p, window::getID(), window::type::smoker, "minecraft:smoker");
+		message::play::send::openWindow(p, window::getID(window::type::smoker), window::type::smoker, "Smoker");
 		return true;
 	case Block::minecraft_loom:
-		message::play::send::openWindow(p, window::getID(), window::type::loom, "minecraft:loom");
+		message::play::send::openWindow(p, window::getID(window::type::loom), window::type::loom, "Loom");
 		return true;
 	case Block::minecraft_shulker_box:
 	case Block::minecraft_white_shulker_box:
@@ -3315,16 +3315,16 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	case Block::minecraft_green_shulker_box:
 	case Block::minecraft_red_shulker_box:
 	case Block::minecraft_black_shulker_box:
-		message::play::send::openWindow(p, window::getID(), window::type::shulker_box, "minecraft:shulker_box");
+		message::play::send::openWindow(p, window::getID(window::type::shulker_box), window::type::shulker_box, "Shulker_box");
 		return true;
 	case Block::minecraft_barrel:
-		message::play::send::openWindow(p, window::getID(), window::type::generic_9x3, "minecraft:barrel");
+		message::play::send::openWindow(p, window::getID(window::type::generic_9x3), window::type::generic_9x3, "Barrel");
 		return true;
 	case Block::minecraft_dispenser:
-		message::play::send::openWindow(p, window::getID(), window::type::generic_3x3, "minecraft:dispenser");
+		message::play::send::openWindow(p, window::getID(window::type::generic_3x3), window::type::generic_3x3, "Dispenser");
 		return true;
 	case Block::minecraft_dropper:
-		message::play::send::openWindow(p, window::getID(), window::type::generic_3x3, "minecraft:dropper");
+		message::play::send::openWindow(p, window::getID(window::type::generic_3x3), window::type::generic_3x3, "Dropper");
 		return true;
 	case Block::minecraft_oak_trapdoor:
 	case Block::minecraft_spruce_trapdoor:

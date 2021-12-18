@@ -20,7 +20,6 @@ class Registry
 	static json* globalPalette;
 	static ull blockStatesCount;
 
-
 public:
 	SERVER_API static const std::string itemRegistry,
 		blockRegistry,
