@@ -370,7 +370,7 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	if (!fs::is_directory("worlds\\" + name + "\\regions"))
 	{
 		fs::create_directory("worlds\\" + name + "\\regions");
-		Log::txt() << "\nCreated \"regions\" directory for world " << name << Log::flush;
+		Log::info() << "\nCreated \"regions\" directory for world " << name << Log::flush;
 	}
 
 	IF_WORLD_LOAD_DEBUG(Log::info() << "Loading spawn area..." << Log::flush);

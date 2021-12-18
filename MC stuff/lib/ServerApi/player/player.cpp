@@ -294,18 +294,14 @@ void Player::setWorld(World* world)
 		//message::play::send::updateLight(this, x, z);
 		//message::play::send::chunkData(this, x, z);
 	}
-
-	//send the selected slot
-	message::play::send::heldItemChange(this, selectedSlot - 36);
-
-	//send old items
-
+	
 	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
 
 	//send the selected slot
 	message::play::send::heldItemChange(this, inventory->getSelectedIndex());
 
 	//send old items
+	//...
 
 	//check for players in sight
 	for (Player* otherP : world->players)

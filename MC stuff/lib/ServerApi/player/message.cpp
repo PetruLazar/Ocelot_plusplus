@@ -2391,12 +2391,12 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Po
 
 	if (hand == Hand::main)
 	{
-		text += "main ";
+		//text += "main ";
 		slot = p->inventory->getSelectedSlot();
 	}
 	else
 	{ //hand == Hand::offhand
-		text += "off";
+		//text += "off";
 		slot = p->inventory->getOffhandSlot();
 	}
 
@@ -2429,9 +2429,6 @@ void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Po
 	//play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
 	p->world->setBlockByItem(p, slot, location, face, curX, curY, curZ);
-	//tmp: increase the id of the held item
-	//((int*)p->slots[p->selectedSlot + 36])[1]++;
-	//play::send::setSlot(p, 0, 12, 36 + p->selectedSlot, *p->slots[p->selectedSlot + 36]);
 }
 void message::play::receive::useItem(Player* p, Hand hand)
 {
