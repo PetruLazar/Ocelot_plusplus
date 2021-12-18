@@ -63,7 +63,7 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 			section.blockStates = new BitArray(4096, section.bitsPerBlock, (Byte*)blocks);
 
 			//biome data
-			for (ull i = 0; i < sizeof(section.biomes) / sizeof(ull); i++) ((ull*)section.biomes)[i] = 0;
+			section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
 
 			//LIGHTSECTION DATA - this section is light empty
 
@@ -123,7 +123,7 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 			section.blockStates = new BitArray(4096, section.bitsPerBlock);
 
 			//biome data
-			for (ull i = 0; i < sizeof(section.biomes) / sizeof(ull); i++) ((ull*)section.biomes)[i] = 0;
+			section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
 
 			//LIGHTSECTION DATA - this section is light empty
 

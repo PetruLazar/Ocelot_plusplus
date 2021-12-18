@@ -282,6 +282,7 @@ nbt_compound World::dimension_codec("", new nbt*[2]{
 		},10)
 	},2)
 	}, 2);
+const Byte World::currentBiomeBitsPerEntry = 4; // 10 biomes in the global palette
 /*nbt_compound World::dimension("", new nbt* [15]{
 						new nbt_Byte("piglin_safe",0),
 						new nbt_Byte("natural",1),
@@ -370,7 +371,7 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	if (!fs::is_directory("worlds\\" + name + "\\regions"))
 	{
 		fs::create_directory("worlds\\" + name + "\\regions");
-		Log::info() << "\nCreated \"regions\" directory for world " << name << Log::flush;
+		//Log::info() << "\nCreated \"regions\" directory for world " << name << Log::flush;
 	}
 
 	IF_WORLD_LOAD_DEBUG(Log::info() << "Loading spawn area..." << Log::flush);
@@ -453,7 +454,8 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		for (int y = 0; y < 4; y++) for (int z = 0; z < 4; z++) for (int x = 0; x < 4; x++) section.biomes[y][z][x] = biomeId;
+		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
 
 		//block data
 		int section_base = (i << 4);
@@ -562,7 +564,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
 
 		Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
@@ -663,7 +666,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
 
 		Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
@@ -781,7 +785,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
 
 		Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
@@ -942,7 +947,8 @@ Chunk* World::generate_void(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		for (int x0 = 0; x0 < 4; x0++) for (int z0 = 0; z0 < 4; z0++) for (int y0 = 0; y0 < 4; y0++) section.biomes[x0][y0][z0] = biomeId;
+		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
 
 		//[y][z][x]
 		Byte skyLight[16][16][16]{};

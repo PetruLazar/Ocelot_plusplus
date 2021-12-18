@@ -18,7 +18,10 @@ public:
 	//SERVER_API Section();
 	SERVER_API ~Section();
 
-	varInt biomes[4][4][4];
+	//varInt biomes[4][4][4];
+	//bits per entry 4, always global palette
+	//no palette (uses global)
+	BitArray* biomes;
 
 	std::vector<PaletteEntry> palette;
 	bool useGlobalPallete;

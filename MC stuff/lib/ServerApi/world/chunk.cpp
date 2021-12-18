@@ -1,6 +1,7 @@
 #include "chunk.h"
 #include "../types/error.h"
 #include "../types/utils.h"
+#include "../world.h"
 
 using namespace std;
 
@@ -52,7 +53,8 @@ void Chunk::read(std::istream& file)
 	for (Section& sec : sections)
 	{
 		//read biomes
-		file.read((char*)(&sec.biomes), 256);
+		sec.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		sec.biomes->read(file);
 
 		//read useGlobalPalette, bitsPerBlock and blockCount
 		file.read((char*)(&sec.useGlobalPallete), 4);
@@ -153,7 +155,8 @@ void Chunk::write(ostream& file)
 	for (Section& sec : sections)
 	{
 		//write biomes
-		file.write((char*)(&sec.biomes), 256);
+		//file.write((char*)(&sec.biomes), 256);
+		sec.biomes->write(file);
 
 		//write useGlobalPalette, bitsPerBlock, blockCount
 		file.write((char*)(&sec.useGlobalPallete), 4);

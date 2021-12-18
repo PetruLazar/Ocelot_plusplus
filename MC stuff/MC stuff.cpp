@@ -72,7 +72,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 
 	sf::TcpSocket* buffer = new sf::TcpSocket;
-	
+
 	Log::info() << "Server started! " << Log::Bench("server") << Log::flush;
 
 	//main loop
@@ -136,7 +136,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::Flush();
 	}
 
-	Log::info() << "Kicking players...";
+	Log::info() << "Kicking players..." << Log::endl;
 	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
 	{
 		message::play::send::disconnect(Player::players[i], Chat("Server closed."));

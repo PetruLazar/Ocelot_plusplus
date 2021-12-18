@@ -91,6 +91,7 @@ public:
 
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
+	SERVER_API static const Byte currentBiomeBitsPerEntry;
 
 	SERVER_API static bool loadAll();
 	SERVER_API static void unloadAll();

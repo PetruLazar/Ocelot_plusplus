@@ -555,6 +555,7 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 	heightMaps.write(data);
 	dataSize.write(data);
 	std::memmove(data, chunkData, dataSize);
+	data += dataSize;
 	nOfBlockEntities.write(data);
 	for (int i = 0; i < nOfBlockEntities; i++)
 	{
@@ -591,7 +592,7 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 void message::play::send::chunkDataAndLight(Player*p, bint cX, bint cZ, bool increaseLoadCount)
 {
 	Chunk* chunk = p->world->get(cX, cZ, increaseLoadCount);
-	uint sectionCount = chunk->sections.size();
+	uint sectionCount = (uint)chunk->sections.size();
 
 	//build the heightmaps
 	nbt_compound heightMaps("", new nbt * [1]{
@@ -601,21 +602,36 @@ void message::play::send::chunkDataAndLight(Player*p, bint cX, bint cZ, bool inc
 	//build the chunkData
 	char* chunkData = new char[0xfffff],
 		*chunkDataStart = chunkData;
-	for (int i = 0; i < sectionCount; i++)
+	for (uint i = 0; i < sectionCount; i++)
 	{
 		Section& section = chunk->sections[i];
+		section.blockCount.write(chunkData);
+		//send blocks
 		if (section.blockCount)
 		{
-			section.blockCount.write(chunkData);
-			/*(chunkData++) = section.bitsPerBlock;
+			//there are blocks in the section, send blockStates
+			*(chunkData++) = section.bitsPerBlock;
 			if (!section.useGlobalPallete)
 			{
-				varInt((uint)section.palette.size()).write(dataBuffer);
-				for (const PaletteEntry val : section.palette) val.block.id.write(dataBuffer);
+				varInt((uint)section.palette.size()).write(chunkData);
+				for (PaletteEntry& val : section.palette) val.block.id.write(chunkData);
 			}
-			varInt((uint)section.blockStates->getCompactedSize()).write(dataBuffer);
-			section.blockStates->write(dataBuffer);*/
+			varInt((uint)section.blockStates->getCompactedSize()).write(chunkData);
+			section.blockStates->write(chunkData);
 		}
+		else
+		{
+			//there are no blocks in the section, send all air
+			*(int*)chunkData = 0;
+			chunkData += 3;
+			// 0 bits per entry
+			// palette is one entry: 0
+			// data array length is 0
+		}
+		//send biomes
+		*(chunkData++) = World::currentBiomeBitsPerEntry;
+		varInt((uint)section.biomes->getCompactedSize()).write(chunkData);
+		section.biomes->write(chunkData);
 	}
 	uint dataSize = (uint)(chunkData - chunkDataStart);
 
@@ -628,7 +644,7 @@ void message::play::send::chunkDataAndLight(Player*p, bint cX, bint cZ, bool inc
 		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightData[i].blockLight);
 	}
 
-	chunkDataAndLight(p, cX, cZ, heightMaps, dataSize, chunkDataStart, 0, nullptr, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, skyLightArrays.size(), skyLightArrays.data(), blockLightArrays.size(), blockLightArrays.data());
+	chunkDataAndLight(p, cX, cZ, heightMaps, dataSize, chunkDataStart, 0, nullptr, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, (uint)skyLightArrays.size(), skyLightArrays.data(), (uint)blockLightArrays.size(), blockLightArrays.data());
 	delete[] chunkDataStart;
 }
 void message::play::send::effect(Player* p, bint effectId, const Position& location, bint extraData, bool disableRelativeVolume)
@@ -1117,7 +1133,7 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 {
 	Chunk* chunk = p->world->get(cX, cZ);
-	uint sectionCount = chunk->lightData.size();
+	uint sectionCount = (uint)chunk->lightData.size();
 
 	std::vector<BitArray*> skyLightArrays, blockLightArrays;
 	for (uint i = 0; i < sectionCount; i++)
@@ -1125,7 +1141,7 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 		if (chunk->skyLightMask->getElement(i)) skyLightArrays.emplace_back(chunk->lightData[i].skyLight);
 		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightData[i].blockLight);
 	}
-	updateLight(p, cX, cZ, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, skyLightArrays.size(), skyLightArrays.data(), blockLightArrays.size(), blockLightArrays.data());
+	updateLight(p, cX, cZ, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, (uint)skyLightArrays.size(), skyLightArrays.data(), (uint)blockLightArrays.size(), blockLightArrays.data());
 }
 void message::play::send::disconnect(Player* p, const Chat& reason)
 {
