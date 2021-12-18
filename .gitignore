@@ -106,6 +106,9 @@ Build/*/*.exe
 Build/*/debug.*
 Build/*/ServerApi*
 
+#World regions
+Build/*/worlds/*/regions
+
 # Temporary files
 MC stuff/Build
 MC stuff/debug.txt

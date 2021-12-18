@@ -7,7 +7,9 @@
 #include "../server/log.h"
 #include "../server/options.h"
 #include "../player/message.h"
+#include <filesystem>
 
+namespace fs = std::filesystem;
 using namespace std;
 
 const char invalidMainFile[] = "Invalid characteristics.bin file.";
@@ -361,6 +363,14 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 			generatorFunction = generate_def;
 		}
 		break;
+	}
+
+	//if regions folder is absent, create it
+	//fs::path regionsFolder();
+	if (!fs::is_directory("worlds\\" + name + "\\regions"))
+	{
+		fs::create_directory("worlds\\" + name + "\\regions");
+		Log::txt() << "\nCreated \"regions\" directory for world " << name << Log::flush;
 	}
 
 	IF_WORLD_LOAD_DEBUG(Log::txt() << "\nLoading spawn area..." << Log::flush);
@@ -1009,13 +1019,20 @@ Chunk* World::get(int x, int z, bool increaseLoadCount)
 	}
 
 	//region not found, create region and load chunk
-	Region* region = new Region(rX, rZ);
+	Region* region = new Region(name, rX, rZ);
 	regions.push_back(region);
 	IF_REGION_DEBUG(Log::txt() << "\nRegions is now " << regions.size() << Log::flush;);
-	Chunk* chunk = generatorFunction(this, x, z);
+	//try to load the chunk from the region
+	Chunk* chunk = region->get(this, relX, relZ, increaseLoadCount);
+	if (chunk)
+	{
+		IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] extracted(" << chunk->loadCount << ")" << Log::flush;);
+		return chunk;
+	}
+	//chunk could not be loaded, generate
+	chunk = generatorFunction(this, x, z);
 	chunk->loadCount = 1;
 	IF_CHUNK_DEBUG(Log::txt() << "\nChunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;);
-
 	region->set(relX, relZ, chunk);
 	return chunk;
 }

@@ -46,9 +46,9 @@ public:
 
 	SERVER_API BitArrayElement operator[](ull);
 
-	SERVER_API void write(std::fstream&) const;
+	SERVER_API void write(std::ostream&) const;
 	SERVER_API void write(char*&) const;
-	SERVER_API void read(std::fstream&);
+	SERVER_API void read(std::istream&);
 	SERVER_API void read(char*&);
 };
 
@@ -80,8 +80,8 @@ public:
 
 	SERVER_API BitArrayElement operator[](ull);
 
-	SERVER_API void write(std::fstream&) const;
+	SERVER_API void write(std::ostream&) const;
 	SERVER_API void write(char*&) const;
-	SERVER_API void read(std::fstream&);
+	SERVER_API void read(std::istream&);
 	SERVER_API void read(char*&);
 };

@@ -26,7 +26,7 @@ public:
 	Byte bitsPerBlock;
 	bshort blockCount;
 
-	varInt dataLength;
+	varInt dataLength; //unused
 	BitArray* blockStates;
 
 	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section

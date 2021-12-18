@@ -36,8 +36,8 @@ public:
 	//block Entities
 
 	//for loading/saving from/to file
-	SERVER_API void read(char*&, int sectionCount, int sectionOffset = 0);
-	SERVER_API void write(char*&);
+	SERVER_API void read(std::istream& file);
+	SERVER_API void write(std::ostream& file);
 	//writing and reading from buffer after/before compression
 
 	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section
