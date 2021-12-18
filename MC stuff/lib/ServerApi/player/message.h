@@ -18,6 +18,22 @@
 //broadcasting destionation is "player_macro"
 #define broadcastMessageOmitSafe(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr && player_macro->connected) ignoreExceptions(msg_f_call);
 
+struct blockEntity {
+	Byte packedXY;
+	bshort Y;
+	varInt type;
+	nbt_compound* nbt;
+
+	blockEntity(Byte packedXY, bshort Y, varInt type, nbt_compound* nbt) : packedXY(packedXY), Y(Y), type(type), nbt(nbt) {}
+
+	void write(char*& buffer) const {
+		*(buffer++) = packedXY;
+		Y.write(buffer);
+		type.write(buffer);
+		nbt->write(buffer);
+	}
+};
+
 namespace blockEntityData
 {
 	enum class action
@@ -152,7 +168,7 @@ struct message
 			openHorseWindow,
 			initializeWorldBorder,
 			keepAlive_clientbound,
-			chunkData,
+			chunkDataAndLight,
 			effect,
 			particle,
 			updateLight,
@@ -205,6 +221,7 @@ struct message
 			setPassengers,
 			teams,
 			updateScore,
+			updateSimulationDistance,
 			setTitleSubtitle,
 			timeUpdate,
 			setTitleText,
@@ -277,16 +294,16 @@ struct message
 			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint data, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void spawnXPorb(Player*, varInt eid, bdouble x, bdouble y, bdouble z, bigEndian<short> xpCount);
 			SERVER_API static void spawnLivingEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ);
-			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, Entity::Painting::motive motive, Position location, Entity::direction direction);
+			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, Entity::Painting::motive motive, const Position& location, Entity::direction direction);
 			SERVER_API static void spawnPlayer(Player*, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch);
-			SERVER_API static void sculkVibrationSignal(Player*, Position source, Entity::Sculk::destinationType destinationType, Entity::Sculk::destination destination, varInt arrivalTicks);
+			SERVER_API static void sculkVibrationSignal(Player*, const Position& source, Entity::Sculk::destinationType destinationType, const Entity::Sculk::destination& destination, varInt arrivalTicks);
 			SERVER_API static void entityAnimation(Player*, varInt eid, Entity::animation animation);
 			//SERVER_API static void statistics(Player*, varInt count, statistic* stats);
-			SERVER_API static void acknowledgePlayerDigging(Player*, Position location, varInt block, varInt status, bool successful);
-			SERVER_API static void blockBreakAnimation(Player*, varInt eid, Position location, Byte destroyStage);
-			SERVER_API static void blockEntityData(Player*, Position location, blockEntityData::action action, const nbt& data);
-			SERVER_API static void blockAction(Player*, Position location, Byte actionId, Byte actionParam, varInt blockType);
-			SERVER_API static void blockChange(Player*, Position location, varInt blockId);
+			SERVER_API static void acknowledgePlayerDigging(Player*, const Position& location, varInt block, varInt status, bool successful);
+			SERVER_API static void blockBreakAnimation(Player*, varInt eid, const Position& location, Byte destroyStage);
+			SERVER_API static void blockEntityData(Player*, const Position& location, blockEntityData::action action, const nbt& data);
+			SERVER_API static void blockAction(Player*, const Position& location, Byte actionId, Byte actionParam, varInt blockType);
+			SERVER_API static void blockChange(Player*, const Position& location, varInt blockId);
 			SERVER_API static void bossBar(Player*, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField);
 			SERVER_API static void serverDifficulty(Player*, Byte difficulty, bool isLocked);
 			SERVER_API static void chatMessage(Player*, const Chat& data, Byte position, const mcUUID& sender);
@@ -309,11 +326,12 @@ struct message
 			SERVER_API static void openHorseWindow(Player*, Byte winId, varInt slotCount, bint eid);
 			SERVER_API static void initializeWorldBorder(Player*, bdouble x, bdouble z, bdouble oldDiameter, bdouble newDiameter, varLong speed, varInt portalTeleportBoundary, varInt warningBlocks, varInt warningTime);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
-			SERVER_API static void chunkData(Player*, bint cX, bint cZ, varInt bitMaskLength, blong* bitMask, const nbt_compound& heightMaps, varInt biomesLength, varInt* biomes, varInt dataSize, char* chunkData, varInt nOfBlockEntities, nbt_compound* blockEntities);
-			SERVER_API static void effect(Player*, bint effectId, Position location, bint data, bool disableRelativeVolume);
+			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
+			SERVER_API static void effect(Player*, bint effectId, const Position& location, bint data, bool disableRelativeVolume);
 			SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle);
-			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
-			SERVER_API static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
+			//SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
+			SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, blong* skyLightMask, blong* blockLightMask, blong* emptySkyLightMask, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);
+			SERVER_API static void joinGame(Player*, bint Eid, bool isHardcore, gamemode gm, gamemode prev_gm, varInt worldCount, mcString* worldNames, const nbt_compound& dimensionCodec, const nbt_compound& dimension, const mcString& worldName, int64 hashedSeedHigh, varInt maxPlayers, varInt viewDistance, varInt simulationDistance, bool reducedDebugInfo, bool respawnScreen, bool isDebug, bool isFlat);
 			SERVER_API static void mapData(Player*, varInt mapId, Byte scale, bool locked, bool trackingPosition, varInt iconCount, map::icon* icons, Byte optColumns, Byte optRows, Byte optX, Byte optZ, varInt optLength, Byte* data);
 			SERVER_API static void tradeList(Player*, varInt winId, Byte size, trade* trades, varInt villagerLevel, varInt experience, bool isRegularVillager, bool canRestock);
 			SERVER_API static void entityPosition(Player*, varInt eid, bshort deltaX, bshort deltaY, bshort deltaZ, bool onGround);
@@ -322,7 +340,7 @@ struct message
 			SERVER_API static void vehicleMove(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch);
 			SERVER_API static void openBook(Player*, Hand whichHand);
 			SERVER_API static void openWindow(Player*, varInt winId, varInt winType, const Chat& winTitle);
-			SERVER_API static void openSignEditor(Player*, Position location);
+			SERVER_API static void openSignEditor(Player*, const Position& location);
 			SERVER_API static void ping(Player*, bint pingId);
 			SERVER_API static void craftRecipeResponse(Player*, Byte winId, const mcString& recipeIdentifier);
 			SERVER_API static void playerAbilities(Player*, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier);
@@ -332,7 +350,7 @@ struct message
 			SERVER_API static void playerInfo(Player*, varInt action, varInt playerCount, Player**);
 			SERVER_API static void facePlayer(Player*, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot);
 			SERVER_API static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, Byte flags, bool dismountVehicle);
-			SERVER_API static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, mcString* array1, varInt size2, mcString* array2);
+			SERVER_API static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, std::vector<mcString>* array1, varInt size2, std::vector<mcString>* array2);
 			SERVER_API static void destroyEntities(Player*, varInt count, varInt* eids);
 			SERVER_API static void removeEntityEffect(Player*, varInt eid, Byte effectId);
 			SERVER_API static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
@@ -350,19 +368,20 @@ struct message
 			SERVER_API static void heldItemChange(Player*, Byte slot);
 			SERVER_API static void updateViewPosition(Player*, varInt chunkX, varInt chunkZ);
 			SERVER_API static void updateViewDistance(Player*, varInt distance);
-			SERVER_API static void spawnPosition(Player*, Position location, bfloat angle);
+			SERVER_API static void spawnPosition(Player*, const Position& location, bfloat angle);
 			SERVER_API static void displayScoreboard(Player*, Byte position, const mcString& scoreName);
 			SERVER_API static void entityMetadata(Player*, varInt eid, const std::vector<Entity::Metadata>& metadatas);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
-			SERVER_API static void entityEquipment(Player*, varInt eid, const std::vector<Equipment>& equipments);
+			SERVER_API static void entityEquipment(Player*, varInt eid, const std::vector<Equipment*>& equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
 			SERVER_API static void scoreboardObjective(Player*, const mcString& name, Byte mode, const Chat& value, varInt type);
 			SERVER_API static void setPassengers(Player*, varInt vehicleEid, varInt count, varInt* passengers);
 			SERVER_API static void teams(Player*, const mcString& name, Byte mode, teamsUpdate::mode* teamUpdateMode);
 			SERVER_API static void updateScore(Player*, const mcString& name, Byte action, const mcString& objective, varInt value);
+			SERVER_API static void updateSimulationDistance(Player*, varInt value);
 			SERVER_API static void setTitleSubtitle(Player*, const Chat& subtitle);
 			SERVER_API static void timeUpdate(Player*, blong worldAge, blong timeOfDay);
 			SERVER_API static void setTitleText(Player*, const Chat& title);
@@ -377,7 +396,7 @@ struct message
 			SERVER_API static void advancements(Player*, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement** advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress** advancementProgresses);
 			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, Entity::Property* properties);
 			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
-			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes, recipe::Recipe** recipes);
+			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes, std::vector<recipe::Recipe*>* recipes);
 			SERVER_API static void tags(Player*);
 			SERVER_API static void tags(Player*, varInt tagCategoryCount, TagGroup* tags);
 
@@ -387,20 +406,20 @@ struct message
 		struct receive
 		{
 			SERVER_API static void teleportConfirm(Player*, varInt id);
-			SERVER_API static void queryBlockNbt(Player*, varInt transactionId, Position location);
+			SERVER_API static void queryBlockNbt(Player*, varInt transactionId, const Position& location);
 			SERVER_API static void setDifficulty(Player*, Byte difficulty);
 			SERVER_API static void chatMessage(Player*, mcString& content);
 			SERVER_API static void clientStatus(Player*, varInt actionId);
-			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool disableTextFiltering);
+			SERVER_API static void clientSettings(Player*, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool enableTextFiltering, bool allowServerListings);
 			SERVER_API static void tabComplete(Player*, varInt transactionId, const mcString& text);
 			SERVER_API static void clickWindowButton(Player*, Byte windowID, Byte buttonID);
 			SERVER_API static void clickWindow(Player*, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem);
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, char* data);
-			SERVER_API static void editBook(Player*, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, mcString title);
+			SERVER_API static void editBook(Player*, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, const mcString& title);
 			SERVER_API static void queryEntityNbt(Player*, varInt transactionId, varInt eid);
 			SERVER_API static void interactEntity(Player*, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking);
-			SERVER_API static void generateStructure(Player*, Position location, varInt levels, bool keepJigsaw);
+			SERVER_API static void generateStructure(Player*, const Position& location, varInt levels, bool keepJigsaw);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
 			SERVER_API static void lockDifficulty(Player*, bool locked);
 			SERVER_API static void playerPosition(Player*, bdouble x, bdouble feetY, bdouble Z, bool onGround);
@@ -412,7 +431,7 @@ struct message
 			SERVER_API static void pickItem(Player*, varInt slot);
 			SERVER_API static void craftRecipeRequest(Player*, Byte winId, const mcString& recipe, bool makeAll);
 			SERVER_API static void playerAbilities(Player*, Byte falgs);
-			SERVER_API static void playerDigging(Player*, varInt status, Position location, Byte face);
+			SERVER_API static void playerDigging(Player*, varInt status, const Position& location, Byte face);
 			SERVER_API static void entityAction(Player*, varInt eid, varInt actionId, varInt jumpBoost);
 			SERVER_API static void steerVehicle(Player*, bfloat sideways, bfloat forward);
 			SERVER_API static void pong(Player*, bint id);
@@ -424,15 +443,15 @@ struct message
 			SERVER_API static void selectTrade(Player*, varInt selectedSlot);
 			SERVER_API static void setBeaconEffect(Player*, varInt primary, varInt secondary);
 			SERVER_API static void heldItemChange(Player*, bshort slot);
-			SERVER_API static void updateCommandBlock(Player*, Position location, const mcString& command, varInt mode, Byte flags);
+			SERVER_API static void updateCommandBlock(Player*, const Position& location, const mcString& command, varInt mode, Byte flags);
 			SERVER_API static void updateCommandBlockMinecart(Player*, varInt eid, const mcString& command, bool trackOutput);
 			SERVER_API static void creativeInventoryAction(Player*, bshort slot, Slot* clickedItem);
-			SERVER_API static void updateJigsawBlock(Player*, Position location, const mcString& name, const mcString& target, const mcString& pool, const mcString& finalState, const mcString& jointType);
-			SERVER_API static void updateStructureBlock(Player*, Position location, varInt action, varInt mode, const mcString& name, char offsetX, char offsetY, char offsetZ, Byte sizeX, Byte sizeY, Byte sizeZ, varInt mirror, varInt rotation, const mcString& metadata, bfloat integrity, varLong seed, Byte flags);
-			SERVER_API static void updateSign(Player*, Position location, const mcString& line1, const mcString& line2, const mcString& line3, const mcString& line4);
+			SERVER_API static void updateJigsawBlock(Player*, const Position& location, const mcString& name, const mcString& target, const mcString& pool, const mcString& finalState, const mcString& jointType);
+			SERVER_API static void updateStructureBlock(Player*, const Position& location, varInt action, varInt mode, const mcString& name, char offsetX, char offsetY, char offsetZ, Byte sizeX, Byte sizeY, Byte sizeZ, varInt mirror, varInt rotation, const mcString& metadata, bfloat integrity, varLong seed, Byte flags);
+			SERVER_API static void updateSign(Player*, const Position& location, const mcString& line1, const mcString& line2, const mcString& line3, const mcString& line4);
 			SERVER_API static void animation(Player*, varInt hand);
 			SERVER_API static void spectate(Player*, const mcUUID& target);
-			SERVER_API static void playerBlockPlacement(Player*, Hand hand, Position location, playerDigging::face face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
+			SERVER_API static void playerBlockPlacement(Player*, Hand hand, const Position& location, playerDigging::face face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
 			SERVER_API static void useItem(Player*, Hand hand);
 		};
 	};

@@ -1,11 +1,9 @@
 #pragma once
 
+#include <vector>
+
 namespace window
 {
-	static unsigned indexer = 0;
-
-	inline unsigned getID() { return indexer++; }
-
 	enum type {
 		generic_9x1 = 0,
 		generic_9x2,
@@ -32,6 +30,12 @@ namespace window
 		cartography,
 		stonecutter
 	};
+
+	static unsigned indexer = 1;
+	static std::vector<type> indexerType;
+
+	unsigned getID(type windowType);
+	type getWindowType(unsigned index);
 }
 
 

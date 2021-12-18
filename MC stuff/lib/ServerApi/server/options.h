@@ -12,6 +12,7 @@ class Options
 	static std::string _mainWorldName, _motd;
 	static sf::IpAddress _ip;
 	static Byte _viewDistance;
+	static Byte _simulationDistance;
 	static bool _chunkCompression;
 	static short _networkCompression;
 
@@ -24,7 +25,7 @@ class Options
 
 public:
 	//thee are not included in server.properties
-	SERVER_API static const int currentProtocol = 756;
+	SERVER_API static const int currentProtocol = 757;
 	SERVER_API static const std::string version;
 	SERVER_API static bool allowJoin;
 
@@ -34,6 +35,7 @@ public:
 	SERVER_API static const std::string& motd();
 	SERVER_API static const sf::IpAddress& ip();
 	SERVER_API static Byte viewDistance();
+	SERVER_API static Byte simulationDistance();
 	SERVER_API static bool chunkCompression();
 	SERVER_API static short networkCompression();
 };

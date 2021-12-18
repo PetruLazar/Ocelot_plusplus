@@ -27,13 +27,36 @@ namespace recipe
 	protected:
 		mcString type, recipeID;
 
+	public:
 		Recipe(mcString type, mcString recipeID) : type(type), recipeID(recipeID) {}
 
+		static const std::string crafting_shapeless, crafting_shaped, smelting, blasting, smoking, campfire_cooking, stonecutting, smithing,
+			crafting_special_armordye, crafting_special_bookcloning, crafting_special_mapcloning, crafting_special_mapextending, crafting_special_firework_rocket,
+			crafting_special_firework_star, crafting_special_firework_star_fade, crafting_special_repairitem, crafting_special_tippedarrow, crafting_special_bannerduplicate,
+			crafting_special_banneraddpattern, crafting_special_shielddecoration, crafting_special_shulkerboxcoloring, crafting_special_suspiciousstew;
+		
+		virtual void write(char*& buffer) const;
+
+		const mcString& getType() { return type; }
+		const mcString& getRecipeID() { return recipeID; }
+	};
+
+	class Manager
+	{
+	private:
+		static Ingredient* getItemOrTag(json* data);
+
 	public:
-		void write(char*& buffer) const;
+		static std::vector<Recipe*>* recipes;
+		static std::vector<mcString>* recipesIDs;
+
+		SERVER_API static const Recipe* getRecipe(const std::string& recipeID);
+
+		SERVER_API static void loadRecipes();
+		SERVER_API static void unloadRecipes();
 	};
 	
-	class crafting_shapeless : Recipe
+	class crafting_shapeless : public Recipe
 	{
 	public:
 		mcString group;
@@ -47,7 +70,7 @@ namespace recipe
 		void write(char*& buffer) const;
 	};
 
-	class crafting_shaped : Recipe
+	class crafting_shaped : public Recipe
 	{
 	public:
 		varInt width, height;
@@ -61,91 +84,91 @@ namespace recipe
 		void write(char*& buffer) const;
 	};
 
-	struct crafting_special_armordye : Recipe
+	struct crafting_special_armordye : public Recipe
 	{
 		crafting_special_armordye(mcString recipeID) 
 			: Recipe("crafting_special_armordye", recipeID) {}
 	};
 
-	struct crafting_special_bookcloning : Recipe
+	struct crafting_special_bookcloning : public Recipe
 	{
 		crafting_special_bookcloning(mcString recipeID) 
 			: Recipe("crafting_special_bookcloning", recipeID) {}
 	};
 
-	struct crafting_special_mapcloning : Recipe
+	struct crafting_special_mapcloning : public Recipe
 	{
 		crafting_special_mapcloning(mcString recipeID) 
 			: Recipe("crafting_special_mapcloning", recipeID) {}
 	};
 
-	struct crafting_special_mapextending : Recipe
+	struct crafting_special_mapextending : public Recipe
 	{
 		crafting_special_mapextending(mcString recipeID) 
 			: Recipe("crafting_special_mapextending", recipeID) {}
 	};
 
-	struct crafting_special_firework_rocket : Recipe
+	struct crafting_special_firework_rocket : public Recipe
 	{
 		crafting_special_firework_rocket(mcString recipeID) 
 			: Recipe("crafting_special_firework_rocket", recipeID) {}
 	};
 
-	struct crafting_special_firework_star : Recipe
+	struct crafting_special_firework_star : public Recipe
 	{
 		crafting_special_firework_star(mcString recipeID) 
 			: Recipe("crafting_special_firework_star", recipeID) {}
 	};
 
-	struct crafting_special_firework_star_fade : Recipe
+	struct crafting_special_firework_star_fade : public Recipe
 	{
 		crafting_special_firework_star_fade(mcString recipeID) 
 			: Recipe("crafting_special_firework_star_fade", recipeID) {}
 	};
 
-	struct crafting_special_repairitem : Recipe
+	struct crafting_special_repairitem : public Recipe
 	{
 		crafting_special_repairitem(mcString recipeID) 
 			: Recipe("crafting_special_repairitem", recipeID) {}
 	};
 
-	struct crafting_special_tippedarrow : Recipe
+	struct crafting_special_tippedarrow : public Recipe
 	{
 		crafting_special_tippedarrow(mcString recipeID) 
 			: Recipe("crafting_special_tippedarrow", recipeID) {}
 	};
 
-	struct crafting_special_bannerduplicate : Recipe
+	struct crafting_special_bannerduplicate : public Recipe
 	{
 		crafting_special_bannerduplicate(mcString recipeID) 
 			: Recipe("crafting_special_bannerduplicate", recipeID) {}
 	};
 
-	struct crafting_special_banneraddpattern : Recipe
+	struct crafting_special_banneraddpattern : public Recipe
 	{
 		crafting_special_banneraddpattern(mcString recipeID) 
 			: Recipe("crafting_special_banneraddpattern", recipeID) {}
 	};
 
-	struct crafting_special_shielddecoration : Recipe
+	struct crafting_special_shielddecoration : public Recipe
 	{
 		crafting_special_shielddecoration(mcString recipeID) 
 			: Recipe("crafting_special_shielddecoration", recipeID) {}
 	};
 
-	struct crafting_special_shulkerboxcoloring : Recipe
+	struct crafting_special_shulkerboxcoloring : public Recipe
 	{
 		crafting_special_shulkerboxcoloring(mcString recipeID) 
 			: Recipe("crafting_special_shulkerboxcoloring", recipeID) {}
 	};
 
-	struct crafting_special_suspiciousstew : Recipe
+	struct crafting_special_suspiciousstew : public Recipe
 	{
 		crafting_special_suspiciousstew(mcString recipeID) 
 			: Recipe("crafting_special_suspiciousstew", recipeID) {}
 	};
 
-	class smelting : Recipe
+	class smelting : public Recipe
 	{
 	public:
 		mcString group;
@@ -160,7 +183,7 @@ namespace recipe
 		void write(char*& buffer) const;
 	};
 
-	class blasting : Recipe
+	class blasting : public Recipe
 	{
 	public:
 		mcString group;
@@ -175,7 +198,7 @@ namespace recipe
 		void write(char*& buffer) const;
 	};
 
-	class smoking : Recipe
+	class smoking : public Recipe
 	{
 	public:
 		mcString group;
@@ -190,7 +213,7 @@ namespace recipe
 		void write(char*& buffer) const;
 	};
 
-	class campfire_cooking : Recipe
+	class campfire_cooking : public Recipe
 	{
 	public:
 		mcString group;
@@ -205,7 +228,7 @@ namespace recipe
 		void write(char*& buffer) const;
 	};
 
-	class stonecutting : Recipe
+	class stonecutting : public Recipe
 	{
 	public:
 		mcString group;
@@ -218,7 +241,7 @@ namespace recipe
 		void write(char*& buffer) const;
 	};
 
-	class smithing : Recipe
+	class smithing : public Recipe
 	{
 	public:
 		Ingredient* base, * addition;

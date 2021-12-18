@@ -45,6 +45,7 @@ void TagGroup::loadTag(const std::string& tagName)
 	//take each entry of "values"
 	json& values = jsonTag["values"];
 	ull size = values.getSize();
+	tags.reserve(size);
 	for (ull i = 0; i < size; i++)
 	{
 		std::string value = values[(int)i].value();
@@ -55,17 +56,17 @@ void TagGroup::loadTag(const std::string& tagName)
 			const Tag* refTag = getTag(tagType, (value.c_str() + 1));
 			if (!&refTag)
 				throw;
-			for (const varInt& v : refTag->entries) tag.entries.push_back(v);
+			for (const varInt& v : refTag->entries) tag.entries.emplace_back(v);
 		}
 		else
 		{
 			//value is literal, add it to the tag
-			tag.entries.push_back(Registry::getId(tagType, value));
+			tag.entries.emplace_back(Registry::getId(tagType, value));
 		}
 	}
 
 	//add the tag to the TagGroup
-	tags.push_back(tag);
+	tags.emplace_back(tag);
 
 	//memory cleanup
 	delete& jsonTag;

@@ -300,12 +300,10 @@ namespace Entity {
 		mcString key;
 		bdouble value;
 		varInt nOfModifiers = 0;
-		Modifier* modifiers;
+		Modifier** modifiers;
 
-		SERVER_API Property(const mcString& key, double value, varInt nOfModifiers, Modifier* modifiers)
+		SERVER_API Property(const mcString& key, double value, varInt nOfModifiers, Modifier** modifiers)
 			: key(key), value(value), nOfModifiers(nOfModifiers), modifiers(modifiers) { }
-		SERVER_API Property(const mcString& key, double value, Modifier modifier)
-			: key(key), value(value), nOfModifiers(1), modifiers(&modifier) { }
 
 		void write(char*& buffer) const;
 	};
@@ -552,18 +550,18 @@ namespace Entity {
 
 	struct armorStand : LivingEntity
 	{
-		Byte attributes;
+		Byte armorStandAttributes;
 		Rotation3f head, body, leftArm, rightArm, leftLeg, rightLeg;
 
 		armorStand(LivingEntity theLivingEntity, Byte attributes = 0, Rotation3f head = Rotation3f(0, 0, 0), Rotation3f body = Rotation3f(0, 0, 0), Rotation3f leftArm = Rotation3f(-10, 0, -10), Rotation3f rightArm = Rotation3f(-15, 0, 10), Rotation3f leftLeg = Rotation3f(-1, 0, -1), Rotation3f rightLeg = Rotation3f(1, 0, 1))
-			: attributes(attributes), head(head), body(body), leftArm(leftArm), rightArm(rightArm), leftLeg(leftLeg), rightLeg(rightLeg), LivingEntity(theLivingEntity) {}
+			: armorStandAttributes(attributes), head(head), body(body), leftArm(leftArm), rightArm(rightArm), leftLeg(leftLeg), rightLeg(rightLeg), LivingEntity(theLivingEntity) {}
 	};
 
 	struct Mob : LivingEntity
 	{
-		Byte attributes;
+		Byte mobAttributes;
 
-		Mob(LivingEntity theLivingEntity, Byte attributes = 0) : attributes(attributes), LivingEntity(theLivingEntity) {}
+		Mob(LivingEntity theLivingEntity, Byte attributes = 0) : mobAttributes(attributes), LivingEntity(theLivingEntity) {}
 	};
 
 	struct AmbientCreature : Mob
@@ -702,10 +700,10 @@ namespace Entity {
 
 	struct bee : Animal
 	{
-		Byte attributes;
+		Byte beeAttributes;
 		varInt angerTimeTicks;
 
-		bee(Animal theAnimal, Byte attributes = 0, varInt angerTimeTicks = 0) : attributes(attributes), angerTimeTicks(angerTimeTicks), Animal(theAnimal) {}
+		bee(Animal theAnimal, Byte beeAttributes = 0, varInt angerTimeTicks = 0) : beeAttributes(attributes), angerTimeTicks(angerTimeTicks), Animal(theAnimal) {}
 	};
 
 	struct fox : Animal
@@ -728,10 +726,10 @@ namespace Entity {
 	struct panda : Animal
 	{
 		bint breedTimer, sneezeTimer, eatTimer;
-		Byte mainGene, hiddenGene, attributes;
+		Byte mainGene, hiddenGene, pandaAttributes;
 
 		panda(Animal theAnimal, bint breedTimer = 0, bint sneezeTimer = 0, bint eatTimer = 0, Byte mainGene = 0, Byte hiddenGene = 0, Byte attributes = 0)
-			: breedTimer(breedTimer), sneezeTimer(sneezeTimer), eatTimer(eatTimer), mainGene(mainGene), hiddenGene(hiddenGene), attributes(attributes), Animal(theAnimal) {}
+			: breedTimer(breedTimer), sneezeTimer(sneezeTimer), eatTimer(eatTimer), mainGene(mainGene), hiddenGene(hiddenGene), pandaAttributes(attributes), Animal(theAnimal) {}
 	};
 
 	struct pig : Animal
@@ -792,9 +790,9 @@ namespace Entity {
 
 	struct sheep : Animal
 	{
-		Byte attributes;
+		Byte sheepAttributes;
 
-		sheep(Animal theAnimal, Byte attributes = 0) : attributes(attributes), Animal(theAnimal) {}
+		sheep(Animal theAnimal, Byte attributes = 0) : sheepAttributes(attributes), Animal(theAnimal) {}
 	};
 
 	struct strider : Animal
@@ -867,16 +865,16 @@ namespace Entity {
 
 	struct ironGolem : AbstractGolem
 	{
-		Byte attributes;
+		Byte ironGolemAttributes;
 
-		ironGolem(AbstractGolem theAbstractGolem, Byte attributes = 0) : attributes(attributes), AbstractGolem(theAbstractGolem) {}
+		ironGolem(AbstractGolem theAbstractGolem, Byte attributes = 0) : ironGolemAttributes(attributes), AbstractGolem(theAbstractGolem) {}
 	};
 
 	struct snowGolem : AbstractGolem
 	{
-		Byte attributes;
+		Byte snowGolemAttributes;
 
-		snowGolem(AbstractGolem theAbstractGolem, Byte attributes = 0) : attributes(attributes), AbstractGolem(theAbstractGolem) {}
+		snowGolem(AbstractGolem theAbstractGolem, Byte attributes = 0) : snowGolemAttributes(attributes), AbstractGolem(theAbstractGolem) {}
 	};
 
 	struct shulker : AbstractGolem
@@ -917,9 +915,9 @@ namespace Entity {
 
 	struct blaze : Monster
 	{
-		Byte attributes;
+		Byte blazeAttributes;
 
-		blaze(Monster theMonster, Byte attributes = 0) : attributes(attributes), Monster(theMonster) {}
+		blaze(Monster theMonster, Byte attributes = 0) : blazeAttributes(attributes), Monster(theMonster) {}
 	};
 
 	struct creeper : Monster
@@ -1020,9 +1018,9 @@ namespace Entity {
 
 	struct vex : Monster
 	{
-		Byte attributes;
+		Byte vexAttributes;
 
-		vex(Monster theMonster, Byte attributes = 0) : attributes(attributes), Monster(theMonster) {}
+		vex(Monster theMonster, Byte attributes = 0) : vexAttributes(attributes), Monster(theMonster) {}
 	};
 
 	struct AbstractSkeleton : Monster
@@ -1047,9 +1045,9 @@ namespace Entity {
 
 	struct spider : Monster
 	{
-		Byte attributes;
+		Byte spiderAttributes;
 
-		spider(Monster theMonster, Byte attributes = 0) : attributes(attributes), Monster(theMonster) {}
+		spider(Monster theMonster, Byte attributes = 0) : spiderAttributes(attributes), Monster(theMonster) {}
 	};
 
 	struct wither : Monster
@@ -1197,9 +1195,9 @@ namespace Entity {
 	struct minecartCommandBlock : AbstractMinecart
 	{
 		mcString command;
-		Chat &lastOutput;
+		Chat* lastOutput;
 
-		minecartCommandBlock(AbstractMinecart theAbstractMinecart, mcString command = "", Chat lastOutput = Chat(""))
+		minecartCommandBlock(AbstractMinecart theAbstractMinecart, mcString command = "", Chat* lastOutput = nullptr)
 			: command(command), lastOutput(lastOutput), AbstractMinecart(theAbstractMinecart) {}
 	};
 

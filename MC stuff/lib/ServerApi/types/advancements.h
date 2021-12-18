@@ -18,7 +18,7 @@ private:
 	bfloat x, y;
 
 public:
-	advancementDisplay(Chat title, Chat decription, Slot icon, frameType frame, bint flags, mcString backgroundTexture, bfloat x, bfloat y)
+	advancementDisplay(Chat title, Chat description, Slot icon, frameType frame, bint flags, mcString backgroundTexture, bfloat x, bfloat y)
 		: title(title), description(description), icon(icon), frame(frame), flags(flags), backgroundTexture(backgroundTexture), x(x), y(y) {}
 
 	void write(char*& buffer) const;

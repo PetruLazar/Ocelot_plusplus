@@ -28,6 +28,7 @@ void json::operator=(int) { throw typeError; }
 void json::operator=(const std::string&) { throw typeError; }
 json& json::operator[](int) { throw typeError; }
 json& json::operator[](const std::string&) { throw typeError; }
+bool json::has(const std::string&) { throw typeError; }
 
 ull json::getSize() { throw typeError; }
 void json::resize(ull) { throw typeError; }
@@ -109,7 +110,7 @@ json* json::parse(std::fstream& f, bool canHaveName)
 		std::vector<json*> elems;
 		do
 		{
-			elems.push_back(parse(f, false));
+			elems.emplace_back(parse(f, false));
 			ch = skipInJsonFile(f);
 		} while (ch == ',');
 
