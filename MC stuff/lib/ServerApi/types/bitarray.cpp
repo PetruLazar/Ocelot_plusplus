@@ -84,3 +84,7 @@ void BitArray::read(char*& buffer)
 {
 	for (int i = 0; i < compactedSize; i++) compactedData[i].read(buffer);
 }
+void BitArray::writeAsLight(char*& buffer) const
+{
+	for (ull i = 0; i < compactedSize; i++) *(((int64*&)buffer)++) = compactedData[i];
+}

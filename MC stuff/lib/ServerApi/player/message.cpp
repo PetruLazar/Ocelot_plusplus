@@ -577,14 +577,14 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 	for (int i = 0; i < skyLightArrayCount; i++)
 	{
 		LightSection::lightArrayLength.write(data);
-		skyLightArrays[i]->write(data);
+		skyLightArrays[i]->writeAsLight(data);
 	}
 
 	blockLightArrayCount.write(data);
 	for (int i = 0; i < blockLightArrayCount; i++)
 	{
 		LightSection::lightArrayLength.write(data);
-		blockLightArrays[i]->write(data);
+		blockLightArrays[i]->writeAsLight(data);
 	}
 
 	finishSendMacro;
@@ -1118,14 +1118,14 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 	for (int i = 0; i < skyLightArrayCount; i++)
 	{
 		LightSection::lightArrayLength.write(data);
-		skyLightArrays[i]->write(data);
+		skyLightArrays[i]->writeAsLight(data);
 	}
 
 	blockLightArrayCount.write(data);
 	for (int i = 0; i < blockLightArrayCount; i++)
 	{
 		LightSection::lightArrayLength.write(data);
-		blockLightArrays[i]->write(data);
+		blockLightArrays[i]->writeAsLight(data);
 	}
 
 	finishSendMacro;

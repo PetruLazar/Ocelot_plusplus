@@ -50,6 +50,7 @@ public:
 	SERVER_API void write(char*&) const;
 	SERVER_API void read(std::istream&);
 	SERVER_API void read(char*&);
+	SERVER_API void writeAsLight(char*&) const;
 };
 
 class BitArrayReversed
