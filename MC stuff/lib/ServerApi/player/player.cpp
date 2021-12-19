@@ -294,7 +294,7 @@ void Player::setWorld(World* world)
 		//message::play::send::updateLight(this, x, z);
 		//message::play::send::chunkData(this, x, z);
 	}
-	
+
 	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
 
 	//send the selected slot
@@ -405,7 +405,8 @@ void Player::updateNet()
 	else if ((lastKeepAliveId != -1 || state != ConnectionState::play) && cycleTime > keepAliveTimeoutPoint)
 	{
 		disconnect();
-		Log::info() << '\n' << username << " was timed out.";
+		if (!username.empty()) Log::info() << username << " was timed out.\n";
+		else Log::info() << netId() << " was timed out.\n";
 		return;
 	}
 
