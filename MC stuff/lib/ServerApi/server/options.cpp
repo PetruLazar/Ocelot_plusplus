@@ -1,4 +1,5 @@
 #include "options.h"
+#include "log.h"
 #include <iostream>
 #include <fstream>
 
@@ -15,8 +16,8 @@ std::string Options::_mainWorldName = "world", Options::_motd = "{\"text\":\"A M
 sf::IpAddress Options::_ip = sf::IpAddress::Any;
 Byte Options::_viewDistance = 10;
 Byte Options::_simulationDistance = 10;
-bool Options::_chunkCompression = false;
-short Options::_networkCompression = -1;
+bool Options::_chunkCompression = true;
+short Options::_networkCompression = 128;
 
 Options Options::options;
 
@@ -153,9 +154,9 @@ Options::Options()
 	ifstream opt(optionsFileName);
 	if (!opt.is_open())
 	{
-		cout << "File \"server.properties\" not found, so one has been generated.\n";
+		Log::warn() << "File \"server.properties\" not found, so one has been generated.\n";
 		ofstream out(optionsFileName);
-		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#main-world-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10\n#chunk-compression=false\n#network-compression-threshold=-1";
+		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#main-world-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10\n#chunk-compression=true\n#network-compression-threshold=128";
 		out.close();
 		return;
 	}
@@ -168,7 +169,7 @@ Options::Options()
 		char* str_value = strchr(line, '=');
 		if (!str_value)
 		{
-			cout << "Error on line " << linenumber << ": expected an '='.\n";
+			Log::error() << "Error on line " << linenumber << ": expected an '='.\n";
 			continue;
 		}
 		*(str_value++) = 0;
@@ -252,7 +253,7 @@ Options::Options()
 		}
 		else
 		{
-			cout << "Error on line " << linenumber << ": unkown property name \"" << name << "\".\n";
+			Log::error() << "Error on line " << linenumber << ": unkown property name \"" << name << "\".\n";
 		}
 	}
 	opt.close();

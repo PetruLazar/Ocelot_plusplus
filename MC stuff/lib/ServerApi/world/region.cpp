@@ -7,6 +7,7 @@
 #include "../mcexception.h"
 #include <sstream>
 #include <filesystem>
+#include "../server/options.h"
 
 namespace fs = std::filesystem;
 
@@ -159,7 +160,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 	char* data;
 	uint size;
 
-	if (/*chunkCompression*/true)
+	if (Options::chunkCompression())
 	{
 		chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
 		std::string bufferContents = buffer.str();
@@ -256,7 +257,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 	if (autoFlush) regionFile.flush();
 
 	//free any memory
-	if (/*chunkCompression*/true) delete[] data;
+	if (Options::chunkCompression()) delete[] data;
 }
 Chunk* Region::load(World* parent, int relX, int relZ)
 {

@@ -140,7 +140,10 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	Log::info() << p->username << '(' << p->netId() << ") is logging in (eid: " << p->getEid() << ").\n";
 
-	login::send::setCompression(p, 128);
+	{
+		short netCThres = Options::networkCompression();
+		if (netCThres != -1) login::send::setCompression(p, netCThres);
+	}
 
 	login::send::success(p, *p->euuid, username);
 
