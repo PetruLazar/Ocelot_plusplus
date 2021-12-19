@@ -18,6 +18,8 @@ class Region
 	std::vector<bool> regionFileMap;
 	std::fstream regionFile;
 
+	//void writeChunkToFile(char* data, uint size);
+
 public:
 	int rX, rZ;
 

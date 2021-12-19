@@ -89,16 +89,9 @@ void markZone(std::vector<bool>& map, uint start, uint end, bool occupied)
 	for (uint i = start; i < end; i++) map[i] = occupied;
 }
 
-void Region::save(int relX, int relZ, bool autoFlush)
+/*void Region::writeChunkToFile(char* data, uint size, ull relX, ull relZ)
 {
-	//write the chunk to a buffer
-	std::stringstream buffer;
-	buffer.write("", 1); //writes 0 to the buffer - (chunk not compressed)
-	chunks[relX][relZ]->write(buffer);
-	std::string bufferContents = buffer.str();
-	uint chunkSize = bufferContents.length();
-	//transform the size from bytes to 1024B sections
-	chunkSize = (chunkSize >> 10) + ((chunkSize & 0x3ff) != 0);
+	uint chunkSize = (size >> 10) + ((size & 0x3ff) != 0);
 
 	//find a suitable location for the chunk
 	HeaderEntry& headerEntry = regionHeader[relX][relZ];
@@ -108,7 +101,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 
 		//put the chunk in the same location
 		regionFile.seekp((ull)headerEntry.fileOffset << 10);
-		regionFile.write(bufferContents.c_str(), bufferContents.length());
+		regionFile.write(data, size);
 		//free the sections in the map
 		markZone(regionFileMap, chunkSize, headerEntry.length, false);
 		//update the header in ram and file
@@ -151,7 +144,110 @@ void Region::save(int relX, int relZ, bool autoFlush)
 			markZone(regionFileMap, headerEntry.fileOffset, headerEntry.fileOffset + chunkSize, true);
 			regionFile.seekp(headerEntry.fileOffset << 10);
 		}
-		regionFile.write(bufferContents.c_str(), bufferContents.length());
+		regionFile.write(data, size);
+		regionFile.seekp(((ull)relX << 5 | relZ) << 2);
+		regionFile.write((char*)(&headerEntry), sizeof(HeaderEntry));
+	}
+
+	//flush is autoFlush is true
+	if (autoFlush) regionFile.flush();
+}*/
+void Region::save(int relX, int relZ, bool autoFlush)
+{
+	//write the chunk to a buffer
+	std::stringstream buffer;
+	char* data;
+	uint size;
+
+	if (/*chunkCompression*/true)
+	{
+		chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
+		std::string bufferContents = buffer.str();
+
+		//compress chunk
+		char* decompressedData = (char*)bufferContents.c_str();
+		uint decompressedSize = bufferContents.length();
+		data = new char[9 + decompressedSize];
+		size = decompressedSize;
+		zlibCompressNoAlloc(decompressedData, decompressedSize, data + 9, size);
+		//Log::
+
+		//add the 1 for compressed, compressedSize and decompressedSize as the header
+		*(data++) = 1;
+		((uint*)data)[0] = size;
+		((uint*)data--)[1] = decompressedSize;
+
+		//add the size of the header to the total size
+		size += 9;
+
+		//delete the 
+	}
+	else
+	{
+		//leave chunk uncompressed
+		buffer.write("", 1); // 0 for uncompressed
+		chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
+		std::string bufferContents = buffer.str();
+
+		//get data address and length
+		data = (char*)bufferContents.c_str();
+		size = bufferContents.length();
+	}
+	//transform the size from bytes to 1024B sections
+	uint chunkSize = (size >> 10) + ((size & 0x3ff) != 0);
+
+	//find a suitable location for the chunk
+	HeaderEntry& headerEntry = regionHeader[relX][relZ];
+	if (chunkSize <= headerEntry.length)
+	{
+		//new size is smaller than the old size
+
+		//put the chunk in the same location
+		regionFile.seekp((ull)headerEntry.fileOffset << 10);
+		regionFile.write(data, size);
+		//free the sections in the map
+		markZone(regionFileMap, chunkSize, headerEntry.length, false);
+		//update the header in ram and file
+		headerEntry.length = chunkSize;
+		regionFile.seekp(((ull)relX << 5 | relZ) << 2);
+		regionFile.write((char*)(&headerEntry), sizeof(HeaderEntry));
+	}
+	else
+	{
+		//new size is bigger tha the old size
+
+		//update map and header entry
+
+		//see if the chunk previosly existed and if the new chunk would fit in the same place (has enough 0s is the map after the current location
+		if (headerEntry.length)
+		{
+			//chunk already exists in region file
+			if (isFreeZone(regionFileMap, headerEntry.fileOffset + headerEntry.length, chunkSize))
+			{
+				//there is enough space at the same location
+				markZone(regionFileMap, headerEntry.fileOffset + headerEntry.length, chunkSize, true);
+				headerEntry.length = chunkSize;
+				regionFile.seekp((ull)headerEntry.fileOffset << 10);
+			}
+			else
+			{
+				//the chunk needs to be relocated
+				markZone(regionFileMap, headerEntry.fileOffset, headerEntry.fileOffset + headerEntry.length, false);
+				headerEntry.fileOffset = getFreeZone(regionFileMap, chunkSize);
+				headerEntry.length = chunkSize;
+				markZone(regionFileMap, headerEntry.fileOffset, headerEntry.fileOffset + chunkSize, true);
+				regionFile.seekp((ull)headerEntry.fileOffset << 10);
+			}
+		}
+		else
+		{
+			//this chunk did not exist before
+			headerEntry.fileOffset = getFreeZone(regionFileMap, chunkSize);
+			headerEntry.length = chunkSize;
+			markZone(regionFileMap, headerEntry.fileOffset, headerEntry.fileOffset + chunkSize, true);
+			regionFile.seekp((ull)headerEntry.fileOffset << 10);
+		}
+		regionFile.write(data, size);
 		regionFile.seekp(((ull)relX << 5 | relZ) << 2);
 		regionFile.write((char*)(&headerEntry), sizeof(HeaderEntry));
 	}
@@ -159,38 +255,42 @@ void Region::save(int relX, int relZ, bool autoFlush)
 	//flush is autoFlush is true
 	if (autoFlush) regionFile.flush();
 
-	//write the buffer to the region file
+	//free any memory
+	if (/*chunkCompression*/true) delete[] data;
 }
 Chunk* Region::load(World* parent, int relX, int relZ)
 {
 	//try to read chunk from region file, if found
 	ull offset = regionHeader[relX][relZ].fileOffset;
-	//regionFile.seekg(offset);
-	//regionFile.read((char*)(&offset), 4);
 	if (!offset) return nullptr;
 	regionFile.seekg(offset << 10);
 	char isCompressed = 0;
 	regionFile.read(&isCompressed, 1);
-	//Byte sizeInKB;
-	//regionFile.read((char*)(&sizeInKB), 1);
-	std::istream* istr;
-	//uint size;
-	//regionFile.read((char*)(&size), 4);
+
 	if (isCompressed)
 	{
-		throw "Chunk compression not supported yet.\n";
-		//compressed: read, decompress and read from the resulted buffer
+		//compressed
+		//read compressedSize, decompressedSize and compressedData
+		uint dataSizes[2]{}; //[0] - compressedSize; [1] - decompressedSize
+		regionFile.read((char*)dataSizes, sizeof(dataSizes));
+		char* compressedData = new char[dataSizes[0]],
+			*decompressedData;
+		regionFile.read(compressedData, dataSizes[0]);
+		//decompress data
+		zlibDecompress(compressedData, dataSizes[0], decompressedData, dataSizes[1]);
+		//read chunk
+		Chunk* ch = new Chunk(parent->height);
+		std::stringstream stream(std::string(decompressedData, dataSizes[1]));
+		ch->read(stream);
+		delete[] decompressedData;
+		return ch;
 	}
-	else
-	{
-		//not compressed: read directly from file
-		istr = &regionFile;
-	}
-
+	//not compressed
 	//read chunk from buffer;
 	Chunk* ch = new Chunk(parent->height);
-	ch->read(*istr);
+	ch->read(regionFile);
 	return ch;
+
 }
 void Region::unload(World* parent)
 {
