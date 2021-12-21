@@ -1,4 +1,4 @@
-#include "nbt_Byte.h"
+#include "nbt_byte.h"
 
 nbt_Byte::nbt_Byte(const std::string& name, char v) : nbt(tag::Byte, name), value(v) { }
 

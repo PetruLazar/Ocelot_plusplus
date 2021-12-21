@@ -293,8 +293,8 @@ struct message
 
 		struct send
 		{
-			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint data, bshort velocityX, bshort velocityY, bshort velocityZ);
-			SERVER_API static void spawnXPorb(Player*, varInt eid, bdouble x, bdouble y, bdouble z, bigEndian<short> xpCount);
+			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle pitch, Angle yaw, bint data, bshort velocityX, bshort velocityY, bshort velocityZ);
+			SERVER_API static void spawnXPorb(Player*, varInt eid, bdouble x, bdouble y, bdouble z, bshort xpCount);
 			SERVER_API static void spawnLivingEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, Entity::Painting::motive motive, const Position& location, Entity::direction direction);
 			SERVER_API static void spawnPlayer(Player*, varInt eid, const mcUUID& uuid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch);
@@ -347,13 +347,13 @@ struct message
 			SERVER_API static void openSignEditor(Player*, const Position& location);
 			SERVER_API static void ping(Player*, bint pingId);
 			SERVER_API static void craftRecipeResponse(Player*, Byte winId, const mcString& recipeIdentifier);
-			SERVER_API static void playerAbilities(Player*, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier);
+			SERVER_API static void playerAbilities(Player*, bool invulnerable, bool flying, bool allowFlying, bool creative, bfloat flyingSpeed, bfloat fovModifier);
 			SERVER_API static void endCombatEvent(Player*, varInt duration, bint eid);
 			SERVER_API static void enterCombatEvent(Player*);
 			SERVER_API static void deathCombatEvent(Player*, varInt playerId, bint eid, const Chat& message);
 			SERVER_API static void playerInfo(Player*, varInt action, varInt playerCount, Player**);
 			SERVER_API static void facePlayer(Player*, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot);
-			SERVER_API static void playerPosAndLook(Player*, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, Byte flags, bool dismountVehicle);
+			SERVER_API static void playerPosAndLook(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch, Byte flags, bool dismountVehicle);
 			SERVER_API static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, std::vector<mcString>* array1, varInt size2, std::vector<mcString>* array2);
 			SERVER_API static void destroyEntities(Player*, varInt count, varInt* eids);
 			SERVER_API static void removeEntityEffect(Player*, varInt eid, Byte effectId);

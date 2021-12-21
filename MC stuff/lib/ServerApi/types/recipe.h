@@ -1,5 +1,4 @@
 #pragma once
-#include "../nbt.h"
 #include "varData.h"
 #include "../types.h"
 

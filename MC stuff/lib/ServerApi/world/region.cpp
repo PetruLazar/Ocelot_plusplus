@@ -307,7 +307,7 @@ void Region::unload(World* parent, int relX, int relZ)
 		throw runtimeWarning("Tried to unload a chunk the was not loaded");
 	}
 	chunk->loadCount--;
-	IF_CHUNK_DEBUG(Log::info() << "Chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] unloaded (" << chunk->loadCount << ")" << Log::endl);
+	Log::debug(CHUNK_DEBUG) << "Chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] unloaded (" << chunk->loadCount << ")" << Log::endl;
 	if (!chunk->loadCount)
 	{
 		//write the chunk to file

@@ -64,7 +64,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	Log::info() << "Loading worlds..." << Log::flush;
 	if (!World::loadAll())
 	{
-		Log::info() << "Error: Spawn world \"" << Options::mainWorldName() << "\" not found." << Log::flush;
+		Log::error() << "Error: Spawn world \"" << Options::mainWorldName() << "\" not found." << Log::flush;
 		ServerConsole::FreeConsole();
 		World::unloadAll();
 		Registry::unloadRegistriesAndPalette();
@@ -83,7 +83,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
 			Player::players.emplace_back(new Player(buffer));
-			IF_LOG_ALL_CONNECTIONS(Log::info() << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.\n");
+			Log::debug(PROTOCOL_WARNINGS) << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.\n";
 			buffer = new sf::TcpSocket;
 		}
 
@@ -94,31 +94,31 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		}
 		catch (runtimeError obj)
 		{
-			Log::info() << "Runtime error: " << obj.msg << Log::endl;
+			Log::error() << "Runtime error: " << obj.msg << Log::endl;
 		}
 		catch (runtimeWarning obj)
 		{
-			Log::info() << "Runtime warning: " << obj.msg << Log::endl;
+			Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
 		}
 		catch (protocolError obj)
 		{
-			Log::info() << "Protocol error: " << obj.msg << Log::endl;
+			Log::error() << "Protocol error: " << obj.msg << Log::endl;
 		}
 		catch (protocolWarning obj)
 		{
-			Log::info() << "Protocol warning: " << obj.msg << Log::endl;
+			Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
 		}
 		catch (const char* err_msg)
 		{
-			Log::info() << "Error (old format): " << err_msg << Log::endl;
+			Log::error() << "Error (old format): " << err_msg << Log::endl;
 		}
 		catch (const std::exception& e)
 		{
-			Log::info() << "Exception thrown: " << e.what() << Log::endl;
+			Log::error() << "Exception thrown: " << e.what() << Log::endl;
 		}
 		catch (...)
 		{
-			Log::info() << "Unknown error." << Log::endl;
+			Log::error() << "Unknown error." << Log::endl;
 		}
 		Player::clearDisconnectedPlayers();
 
@@ -144,27 +144,27 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 	catch (runtimeError obj)
 	{
-		Log::info() << "Runtime error: " << obj.msg << Log::endl;
+		Log::error() << "Runtime error: " << obj.msg << Log::endl;
 	}
 	catch (runtimeWarning obj)
 	{
-		Log::info() << "Runtime warning: " << obj.msg << Log::endl;
+		Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
 	}
 	catch (protocolError obj)
 	{
-		Log::info() << "Protocol error: " << obj.msg << Log::endl;
+		Log::error() << "Protocol error: " << obj.msg << Log::endl;
 	}
 	catch (protocolWarning obj)
 	{
-		Log::info() << "Protocol warning: " << obj.msg << Log::endl;
+		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
 	}
 	catch (const char* err_msg)
 	{
-		Log::info() << "Error: " << err_msg << Log::endl;
+		Log::error() << "Error: " << err_msg << Log::endl;
 	}
 	catch (...)
 	{
-		Log::info() << "Unknown error." << Log::endl;
+		Log::error() << "Unknown error." << Log::endl;
 	}
 
 	for (int64 i = 0; i < (int64)Player::players.size(); i++)
@@ -181,19 +181,19 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 	catch (runtimeError obj)
 	{
-		Log::info() << "Runtime error: " << obj.msg << Log::endl;
+		Log::error() << "Runtime error: " << obj.msg << Log::endl;
 	}
 	catch (runtimeWarning obj)
 	{
-		Log::info() << "Runtime warning: " << obj.msg << Log::endl;
+		Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
 	}
 	catch (protocolError obj)
 	{
-		Log::info() << "Protocol error: " << obj.msg << Log::endl;
+		Log::error() << "Protocol error: " << obj.msg << Log::endl;
 	}
 	catch (protocolWarning obj)
 	{
-		Log::info() << "Protocol warning: " << obj.msg << Log::endl;
+		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
 	}
 
 	ServerConsole::FreeConsole();

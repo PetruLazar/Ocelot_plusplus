@@ -140,10 +140,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	Log::info() << p->username << '(' << p->netId() << ") is logging in (eid: " << p->getEid() << ").\n";
 
-	{
-		short netCThres = Options::networkCompression();
-		if (netCThres != -1) login::send::setCompression(p, netCThres);
-	}
+	short netCThres = Options::networkCompression();
+	if (netCThres != -1) 
+		login::send::setCompression(p, netCThres);
 
 	login::send::success(p, *p->euuid, username);
 
@@ -193,7 +192,7 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 	throw protocolError("Encryption not supported");
 }
 
-void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, Entity::type type, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
+void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
 {
 	varInt id = (int)id::spawnEntity;
 	prepareSendMacro(1024 * 1024);
@@ -214,7 +213,7 @@ void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid,
 
 	finishSendMacro;
 }
-void message::play::send::spawnXPorb(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, bigEndian<short> xpCount)
+void message::play::send::spawnXPorb(Player* p, varInt eid, bdouble x, bdouble y, bdouble z, bshort xpCount)
 {
 	varInt id = (int)id::spawnXPorb;
 	prepareSendMacro(1024 * 1024);
@@ -684,7 +683,7 @@ void message::play::send::particle(Player* p, bint particleId, bool longDistance
 
 	finishSendMacro;
 }
-void message::play::send::playerPosAndLook(Player* p, bigEndian<double> x, bigEndian<double> y, bigEndian<double> z, bigEndian<float> yaw, bigEndian<float> pitch, Byte flags, bool dismountVehicle)
+void message::play::send::playerPosAndLook(Player* p, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch, Byte flags, bool dismountVehicle)
 {
 	varInt id = (int)id::playerPosAndLook_clientbound;
 	prepareSendMacro(1024 * 1024);
@@ -730,7 +729,7 @@ void message::play::send::unlockRecipes(Player* p, varInt action, bool bookOpen,
 
 	finishSendMacro;
 }
-void message::play::send::playerAbilities(Player* p, bool invulnerable, bool flying, bool allowFlying, bool creative, bigEndian<float> flyingSpeed, bigEndian<float> fovModifier)
+void message::play::send::playerAbilities(Player* p, bool invulnerable, bool flying, bool allowFlying, bool creative, bfloat flyingSpeed, bfloat fovModifier)
 {
 	varInt id = (int)id::playerAbilities_clientbound;
 	prepareSendMacro(1024 * 1024);
@@ -1850,7 +1849,7 @@ void message::play::receive::keepAlive(Player* p, blong keepAlive_id)
 void message::play::receive::lockDifficulty(Player* p, bool locked)
 {
 	//unused
-	IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: lock difficulty");
+	Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: lock difficulty";
 }
 void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 {
@@ -1860,7 +1859,7 @@ void message::play::receive::teleportConfirm(Player* p, varInt teleportId)
 void message::play::receive::setDifficulty(Player* p, Byte difficulty)
 {
 	//unused
-	IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: set difficulty");
+	Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: set difficulty";
 }
 void message::play::receive::clientStatus(Player*, varInt actionId)
 {
@@ -1879,7 +1878,7 @@ void message::play::receive::clientSettings(Player* p, const mcString& locale, B
 }
 void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte buttonId)
 {
-	IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: clickWindowButton");
+	Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: clickWindowButton";
 }
 void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
 {
@@ -2045,7 +2044,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		break;
 	}
 
-	IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: clickWindow" << Log::endl);
+	Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: clickWindow" << Log::endl;
 }
 void message::play::receive::closeWindow(Player* p, Byte winId)
 {
@@ -2172,7 +2171,7 @@ void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch,
 }
 void message::play::receive::pickItem(Player* p, varInt slot)
 {
-	IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: pickItem");
+	Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: pickItem";
 	//Log::info() << "pickite";
 	//Log::info() << "a: " << p->slots[slot]->getItemId();
 	varInt foundSlot = 0;
@@ -2326,7 +2325,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
 			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
-		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y + 1.25, p->Z, 0.7, 0.6, 1, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
 		playerItem->count -= 1;
@@ -2682,7 +2681,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::queryBlockNbt:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: query block nbt");
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: query block nbt";
 		}
 		break;
 		case play::id::setDifficulty:
@@ -2705,7 +2704,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			actionId.read(data);
 			play::receive::clientStatus(p, actionId);
 
-			IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: client status" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: client status" << Log::endl;
 		}
 		break;
 		case play::id::clientSettings:
@@ -2729,7 +2728,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::tabComplete_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: tab complete");
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: tab complete";
 		}
 		break;
 		case play::id::clickWindowButton:
@@ -2777,12 +2776,12 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			play::receive::closeWindow(p, windowID);
 
-			IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet : close window" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet : close window" << Log::endl;
 		}
 		break;
 		case play::id::pluginMessage_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: plugin message" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: plugin message" << Log::endl;
 		}
 		break;
 		case play::id::editBook:
@@ -2811,7 +2810,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::queryEntityNbt:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: query entity nbt" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: query entity nbt" << Log::endl;
 		}
 		break;
 		case play::id::interactEntity:
@@ -2832,12 +2831,12 @@ void message::dispatch(Player* p, char* data, uint size)
 			sneaking = *(data++);
 
 			message::play::receive::interactEntity(p, eid, type, targetX, targetY, targetZ, (Hand)(int)mainHand, sneaking);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: interact entity" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: interact entity" << Log::endl;
 		}
 		break;
 		case play::id::generateStructure:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: generate structure" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: generate structure" << Log::endl;
 		}
 		break;
 		case play::id::keepAlive_serverbound:
@@ -2892,17 +2891,17 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::playerMovement:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: player movement" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: player movement" << Log::endl;
 		}
 		break;
 		case play::id::vehicleMove:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: vehicle move" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: vehicle move" << Log::endl;
 		}
 		break;
 		case play::id::steerBoat:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: steer boat" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: steer boat" << Log::endl;
 		}
 		break;
 		case play::id::pickItem:
@@ -2925,12 +2924,12 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			message::play::receive::craftRecipeRequest(p, windowID, recipe, makeAll);
 
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: craft recipe request" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: craft recipe request" << Log::endl;
 		}
 		break;
 		case play::id::playerAbilities_serverbound:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: player abilities" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: player abilities" << Log::endl;
 		}
 		break;
 		case play::id::playerDigging:
@@ -2943,7 +2942,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			face = *(data++);
 
 			play::receive::playerDigging(p, status, location, face);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: player digging" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: player digging" << Log::endl;
 		}
 		break;
 		case play::id::entityAction:
@@ -2954,12 +2953,12 @@ void message::dispatch(Player* p, char* data, uint size)
 			jumpBoost.read(data);
 
 			play::receive::entityAction(p, eid, actionID, jumpBoost);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: entity action" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: entity action" << Log::endl;
 		}
 		break;
 		case play::id::steerVehicle:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: steer vehicle" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: steer vehicle" << Log::endl;
 		}
 		break;
 		case play::id::pong:
@@ -2972,7 +2971,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::setRecipeBookState:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: set recipe book state" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: set recipe book state" << Log::endl;
 		}
 		break;
 		case play::id::setDisplayedRecipe:
@@ -2981,7 +2980,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			recipeID.read(data);
 
 			play::receive::setDisplayedRecipe(p, recipeID);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: set displayed recipe" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: set displayed recipe" << Log::endl;
 		}
 		break;
 		case play::id::nameItem:
@@ -2990,7 +2989,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			newName.read(data);
 
 			play::receive::nameItem(p, newName);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: name item" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: name item" << Log::endl;
 		}
 		break;
 		case play::id::resourcePackStatus:
@@ -2999,7 +2998,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			result.read(data);
 
 			play::receive::resourcePackStatus(p, result);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: resource pack status" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: resource pack status" << Log::endl;
 		}
 		break;
 		case play::id::advancementTab:
@@ -3012,17 +3011,17 @@ void message::dispatch(Player* p, char* data, uint size)
 				tabID.read(data);
 
 			play::receive::advancementTab(p, action, tabID);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: advancement tab" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: advancement tab" << Log::endl;
 		}
 		break;
 		case play::id::selectTrade:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: select trade" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: select trade" << Log::endl;
 		}
 		break;
 		case play::id::setBeaconEffect:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: set beacon effect" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: set beacon effect" << Log::endl;
 		}
 		break;
 		case play::id::heldItemChange_serverbound:
@@ -3035,12 +3034,12 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::updateCommandBlock:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: update command block" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: update command block" << Log::endl;
 		}
 		break;
 		case play::id::updateCommandBlockMinecart:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet : update command block minecart" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet : update command block minecart" << Log::endl;
 		}
 		break;
 		case play::id::creativeInventoryAction:
@@ -3069,17 +3068,17 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::updateJigsawBlock:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: update jigsaw block" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: update jigsaw block" << Log::endl;
 		}
 		break;
 		case play::id::updateStructureBlock:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: update structure block" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: update structure block" << Log::endl;
 		}
 		break;
 		case play::id::updateSign:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: update sign" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: update sign" << Log::endl;
 		}
 		break;
 		case play::id::animation_serverbound:
@@ -3091,7 +3090,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::spectate:
 		{
-			IF_PROTOCOL_WARNINGS(Log::info() << "Unhandled packet: spectate" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: spectate" << Log::endl;
 		}
 		break;
 		case play::id::playerBlockPlacement:
@@ -3110,7 +3109,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			insideBlock = *(data++);
 
 			play::receive::playerBlockPlacement(p, (Hand)(int)hand, location, (playerDigging::face)(int)face, curX, curY, curZ, insideBlock);
-			IF_PROTOCOL_WARNINGS(Log::info() << "Partially handled packet: player block placement" << Log::endl);
+			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: player block placement" << Log::endl;
 		}
 		break;
 		case play::id::useItem:

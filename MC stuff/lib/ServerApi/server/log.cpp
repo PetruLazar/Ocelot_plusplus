@@ -10,138 +10,182 @@
 
 using namespace std;
 
-const char Log::binFileName[] = "debug.bin", Log::txtFileName[] = "debug.txt";
-bool Log::initialized = false;
-ofstream Log::binFile, Log::txtFile;
+bool		Log::initialized = false;
+const char	Log::binFileName[] = "log.bin", Log::logFileName[] = "log.txt", Log::debugFileName[] = "debug.txt";
+ofstream	Log::binFile, Log::logFile, Log::debugFile;
 
 std::unordered_map<std::string, std::chrono::steady_clock::time_point> Log::benches;
 
-LogStream Log::infoStream("info");
-LogStream Log::warningStream("warning");
-LogStream Log::errorStream("error");
-LogStream Log::noneStream("none");
+LogStream	Log::infoStream("info", &Log::logFile);
+LogStream	Log::warningStream("warning", &Log::logFile);
+LogStream	Log::errorStream("error", &Log::logFile);
+LogStream	Log::noneStream("none", &Log::logFile);
+LogStream	Log::debugStream("debug", &Log::debugFile);
 
-LogAction Log::flush(LogAction::ID::flush);
-LogAction Log::endl(LogAction::ID::newline);
+LogAction	Log::flush(LogAction::ID::flush);
+LogAction	Log::endl(LogAction::ID::newline);
 
 LogAction::LogAction(LogAction::ID action) : action(action) {}
 LogAction::ID LogAction::getAction() {
 	return action;
 }
 
-LogStream::LogStream(const std::string& title) : title(title) {}
+LogStream::LogStream(const std::string& title, std::ofstream* toFile = &Log::logFile) : title(title), toFile(toFile) {}
 
 LogStream& LogStream::operator<<(const bool n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const char n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const unsigned char n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const short n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const unsigned short n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const int n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const unsigned int n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const long n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const unsigned long n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const long long n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const unsigned long long n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const double n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const char* n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const std::string& n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (this->enabled) {
+		if (ServerConsole::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+	
 	return *this;
 }
 LogStream& LogStream::operator<<(const void* n)
 {
 	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (toFile->is_open()) *toFile << n;
 	return *this;
 }
 LogStream& LogStream::operator<<(const sf::IpAddress& n)
 {
 	if (ServerConsole::HasConsole()) cout << n;
-	if (Log::txtFile.is_open()) Log::txtFile << n;
+	if (toFile->is_open()) *toFile << n;
 	return *this;
 }
 
 LogStream& LogStream::operator<<(LogAction& n)
 {
-	switch (n.getAction()) {
-	case LogAction::ID::flush:
-		if (ServerConsole::HasConsole()) cout << '\n';
-		if (Log::txtFile.is_open()) Log::txtFile << '\n';
+	if (this->enabled) {
+		switch (n.getAction()) {
+		case LogAction::ID::flush:
+			if (ServerConsole::HasConsole()) cout << '\n';
+			if (toFile->is_open()) *toFile << '\n';
 
-		Log::txtFile.flush();
-		Log::binFile.flush();
-		break;
-	case LogAction::ID::newline:
-		if (ServerConsole::HasConsole()) cout << '\n';
-		if (Log::txtFile.is_open()) Log::txtFile << '\n';
-		break;
+			Log::Flush();
+			break;
+		case LogAction::ID::newline:
+			if (ServerConsole::HasConsole()) cout << '\n';
+			if (toFile->is_open()) *toFile << '\n';
+			break;
+		}
 	}
 	
 	return *this;
@@ -150,7 +194,8 @@ LogStream& LogStream::operator<<(LogAction& n)
 void Log::initialize()
 {
 	binFile.open(binFileName, /*ios::app |*/ ios::binary);
-	txtFile.open(txtFileName /*,ios::app*/);
+	logFile.open(logFileName /*,ios::app*/);
+	debugFile.open(debugFileName /*,ios::app*/);
 
 	initialized = true;
 }
@@ -158,15 +203,17 @@ bool Log::Initialized()
 {
 	return initialized;
 }
-void Log::preLogPrint()
+std::string Log::preLogPrint()
 {
-	auto now = std::chrono::system_clock::now();
-	auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	struct tm newtime;
+	time_t now = time(0);
+	localtime_s(&newtime, &now);
 
-	tm tt;
-	localtime_s(&tt, &in_time_t);
+	char buffer[9];
 
-	std::cout << std::put_time(&tt, "%EX");
+	strftime(buffer, sizeof(buffer), "%H:%M:%S", &newtime);
+
+	return buffer;
 }
 
 LogStream& Log::none()
@@ -175,21 +222,29 @@ LogStream& Log::none()
 }
 LogStream& Log::info()
 {
-	preLogPrint();
-	cout << "  [INFO]: ";
+	infoStream << preLogPrint() << "  [INFO]: ";
 	return infoStream;
 }
 LogStream& Log::warn()
 {
-	preLogPrint();
-	cout << "  [WARN]: ";
-	return infoStream;
+	warningStream << preLogPrint() << "  [WARN]: ";
+	return warningStream;
 }
 LogStream& Log::error()
 {
-	preLogPrint();
-	cout << " [ERROR]: ";
-	return infoStream;
+	errorStream << preLogPrint() << " [ERROR]: ";
+	return errorStream;
+}
+LogStream& Log::debug(bool print)
+{
+	debugStream.setState(print);
+
+	debugStream << preLogPrint() << " [DEBUG]: ";
+	return debugStream;
+}
+
+void LogStream::setState(bool state) {
+	this->enabled = state;
 }
 
 void Log::Bin(const char* data, const ull length)
@@ -199,8 +254,10 @@ void Log::Bin(const char* data, const ull length)
 void Log::Flush()
 {
 	binFile.flush();
-	txtFile.flush();
+	logFile.flush();
+	debugFile.flush();
 }
+
 std::string Log::Bench(const std::string& name, bool parentheses)
 {
 	if (benches.find(name) == benches.end()) {

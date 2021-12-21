@@ -111,7 +111,9 @@ Build/*/worlds/*/regions
 
 # Temporary files
 MC stuff/Build
-MC stuff/debug.txt
+Build/*/log.txt
+Build/*/log.bin
+Build/*/debug.txt
 MC stuff/lib/ServerApi/Build/
 GlobalPalleteTranslator
 MC stuff/generators/*/Build

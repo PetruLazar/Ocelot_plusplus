@@ -27,9 +27,13 @@ class LogStream
 {
 private:
 	const std::string title;
+	std::ofstream* toFile;
+	bool enabled = true;
 
 public:
-	LogStream(const std::string& title);
+	LogStream(const std::string& title, std::ofstream* toFile);
+
+	void setState(bool state);
 
 	SERVER_API LogStream& operator<<(const bool n);
 	SERVER_API LogStream& operator<<(const char n);
@@ -53,13 +57,14 @@ public:
 
 class Log
 {
-	SERVER_API static const char binFileName[], txtFileName[];
-	SERVER_API static std::ofstream binFile, txtFile;
+	SERVER_API static const char binFileName[], logFileName[], debugFileName[];
+
+	SERVER_API static std::ofstream binFile, logFile, debugFile;
 	SERVER_API static bool initialized;
 
-	static LogStream noneStream, infoStream, warningStream, errorStream;
+	static LogStream noneStream, infoStream, warningStream, errorStream, debugStream;
 
-	static void preLogPrint();
+	static std::string preLogPrint();
 
 	static std::unordered_map<std::string, std::chrono::steady_clock::time_point> benches;
 
@@ -70,6 +75,7 @@ public:
 	SERVER_API static LogStream& none();
 	SERVER_API static LogStream& info();
 	SERVER_API static LogStream& warn();
+	SERVER_API static LogStream& debug(bool print = false);
 	SERVER_API static LogStream& error();
 
 	SERVER_API static void Bin(const char*, const ull);

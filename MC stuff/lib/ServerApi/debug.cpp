@@ -1,6 +1,6 @@
 #include "debug.h"
 
-#ifdef DEBUG_ALLOCATIONS
+#if DEBUG_ALLOCATIONS
 
 #include "server/log.h"
 #include <iostream>
@@ -16,7 +16,7 @@ void* operator new(size_t s)
 	if (bid == TARGET_MEMORY_BLOCK)
 		std::cout << "";
 #endif
-	if (Log::info().is_open()) Log::info() << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
+	Log::debug(DEBUG_ALLOCATIONS) << "Allocated object at: " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 	return p;
 }
 void* operator new[](size_t s)
@@ -27,7 +27,7 @@ void* operator new[](size_t s)
 	if (bid == TARGET_MEMORY_BLOCK)
 		std::cout << "";
 #endif
-	if (Log::info().is_open()) Log::info() << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
+	Log::debug(DEBUG_ALLOCATIONS) << "Allocated block at:  " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 	return p;
 }
 
@@ -39,7 +39,7 @@ void operator delete(void* p, size_t s)
 		std::cout << "";
 #endif
 	free(p);
-	if (Log::info().is_open()) Log::info() << "Freed object at:     " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
+	Log::debug(DEBUG_ALLOCATIONS) << "Freed object at:     " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 }
 void operator delete[](void* p, size_t s)
 {
@@ -49,7 +49,7 @@ void operator delete[](void* p, size_t s)
 		std::cout << "";
 #endif
 	free(p);
-	if (Log::info().is_open()) Log::info() << "Freed block at:      " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
+	Log::debug(DEBUG_ALLOCATIONS) << "Freed block at:      " << p << " (size " << s << ", block id " << bid << ")" << Log::endl;
 }
 
 #endif
