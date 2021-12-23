@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include "types/slot.h"
 #include "types/enums.h"
+#include <mutex>
 
 class Player;
 #include "player/player.h"
@@ -19,6 +20,9 @@ class World
 	static Chunk* generate_def(World*, int x, int z);
 	static Chunk* generate_flat(World*, int x, int z);
 	static Chunk* generate_void(World*, int x, int z);
+
+	static std::mutex loader;
+	static void threadLoad(std::string name);
 
 public:
 	SERVER_API World(const char* name);

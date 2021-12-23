@@ -1,6 +1,6 @@
 #include "../world.h"
 #include "../types/utils.h"
-#include <iostream>
+
 #include "noise.h"
 #include "../types/error.h"
 #include "../types/basic.h"
@@ -8,6 +8,7 @@
 #include "../server/options.h"
 #include "../player/message.h"
 #include <filesystem>
+#include <thread>
 
 namespace fs = std::filesystem;
 using namespace std;
@@ -1126,12 +1127,26 @@ void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl)
 	reg->setBlock(x, y, z, bl);
 }
 
+std::mutex World::loader;
+void World::threadLoad(std::string name) {
+	World* zaWarudo = new World(name.c_str());
+	loader.lock();
+	worlds.emplace_back(zaWarudo);
+	loader.unlock();
+}
+
 bool World::loadAll()
 {
 	ifstream worldList("worlds\\worldList.txt");
-	char name[256];
-	while (worldList >> name)
-		worlds.emplace_back(new World(name));
+	std::string name;
+	std::vector<std::thread> loaders;
+	while (worldList >> name) {
+		std::thread th(&World::threadLoad, name);
+		loaders.push_back(std::move(th));
+	}
+	
+	for (std::thread& th : loaders)
+		th.join();
 
 	Log::info() << "Finished loading " << worlds.size() << " worlds! " << Log::Bench("worlds") << Log::flush;
 	worldList.close();
