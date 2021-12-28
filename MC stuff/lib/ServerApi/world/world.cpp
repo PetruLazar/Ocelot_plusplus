@@ -1,5 +1,6 @@
 #include "../world.h"
 #include "../types/utils.h"
+#include "../server/server.h"
 
 #include "noise.h"
 #include "../types/error.h"
@@ -8,7 +9,6 @@
 #include "../server/options.h"
 #include "../player/message.h"
 #include <filesystem>
-#include <thread>
 
 namespace fs = std::filesystem;
 using namespace std;
@@ -378,7 +378,7 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	Log::debug(WORLD_LOAD_DEBUG) << "Loading spawn area..." << Log::flush;
 	for (int x = spawn.ChunkX - Options::viewDistance(); x <= spawn.ChunkX + Options::viewDistance(); x++)
 		for (int z = spawn.ChunkZ - Options::viewDistance(); z <= spawn.ChunkZ + Options::viewDistance(); z++)
-			get(x, z, true);
+			this->get(x, z, true);
 
 	spawn.Y = double(characteristics["min_y"].vInt()) + get(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
 	Log::debug(WORLD_LOAD_DEBUG) << "Done!" << Log::flush;
@@ -1127,26 +1127,25 @@ void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl)
 	reg->setBlock(x, y, z, bl);
 }
 
-std::mutex World::loader;
-void World::threadLoad(std::string name) {
-	World* zaWarudo = new World(name.c_str());
-	loader.lock();
-	worlds.emplace_back(zaWarudo);
-	loader.unlock();
-}
-
 bool World::loadAll()
 {
 	ifstream worldList("worlds\\worldList.txt");
 	std::string name;
-	std::vector<std::thread> loaders;
+	static std::mutex loader;
+	std::vector<std::future<World*>> futures;
 	while (worldList >> name) {
-		std::thread th(&World::threadLoad, name);
-		loaders.push_back(std::move(th));
+		futures.emplace_back(Server::threadPool.enqueue([name] {
+			Log::Bench(name);
+			World* zaWarudo = new World(name.c_str());
+			loader.lock();
+			Log::info() << "thread-" << std::this_thread::get_id() << " loaded \"" << name << "\" " << Log::Bench(name) << Log::endl;
+			loader.unlock();
+			return zaWarudo;
+		}));
 	}
-	
-	for (std::thread& th : loaders)
-		th.join();
+
+	for (auto&& fut : futures)
+		worlds.emplace_back(fut.get());
 
 	Log::info() << "Finished loading " << worlds.size() << " worlds! " << Log::Bench("worlds") << Log::flush;
 	worldList.close();

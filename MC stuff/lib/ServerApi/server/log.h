@@ -1,8 +1,10 @@
+
 #pragma once
 
 #include <fstream>
 #include <chrono>
 #include <unordered_map>
+#include <thread>
 
 #include "../types/typedefs.h"
 #include "../types/apidef.h"
@@ -49,6 +51,7 @@ public:
 	SERVER_API LogStream& operator<<(const double n);
 	SERVER_API LogStream& operator<<(const char* n);
 	SERVER_API LogStream& operator<<(const std::string& n);
+	SERVER_API LogStream& operator<<(const std::thread::id& n);
 	SERVER_API LogStream& operator<<(const void* n);
 	SERVER_API LogStream& operator<<(const sf::IpAddress& n);
 

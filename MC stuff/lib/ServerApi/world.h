@@ -21,9 +21,6 @@ class World
 	static Chunk* generate_flat(World*, int x, int z);
 	static Chunk* generate_void(World*, int x, int z);
 
-	static std::mutex loader;
-	static void threadLoad(std::string name);
-
 public:
 	SERVER_API World(const char* name);
 	SERVER_API ~World();

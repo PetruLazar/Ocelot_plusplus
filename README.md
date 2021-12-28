@@ -1,10 +1,10 @@
 # Minecraft-server
 Minecraft server implemented in c++
 
-# Documentation
+## Documentation
 https://wiki.vg/Protocol
 
-# To-do
+## To-do
 - Encryption support
 - Commands - implement suggestions
 - Console - implement command input and show/hide functionality
@@ -68,3 +68,8 @@ Code related to the following packets (either implement the packet itself or cod
 	play::receive::updateStructureBlock
 	play::receive::updateSign
 	play::receive::spectate
+
+## Libraries used
+[SFML](https://www.sfml-dev.org/) - Networking
+[ZLIB](https://zlib.net/) - Compression
+[Thread](https://github.com/aphenriques/thread) - Thread pooling

@@ -5,7 +5,7 @@
 #include "player/message.h"
 #include <iostream>
 #include "types/chat.h"
-#include <server/console.h>
+#include <server/server.h>
 #include <conio.h>
 #include <SFML/Network/TcpListener.hpp>
 #include <Windows.h>
@@ -25,7 +25,7 @@ bool keepServerOpen = true;
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
 {
 	Log::initialize();
-	ServerConsole::AllocConsole();
+	Server::AllocConsole();
 
 	//rand seeding
 	srand((uint)time(nullptr));
@@ -35,7 +35,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	if (listener.listen(Options::port(), Options::ip()) != sockStat::Done)
 	{
 		system("pause");
-		ServerConsole::FreeConsole();
+		Server::FreeConsole();
 		return 0;
 	}
 	Log::Bench("server");
@@ -65,7 +65,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	if (!World::loadAll())
 	{
 		Log::error() << "Error: Spawn world \"" << Options::mainWorldName() << "\" not found." << Log::flush;
-		ServerConsole::FreeConsole();
+		Server::FreeConsole();
 		World::unloadAll();
 		Registry::unloadRegistriesAndPalette();
 		return 0;
@@ -196,7 +196,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
 	}
 
-	ServerConsole::FreeConsole();
+	Server::FreeConsole();
 	Registry::unloadRegistriesAndPalette();
 	recipe::Manager::unloadRecipes();
 	return 0;

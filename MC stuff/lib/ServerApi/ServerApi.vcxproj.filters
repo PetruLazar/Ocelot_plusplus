@@ -234,7 +234,7 @@
     <ClInclude Include="debug.h">
       <Filter>Header Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="server\console.h">
+    <ClInclude Include="server\server.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
     <ClInclude Include="types\registry.h">
@@ -431,7 +431,7 @@
     <ClCompile Include="debug.cpp">
       <Filter>Source Files\debug</Filter>
     </ClCompile>
-    <ClCompile Include="server\console.cpp">
+    <ClCompile Include="server\server.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
     <ClCompile Include="types\registry.cpp">

@@ -1,7 +1,7 @@
 
 #include "log.h"
 
-#include "console.h"
+#include "server.h"
 
 #include <iostream>
 #include <chrono>
@@ -35,7 +35,7 @@ LogStream::LogStream(const std::string& title, std::ofstream* toFile = &Log::log
 LogStream& LogStream::operator<<(const bool n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -44,7 +44,7 @@ LogStream& LogStream::operator<<(const bool n)
 LogStream& LogStream::operator<<(const char n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -53,7 +53,7 @@ LogStream& LogStream::operator<<(const char n)
 LogStream& LogStream::operator<<(const unsigned char n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -62,7 +62,7 @@ LogStream& LogStream::operator<<(const unsigned char n)
 LogStream& LogStream::operator<<(const short n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -71,7 +71,7 @@ LogStream& LogStream::operator<<(const short n)
 LogStream& LogStream::operator<<(const unsigned short n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -80,7 +80,7 @@ LogStream& LogStream::operator<<(const unsigned short n)
 LogStream& LogStream::operator<<(const int n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -89,7 +89,7 @@ LogStream& LogStream::operator<<(const int n)
 LogStream& LogStream::operator<<(const unsigned int n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -98,7 +98,7 @@ LogStream& LogStream::operator<<(const unsigned int n)
 LogStream& LogStream::operator<<(const long n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -107,7 +107,7 @@ LogStream& LogStream::operator<<(const long n)
 LogStream& LogStream::operator<<(const unsigned long n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -116,7 +116,7 @@ LogStream& LogStream::operator<<(const unsigned long n)
 LogStream& LogStream::operator<<(const long long n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -125,7 +125,7 @@ LogStream& LogStream::operator<<(const long long n)
 LogStream& LogStream::operator<<(const unsigned long long n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -134,7 +134,7 @@ LogStream& LogStream::operator<<(const unsigned long long n)
 LogStream& LogStream::operator<<(const double n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -143,7 +143,7 @@ LogStream& LogStream::operator<<(const double n)
 LogStream& LogStream::operator<<(const char* n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 
@@ -152,21 +152,30 @@ LogStream& LogStream::operator<<(const char* n)
 LogStream& LogStream::operator<<(const std::string& n)
 {
 	if (this->enabled) {
-		if (ServerConsole::HasConsole()) cout << n;
+		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
 	
 	return *this;
 }
+LogStream& LogStream::operator<<(const std::thread::id& n)
+{
+	if (this->enabled) {
+		if (Server::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
+	return *this;
+}
 LogStream& LogStream::operator<<(const void* n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
+	if (Server::HasConsole()) cout << n;
 	if (toFile->is_open()) *toFile << n;
 	return *this;
 }
 LogStream& LogStream::operator<<(const sf::IpAddress& n)
 {
-	if (ServerConsole::HasConsole()) cout << n;
+	if (Server::HasConsole()) cout << n;
 	if (toFile->is_open()) *toFile << n;
 	return *this;
 }
@@ -176,13 +185,13 @@ LogStream& LogStream::operator<<(LogAction& n)
 	if (this->enabled) {
 		switch (n.getAction()) {
 		case LogAction::ID::flush:
-			if (ServerConsole::HasConsole()) cout << '\n';
+			if (Server::HasConsole()) cout << '\n';
 			if (toFile->is_open()) *toFile << '\n';
 
 			Log::Flush();
 			break;
 		case LogAction::ID::newline:
-			if (ServerConsole::HasConsole()) cout << '\n';
+			if (Server::HasConsole()) cout << '\n';
 			if (toFile->is_open()) *toFile << '\n';
 			break;
 		}
@@ -266,7 +275,6 @@ std::string Log::Bench(const std::string& name, bool parentheses)
 	}
 
 	double msTime = std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - benches[name]).count();
-
 	benches.erase(name);
 
 	if (parentheses)

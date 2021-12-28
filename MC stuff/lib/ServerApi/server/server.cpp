@@ -1,12 +1,15 @@
-#include "console.h"
+#include "server.h"
 
 #include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
 
-bool ServerConsole::hasConsole = false;
+#include <thread>
 
-void ServerConsole::AllocConsole()
+bool Server::hasConsole = false;
+ThreadPool Server::threadPool(std::thread::hardware_concurrency());
+
+void Server::AllocConsole()
 {
 	if (!::AllocConsole()) return;
 	SetConsoleTitleA("Minecraft Server");
@@ -15,8 +18,8 @@ void ServerConsole::AllocConsole()
 	freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
 	hasConsole = true;
 }
-bool ServerConsole::HasConsole() { return hasConsole; }
-void ServerConsole::FreeConsole()
+bool Server::HasConsole() { return hasConsole; }
+void Server::FreeConsole()
 {
 	if (!hasConsole) return;
 	fclose(stdout);
