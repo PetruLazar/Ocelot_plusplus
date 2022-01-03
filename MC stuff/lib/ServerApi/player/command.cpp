@@ -61,9 +61,9 @@ namespace CommandHandlers
 		{
 		case 1:
 		{
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1,
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y) - 1,
+				z = fastfloor((double)executingPlayer->z);
 
 			y = executingPlayer->world->AbsToRelHeight(y);
 			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
@@ -75,9 +75,9 @@ namespace CommandHandlers
 		{
 			static int lvl = 0;
 
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y),
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y),
+				z = fastfloor((double)executingPlayer->z);
 
 			y = executingPlayer->world->AbsToRelHeight(y);
 			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
@@ -89,7 +89,7 @@ namespace CommandHandlers
 		break;
 		case 3:
 		{
-			executingPlayer->teleport(executingPlayer->X, executingPlayer->Y, executingPlayer->Z, 45.f, executingPlayer->pitch);
+			executingPlayer->teleport(executingPlayer->x, executingPlayer->y, executingPlayer->z, 45.f, executingPlayer->pitch);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
@@ -97,9 +97,9 @@ namespace CommandHandlers
 		{
 			World* wld = executingPlayer->world;
 
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1,
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y) - 1,
+				z = fastfloor((double)executingPlayer->z);
 
 			int yloc = y;
 			y = wld->AbsToRelHeight(y);
@@ -119,9 +119,9 @@ namespace CommandHandlers
 		{
 			World* wld = executingPlayer->world;
 
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1,
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y) - 1,
+				z = fastfloor((double)executingPlayer->z);
 
 			int yloc = y;
 			y = wld->AbsToRelHeight(y);

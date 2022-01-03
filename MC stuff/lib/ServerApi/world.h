@@ -21,15 +21,21 @@ class World
 	static Chunk* generate_flat(World*, int x, int z);
 	static Chunk* generate_void(World*, int x, int z);
 
+	std::vector<Entity::entity*> entities;
+
+	eidDispenser::Entity eidDispenser;
+
 public:
 	SERVER_API World(const char* name);
 	SERVER_API ~World();
 
 	mcString name;
 	std::vector<Player*> players;
-	std::vector<Entity::entity*> entities;
-
-	eidDispenser::Entity eidDispenser;
+	
+	eidDispenser::Entity* getEidDispenser();
+	void addEntity(Entity::entity* entity);
+	bool removeEntity(varInt eid);
+	std::vector<Entity::entity*> getEntitiesByType(Entity::type theType);
 
 	/*Contents of nbt_compound characteristics
 	*

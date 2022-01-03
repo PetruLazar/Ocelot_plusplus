@@ -75,8 +75,6 @@ public:
 
 	//world and position information
 	World* world; // pointer to the world the player is in
-	bdouble X, Y, Z;
-	bfloat yaw, pitch;
 	int chunkX, chunkZ;
 	bool onGround;
 	void updatePosition(bdouble X, bdouble Y, bdouble Z);

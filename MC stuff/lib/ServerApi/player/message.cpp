@@ -192,6 +192,10 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 	throw protocolError("Encryption not supported");
 }
 
+void message::play::send::spawnEntity(Player* p, Entity::entity* entity, bshort velocityX, bshort velocityY, bshort velocityZ)
+{
+	message::play::send::spawnEntity(p, entity->getEid(), *entity->euuid, entity->getType(), entity->x, entity->y, entity->z, entity->pitch, entity->yaw, entity->data, velocityX, velocityY, velocityZ);
+}
 void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
 {
 	varInt id = (int)id::spawnEntity;
@@ -1031,6 +1035,19 @@ void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX
 
 	finishSendMacro;
 }
+void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equipment)
+{
+	varInt id = (int)id::entityEquipment;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+
+	equipment->unSet();
+	equipment->write(data);
+
+	finishSendMacro;
+}
 void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equipments)
 {
 	varInt id = (int)id::entityEquipment;
@@ -1690,6 +1707,16 @@ void message::play::send::camera(Player* p, varInt camId)
 
 	finishSendMacro;
 }
+void message::play::send::destroyEntity(Player* p, varInt eid) {
+	varInt id = (int)id::destroyEntities;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	varInt(1).write(data);
+	eid.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 {
 	varInt id = (int)id::destroyEntities;
@@ -2139,7 +2166,7 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 		return;
 
 	for (Player* seener : p->seenBy)
-		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->x) * 4096), short((feetY - p->y) * 4096), short((Z - p->z) * 4096), onGround));
 
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
@@ -2151,7 +2178,7 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 
 	for (Player* seener : p->seenBy)
 	{
-		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->getEid(), short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->getEid(), short((X - p->x) * 4096), short((Y - p->y) * 4096), short((Z - p->z) * 4096), (float)yaw, (float)pitch, onGround));
 		ignoreExceptions(message::play::send::entityHeadLook(seener, p->getEid(), (float)p->yaw));
 	}
 	p->updatePosition(X, Y, Z);
@@ -2211,12 +2238,12 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
 	p->inventory->setSelectedSlot(slot);
 
-	std::vector<Equipment*> eqp = { new Equipment(0, p->inventory->getSelectedSlot()) };
+	Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-	delete eqp[0];
+	delete eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
@@ -2230,12 +2257,12 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 
 		if (p->inventory->getSelectedIndex() == slot)
 		{
-			std::vector<Equipment*> eqp = { new Equipment(0, clickedItem) };
+			Equipment* eqp = new Equipment(0, clickedItem);
 
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-			delete eqp[0];
+			delete eqp;
 		}
 	}
 }
@@ -2288,24 +2315,24 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		if (playerItem->count == 0) //empty slot
 			return;
 
-		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
-		p->world->entities.emplace_back(theItem);
+		Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *playerItem);
+		p->world->addEntity(theItem);
 
 		for (Player* seener : p->seenBy)
 		{
-			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
 			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
-		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
 		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
 
-		std::vector<Equipment*> eqp = { new Equipment(0, p->inventory->getSelectedSlot()) };
+		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 		for (Player* seener : p->seenBy)
 			message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-		delete eqp[0];
+		delete eqp;
 	}
 	break;
 	case playerDigging::dropItem:
@@ -2315,17 +2342,17 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		if (playerItem->count == 0) //empty slot
 			return;
 
-		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
+		Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *playerItem);
 		theItem->theItem.count = 1;
 
-		p->world->entities.emplace_back(theItem);
+		p->world->addEntity(theItem);
 
 		for (Player* seener : p->seenBy)
 		{
-			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
 			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
-		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y + 1.25, p->Z, 0.7, 0.6, 1, 100, 0, 100);
+		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
 		playerItem->count -= 1;
@@ -2333,11 +2360,11 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		{
 			p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
 
-			std::vector<Equipment*> eqp = { new Equipment(0, p->inventory->getSelectedSlot()) };
+			Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-			delete eqp[0];
+			delete eqp;
 		}
 	}
 	break;
@@ -2776,7 +2803,7 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			play::receive::closeWindow(p, windowID);
 
-			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet : close window" << Log::endl;
+			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: close window" << Log::endl;
 		}
 		break;
 		case play::id::pluginMessage_serverbound:

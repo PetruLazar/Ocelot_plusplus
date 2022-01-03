@@ -12,7 +12,7 @@ const char* socketDisconnected = "Socket Disconnected unexpectedly";
 std::vector<Player*> Player::players;
 eidDispenser::Player Player::eidDispenser;
 
-Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser)
+Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser, Entity::type::minecraft_player, 0, 0, 0, .0, .0)
 {
 	socket->setBlocking(false);
 
@@ -176,9 +176,9 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		}
 	}
 
-	Player::X = X;
-	Player::Y = Y;
-	Player::Z = Z;
+	Player::x = X;
+	Player::y = Y;
+	Player::z = Z;
 	Player::chunkX = newChunkX;
 	Player::chunkZ = newChunkZ;
 }
@@ -253,16 +253,16 @@ void Player::_inventory::setInventorySlot(bshort index, Slot* slot)
 
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
 {
-	X = tpX;
-	Y = tpY;
-	Z = tpZ;
+	x = tpX;
+	y = tpY;
+	z = tpZ;
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, yaw, pitch, 0, false);
 }
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloat tpPitch)
 {
-	X = tpX;
-	Y = tpY;
-	Z = tpZ;
+	x = tpX;
+	y = tpY;
+	z = tpZ;
 	yaw = tpYaw;
 	pitch = tpPitch;
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, tpYaw, tpPitch, 0, false);
@@ -273,9 +273,9 @@ void Player::setWorld(World* world)
 	Log::debug(DEBUG_SIGHT) << '\n' << this << " is entering world " << world->name;
 	//set world and position
 	this->world = world;
-	X = world->spawn.X;
-	Y = world->spawn.Y;
-	Z = world->spawn.Z;
+	x = world->spawn.X;
+	y = world->spawn.Y;
+	z = world->spawn.Z;
 	chunkX = world->spawn.ChunkX;
 	chunkZ = world->spawn.ChunkZ;
 	yaw = world->spawn.Yaw;
@@ -295,7 +295,7 @@ void Player::setWorld(World* world)
 		//message::play::send::chunkData(this, x, z);
 	}
 
-	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
+	message::play::send::playerPosAndLook(this, x, y, z, yaw, pitch, 0, false);
 
 	//send the selected slot
 	message::play::send::heldItemChange(this, inventory->getSelectedIndex());
@@ -355,7 +355,7 @@ void Player::changeWorld(const mcString& worldName)
 void Player::enterSight(Player* other)
 {
 	Log::debug(DEBUG_SIGHT) << "Player " << other << " entering sight of " << this << Log::endl;
-	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
+	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->x, other->y, other->z, (float)other->yaw, (float)other->pitch));
 	ignoreExceptions(message::play::send::entityHeadLook(this, other->getEid(), (float)other->yaw));
 	seenBy.emplace_back(other);
 	Log::debug(DEBUG_SIGHT) << "Sight of " << this << " is now " << seenBy.size() << Log::endl;
