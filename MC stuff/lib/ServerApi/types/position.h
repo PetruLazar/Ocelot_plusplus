@@ -13,6 +13,10 @@ public:
 	SERVER_API Position(int x, int y, int z);
 	SERVER_API Position(const sf::Vector3i&);
 
+	SERVER_API static bool inRange(int chunkfX, int chunkfY, int chunktX, int chunktY, int range);
+	SERVER_API static bool inRange(bdouble fX, bdouble fY, bdouble fZ, bdouble tX, bdouble tY, bdouble tZ, bdouble range);
+	SERVER_API static bool inRange(Position fP, Position tP, bdouble range);
+
 	SERVER_API void read(std::fstream&);
 	SERVER_API void write(std::fstream&) const;
 	SERVER_API void read(char*&);

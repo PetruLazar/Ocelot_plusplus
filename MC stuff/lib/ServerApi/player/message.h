@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "player.h"
 #include "../nbt.h"
 #include "../json.h"

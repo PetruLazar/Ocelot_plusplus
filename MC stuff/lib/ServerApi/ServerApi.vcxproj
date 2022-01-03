@@ -242,6 +242,7 @@
     <ClInclude Include="types\varData.h" />
     <ClInclude Include="types\window.h" />
     <ClInclude Include="types\winLeanMean.h" />
+    <ClInclude Include="utilities.h" />
     <ClInclude Include="world.h" />
     <ClInclude Include="world\block.h" />
     <ClInclude Include="world\chunk.h" />
@@ -308,6 +309,7 @@
     <ClCompile Include="types\uuid.cpp" />
     <ClCompile Include="types\varData.cpp" />
     <ClCompile Include="types\window.cpp" />
+    <ClCompile Include="utilities.cpp" />
     <ClCompile Include="world\block.cpp" />
     <ClCompile Include="world\chunk.cpp" />
     <ClCompile Include="world\noise.cpp" />

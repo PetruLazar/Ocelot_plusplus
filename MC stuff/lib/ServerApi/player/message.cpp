@@ -2170,6 +2170,34 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
+
+	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item)) {
+		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
+		{
+			Entity::item* droppedItem = static_cast<Entity::item*>(groundItem);
+
+			if (droppedItem->spawnedTimeStamp + 1500 > utility::time::timeSinceEpoch())
+				continue;
+
+			unsigned addedIndex = -1;
+			unsigned picked = p->inventory->add(droppedItem->theItem, addedIndex);
+
+			if (picked != 0) {
+				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), picked);
+
+				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, *p->inventory->getInventorySlot(addedIndex));
+
+				if (picked == droppedItem->theItem.count) { //all of the entity got picked up, destroy it
+					message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
+					p->world->removeEntity(droppedItem->getEid());
+				}
+				else if (picked < droppedItem->theItem.count) { //not everything got picked up, update the data
+					droppedItem->theItem.count = droppedItem->theItem.count - picked;
+					message::play::send::entityMetadata(p, droppedItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &droppedItem->theItem) });
+				}
+			}
+		}
+	}
 }
 void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdouble Y, bdouble Z, bfloat yaw, bfloat pitch, bool onGround)
 {
@@ -2184,6 +2212,34 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 	p->updatePosition(X, Y, Z);
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
+
+	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item)) {
+		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
+		{
+			Entity::item* droppedItem = static_cast<Entity::item*>(groundItem);
+
+			if (droppedItem->spawnedTimeStamp + 1500 > utility::time::timeSinceEpoch())
+				continue;
+
+			unsigned addedIndex = -1;
+			unsigned picked = p->inventory->add(droppedItem->theItem, addedIndex);
+
+			if (picked != 0) {
+				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), picked);
+
+				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, *p->inventory->getInventorySlot(addedIndex));
+
+				if (picked == droppedItem->theItem.count) { //all of the entity got picked up, destroy it
+					message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
+					p->world->removeEntity(droppedItem->getEid());
+				}
+				else if (picked < droppedItem->theItem.count) { //not everything got picked up, update the data
+					droppedItem->theItem.count = droppedItem->theItem.count - picked;
+					message::play::send::entityMetadata(p, droppedItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &droppedItem->theItem) });
+				}
+			}
+		}
+	} //this is repeated for playerposition, maybe make a function?
 }
 void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch, bool onGround)
 {
@@ -2249,7 +2305,17 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 {
 	if (slot == -1)
 	{ //throw away from inventory, create entity
-		Log::info() << "create!" << "\n";
+		Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *clickedItem);
+
+		p->world->addEntity(theItem);
+
+		for (Player* seener : p->seenBy)
+		{
+			message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
+			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+		}
+		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
+		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 	}
 	else
 	{ //put in inventory

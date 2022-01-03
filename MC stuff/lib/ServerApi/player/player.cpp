@@ -242,7 +242,76 @@ Slot*& Player::_inventory::getHotbarSlot(bshort index)
 
 Slot*& Player::_inventory::getInventorySlot(bshort index)
 {
-	return this->slots[selectedHotbar];
+	return this->slots[index];
+}
+
+bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
+{
+	bshort indexMin = -1, minCount = MAXSHORT;
+	for (int i = 36; i < 45; i++) {
+		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
+			minCount = slots[i]->count;
+			indexMin = i;
+		}
+	}
+
+	for (int i = 9; i < 36; i++) {
+		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
+			minCount = slots[i]->count;
+			indexMin = i;
+		}
+	}
+
+	return indexMin;
+}
+bshort Player::_inventory::getFreeSlot()
+{
+	for (int i = 36; i < 45; i++) {
+		if (!this->slots[i]->isPresent())
+			return i;
+	}
+
+	for (int i = 9; i < 36; i++) {
+		if (!this->slots[i]->isPresent())
+			return i;
+	}
+
+	return -1;
+}
+
+unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
+{
+	Byte picked = 0;
+
+	unsigned index = this->getSlotWithLeastID(theItem.getItemId());
+
+	if (index != -1) {
+		Slot*& containedSlot = this->getInventorySlot(index);
+
+		if (containedSlot->count + theItem.count < 65) {
+			picked = theItem.count;
+			containedSlot->count = containedSlot->count + theItem.count;
+		}
+		else {
+			picked = 64 - containedSlot->count;
+			containedSlot->count = 64;
+		}
+
+		addedIndex = index;
+	}
+	else {
+		index = this->getFreeSlot();
+
+		if (this->getFreeSlot() != -1) {
+			picked = theItem.count;
+
+			this->setInventorySlot(index, new Slot(theItem));
+
+			addedIndex = index;
+		}
+	}
+
+	return picked;
 }
 
 void Player::_inventory::setInventorySlot(bshort index, Slot* slot)
@@ -306,7 +375,7 @@ void Player::setWorld(World* world)
 	//check for players in sight
 	for (Player* otherP : world->players)
 	{
-		if (otherP->state == ConnectionState::play && abs(otherP->chunkX - chunkX) <= viewDistance && abs(otherP->chunkZ - chunkZ) <= viewDistance)
+		if (otherP->state == ConnectionState::play && Position::inRange(otherP->chunkX, otherP->chunkZ, chunkX, chunkZ, viewDistance))
 		{
 			enterSight(otherP);
 			otherP->enterSight(this);

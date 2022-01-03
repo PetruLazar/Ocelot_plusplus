@@ -99,6 +99,11 @@ public:
 		Slot*& getHotbarSlot(bshort index);
 		Slot*& getInventorySlot(bshort index);
 
+		bshort getSlotWithLeastID(varInt itemID);
+		bshort getFreeSlot();
+
+		unsigned add(Slot& theItem, unsigned& addedIndex);
+
 		void setInventorySlot(bshort index, Slot* slot);
 	} *inventory;
 

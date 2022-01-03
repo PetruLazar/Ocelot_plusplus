@@ -282,6 +282,9 @@
     <ClInclude Include="json\json_decimal.h">
       <Filter>Header Files\json</Filter>
     </ClInclude>
+    <ClInclude Include="utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -475,6 +478,9 @@
     </ClCompile>
     <ClCompile Include="types\window.cpp">
       <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

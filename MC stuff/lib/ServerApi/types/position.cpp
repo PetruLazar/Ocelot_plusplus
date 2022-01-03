@@ -4,6 +4,21 @@ Position::Position() { };
 Position::Position(int x, int y, int z) : v((ull(x & 0x3ffffff) << 38) | (ull(z & 0x3ffffff) << 12) | ((ull)y & 0xfff)) { }
 Position::Position(const sf::Vector3i& v3) : v((ull(v3.x & 0x3ffffff) << 38) | (ull(v3.z & 0x3ffffff) << 12) | ((ull)v3.y & 0xfff)) { }
 
+bool Position::inRange(int chunkfX, int chunkfZ, int chunktX, int chunktZ, int viewDistance)
+{
+	return (abs(chunkfX - chunkfZ) <= viewDistance) && (abs(chunktX - chunktZ) <= viewDistance);
+}
+bool Position::inRange(bdouble fX, bdouble fY, bdouble fZ, bdouble tX, bdouble tY, bdouble tZ, bdouble range) 
+{
+	return (abs(fX - tX) <= range) && (abs(fY - tY) <= range) && (abs(fZ - tZ) <= range);
+}
+bool Position::inRange(Position fP, Position tP, bdouble range)
+{
+	//do this
+
+	return false;
+}
+
 void Position::read(std::fstream& fs)
 {
 	v.read(fs);
