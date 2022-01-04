@@ -283,18 +283,34 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 {
 	Byte picked = 0;
 
-	unsigned index = this->getSlotWithLeastID(theItem.getItemId());
+	bshort index, stackableSize = items::getStackableSize(theItem.getItemId());
+
+	if (stackableSize == 1) {
+		index = this->getFreeSlot();
+
+		if (this->getFreeSlot() != -1) {
+			picked = theItem.count;
+
+			this->setInventorySlot(index, new Slot(theItem));
+
+			addedIndex = index;
+		}
+
+		return picked;
+	}
+
+	index = this->getSlotWithLeastID(theItem.getItemId());
 
 	if (index != -1) {
 		Slot*& containedSlot = this->getInventorySlot(index);
 
-		if (containedSlot->count + theItem.count < 65) {
+		if (containedSlot->count + theItem.count < stackableSize + 1) {
 			picked = theItem.count;
 			containedSlot->count = containedSlot->count + theItem.count;
 		}
 		else {
-			picked = 64 - containedSlot->count;
-			containedSlot->count = 64;
+			picked = stackableSize - containedSlot->count;
+			containedSlot->count = stackableSize;
 		}
 
 		addedIndex = index;

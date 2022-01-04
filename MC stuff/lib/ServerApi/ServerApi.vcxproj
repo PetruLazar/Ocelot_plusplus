@@ -293,6 +293,7 @@
     <ClCompile Include="types\error.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
     <ClCompile Include="types\gametags.cpp" />
+    <ClCompile Include="types\item.cpp" />
     <ClCompile Include="types\mapIcon.cpp" />
     <ClCompile Include="types\mcString.cpp" />
     <ClCompile Include="types\node.cpp" />

@@ -1029,7 +1029,6 @@ enum class Item
 	minecraft_music_disc_ward = 1024,
 	minecraft_music_disc_11 = 1025,
 	minecraft_music_disc_wait = 1026,
-
 	minecraft_music_disc_otherside = 1027,
 	minecraft_music_disc_pigstep = 1028,
 	minecraft_trident = 1029,
@@ -1105,3 +1104,8 @@ enum class Item
 	minecraft_amethyst_cluster = 1099,
 	minecraft_pointed_dripstone = 1100,
 };
+
+namespace items
+{
+	short getStackableSize(int i);
+}
