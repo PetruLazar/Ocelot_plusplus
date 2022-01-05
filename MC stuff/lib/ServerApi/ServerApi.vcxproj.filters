@@ -386,9 +386,6 @@
     <ClCompile Include="types\uuid.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="types\varData.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
     <ClCompile Include="nbt\nbt.cpp">
       <Filter>Source Files\nbt</Filter>
     </ClCompile>
