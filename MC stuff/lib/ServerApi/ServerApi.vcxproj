@@ -296,7 +296,6 @@
     <ClCompile Include="types\mcString.cpp" />
     <ClCompile Include="types\node.cpp" />
     <ClCompile Include="types\particle.cpp" />
-    <ClCompile Include="types\position.cpp" />
     <ClCompile Include="types\queue.cpp" />
     <ClCompile Include="types\recipe.cpp" />
     <ClCompile Include="types\registry.cpp" />

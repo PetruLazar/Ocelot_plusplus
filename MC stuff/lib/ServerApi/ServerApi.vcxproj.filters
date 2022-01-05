@@ -371,9 +371,6 @@
     <ClCompile Include="types\node.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="types\position.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
     <ClCompile Include="types\queue.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>

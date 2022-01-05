@@ -18,24 +18,7 @@ BitArray::BitArray(ull entryCount, Byte bitsPerEntry, Byte* values) : entryCount
 {
 	for (int i = 0; i < entryCount; i++) setElement(i, values[i]);
 }
-BitArray::~BitArray()
-{
-	delete[] compactedData;
-}
 
-ull BitArray::getElement(ull i)
-{
-	return (compactedData[i / groupSize] >> (i % groupSize * bitsPerEntry)) & mask;
-}
-void BitArray::setElement(ull i, ull value)
-{
-	ull compactedArrayElement = i / groupSize,
-		long_index = (i % groupSize) * bitsPerEntry;
-	compactedData[compactedArrayElement] = compactedData[compactedArrayElement] & ~(mask << long_index) | ((value & mask) << long_index);
-}
-
-ull BitArray::getCompactedSize() const { return compactedSize; }
-blong* BitArray::getCompactedValues() const { return compactedData; }
 void BitArray::changeSize(ull newEntryCount)
 {
 	entryCount = newEntryCount;
@@ -64,27 +47,4 @@ void BitArray::changeBitsPerEntry(Byte newBitsPerEntry)
 BitArrayElement BitArray::operator[](ull i)
 {
 	return BitArrayElement(this, i);
-}
-
-void BitArray::write(std::ostream& f) const
-{
-	f.write((char*)compactedData, compactedSize << 3);
-	//for (int i = 0; i < compactedSize; i++) compactedData[i].write(f);
-}
-void BitArray::write(char*& buffer) const
-{
-	for (int i = 0; i < compactedSize; i++) compactedData[i].write(buffer);
-}
-void BitArray::read(std::istream& f)
-{
-	f.read((char*)compactedData, compactedSize << 3);
-	//for (int i = 0; i < compactedSize; i++) compactedData[i].read(f);
-}
-void BitArray::read(char*& buffer)
-{
-	for (int i = 0; i < compactedSize; i++) compactedData[i].read(buffer);
-}
-void BitArray::writeAsLight(char*& buffer) const
-{
-	for (ull i = 0; i < compactedSize; i++) *(((int64*&)buffer)++) = compactedData[i];
 }
