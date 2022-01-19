@@ -344,7 +344,7 @@ struct message
 			SERVER_API static void entityRotation(Player*, varInt eid, Angle yaw, Angle pitch, bool onGround);
 			SERVER_API static void vehicleMove(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch);
 			SERVER_API static void openBook(Player*, Hand whichHand);
-			SERVER_API static void openWindow(Player*, varInt winId, varInt winType, const Chat& winTitle);
+			SERVER_API static void openWindow(Player*, varInt winId, window::type winType, const Chat& winTitle);
 			SERVER_API static void openSignEditor(Player*, const Position& location);
 			SERVER_API static void ping(Player*, bint pingId);
 			SERVER_API static void craftRecipeResponse(Player*, Byte winId, const mcString& recipeIdentifier);

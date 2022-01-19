@@ -1,10 +1,9 @@
-#pragma once
 
-#include <vector>
+#pragma once
 
 namespace window
 {
-	enum type {
+	enum class type {
 		generic_9x1 = 0,
 		generic_9x2,
 		generic_9x3,
@@ -31,11 +30,5 @@ namespace window
 		stonecutter
 	};
 
-	static unsigned indexer = 1;
-	static std::vector<type> indexerType;
-
-	unsigned getID(type windowType);
-	type getWindowType(unsigned index);
+	unsigned getWindowSlotCount(type windowType);
 }
-
-

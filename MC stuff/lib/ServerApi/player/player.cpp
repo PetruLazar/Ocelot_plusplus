@@ -20,6 +20,7 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
 
 	inventory = new _inventory();
+	windower = new _windower();
 }
 Player::~Player()
 {
@@ -27,6 +28,7 @@ Player::~Player()
 	if (buffer) delete buffer;
 
 	delete inventory;
+	delete windower;
 }
 
 std::string Player::netId()
@@ -245,6 +247,16 @@ Slot*& Player::_inventory::getInventorySlot(bshort index)
 	return this->slots[index];
 }
 
+Slot*& Player::_inventory::getFloatingSlot()
+{
+	return this->floatingItem;
+}
+void Player::_inventory::setFloatingSlot(Slot* newSlot)
+{
+	delete this->floatingItem;
+	this->floatingItem = newSlot;
+}
+
 bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
 {
 	bshort indexMin = -1, minCount = MAXSHORT;
@@ -288,7 +300,7 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 	if (stackableSize == 1) {
 		index = this->getFreeSlot();
 
-		if (this->getFreeSlot() != -1) {
+		if (index != -1) {
 			picked = theItem.count;
 
 			this->setInventorySlot(index, new Slot(theItem));
@@ -318,7 +330,7 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 	else {
 		index = this->getFreeSlot();
 
-		if (this->getFreeSlot() != -1) {
+		if (index != -1) {
 			picked = theItem.count;
 
 			this->setInventorySlot(index, new Slot(theItem));
@@ -329,11 +341,47 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 
 	return picked;
 }
+void Player::_inventory::swapSlots(bshort a, bshort b)
+{
+	Slot* aSlot = this->getInventorySlot(a);
+	Slot* bSlot = this->getInventorySlot(b);
+	
+	std::swap(aSlot, bSlot);
+
+	Slot* newA = new Slot(*aSlot); //idfk
+	Slot* newB = new Slot(*bSlot);
+	this->setInventorySlot(a, newA);
+	this->setInventorySlot(b, newB);
+}
 
 void Player::_inventory::setInventorySlot(bshort index, Slot* slot)
 {
 	delete this->slots[index];
 	this->slots[index] = slot;
+}
+
+unsigned Player::_windower::open(window::type theWindow)
+{
+	this->que.emplace(std::make_pair(theWindow, indexer));
+	return indexer++;
+}
+void Player::_windower::close(unsigned theID)
+{
+	if (theID == this->que.front().second)
+	{
+		this->que.pop();
+		indexer--;
+	}
+	else
+		Log::warn() << "Player closed a not-last-opened window." << Log::endl;
+}
+window::type Player::_windower::getLatest(unsigned theID)
+{
+	if (theID == this->que.back().second)
+		return que.back().first;
+	
+	Log::warn() << "Player got a wrong ID latest." << Log::endl;
+	return que.back().first;
 }
 
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
