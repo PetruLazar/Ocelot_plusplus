@@ -10,6 +10,7 @@
 #include "../types/basic.h"
 #include "../server/log.h"
 #include "../mcexception.h"
+#include "../types/window.h"
 
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
 #define prepareSendMacroNoDecl(x) data = new char[x] + 6; start = data
@@ -192,6 +193,10 @@ void message::login::receive::encryptionResponse(Player*, varInt sharedSecretLen
 	throw protocolError("Encryption not supported");
 }
 
+void message::play::send::spawnEntity(Player* p, Entity::entity* entity, bshort velocityX, bshort velocityY, bshort velocityZ)
+{
+	message::play::send::spawnEntity(p, entity->getEid(), *entity->euuid, entity->getType(), entity->x, entity->y, entity->z, entity->pitch, entity->yaw, entity->data, velocityX, velocityY, velocityZ);
+}
 void message::play::send::spawnEntity(Player* p, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle pitch, Angle yaw, bint Data, bshort velocityX, bshort velocityY, bshort velocityZ)
 {
 	varInt id = (int)id::spawnEntity;
@@ -1031,6 +1036,19 @@ void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX
 
 	finishSendMacro;
 }
+void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equipment)
+{
+	varInt id = (int)id::entityEquipment;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+
+	equipment->unSet();
+	equipment->write(data);
+
+	finishSendMacro;
+}
 void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equipments)
 {
 	varInt id = (int)id::entityEquipment;
@@ -1690,6 +1708,16 @@ void message::play::send::camera(Player* p, varInt camId)
 
 	finishSendMacro;
 }
+void message::play::send::destroyEntity(Player* p, varInt eid) {
+	varInt id = (int)id::destroyEntities;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	varInt(1).write(data);
+	eid.write(data);
+
+	finishSendMacro;
+}
 void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 {
 	varInt id = (int)id::destroyEntities;
@@ -1779,14 +1807,14 @@ void message::play::send::openBook(Player* p, Hand whichHand)
 
 	finishSendMacro;
 }
-void message::play::send::openWindow(Player* p, varInt winId, varInt winType, const Chat& winTitle)
+void message::play::send::openWindow(Player* p, varInt winId, window::type winType, const Chat& winTitle)
 {
 	varInt id = (int)id::openWindow;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	winId.write(data);
-	winType.write(data);
+	varInt(static_cast<int>(winType)).write(data);
 	winTitle.write(data);
 
 	finishSendMacro;
@@ -1882,66 +1910,17 @@ void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte butt
 }
 void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
 {
-	Log::info() << "m: " << mode << " b : " << (int)button << " cs : " << (int)clickedSlot << " l : " << length << Log::endl;
+	Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: clickWindow" << Log::endl;
+
+	Log::info() << "WindowID: " << (int)windowID << " StateID: "<<stateID<< Log::endl;
+	Log::info() << "Mode: " << mode << "\tButton: " << (int)button << "\tClickedSlot : " << (int)clickedSlot << " Length: " << length << Log::endl;
 	for (int i = 0; i < length; i++)
 	{
-		Log::info() << "-i: " << i << " sn: " << slotNumbers[i] << Log::endl;
+		Log::info() << "\t"<< i << " sn: " << slotNumbers[i] << Log::endl;
 	}
 	Log::info() << Log::endl;
 
-	int inventoryFirstSlotIndex = 0;
-
-	switch (window::getWindowType(windowID))
-	{
-	case window::type::generic_9x1:
-	case window::type::generic_3x3:
-		inventoryFirstSlotIndex = 9;
-		break;
-	case window::type::generic_9x2:
-		inventoryFirstSlotIndex = 18;
-		break;
-	case window::type::shulker_box:
-	case window::type::generic_9x3:
-		inventoryFirstSlotIndex = 27;
-		break;
-	case window::type::generic_9x4:
-		inventoryFirstSlotIndex = 36;
-		break;
-	case window::type::generic_9x5:
-		inventoryFirstSlotIndex = 45;
-		break;
-	case window::type::generic_9x6:
-		inventoryFirstSlotIndex = 54;
-		break;
-	case window::type::beacon:
-	case window::type::lectern:
-		inventoryFirstSlotIndex = 1;
-		break;
-	case window::type::anvil:
-	case window::type::smoker:
-	case window::type::furnace:
-	case window::type::blast_furnace:
-	case window::type::cartography:
-	case window::type::grindstone:
-	case window::type::smithing:
-	case window::type::merchant:
-		inventoryFirstSlotIndex = 3;
-		break;
-	case window::type::brewing_stand:
-	case window::type::hopper:
-		inventoryFirstSlotIndex = 5;
-		break;
-	case window::type::crafting:
-		inventoryFirstSlotIndex = 10;
-		break;
-	case window::type::loom:
-		inventoryFirstSlotIndex = 4;
-		break;
-	case window::type::enchantment:
-	case window::type::stonecutter:
-		inventoryFirstSlotIndex = 2;
-		break;
-	}
+	int inventoryFirstSlotIndex = (windowID == 0) ? 9 : window::getWindowSlotCount(p->windower->getLatest(windowID));
 
 	switch (mode)
 	{
@@ -1950,26 +1929,64 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		{
 			if (clickedSlot == -999)
 			{ //drop whole slot
+				Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getFloatingSlot());
+				p->inventory->setFloatingSlot(new Slot());
 
+				p->world->addEntity(theItem);
+
+				for (Player* seener : p->seenBy)
+				{
+					message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
+					message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+				}
+				message::play::send::spawnEntity(p, theItem, 100, 0, 100);
+				message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 			}
 			else
-			{ //select whole slot
-		  //if (p->floatingItem == nullptr) {
-		  //	p->floatingItem = p->slots[clickedSlot - inventoryFirstSlotIndex];
-		  //	p->slots[clickedSlot - inventoryFirstSlotIndex] = nullptr;
-		  //}
-
+			{ //select or place slot
+				if (p->inventory->getFloatingSlot()->isPresent()) {
+					p->inventory->setInventorySlot(clickedSlot, new Slot(*p->inventory->getFloatingSlot()));
+					p->inventory->setFloatingSlot(new Slot());
+				}
+				else {
+					p->inventory->setFloatingSlot(new Slot(*p->inventory->getInventorySlot(clickedSlot)));
+					p->inventory->setInventorySlot(clickedSlot, new Slot());
+				}
 			}
 		}
 		else
 		{ //button == 1
 			if (clickedSlot == -999)
 			{ //drop one item from slot
+				Slot* floatingSlot = p->inventory->getFloatingSlot();
+				floatingSlot->count--; //decrease the floating item count;
 
+				Slot dropSlot = *floatingSlot;
+				dropSlot.count = 1; //copy the floating item, but with 1 count
+
+				Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), dropSlot);
+
+				p->world->addEntity(theItem);
+
+				for (Player* seener : p->seenBy)
+				{
+					message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
+					message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+				}
+				message::play::send::spawnEntity(p, theItem, 100, 0, 100);
+				message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 			}
 			else
 			{ //select half from slot
+				Slot* selectedSlot = p->inventory->getInventorySlot(clickedSlot);
+				Slot* newFloatingSlot = new Slot(*selectedSlot);
+				
+				newFloatingSlot->count /= 2;
+				if (selectedSlot->count % 2 == 1)
+					newFloatingSlot->count++;
 
+				p->inventory->setFloatingSlot(newFloatingSlot);
+				selectedSlot->count = selectedSlot->count / 2;
 			}
 		}
 		break;
@@ -1981,11 +1998,16 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	case 2:
 		if (button == 40)
 		{ //offhand swap
+			bshort positionIndex = p->inventory->getSelectedIndex(true);
 
+			p->inventory->swapSlots(45, positionIndex);
+
+			message::play::send::setSlot(p, 0, 0, 45, *p->inventory->getInventorySlot(45));
+			message::play::send::setSlot(p, 0, 0, positionIndex, *p->inventory->getInventorySlot(positionIndex));
 		}
 		else
 		{ //button is hotbar index from 0
-
+			
 		}
 		break;
 	case 3:
@@ -1994,16 +2016,40 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 
 		break;
 	case 4:
-		if (clickedSlot != -999)
-		{ //the player clicked outside empty-handed
-			if (button == 0)
-			{ //drop one from whole slot
+		if (button == 0)
+		{ //q, drop one from whole slot
+			Slot* selectedSlot = p->inventory->getInventorySlot(clickedSlot);
+			selectedSlot->count--; //decrease the floating item count;
 
-			}
-			else
-			{ //button == 1 drop whole slot
+			Slot dropSlot = *selectedSlot;
+			dropSlot.count = 1; //copy the floating item, but with 1 count
 
+			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), dropSlot);
+
+			p->world->addEntity(theItem);
+
+			for (Player* seener : p->seenBy)
+			{
+				message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
+				message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 			}
+			message::play::send::spawnEntity(p, theItem, 100, 0, 100);
+			message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+		}
+		else
+		{ //ctrl + q, button == 1 drop whole slot
+			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getInventorySlot(clickedSlot));
+			p->inventory->setInventorySlot(clickedSlot, new Slot());
+
+			p->world->addEntity(theItem);
+
+			for (Player* seener : p->seenBy)
+			{
+				message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
+				message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+			}
+			message::play::send::spawnEntity(p, theItem, 100, 0, 100);
+			message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
 		break;
 	case 5:
@@ -2015,7 +2061,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		case 4: //start right mouse drag
 
 			break;
-		case 8: //start middle mouse drag (creative players in non-creative players) (bugged)
+		case 8: //start middle mouse drag (creative players in non-creative players inv) (bugged)
 
 			break;
 		case 1: //add slot left mouse drag
@@ -2024,7 +2070,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		case 5: //add slot right mouse drag
 
 			break;
-		case 9: //add slot middle mouse drag (creative players in non-creative players) (bugged)
+		case 9: //add slot middle mouse drag (creative players in non-creative players inv) (bugged)
 
 			break;
 		case 2: //end left mouse drag
@@ -2033,7 +2079,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		case 6: //end right mouse drag
 
 			break;
-		case 10: //end slot middle mouse drag (creative players in non-creative players) (bugged)
+		case 10: //end slot middle mouse drag (creative players in non-creative players inv) (bugged)
 
 			break;
 		}
@@ -2043,11 +2089,12 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 
 		break;
 	}
-
-	Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: clickWindow" << Log::endl;
 }
 void message::play::receive::closeWindow(Player* p, Byte winId)
 {
+	if(winId != 0)
+		p->windower->close(winId);
+
 	message::play::send::closeWindow(p, winId);
 }
 void message::play::receive::editBook(Player* p, varInt hand, varInt count, const std::vector<mcString>& pages, bool hasTitle, const mcString& title)
@@ -2139,10 +2186,38 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 		return;
 
 	for (Player* seener : p->seenBy)
-		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->X) * 4096), short((feetY - p->Y) * 4096), short((Z - p->Z) * 4096), onGround));
+		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->x) * 4096), short((feetY - p->y) * 4096), short((Z - p->z) * 4096), onGround));
 
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
+
+	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item)) {
+		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
+		{
+			Entity::item* droppedItem = static_cast<Entity::item*>(groundItem);
+
+			if (droppedItem->spawnedTimeStamp + 1500 > utility::time::timeSinceEpoch())
+				continue;
+
+			unsigned addedIndex = -1;
+			unsigned picked = p->inventory->add(droppedItem->theItem, addedIndex);
+
+			if (picked != 0) {
+				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), picked);
+
+				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, *p->inventory->getInventorySlot(addedIndex));
+
+				if (picked == droppedItem->theItem.count) { //all of the entity got picked up, destroy it
+					message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
+					p->world->removeEntity(droppedItem->getEid());
+				}
+				else if (picked < droppedItem->theItem.count) { //not everything got picked up, update the data
+					droppedItem->theItem.count = droppedItem->theItem.count - picked;
+					message::play::send::entityMetadata(p, droppedItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &droppedItem->theItem) });
+				}
+			}
+		}
+	}
 }
 void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdouble Y, bdouble Z, bfloat yaw, bfloat pitch, bool onGround)
 {
@@ -2151,12 +2226,40 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 
 	for (Player* seener : p->seenBy)
 	{
-		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->getEid(), short((X - p->X) * 4096), short((Y - p->Y) * 4096), short((Z - p->Z) * 4096), (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->getEid(), short((X - p->x) * 4096), short((Y - p->y) * 4096), short((Z - p->z) * 4096), (float)yaw, (float)pitch, onGround));
 		ignoreExceptions(message::play::send::entityHeadLook(seener, p->getEid(), (float)p->yaw));
 	}
 	p->updatePosition(X, Y, Z);
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
+
+	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item)) {
+		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
+		{
+			Entity::item* droppedItem = static_cast<Entity::item*>(groundItem);
+
+			if (droppedItem->spawnedTimeStamp + 1500 > utility::time::timeSinceEpoch())
+				continue;
+
+			unsigned addedIndex = -1;
+			unsigned picked = p->inventory->add(droppedItem->theItem, addedIndex);
+
+			if (picked != 0) {
+				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), picked);
+
+				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, *p->inventory->getInventorySlot(addedIndex));
+
+				if (picked == droppedItem->theItem.count) { //all of the entity got picked up, destroy it
+					message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
+					p->world->removeEntity(droppedItem->getEid());
+				}
+				else if (picked < droppedItem->theItem.count) { //not everything got picked up, update the data
+					droppedItem->theItem.count = droppedItem->theItem.count - picked;
+					message::play::send::entityMetadata(p, droppedItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &droppedItem->theItem) });
+				}
+			}
+		}
+	} //this is repeated for playerposition, maybe make a function?
 }
 void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch, bool onGround)
 {
@@ -2211,18 +2314,28 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
 	p->inventory->setSelectedSlot(slot);
 
-	std::vector<Equipment*> eqp = { new Equipment(0, p->inventory->getSelectedSlot()) };
+	Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 
 	for (Player* seener : p->seenBy)
 		message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-	delete eqp[0];
+	delete eqp;
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
 	if (slot == -1)
 	{ //throw away from inventory, create entity
-		Log::info() << "create!" << "\n";
+		Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *clickedItem);
+
+		p->world->addEntity(theItem);
+
+		for (Player* seener : p->seenBy)
+		{
+			message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
+			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
+		}
+		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
+		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 	}
 	else
 	{ //put in inventory
@@ -2230,12 +2343,12 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 
 		if (p->inventory->getSelectedIndex() == slot)
 		{
-			std::vector<Equipment*> eqp = { new Equipment(0, clickedItem) };
+			Equipment* eqp = new Equipment(0, clickedItem);
 
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-			delete eqp[0];
+			delete eqp;
 		}
 	}
 }
@@ -2288,24 +2401,24 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		if (playerItem->count == 0) //empty slot
 			return;
 
-		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
-		p->world->entities.emplace_back(theItem);
+		Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *playerItem);
+		p->world->addEntity(theItem);
 
 		for (Player* seener : p->seenBy)
 		{
-			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
 			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
-		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
 		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
 
-		std::vector<Equipment*> eqp = { new Equipment(0, p->inventory->getSelectedSlot()) };
+		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 		for (Player* seener : p->seenBy)
 			message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-		delete eqp[0];
+		delete eqp;
 	}
 	break;
 	case playerDigging::dropItem:
@@ -2315,17 +2428,17 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		if (playerItem->count == 0) //empty slot
 			return;
 
-		Entity::item* theItem = new Entity::item(Entity::entity(&p->world->eidDispenser), *playerItem);
+		Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *playerItem);
 		theItem->theItem.count = 1;
 
-		p->world->entities.emplace_back(theItem);
+		p->world->addEntity(theItem);
 
 		for (Player* seener : p->seenBy)
 		{
-			message::play::send::spawnEntity(seener, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y, p->Z, 0.0, 0.0, 0.0, 0, 0, 0);
+			message::play::send::spawnEntity(seener, theItem, 100, 0, 100);
 			message::play::send::entityMetadata(seener, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 		}
-		message::play::send::spawnEntity(p, theItem->getEid(), *theItem->euuid, Entity::type::minecraft_item, p->X, p->Y + 1.25, p->Z, 0.7, 0.6, 1, 100, 0, 100);
+		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
 		playerItem->count -= 1;
@@ -2333,11 +2446,11 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		{
 			p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
 
-			std::vector<Equipment*> eqp = { new Equipment(0, p->inventory->getSelectedSlot()) };
+			Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 			for (Player* seener : p->seenBy)
 				message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
-			delete eqp[0];
+			delete eqp;
 		}
 	}
 	break;
@@ -2345,8 +2458,15 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 
 		break;
 	case playerDigging::swapItemInHand:
+	{
+		bshort positionIndex = p->inventory->getSelectedIndex(true);
 
-		break;
+		p->inventory->swapSlots(45, positionIndex);
+
+		message::play::send::setSlot(p, 0, 0, 45, *p->inventory->getInventorySlot(45));
+		message::play::send::setSlot(p, 0, 0, positionIndex, *p->inventory->getInventorySlot(positionIndex));
+	}
+	break;
 	}
 }
 void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId, varInt jumpBoost)
@@ -2775,8 +2895,6 @@ void message::dispatch(Player* p, char* data, uint size)
 			windowID = *(data++);
 
 			play::receive::closeWindow(p, windowID);
-
-			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet : close window" << Log::endl;
 		}
 		break;
 		case play::id::pluginMessage_serverbound:

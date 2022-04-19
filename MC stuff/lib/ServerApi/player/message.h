@@ -293,7 +293,8 @@ struct message
 
 		struct send
 		{
-			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle pitch, Angle yaw, bint data, bshort velocityX, bshort velocityY, bshort velocityZ);
+			SERVER_API static void spawnEntity(Player*, Entity::entity* entity, bshort velocityX = 0, bshort velocityY = 0, bshort velocityZ = 0);
+			SERVER_API static void spawnEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle pitch, Angle yaw, bint data, bshort velocityX = 0, bshort velocityY = 0, bshort velocityZ = 0);
 			SERVER_API static void spawnXPorb(Player*, varInt eid, bdouble x, bdouble y, bdouble z, bshort xpCount);
 			SERVER_API static void spawnLivingEntity(Player*, varInt eid, const mcUUID& uuid, Entity::type type, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, Angle headPitch, bshort velocityX, bshort velocityY, bshort velocityZ);
 			SERVER_API static void spawnPainting(Player*, varInt eid, const mcUUID& uuid, Entity::Painting::motive motive, const Position& location, Entity::direction direction);
@@ -343,7 +344,7 @@ struct message
 			SERVER_API static void entityRotation(Player*, varInt eid, Angle yaw, Angle pitch, bool onGround);
 			SERVER_API static void vehicleMove(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch);
 			SERVER_API static void openBook(Player*, Hand whichHand);
-			SERVER_API static void openWindow(Player*, varInt winId, varInt winType, const Chat& winTitle);
+			SERVER_API static void openWindow(Player*, varInt winId, window::type winType, const Chat& winTitle);
 			SERVER_API static void openSignEditor(Player*, const Position& location);
 			SERVER_API static void ping(Player*, bint pingId);
 			SERVER_API static void craftRecipeResponse(Player*, Byte winId, const mcString& recipeIdentifier);
@@ -355,6 +356,7 @@ struct message
 			SERVER_API static void facePlayer(Player*, varInt pivot, bdouble targetX, bdouble targetY, bdouble targetZ, bool isEntity, varInt eid, varInt targetPivot);
 			SERVER_API static void playerPosAndLook(Player*, bdouble x, bdouble y, bdouble z, bfloat yaw, bfloat pitch, Byte flags, bool dismountVehicle);
 			SERVER_API static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, std::vector<mcString>* array1, varInt size2, std::vector<mcString>* array2);
+			SERVER_API static void destroyEntity(Player*, varInt eid); //singular of destroyEntities
 			SERVER_API static void destroyEntities(Player*, varInt count, varInt* eids);
 			SERVER_API static void removeEntityEffect(Player*, varInt eid, Byte effectId);
 			SERVER_API static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
@@ -377,6 +379,7 @@ struct message
 			SERVER_API static void entityMetadata(Player*, varInt eid, const std::vector<Entity::Metadata>& metadatas);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
+			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment* equipment); //singular of entityEquipment
 			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
 			SERVER_API static void entityEquipment(Player*, varInt eid, const std::vector<Equipment*>& equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);

@@ -45,6 +45,10 @@ namespace recipe
 	private:
 		static Ingredient* getItemOrTag(json* data);
 
+		static void addRecipe(const mcString& id, recipe::Recipe* recipe);
+		static void loadStaticRecipes();
+		static void loadDynamicRecipes();
+
 	public:
 		static std::vector<Recipe*>* recipes;
 		static std::vector<mcString>* recipesIDs;

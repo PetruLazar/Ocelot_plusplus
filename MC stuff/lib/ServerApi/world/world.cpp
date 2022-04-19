@@ -401,6 +401,46 @@ World::~World()
 	//update characteristics.bin
 }
 
+eidDispenser::Entity* World::getEidDispenser()
+{
+	return &this->eidDispenser;
+}
+void World::addEntity(Entity::entity* entity)
+{
+	entities.emplace_back(entity);
+}
+bool World::removeEntity(varInt eid)
+{
+	unsigned removingEntity = -1;
+
+	for (unsigned i = 0; i < this->entities.size(); i++) {
+		if (entities[i]->getEid() == eid) {
+			removingEntity = i;
+			break;
+		}
+	}
+
+	if (removingEntity != -1) {
+		delete entities[removingEntity];
+		entities.erase(entities.begin() + removingEntity);
+
+		return true;
+	}
+
+	return false;
+}
+std::vector<Entity::entity*> World::getEntitiesByType(Entity::type theType)
+{
+	std::vector<Entity::entity*> typeEntities;
+
+	for (Entity::entity* entity : this->entities) {
+		if (entity->getType() == theType)
+			typeEntities.emplace_back(entity);
+	}
+
+	return typeEntities;
+}
+
 Chunk* World::generate_def(World* world, int X, int Z)
 {
 	int height = world->height;

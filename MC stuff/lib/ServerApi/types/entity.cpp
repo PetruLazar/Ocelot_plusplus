@@ -145,11 +145,11 @@ namespace eidDispenser
 
 namespace Entity //all entity classes functions
 {
-	entity::entity(eidDispenser::General *eidDispenser, Byte attributes, varInt airTicks, Chat *customName, bool isCustomNameVisible, bool isSilent, bool hasGravity, pose thePose, varInt ticksFrozen)
-		: attributes(attributes), airTicks(airTicks), customName(customName), isCustomNameVisible(isCustomNameVisible), isSilent(isSilent), hasGravity(hasGravity), thePose(thePose), ticksFrozen(ticksFrozen), euuid(new mcUUID(mcUUID::entity)), eidDispenser(eidDispenser), eid(eidDispenser->Alloc()) {}
+	entity::entity(eidDispenser::General* eidDispenser, Entity::type type, bdouble spawnX, bdouble spawnY, bdouble spawnZ, Angle pitch, Angle yaw, bint data, Byte attributes, varInt airTicks, Chat* customName, bool isCustomNameVisible, bool isSilent, bool hasGravity, pose thePose, varInt ticksFrozen)
+		: x(spawnX), y(spawnY), z(spawnZ), pitch(pitch), yaw(yaw), data(data), attributes(attributes), airTicks(airTicks), customName(customName), isCustomNameVisible(isCustomNameVisible), isSilent(isSilent), hasGravity(hasGravity), thePose(thePose), ticksFrozen(ticksFrozen), euuid(new mcUUID(mcUUID::entity)), eidDispenser(eidDispenser), eid(eidDispenser->Alloc()), type(type) {}
 
 	entity::entity(const entity& e)
-		: attributes(e.attributes), airTicks(e.airTicks), customName(e.customName), isCustomNameVisible(e.isCustomNameVisible), isSilent(e.isSilent), hasGravity(e.hasGravity), thePose(e.thePose), ticksFrozen(e.ticksFrozen), euuid(new mcUUID(mcUUID::entity)), eidDispenser(e.eidDispenser), eid(e.eidDispenser->Alloc()) {}
+		: x(e.x), y(e.y), z(e.z), pitch(e.pitch), yaw(e.yaw), data(e.data), attributes(e.attributes), airTicks(e.airTicks), customName(e.customName), isCustomNameVisible(e.isCustomNameVisible), isSilent(e.isSilent), hasGravity(e.hasGravity), thePose(e.thePose), ticksFrozen(e.ticksFrozen), euuid(new mcUUID(mcUUID::entity)), eidDispenser(e.eidDispenser), eid(e.eidDispenser->Alloc()), type(e.type) {}
 
 	entity::~entity() {
 		eidDispenser->Free(eid);
@@ -157,4 +157,5 @@ namespace Entity //all entity classes functions
 	}
 
 	varInt entity::getEid() { return eid; }
+	Entity::type entity::getType() { return type; }
 }

@@ -7,6 +7,9 @@
 #include "../types/queue.h"
 #include "../types/entity.h"
 #include "../types/slot.h"
+#include "../types/window.h"
+
+#include <queue>
 
 enum class ConnectionState : Byte
 {
@@ -75,8 +78,6 @@ public:
 
 	//world and position information
 	World* world; // pointer to the world the player is in
-	bdouble X, Y, Z;
-	bfloat yaw, pitch;
 	int chunkX, chunkZ;
 	bool onGround;
 	void updatePosition(bdouble X, bdouble Y, bdouble Z);
@@ -101,8 +102,29 @@ public:
 		Slot*& getHotbarSlot(bshort index);
 		Slot*& getInventorySlot(bshort index);
 
+		Slot*& getFloatingSlot();
+		void setFloatingSlot(Slot* newSlot);
+
+		bshort getSlotWithLeastID(varInt itemID);
+		bshort getFreeSlot();
+
+		unsigned add(Slot& theItem, unsigned& addedIndex);
+		void swapSlots(bshort a, bshort b);
+
 		void setInventorySlot(bshort index, Slot* slot);
 	} *inventory;
+
+	class _windower {
+	private:
+		std::queue<std::pair<window::type, unsigned>> que;
+		unsigned indexer = 1;
+
+	public:
+		unsigned open(window::type theWindow);
+		void close(unsigned ID);
+
+		window::type getLatest(unsigned ID);
+	} *windower;
 
 	//player info
 	varInt ping;

@@ -12,7 +12,7 @@ const char* socketDisconnected = "Socket Disconnected unexpectedly";
 std::vector<Player*> Player::players;
 eidDispenser::Player Player::eidDispenser;
 
-Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser)
+Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser, Entity::type::minecraft_player, 0, 0, 0, .0, .0)
 {
 	socket->setBlocking(false);
 
@@ -20,6 +20,7 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
 
 	inventory = new _inventory();
+	windower = new _windower();
 }
 Player::~Player()
 {
@@ -27,6 +28,7 @@ Player::~Player()
 	if (buffer) delete buffer;
 
 	delete inventory;
+	delete windower;
 }
 
 std::string Player::netId()
@@ -176,9 +178,9 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		}
 	}
 
-	Player::X = X;
-	Player::Y = Y;
-	Player::Z = Z;
+	Player::x = X;
+	Player::y = Y;
+	Player::z = Z;
 	Player::chunkX = newChunkX;
 	Player::chunkZ = newChunkZ;
 }
@@ -242,7 +244,114 @@ Slot*& Player::_inventory::getHotbarSlot(bshort index)
 
 Slot*& Player::_inventory::getInventorySlot(bshort index)
 {
-	return this->slots[selectedHotbar];
+	return this->slots[index];
+}
+
+Slot*& Player::_inventory::getFloatingSlot()
+{
+	return this->floatingItem;
+}
+void Player::_inventory::setFloatingSlot(Slot* newSlot)
+{
+	delete this->floatingItem;
+	this->floatingItem = newSlot;
+}
+
+bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
+{
+	bshort indexMin = -1, minCount = MAXSHORT;
+	for (int i = 36; i < 45; i++) {
+		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
+			minCount = slots[i]->count;
+			indexMin = i;
+		}
+	}
+
+	for (int i = 9; i < 36; i++) {
+		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
+			minCount = slots[i]->count;
+			indexMin = i;
+		}
+	}
+
+	return indexMin;
+}
+bshort Player::_inventory::getFreeSlot()
+{
+	for (int i = 36; i < 45; i++) {
+		if (!this->slots[i]->isPresent())
+			return i;
+	}
+
+	for (int i = 9; i < 36; i++) {
+		if (!this->slots[i]->isPresent())
+			return i;
+	}
+
+	return -1;
+}
+
+unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
+{
+	Byte picked = 0;
+
+	bshort index, stackableSize = items::getStackableSize(theItem.getItemId());
+
+	if (stackableSize == 1) {
+		index = this->getFreeSlot();
+
+		if (index != -1) {
+			picked = theItem.count;
+
+			this->setInventorySlot(index, new Slot(theItem));
+
+			addedIndex = index;
+		}
+
+		return picked;
+	}
+
+	index = this->getSlotWithLeastID(theItem.getItemId());
+
+	if (index != -1) {
+		Slot*& containedSlot = this->getInventorySlot(index);
+
+		if (containedSlot->count + theItem.count < stackableSize + 1) {
+			picked = theItem.count;
+			containedSlot->count = containedSlot->count + theItem.count;
+		}
+		else {
+			picked = stackableSize - containedSlot->count;
+			containedSlot->count = stackableSize;
+		}
+
+		addedIndex = index;
+	}
+	else {
+		index = this->getFreeSlot();
+
+		if (index != -1) {
+			picked = theItem.count;
+
+			this->setInventorySlot(index, new Slot(theItem));
+
+			addedIndex = index;
+		}
+	}
+
+	return picked;
+}
+void Player::_inventory::swapSlots(bshort a, bshort b)
+{
+	Slot* aSlot = this->getInventorySlot(a);
+	Slot* bSlot = this->getInventorySlot(b);
+	
+	std::swap(aSlot, bSlot);
+
+	Slot* newA = new Slot(*aSlot); //idfk
+	Slot* newB = new Slot(*bSlot);
+	this->setInventorySlot(a, newA);
+	this->setInventorySlot(b, newB);
 }
 
 void Player::_inventory::setInventorySlot(bshort index, Slot* slot)
@@ -251,18 +360,42 @@ void Player::_inventory::setInventorySlot(bshort index, Slot* slot)
 	this->slots[index] = slot;
 }
 
+unsigned Player::_windower::open(window::type theWindow)
+{
+	this->que.emplace(std::make_pair(theWindow, indexer));
+	return indexer++;
+}
+void Player::_windower::close(unsigned theID)
+{
+	if (theID == this->que.front().second)
+	{
+		this->que.pop();
+		indexer--;
+	}
+	else
+		Log::warn() << "Player closed a not-last-opened window." << Log::endl;
+}
+window::type Player::_windower::getLatest(unsigned theID)
+{
+	if (theID == this->que.back().second)
+		return que.back().first;
+	
+	Log::warn() << "Player got a wrong ID latest." << Log::endl;
+	return que.back().first;
+}
+
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
 {
-	X = tpX;
-	Y = tpY;
-	Z = tpZ;
+	x = tpX;
+	y = tpY;
+	z = tpZ;
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, yaw, pitch, 0, false);
 }
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloat tpPitch)
 {
-	X = tpX;
-	Y = tpY;
-	Z = tpZ;
+	x = tpX;
+	y = tpY;
+	z = tpZ;
 	yaw = tpYaw;
 	pitch = tpPitch;
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, tpYaw, tpPitch, 0, false);
@@ -273,9 +406,9 @@ void Player::setWorld(World* world)
 	Log::debug(DEBUG_SIGHT) << '\n' << this << " is entering world " << world->name;
 	//set world and position
 	this->world = world;
-	X = world->spawn.X;
-	Y = world->spawn.Y;
-	Z = world->spawn.Z;
+	x = world->spawn.X;
+	y = world->spawn.Y;
+	z = world->spawn.Z;
 	chunkX = world->spawn.ChunkX;
 	chunkZ = world->spawn.ChunkZ;
 	yaw = world->spawn.Yaw;
@@ -295,7 +428,7 @@ void Player::setWorld(World* world)
 		//message::play::send::chunkData(this, x, z);
 	}
 
-	message::play::send::playerPosAndLook(this, X, Y, Z, yaw, pitch, 0, false);
+	message::play::send::playerPosAndLook(this, x, y, z, yaw, pitch, 0, false);
 
 	//send the selected slot
 	message::play::send::heldItemChange(this, inventory->getSelectedIndex());
@@ -306,7 +439,7 @@ void Player::setWorld(World* world)
 	//check for players in sight
 	for (Player* otherP : world->players)
 	{
-		if (otherP->state == ConnectionState::play && abs(otherP->chunkX - chunkX) <= viewDistance && abs(otherP->chunkZ - chunkZ) <= viewDistance)
+		if (otherP->state == ConnectionState::play && Position::inRange(otherP->chunkX, otherP->chunkZ, chunkX, chunkZ, viewDistance))
 		{
 			enterSight(otherP);
 			otherP->enterSight(this);
@@ -355,7 +488,7 @@ void Player::changeWorld(const mcString& worldName)
 void Player::enterSight(Player* other)
 {
 	Log::debug(DEBUG_SIGHT) << "Player " << other << " entering sight of " << this << Log::endl;
-	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->X, other->Y, other->Z, (float)other->yaw, (float)other->pitch));
+	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->x, other->y, other->z, (float)other->yaw, (float)other->pitch));
 	ignoreExceptions(message::play::send::entityHeadLook(this, other->getEid(), (float)other->yaw));
 	seenBy.emplace_back(other);
 	Log::debug(DEBUG_SIGHT) << "Sight of " << this << " is now " << seenBy.size() << Log::endl;

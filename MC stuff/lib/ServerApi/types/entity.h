@@ -8,6 +8,8 @@
 #include "slot.h"
 #include "position.h"
 #include "particle.h"
+#include "angle.h"
+#include "../utilities.h"
 
 class Rotation3f
 {
@@ -338,8 +340,9 @@ namespace Entity {
 	{
 	protected:
 		varInt eid;
-
 		eidDispenser::General *eidDispenser;
+
+		Entity::type type;
 
 	public:
 		mcUUID* euuid;
@@ -353,57 +356,60 @@ namespace Entity {
 		pose thePose;
 		varInt ticksFrozen;
 
-		entity(eidDispenser::General *eidDispenser, Byte attributes = 0, varInt airTicks = 300, Chat *customName = nullptr, bool isCustomNameVisible = false,
+		bdouble x, y, z;
+		Angle pitch, yaw;
+		bint data;
+
+		entity(eidDispenser::General *eidDispenser, Entity::type type, bdouble spawnX, bdouble spawnY, bdouble spawnZ, Angle pitch, Angle yaw, bint data = 0, Byte attributes = 0, varInt airTicks = 300, Chat *customName = nullptr, bool isCustomNameVisible = false,
 			bool isSilent = false, bool hasGravity = false, pose thePose = pose::standing, varInt ticksFrozen = 0);
 		entity(const entity& e);
 
 		~entity();
 
 		varInt getEid();
-	
-		void write(char*& buffer) const;
+		Entity::type getType();
 	};
 
 	struct thrownEgg : entity
 	{
 		Slot item;
 
-		thrownEgg(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
+		thrownEgg(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
 	};
 
 	struct thrownEnderPearl : entity
 	{
 		Slot item;
 
-		thrownEnderPearl(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
+		thrownEnderPearl(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
 	};
 
 	struct thrownExperienceBottle : entity
 	{
 		Slot item;
 
-		thrownExperienceBottle(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
+		thrownExperienceBottle(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
 	};
 
 	struct thrownPotion : entity
 	{
 		Slot item;
 
-		thrownPotion(entity theEntity, Slot item) : entity(theEntity) {}
+		thrownPotion(entity theEntity, Slot item) : item(item), entity(theEntity) {}
 	};
 
 	struct snowball : entity
 	{
 		Slot item;
 
-		snowball(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
+		snowball(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
 	};
 
 	struct eyeOfEnder : entity
 	{
 		Slot item;
 
-		eyeOfEnder(entity theEntity, Slot item = Slot()) : entity(theEntity) {}
+		eyeOfEnder(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
 	};
 
 	struct fallingBlock : entity
@@ -527,8 +533,9 @@ namespace Entity {
 	struct item : entity
 	{
 		Slot theItem;
+		unsigned long long spawnedTimeStamp;
 
-		item(const entity& theEntity, const Slot& theItem = Slot()) : theItem(theItem), entity(theEntity) {}
+		item(const entity& theEntity, const Slot& theItem = Slot()) : theItem(theItem), entity(theEntity), spawnedTimeStamp(utility::time::timeSinceEpoch()) {}
 	};
 
 	struct LivingEntity : public entity

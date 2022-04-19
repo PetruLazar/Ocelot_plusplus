@@ -61,9 +61,9 @@ namespace CommandHandlers
 		{
 		case 1:
 		{
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1,
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y) - 1,
+				z = fastfloor((double)executingPlayer->z);
 
 			y = executingPlayer->world->AbsToRelHeight(y);
 			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
@@ -75,9 +75,9 @@ namespace CommandHandlers
 		{
 			static int lvl = 0;
 
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y),
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y),
+				z = fastfloor((double)executingPlayer->z);
 
 			y = executingPlayer->world->AbsToRelHeight(y);
 			if (!executingPlayer->world->checkCoordinates(y)) throw Chat("Cannot place blocks outside world", Chat::color::red());
@@ -89,7 +89,7 @@ namespace CommandHandlers
 		break;
 		case 3:
 		{
-			executingPlayer->teleport(executingPlayer->X, executingPlayer->Y, executingPlayer->Z, 45.f, executingPlayer->pitch);
+			executingPlayer->teleport(executingPlayer->x, executingPlayer->y, executingPlayer->z, 45.f, executingPlayer->pitch);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
@@ -97,9 +97,9 @@ namespace CommandHandlers
 		{
 			World* wld = executingPlayer->world;
 
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1,
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y) - 1,
+				z = fastfloor((double)executingPlayer->z);
 
 			int yloc = y;
 			y = wld->AbsToRelHeight(y);
@@ -119,9 +119,9 @@ namespace CommandHandlers
 		{
 			World* wld = executingPlayer->world;
 
-			int x = fastfloor((double)executingPlayer->X),
-				y = fastfloor((double)executingPlayer->Y) - 1,
-				z = fastfloor((double)executingPlayer->Z);
+			int x = fastfloor((double)executingPlayer->x),
+				y = fastfloor((double)executingPlayer->y) - 1,
+				z = fastfloor((double)executingPlayer->z);
 
 			int yloc = y;
 			y = wld->AbsToRelHeight(y);
@@ -133,6 +133,32 @@ namespace CommandHandlers
 				wld->setBlock(x + row, y, z + col, 1);
 			}
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+		}
+		break;
+		case 6:
+		{
+			Log::info() << Log::endl<<"----------INVENTORY DUMP----------"<<Log::endl;
+			Log::info() << "Crafting: " << Log::endl;
+			for (unsigned i = 0; i < 5; i++)
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
+			Log::none() << Log::endl;
+			Log::info() << "Armor: " << Log::endl;
+			for (unsigned i = 5; i < 9; i++)
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
+			Log::none() << Log::endl;
+			Log::info() << "Offhand: " << Log::endl;
+			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getInventorySlot(45)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(45)->count<< Log::endl;
+			Log::info() << "Inventory: " << Log::endl;
+			for (unsigned i = 1; i < 4; i++) {
+				for (unsigned j = 0; j < 9; j++)
+					Log::none() << "\t"<< 9 * i + j<<": " << executingPlayer->inventory->getInventorySlot(9 * i + j)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(9 * i + j)->count;
+				Log::none() << Log::endl;
+			}
+			Log::info() << "Hotbar: " << Log::endl;
+			for (unsigned i = 36; i < 45; i++)
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId()<<"-"<< (int)executingPlayer->inventory->getInventorySlot(i)->count;
+			Log::none() << Log::endl;
+			Log::info() << "Floating item: " << Log::endl<<"\t"<<executingPlayer->inventory->getFloatingSlot()->getItemId()<<"-" << (int)executingPlayer->inventory->getFloatingSlot()->count << Log::endl<<Log::endl;
 		}
 		break;
 		//add tests here - starting at 1

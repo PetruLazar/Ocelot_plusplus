@@ -218,9 +218,9 @@ std::string Log::preLogPrint()
 	time_t now = time(0);
 	localtime_s(&newtime, &now);
 
-	char buffer[9];
+	char buffer[10] = "[";
 
-	strftime(buffer, sizeof(buffer), "%H:%M:%S", &newtime);
+	strftime(buffer + 1, sizeof(buffer), "%H:%M:%S", &newtime);
 
 	return buffer;
 }
@@ -231,24 +231,24 @@ LogStream& Log::none()
 }
 LogStream& Log::info()
 {
-	infoStream << preLogPrint() << "  [INFO]: ";
+	infoStream << preLogPrint() << "  INFO]: ";
 	return infoStream;
 }
 LogStream& Log::warn()
 {
-	warningStream << preLogPrint() << "  [WARN]: ";
+	warningStream << preLogPrint() << "  WARN]: ";
 	return warningStream;
 }
 LogStream& Log::error()
 {
-	errorStream << preLogPrint() << " [ERROR]: ";
+	errorStream << preLogPrint() << " ERROR]: ";
 	return errorStream;
 }
 LogStream& Log::debug(bool print)
 {
 	debugStream.setState(print);
 
-	debugStream << preLogPrint() << " [DEBUG]: ";
+	debugStream << preLogPrint() << " DEBUG]: ";
 	return debugStream;
 }
 
