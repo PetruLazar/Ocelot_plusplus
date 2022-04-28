@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -298,6 +298,7 @@
     <ClCompile Include="types\mcString.cpp" />
     <ClCompile Include="types\node.cpp" />
     <ClCompile Include="types\particle.cpp" />
+    <ClCompile Include="types\position.cpp" />
     <ClCompile Include="types\queue.cpp" />
     <ClCompile Include="types\recipe.cpp" />
     <ClCompile Include="types\registry.cpp" />

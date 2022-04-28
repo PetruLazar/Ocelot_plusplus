@@ -479,6 +479,9 @@
     <ClCompile Include="types\item.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
+    <ClCompile Include="types\position.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
