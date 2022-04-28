@@ -374,9 +374,6 @@
     <ClCompile Include="types\node.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="types\position.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
     <ClCompile Include="types\queue.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
@@ -387,9 +384,6 @@
       <Filter>Source Files\types</Filter>
     </ClCompile>
     <ClCompile Include="types\uuid.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\varData.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
     <ClCompile Include="nbt\nbt.cpp">
@@ -483,6 +477,9 @@
       <Filter>Source Files\types</Filter>
     </ClCompile>
     <ClCompile Include="types\item.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+    <ClCompile Include="types\position.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
   </ItemGroup>
