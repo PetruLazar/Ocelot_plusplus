@@ -274,7 +274,7 @@ std::string Log::Bench(const std::string& name, bool parentheses)
 		return "";
 	}
 
-	double msTime = std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - benches[name]).count();
+	auto msTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - benches[name]).count();
 	benches.erase(name);
 
 	if (parentheses)

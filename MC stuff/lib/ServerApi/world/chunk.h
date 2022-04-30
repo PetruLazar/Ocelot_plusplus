@@ -21,7 +21,7 @@ public:
 	std::vector<LightSection> lightData;
 
 	//chunk data
-	ull loadCount; // 
+	ull loadCount = 0;
 
 	BitArray* sectionMask;
 

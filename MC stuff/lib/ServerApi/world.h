@@ -43,7 +43,7 @@ public:
 	* natural - Byte
 	* ambient_light - float (0 - 1)
 	* fixed_time - optional long (0 - 24 000)
-	* infiniburn - string
+	* infiniburn - #string
 	* respawn_anchor_works - Byte
 	* has_skylight - Byte
 	* bed_works - Byte
@@ -78,7 +78,7 @@ public:
 	int min_y;
 
 	SERVER_API void unload(int x, int z);
-	SERVER_API Chunk* get(int x, int z, bool increaseLoadCount = false);
+	SERVER_API Chunk* getChunk(int x, int z, bool increaseLoadCount = false);
 	SERVER_API Region* getRegion(int rX, int rZ);
 
 	//converts a y coordinate from absolute values to relative values (to the min_y of the world)

@@ -598,7 +598,7 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 }
 void message::play::send::chunkDataAndLight(Player*p, bint cX, bint cZ, bool increaseLoadCount)
 {
-	Chunk* chunk = p->world->get(cX, cZ, increaseLoadCount);
+	Chunk* chunk = p->world->getChunk(cX, cZ, increaseLoadCount);
 	uint sectionCount = (uint)chunk->sections.size();
 
 	//build the heightmaps
@@ -1152,7 +1152,7 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 }
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 {
-	Chunk* chunk = p->world->get(cX, cZ);
+	Chunk* chunk = p->world->getChunk(cX, cZ);
 	uint sectionCount = (uint)chunk->lightData.size();
 
 	std::vector<BitArray*> skyLightArrays, blockLightArrays;
@@ -1483,14 +1483,14 @@ void message::play::send::entityProperties(Player* p, varInt eid, varInt nOfProp
 
 	finishSendMacro;
 }
-void message::play::send::entityEffect(Player* p, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags)
+void message::play::send::entityEffect(Player* p, varInt entityId, varInt effectId, char amplifier, varInt duration, Byte flags)
 {
 	varInt id = (int)id::entityEffect;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	entityId.write(data);
-	*(data++) = effectId;
+	effectId.write(data);
 	*(data++) = amplifier;
 	duration.write(data);
 	*(data++) = flags;
@@ -1730,14 +1730,14 @@ void message::play::send::destroyEntities(Player* p, varInt count, varInt* eids)
 
 	finishSendMacro;
 }
-void message::play::send::removeEntityEffect(Player* p, varInt eid, Byte effectId)
+void message::play::send::removeEntityEffect(Player* p, varInt eid, varInt effectId)
 {
 	varInt id = (int)id::removeEntityEffect;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	eid.write(data);
-	*(data++) = effectId;
+	effectId.write(data);
 
 	finishSendMacro;
 }

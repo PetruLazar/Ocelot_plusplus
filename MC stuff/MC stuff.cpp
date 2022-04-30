@@ -65,9 +65,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	if (!World::loadAll())
 	{
 		Log::error() << "Error: Spawn world \"" << Options::mainWorldName() << "\" not found." << Log::flush;
-		Server::FreeConsole();
+		Log::warn() << "Shutting down..." << Log::flush;
 		World::unloadAll();
 		Registry::unloadRegistriesAndPalette();
+		Server::FreeConsole();
 		return 0;
 	}
 

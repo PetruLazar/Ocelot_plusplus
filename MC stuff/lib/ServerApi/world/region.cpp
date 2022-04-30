@@ -83,7 +83,7 @@ void markZone(std::vector<bool>& map, uint start, uint end, bool occupied)
 {
 	if (end > map.size())
 	{
-		register uint oldSize = map.size();
+		size_t oldSize = map.size();
 		map.resize(end, occupied);
 		end = oldSize; //only go from start to oldSize because the new elements are already set
 	}
@@ -167,7 +167,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 
 		//compress chunk
 		char* decompressedData = (char*)bufferContents.c_str();
-		uint decompressedSize = bufferContents.length();
+		size_t decompressedSize = bufferContents.length();
 		data = new char[9 + decompressedSize];
 		size = decompressedSize;
 		zlibCompressNoAlloc(decompressedData, decompressedSize, data + 9, size);
