@@ -31,7 +31,7 @@ namespace recipe
 	Ingredient* Manager::getItemOrTag(json* data)
 	{
 		Slot** slotArray = new Slot * [1];
-		ull slotArraySize = 1;
+		size_t slotArraySize = 1;
 
 		if (data->getType() == json::type::array) {
 			delete[] slotArray;
@@ -117,11 +117,11 @@ namespace recipe
 					resultCount = (*data)["result"]["count"].iValue();
 				Slot* result = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)["result"]["item"].value()), resultCount);
 
-				int height = (*data)["pattern"].getSize();
-				int width = 1;
+				size_t height = (*data)["pattern"].getSize();
+				size_t width = 1;
 				for (int i = 0; i < height; i++)
 				{
-					int rowSize = (*data)["pattern"][i].value().size();
+					size_t rowSize = (*data)["pattern"][i].value().size();
 					if ((*data)["pattern"][i].value().find('\\') != std::string::npos)
 						rowSize = rowSize - 5;
 

@@ -284,23 +284,6 @@ nbt_compound World::dimension_codec("", new nbt*[2]{
 	},2)
 	}, 2);
 const Byte World::currentBiomeBitsPerEntry = 4; // 10 biomes in the global palette
-/*nbt_compound World::dimension("", new nbt* [15]{
-						new nbt_Byte("piglin_safe",0),
-						new nbt_Byte("natural",1),
-						new nbt_float("ambient_light",0.f),
-						new nbt_string("infiniburn","minecraft:infiniburn_overworld"),
-						new nbt_Byte("respawn_anchor_works",0),
-						new nbt_Byte("has_skylight",1),
-						new nbt_Byte("bed_works",1),
-						new nbt_string("effects","minecraft:overworld"),
-						new nbt_Byte("has_raids",1),
-						new nbt_int("min_y",-64),
-						new nbt_int("height",384),
-						new nbt_int("logical_height",256),
-						new nbt_float("coordinate_scale",1.f),
-						new nbt_Byte("ultrawarm",0),
-						new nbt_Byte("has_ceiling",0)
-	}, 15);*/
 
 World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 {
@@ -378,9 +361,9 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	Log::debug(WORLD_LOAD_DEBUG) << "Loading spawn area..." << Log::flush;
 	for (int x = spawn.ChunkX - Options::viewDistance(); x <= spawn.ChunkX + Options::viewDistance(); x++)
 		for (int z = spawn.ChunkZ - Options::viewDistance(); z <= spawn.ChunkZ + Options::viewDistance(); z++)
-			this->get(x, z, true);
+			this->getChunk(x, z, true);
 
-	spawn.Y = double(characteristics["min_y"].vInt()) + get(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
+	spawn.Y = double(characteristics["min_y"].vInt()) + getChunk(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
 	Log::debug(WORLD_LOAD_DEBUG) << "Done!" << Log::flush;
 }
 
@@ -1039,7 +1022,7 @@ void World::unload(int x, int z)
 	Log::info() << "Incorrect chunk unload at [" << x << ", " << z << "]" << Log::endl;
 	throw runtimeWarning("Tried to unload a chunk in an unloaded region");
 }
-Chunk* World::get(int x, int z, bool increaseLoadCount)
+Chunk* World::getChunk(int x, int z, bool increaseLoadCount)
 {
 	//region coordinates and relative chunk coordinates
 	int rX = x >> 5,

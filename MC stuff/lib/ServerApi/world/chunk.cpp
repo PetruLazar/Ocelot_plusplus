@@ -5,7 +5,16 @@
 
 using namespace std;
 
-Chunk::Chunk() {}
+Chunk::Chunk() {
+	heightmaps = nullptr;
+
+	skyLightMask = nullptr;
+	blockLightMask = nullptr;
+	emptySkyLightMask = nullptr;
+	emptyBlockLightMask = nullptr;
+
+	sectionMask = nullptr;
+}
 Chunk::Chunk(ull worldHeight)
 {
 	//heightmap initialization
@@ -60,7 +69,7 @@ void Chunk::read(std::istream& file)
 		file.read((char*)(&sec.useGlobalPallete), 4);
 
 		//read paletteSize
-		ush paletteSize;
+		ush paletteSize = 0;
 		file.read((char*)(&paletteSize), 2);
 
 		//read palette
@@ -70,8 +79,8 @@ void Chunk::read(std::istream& file)
 		for (ush i = 0; i < paletteSize; i++)
 		{
 			//read each palette entry
-			int stateid;
-			short refCount;
+			int stateid = 0;
+			short refCount = 0;
 			file.read((char*)(&stateid), 4);
 			file.read((char*)(&refCount), 2);
 

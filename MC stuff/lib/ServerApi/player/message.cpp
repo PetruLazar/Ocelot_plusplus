@@ -598,7 +598,7 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 }
 void message::play::send::chunkDataAndLight(Player*p, bint cX, bint cZ, bool increaseLoadCount)
 {
-	Chunk* chunk = p->world->get(cX, cZ, increaseLoadCount);
+	Chunk* chunk = p->world->getChunk(cX, cZ, increaseLoadCount);
 	uint sectionCount = (uint)chunk->sections.size();
 
 	//build the heightmaps
@@ -1152,7 +1152,7 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 }
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 {
-	Chunk* chunk = p->world->get(cX, cZ);
+	Chunk* chunk = p->world->getChunk(cX, cZ);
 	uint sectionCount = (uint)chunk->lightData.size();
 
 	std::vector<BitArray*> skyLightArrays, blockLightArrays;

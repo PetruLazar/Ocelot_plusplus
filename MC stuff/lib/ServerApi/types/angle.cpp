@@ -5,8 +5,9 @@
 Angle::Angle() : v(0) { }
 Angle::Angle(Byte value) : v(value) { }
 Angle::Angle(double value) : v(Byte(fmod(value, 360) / 360 * 256)) { }
+Angle::Angle(float value) : v(Byte(fmod(value, 360) / 360 * 256)) { }
 
-Angle::operator double()
+Angle::operator float()
 {
 	return v * 1.40625;
 }
