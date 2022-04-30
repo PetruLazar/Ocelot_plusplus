@@ -197,8 +197,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
 	}
 
-	Server::FreeConsole();
 	Registry::unloadRegistriesAndPalette();
 	recipe::Manager::unloadRecipes();
+	Server::FreeConsole();
 	return 0;
 }

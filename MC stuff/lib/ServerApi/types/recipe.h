@@ -9,6 +9,15 @@ namespace recipe
 		varInt count;
 		Slot** items;
 
+		Ingredient() : count(0) {
+			items = nullptr;
+		}
+
+		Ingredient(Slot* item) : count(1) {
+			items = new Slot * [1];
+			items[0] = item;
+		}
+
 		Ingredient(varInt count, Slot** items) : count(count), items(items) {}
 
 		~Ingredient() {

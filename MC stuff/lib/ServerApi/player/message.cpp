@@ -2116,7 +2116,7 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 
 	if (hasTitle)
 	{
-		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot(true, 943, 1, bookData));
+		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot(943, bookData));
 
 		Equipment** eqp = new Equipment * [1];
 		eqp[0] = new Equipment(0, p->inventory->getSelectedSlot());
@@ -3180,7 +3180,7 @@ void message::dispatch(Player* p, char* data, uint size)
 					item_data->read(data);
 			}
 
-			Slot* item = new Slot(present, itemId, count, item_data);
+			Slot* item = new Slot(itemId, present, count, item_data);
 			play::receive::creativeInventoryAction(p, slot, item);
 		}
 		break;
