@@ -28,8 +28,6 @@ public:
 		LongArray
 	};
 protected:
-	std::string name;
-
 	SERVER_API void readName(std::fstream&);
 	SERVER_API void writeName(std::fstream&) const;
 	SERVER_API void readName(char*&);
@@ -37,6 +35,7 @@ protected:
 
 public:
 	const nbt::tag type;
+	std::string name;
 
 	SERVER_API nbt(tag, std::string name = "");
 	SERVER_API virtual ~nbt() = 0;

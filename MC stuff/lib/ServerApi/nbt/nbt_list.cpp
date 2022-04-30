@@ -1,4 +1,5 @@
 #include "nbt_list.h"
+
 nbt_list::nbt_list(const std::string& name, nbt** v, int s) : nbt(tag::List, name), values(v), _size(s)
 {
 	if (_size) childType = values[0]->getType();
@@ -164,7 +165,14 @@ void nbt_list::operator=(const nbt& that)
 }
 void nbt_list::operator=(const nbt_list& that)
 {
+	name = that.name;
+
+	childType = that.childType;
+
 	_size = that._size;
 	values = new nbt * [_size];
-	for (uint i = 0; i < _size; i++) values[i] = that.values[i];
+	for (uint i = 0; i < _size; i++) {
+		values[i] = nbt::getTagP(that.values[i]->type);
+		*(values[i]) = *(that.values[i]);
+	}
 }

@@ -55,6 +55,7 @@ void nbt_double::operator= (const nbt& that)
 }
 void nbt_double::operator= (const nbt_double& that)
 {
+	name = that.name;
 	value = that.value;
 }
 void nbt_double::operator=(double v) { value = v; }

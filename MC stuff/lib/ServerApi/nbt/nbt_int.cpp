@@ -55,6 +55,7 @@ void nbt_int::operator=(const nbt& that)
 }
 void nbt_int::operator=(const nbt_int& that)
 {
+	name = that.name;
 	value = that.value;
 }
 void nbt_int::operator= (int v) { value = v; }

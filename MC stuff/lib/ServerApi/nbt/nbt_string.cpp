@@ -71,6 +71,7 @@ void nbt_string::operator=(const nbt& that)
 }
 void nbt_string::operator=(const nbt_string& that)
 {
+	name = that.name;
 	value = that.value;
 }
 void nbt_string::operator=(const std::string& v) { value = v; }
