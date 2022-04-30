@@ -13,7 +13,7 @@ public:
 		this->slot |= 0x80;
 	}
 
-	void unSet() {
+	void unSet() { //remember to do this on the last element in array
 		slot &= ~(0x80);
 	}
 

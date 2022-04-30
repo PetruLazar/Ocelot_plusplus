@@ -302,7 +302,7 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 
 		if (index != -1) {
 			picked = theItem.count;
-
+			
 			this->setInventorySlot(index, new Slot(theItem));
 
 			addedIndex = index;
@@ -343,15 +343,7 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 }
 void Player::_inventory::swapSlots(bshort a, bshort b)
 {
-	Slot* aSlot = this->getInventorySlot(a);
-	Slot* bSlot = this->getInventorySlot(b);
-	
-	std::swap(aSlot, bSlot);
-
-	Slot* newA = new Slot(*aSlot); //idfk
-	Slot* newB = new Slot(*bSlot);
-	this->setInventorySlot(a, newA);
-	this->setInventorySlot(b, newB);
+	std::swap(this->getInventorySlot(a), this->getInventorySlot(b));
 }
 
 void Player::_inventory::setInventorySlot(bshort index, Slot* slot)

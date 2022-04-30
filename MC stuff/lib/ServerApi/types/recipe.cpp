@@ -30,35 +30,37 @@ namespace recipe
 
 	Ingredient* Manager::getItemOrTag(json* data)
 	{
-		Slot** slotArray = new Slot * [1];
-		size_t slotArraySize = 1;
+		Slot** slotArray = nullptr;
+		size_t slotArraySize = 0;
 
 		if (data->getType() == json::type::array) {
-			delete[] slotArray;
 			slotArraySize = data->getSize();
 			slotArray = new Slot * [slotArraySize];
 
 			for (int j = 0; j < slotArraySize; j++) //array obj can be only item?
 				slotArray[j] = new Slot(Registry::getId(Registry::itemRegistry, (*data)[j]["item"].value()));
-			return new Ingredient(slotArraySize, slotArray);
 		}
-		//else, compound
+		else { //compound
+			if (data->has("item")) {
+				slotArraySize = 1;
+				slotArray = new Slot * [1];
 
-		if (data->has("item"))
-			slotArray[0] = new Slot(Registry::getId(Registry::itemRegistry, (*data)["item"].value()));
-		else { //tag
-			std::string tagName = (*data)["tag"].value();
+				slotArray[0] = new Slot(Registry::getId(Registry::itemRegistry, (*data)["item"].value()));
+			}
+			else { //tag
+				std::string tagName = (*data)["tag"].value();
 
-			const TagGroup::Tag* theTag = TagGroup::getTag(TagGroup::itemTags, tagName); //search it
+				const TagGroup::Tag* theTag = TagGroup::getTag(TagGroup::itemTags, tagName); //search it
 
-			if (theTag == nullptr)
-				throw "tag not found, recipe couldn't be parsed";
+				if (theTag == nullptr)
+					throw "tag not found, recipe couldn't be parsed";
 
-			delete[] slotArray;
-			slotArraySize = theTag->entries.size();
-			slotArray = new Slot * [slotArraySize];
-			for (int j = 0; j < slotArraySize; j++)
-				slotArray[j] = new Slot(theTag->entries[j]);
+				slotArraySize = theTag->entries.size();
+				slotArray = new Slot * [slotArraySize];
+
+				for (int j = 0; j < slotArraySize; j++)
+					slotArray[j] = new Slot(theTag->entries[j]);
+			}
 		}
 
 		return new Ingredient(slotArraySize, slotArray);
@@ -142,7 +144,7 @@ namespace recipe
 							accessY = accessY + 5;
 						}
 						else
-							ingredients[y + x * width] = getItemOrTag(&(*data)["key"][std::string(1, row[accessY])]);
+							ingredients[y + x * width] = getItemOrTag(&(*data)["key"][std::string(1, row[accessY])]); //transforming the char to string because it thinks its a index (int)
 
 						accessY += 1;
 					}
