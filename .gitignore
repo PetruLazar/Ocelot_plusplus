@@ -128,3 +128,5 @@ Build/*/worlds/*/generator.*
 *.lib
 *.idb
 *.recipe
+/Utils/EnumGenerator/Build/Release/run.bat
+/Utils/Sandbox/Build/Release
