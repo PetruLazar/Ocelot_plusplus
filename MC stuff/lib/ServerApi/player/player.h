@@ -3,6 +3,7 @@
 #include "../types/uuid.h"
 #include "../types/enums.h"
 #include "SFML/Network/TcpSocket.hpp"
+#include "SFML/System/Vector2.hpp"
 #include "../types/chat.h"
 #include "../types/queue.h"
 #include "../types/entity.h"
@@ -29,6 +30,7 @@ enum class ChatMode
 	commands,
 	hidden
 };
+#include <iostream>
 
 class Player : public Entity::player
 {
@@ -59,6 +61,97 @@ private:
 
 	MessageBuffer sendBuffer;
 
+	class ChunkLoaderHelper
+	{
+		int v, // viewDistance
+			a, // current loop radius
+			i, // current index in each edge
+			e; // current edge
+
+		bool enabled = false;
+
+		void ResetEdge();
+		void ResetIndex();
+		void ResetRadius();
+
+		bool EdgeOverflow();
+		bool IndexOverflow();
+		bool RadiusOverflow();
+
+		void AdvanceEdge();
+		void AdvanceIndex();
+		void AdvanceRadius();
+
+		sf::Vector2i Generate();
+
+	public:
+		ChunkLoaderHelper(int viewDistance);
+		void UpdateViewDistance(int viewDistance);
+
+		void Reset();
+		sf::Vector2i Next();
+		bool Finished() const;
+
+		class ChunkMatrix
+		{
+			using bitsettype = uint;
+
+			int viewDistance;
+			class SubMatrix
+			{
+
+				Byte width;
+				std::vector<bitsettype> values;
+
+			public:
+				SubMatrix(Byte height, Byte width);
+
+				void resize(Byte newHeight, Byte newWidth);
+				bool get(Byte i, Byte j) const;
+				void set(Byte i, Byte j, bool v);
+
+				Byte Height() const;
+				Byte Width() const;
+
+				void Shift_px(bitsettype val);
+				//call for every x
+				void Shift_pz(Byte x, bool val);
+				bitsettype Shift_nx();
+				//call for every x
+				bool Shift_nz(Byte x);
+
+				void Empty();
+			} pos_pos, pos_neg, neg_pos, neg_neg;
+
+		public:
+			ChunkMatrix(int viewDistance);
+
+			void resize(int newViewDistance);
+			bool get(int x, int z) const;
+			void set(int x, int z, bool v);
+
+			int ViewDistance() const;
+
+			void Shift_positive_x();
+			void Shift_positive_z();
+			void Shift_negative_x();
+			void Shift_negative_z();
+
+			void Empty();
+
+			/*void Show()
+			{
+				int viewDistance = ViewDistance();
+				for (int i = -viewDistance; i <= viewDistance; i++)
+				{
+					for (int j = -viewDistance; j <= viewDistance; j++) std::cout << get(i, j) << ' ';
+					std::cout << '\n';
+				}
+				std::cout << '\n';
+			}*/
+		} matrix;
+	} chunkLoaderHelper;
+
 public:
 	mcString username;
 
@@ -84,7 +177,8 @@ public:
 	void updateRotation(bfloat yaw, bfloat pitch);
 	bool positionInRange(Position);
 
-	class _inventory {
+	class _inventory
+	{
 	private:
 		Slot* slots[46];
 		bshort selectedHotbar = 0; //main hand selected slot
@@ -158,6 +252,7 @@ public:
 	bool chatColors;		//to do: processing chat
 	bool enableTextFiltering;
 	bool allowServerListings;
+	void UpdateViewDistance(int newViewDistance);
 
 	SERVER_API Player(sf::TcpSocket*);
 	SERVER_API ~Player();

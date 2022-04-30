@@ -4,6 +4,7 @@
 #include "../types/enums.h"
 #include "../server/log.h"
 #include "../types/entity.h"
+#include "../server/options.h"
 
 const char* invalidPacketLengthError = "Invalid Packet Length";
 const char* socketError = "Socket error occured";
@@ -12,7 +13,7 @@ const char* socketDisconnected = "Socket Disconnected unexpectedly";
 std::vector<Player*> Player::players;
 eidDispenser::Player Player::eidDispenser;
 
-Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser, Entity::type::minecraft_player, 0, 0, 0, .0, .0)
+Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser, Entity::type::minecraft_player, 0, 0, 0, .0, .0), chunkLoaderHelper(Options::viewDistance()
 {
 	socket->setBlocking(false);
 
@@ -36,12 +37,310 @@ std::string Player::netId()
 	return socket->getRemoteAddress().toString() + ':' + std::to_string(socket->getRemotePort());
 }
 
+void Player::ChunkLoaderHelper::ResetEdge()
+{
+	AdvanceIndex();
+	e = 0;
+}
+void Player::ChunkLoaderHelper::ResetIndex()
+{
+	AdvanceRadius();
+	if (a > v) i = a - v;
+	else i = 0;
+}
+void Player::ChunkLoaderHelper::ResetRadius()
+{
+	enabled = false;
+	a = 0;
+}
+
+bool Player::ChunkLoaderHelper::EdgeOverflow()
+{
+	return e >= 4;
+}
+bool Player::ChunkLoaderHelper::IndexOverflow()
+{
+	//return (a > v && i > v) || (a <= v && i >= a)
+
+	if (a > v) return i > v;
+	return i >= a;
+}
+bool Player::ChunkLoaderHelper::RadiusOverflow()
+{
+	return a > 2 * v;
+}
+
+void Player::ChunkLoaderHelper::AdvanceEdge()
+{
+	e++;
+	if (EdgeOverflow()) ResetEdge();
+}
+void Player::ChunkLoaderHelper::AdvanceIndex()
+{
+	i++;
+	if (IndexOverflow()) ResetIndex();
+}
+void Player::ChunkLoaderHelper::AdvanceRadius()
+{
+	a++;
+	if (RadiusOverflow()) ResetRadius();
+}
+
+sf::Vector2i Player::ChunkLoaderHelper::Generate()
+{
+	int x = i, y = a - x;
+	switch (e)
+	{
+	case 0:
+		return sf::Vector2i(x, y);
+	case 1:
+		return sf::Vector2i(y, -x);
+	case 2:
+		return sf::Vector2i(-x, -y);
+	}
+	return sf::Vector2i(-y, x);
+}
+
+Player::ChunkLoaderHelper::ChunkLoaderHelper(int viewDistance) : v(viewDistance), a(0), i(0), e(3), matrix(viewDistance) {}
+void Player::ChunkLoaderHelper::UpdateViewDistance(int viewDistance)
+{
+	v = viewDistance;
+	Reset();
+	matrix.resize(v);
+}
+
+void Player::ChunkLoaderHelper::Reset()
+{
+	enabled = true;
+	a = i = 0;
+	e = 3;
+}
+sf::Vector2i Player::ChunkLoaderHelper::Next()
+{
+	if (!enabled) return sf::Vector2i(0, 0);
+
+	sf::Vector2i ret = Generate();
+	AdvanceEdge();
+	return ret;
+}
+bool Player::ChunkLoaderHelper::Finished() const { return !enabled; }
+
+Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::SubMatrix(Byte height, Byte width) : width(width), values(height, 0) {}
+
+void Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::resize(Byte newHeight, Byte newWidth)
+{
+	if (newWidth > width)
+	{
+		bitsettype map = ~((bitsettype)(-1) << width);
+		for (bitsettype& v : values) v &= map;
+	}
+	width = newWidth;
+
+	values.resize(newHeight, 0);
+}
+bool Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::get(Byte i, Byte j) const
+{
+	return values[i] & (1 << j);
+}
+void Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::set(Byte i, Byte j, bool v)
+{
+	if (v) values[i] |= (1 << j);
+	else values[i] &= ~(1 << j);
+}
+
+Byte Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::Height() const
+{
+	return (Byte)values.size();
+}
+Byte Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::Width() const
+{
+	return width;
+}
+
+void Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::Shift_px(bitsettype val)
+{
+	values.pop_back();
+	values.insert(values.begin(), val);
+}
+void Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::Shift_pz(Byte x, bool val)
+{
+	bitsettype& value = values[x];
+	value <<= 1;
+	if (val) value |= 1;
+	else value &= ~1;
+}
+Player::ChunkLoaderHelper::ChunkMatrix::bitsettype Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::Shift_nx()
+{
+	bitsettype ret = values[0];
+	values.erase(values.begin());
+	values.push_back(0);
+	return ret;
+}
+bool Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::Shift_nz(Byte x)
+{
+	bitsettype& value = values[x];
+	bool ret = value & 1;
+	value >>= 1;
+	value &= ~(1 << (width - 1));
+	return ret;
+}
+
+void Player::ChunkLoaderHelper::ChunkMatrix::SubMatrix::Empty()
+{
+	for (bitsettype& v : values) v = 0;
+}
+
+Player::ChunkLoaderHelper::ChunkMatrix::ChunkMatrix(int viewDistance) : pos_pos(viewDistance + 1, viewDistance + 1), pos_neg(viewDistance + 1, viewDistance), neg_pos(viewDistance, viewDistance + 1), neg_neg(viewDistance, viewDistance), viewDistance(viewDistance) {}
+
+void Player::ChunkLoaderHelper::ChunkMatrix::resize(int newViewDistance)
+{
+	pos_pos.resize(newViewDistance + 1, newViewDistance + 1);
+	pos_neg.resize(newViewDistance + 1, newViewDistance);
+	neg_pos.resize(newViewDistance, newViewDistance + 1);
+	neg_neg.resize(newViewDistance, newViewDistance);
+	viewDistance = newViewDistance;
+}
+bool Player::ChunkLoaderHelper::ChunkMatrix::get(int x, int z) const
+{
+	if (x < 0)
+	{
+		x = -x - 1;
+		if (z < 0) return neg_neg.get(x, -z - 1);
+		else return neg_pos.get(x, z);
+	}
+	else
+	{
+		if (z < 0) return pos_neg.get(x, -z - 1);
+		else return pos_pos.get(x, z);
+	}
+}
+void Player::ChunkLoaderHelper::ChunkMatrix::set(int x, int z, bool v)
+{
+	if (x < 0)
+	{
+		x = -x - 1;
+		if (z < 0) neg_neg.set(x, -z - 1, v);
+		else neg_pos.set(x, z, v);
+	}
+	else
+	{
+		if (z < 0) pos_neg.set(x, -z - 1, v);
+		else pos_pos.set(x, z, v);
+	}
+}
+
+int Player::ChunkLoaderHelper::ChunkMatrix::ViewDistance() const
+{
+	return viewDistance;
+}
+
+void Player::ChunkLoaderHelper::ChunkMatrix::Shift_positive_x()
+{
+	pos_pos.Shift_px(neg_pos.Shift_nx());
+	pos_neg.Shift_px(neg_neg.Shift_nx());
+}
+void Player::ChunkLoaderHelper::ChunkMatrix::Shift_positive_z()
+{
+	for (int i = 0; i < viewDistance; i++)
+	{
+		pos_pos.Shift_pz(i, pos_neg.Shift_nz(i));
+		neg_pos.Shift_pz(i, neg_neg.Shift_nz(i));
+	}
+	pos_pos.Shift_pz(viewDistance, pos_neg.Shift_nz(viewDistance));
+}
+void Player::ChunkLoaderHelper::ChunkMatrix::Shift_negative_x()
+{
+	neg_pos.Shift_px(pos_pos.Shift_nx());
+	neg_neg.Shift_px(pos_neg.Shift_nx());
+}
+void Player::ChunkLoaderHelper::ChunkMatrix::Shift_negative_z()
+{
+	for (int i = 0; i < viewDistance; i++)
+	{
+		pos_neg.Shift_pz(i, pos_pos.Shift_nz(i));
+		neg_neg.Shift_pz(i, neg_pos.Shift_nz(i));
+	}
+	pos_neg.Shift_pz(viewDistance, pos_pos.Shift_nz(viewDistance));
+}
+
+void Player::ChunkLoaderHelper::ChunkMatrix::Empty()
+{
+	pos_pos.Empty();
+	pos_neg.Empty();
+	neg_pos.Empty();
+	neg_neg.Empty();
+}
+
 void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 {
 	int newChunkX = fastfloor(X) >> 4,
 		newChunkZ = fastfloor(Z) >> 4;
 
-	if (newChunkX != chunkX && newChunkZ != chunkZ)
+	bool chunkChanged = false;
+
+	if (newChunkX != chunkX)
+	{
+		int delta = newChunkX - chunkX;
+		if (delta > 0)
+		{
+			for (int x = -viewDistance; x < -viewDistance + delta; x++)
+				for (int z = -viewDistance; z <= viewDistance; z++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			for (int i = 0; i < delta; i++)
+				chunkLoaderHelper.matrix.Shift_negative_x();
+		}
+		else
+		{
+			for (int x = viewDistance; x > viewDistance - delta; x--)
+				for (int z = -viewDistance; z <= viewDistance; z++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			for (int i = 0; i > delta; i--)
+				chunkLoaderHelper.matrix.Shift_positive_x();
+		}
+
+		chunkLoaderHelper.Reset();
+		chunkX = newChunkX;
+		chunkChanged = true;
+		//chunkLoaderHelper.matrix.Show();
+	}
+
+	if (newChunkZ != chunkZ)
+	{
+		int delta = newChunkZ - chunkZ;
+		if (delta > 0)
+		{
+			for (int z = -viewDistance; z < -viewDistance + delta; z++)
+				for (int x = -viewDistance; x <= viewDistance; x++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			for (int i = 0; i < delta; i++)
+				chunkLoaderHelper.matrix.Shift_negative_z();
+		}
+		else
+		{
+			for (int z = viewDistance; z > viewDistance - delta; z--)
+				for (int x = -viewDistance; x <= viewDistance; x++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			for (int i = 0; i > delta; i--)
+				chunkLoaderHelper.matrix.Shift_positive_z();
+		}
+
+		chunkLoaderHelper.Reset();
+		chunkZ = newChunkZ;
+		chunkChanged = true;
+		//chunkLoaderHelper.matrix.Show();
+	}
+
+	if (chunkChanged) message::play::send::updateViewPosition(this, chunkX, chunkZ);
+
+	/*if (newChunkX != chunkX && newChunkZ != chunkZ)
 	{
 		message::play::send::updateViewPosition(this, newChunkX, newChunkZ);
 		if (newChunkX < chunkX && newChunkZ < chunkZ)
@@ -176,13 +475,11 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
 			}
 		}
-	}
+	}*/
 
 	Player::x = X;
 	Player::y = Y;
 	Player::z = Z;
-	Player::chunkX = newChunkX;
-	Player::chunkZ = newChunkZ;
 }
 void Player::updateRotation(bfloat yaw, bfloat pitch)
 {
@@ -390,6 +687,7 @@ void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
 	y = tpY;
 	z = tpZ;
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, yaw, pitch, 0, false);
+	//unload and resend chunks if needed
 }
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloat tpPitch)
 {
@@ -399,6 +697,7 @@ void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloa
 	yaw = tpYaw;
 	pitch = tpPitch;
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, tpYaw, tpPitch, 0, false);
+	//unload and resend chunks if needed
 }
 
 void Player::setWorld(World* world)
@@ -421,12 +720,14 @@ void Player::setWorld(World* world)
 
 	message::play::send::spawnPosition(this, world->spawn.Absolute, 0.f);
 
-	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++)
+	/*for (int x = -viewDistance; x <= viewDistance; x++) for (int z = -viewDistance; z <= viewDistance; z++)
 	{
-		message::play::send::chunkDataAndLight(this, x, z, true);
+		Log::debug(true) << "Sending chunk " << x + chunkX << ' ' << z + chunkZ << '\n';
+		message::play::send::chunkDataAndLight(this, x + chunkX, z + chunkZ, true);
+		chunkLoaderHelper.matrix.set(x, z, true);
 		//message::play::send::updateLight(this, x, z);
 		//message::play::send::chunkData(this, x, z);
-	}
+	}*/
 
 	message::play::send::playerPosAndLook(this, x, y, z, yaw, pitch, 0, false);
 
@@ -454,6 +755,8 @@ void Player::leaveWorld(World* world)
 	Log::debug(DEBUG_SIGHT) << "Player " << this << " is leaving world " << world->name << Log::endl;
 	//unload chunks in the world
 	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) ignoreExceptions(world->unload(x, z));
+	chunkLoaderHelper.Reset();
+	chunkLoaderHelper.matrix.Empty();
 
 	//destroy the player entity for the players who see this player
 	ull size = seenBy.size();
@@ -541,6 +844,15 @@ void Player::updateNet()
 		if (!username.empty()) Log::info() << username << " was timed out.\n";
 		else Log::info() << netId() << " was timed out.\n";
 		return;
+	}
+
+	//try sending a chunk
+	while (!chunkLoaderHelper.Finished())
+	{
+		sf::Vector2i pos = chunkLoaderHelper.Next();
+		if (chunkLoaderHelper.matrix.get(pos.x, pos.y)) continue;
+		message::play::send::chunkDataAndLight(this, chunkX + pos.x, chunkZ + pos.y);
+		chunkLoaderHelper.matrix.set(pos.x, pos.y, true);
 	}
 
 	//send data
@@ -794,4 +1106,29 @@ void Player::clearDisconnectedPlayers()
 void Player::broadcastChat(const Chat& msg, Player* ignore)
 {
 	for (Player* p : players) if (p != ignore && !p->scheduledDisconnect) ignoreExceptions(message::play::send::chatMessage(p, msg, ChatMessage::systemMessage, mcUUID(0, 0, 0, 0)));
+}
+
+void Player::UpdateViewDistance(int newViewDistance)
+{
+	int maxViewDistance = Options::viewDistance();
+	if (newViewDistance > maxViewDistance) newViewDistance = maxViewDistance;
+	else if (newViewDistance < viewDistance)
+	{
+		//unload chunks
+		for (int x = viewDistance; x > newViewDistance; x--) //+x and -x edges
+			for (int z = -viewDistance; z <= viewDistance; z++)
+			{
+				if (chunkLoaderHelper.matrix.get(x, z)) message::play::send::unloadChunk(this, chunkX + x, chunkZ + z);
+				if (chunkLoaderHelper.matrix.get(-x, z)) message::play::send::unloadChunk(this, chunkX - x, chunkZ + z);
+			}
+		for (int z = viewDistance; z > newViewDistance; z--) //+z and -z edges
+			for (int x = -newViewDistance; x <= newViewDistance; x++)
+			{
+				if (chunkLoaderHelper.matrix.get(x, z)) message::play::send::unloadChunk(this, chunkX + x, chunkZ + z);
+				if (chunkLoaderHelper.matrix.get(x, -z)) message::play::send::unloadChunk(this, chunkX + x, chunkZ - z);
+			}
+	}
+	viewDistance = newViewDistance;
+	chunkLoaderHelper.UpdateViewDistance(viewDistance);
+	//chunkLoaderHelper.matrix.Show();
 }

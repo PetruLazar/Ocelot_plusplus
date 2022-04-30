@@ -596,7 +596,7 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 
 	finishSendMacro;
 }
-void message::play::send::chunkDataAndLight(Player*p, bint cX, bint cZ, bool increaseLoadCount)
+void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, bool increaseLoadCount)
 {
 	Chunk* chunk = p->world->getChunk(cX, cZ, increaseLoadCount);
 	uint sectionCount = (uint)chunk->sections.size();
@@ -1896,7 +1896,7 @@ void message::play::receive::clientStatus(Player*, varInt actionId)
 void message::play::receive::clientSettings(Player* p, const mcString& locale, Byte viewDistance, ChatMode chatMode, bool chatColors, Byte displayedSkinParts, varInt mainHand, bool enableTextFiltering, bool allowServerListings)
 {
 	p->locale = locale;
-	p->viewDistance = (p->viewDistance > (int)viewDistance) ? (int)viewDistance : p->viewDistance;
+	p->UpdateViewDistance(viewDistance);
 	p->chatMode = chatMode;
 	p->chatColors = chatColors;
 	p->displayedSkinParts = displayedSkinParts;
