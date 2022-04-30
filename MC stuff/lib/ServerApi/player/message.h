@@ -358,7 +358,7 @@ struct message
 			SERVER_API static void unlockRecipes(Player*, varInt action, bool bookOpen, bool filterActive, bool smeltingOpen, bool smeltingFilter, bool blastOpen, bool blastFilter, bool smokerOpen, bool smokerFilter, varInt size1, std::vector<mcString>* array1, varInt size2, std::vector<mcString>* array2);
 			SERVER_API static void destroyEntity(Player*, varInt eid); //singular of destroyEntities
 			SERVER_API static void destroyEntities(Player*, varInt count, varInt* eids);
-			SERVER_API static void removeEntityEffect(Player*, varInt eid, Byte effectId);
+			SERVER_API static void removeEntityEffect(Player*, varInt eid, varInt effectId);
 			SERVER_API static void resourcePackSend(Player*, const mcString& url, const mcString& hash, bool forced, bool hasPromptMessage, const Chat& promptMessage);
 			SERVER_API static void respawn(Player*, const nbt_compound& dimension, const mcString& worldName, blong hashedSeed, gamemode gm, gamemode prev_gm, bool isDebug, bool isFlat, bool copyMetadata);
 			SERVER_API static void entityHeadLook(Player*, varInt eid, Angle headYaw);
@@ -402,7 +402,7 @@ struct message
 			SERVER_API static void entityTeleport(Player*, varInt eid, bdouble x, bdouble y, bdouble z, Angle yaw, Angle pitch, bool onGround);
 			SERVER_API static void advancements(Player*, bool reset, varInt mappingSize, mcString* advancementsIdentifiers, advancement** advancements, varInt listSize, mcString* removedIdentifiers, varInt progressSize, mcString* progressIdentifiers, advancementProgress** advancementProgresses);
 			SERVER_API static void entityProperties(Player*, varInt eid, varInt nOfProperties, Entity::Property* properties);
-			SERVER_API static void entityEffect(Player*, varInt entityId, Byte effectId, char amplifier, varInt duration, Byte flags);
+			SERVER_API static void entityEffect(Player*, varInt entityId, varInt effectId, char amplifier, varInt duration, Byte flags);
 			SERVER_API static void declareRecipes(Player*, varInt nOfRecipes, std::vector<recipe::Recipe*>* recipes);
 			SERVER_API static void tags(Player*);
 			SERVER_API static void tags(Player*, varInt tagCategoryCount, TagGroup* tags);

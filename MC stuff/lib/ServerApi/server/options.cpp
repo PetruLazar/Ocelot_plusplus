@@ -21,7 +21,7 @@ short Options::_networkCompression = 128;
 
 Options Options::options;
 
-const string Options::version = "\"version\":{\"name\":\"1.18.1\",\"protocol\":757}";
+const string Options::version = "\"version\":{\"name\":\"1.18.2\",\"protocol\":758}";
 bool Options::allowJoin = true;
 
 ull parseUnsigned(const string& name, const string& value, ull linenumber)

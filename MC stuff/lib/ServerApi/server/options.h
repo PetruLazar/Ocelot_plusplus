@@ -20,12 +20,11 @@ class Options
 	Options();
 	~Options();
 
-	//
 	static Options options;
 
 public:
 	//thee are not included in server.properties
-	SERVER_API static const int currentProtocol = 757;
+	SERVER_API static const int currentProtocol = 758;
 	SERVER_API static const std::string version;
 	SERVER_API static bool allowJoin;
 

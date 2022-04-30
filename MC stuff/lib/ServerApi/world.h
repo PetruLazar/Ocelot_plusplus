@@ -43,7 +43,7 @@ public:
 	* natural - Byte
 	* ambient_light - float (0 - 1)
 	* fixed_time - optional long (0 - 24 000)
-	* infiniburn - string
+	* infiniburn - #string
 	* respawn_anchor_works - Byte
 	* has_skylight - Byte
 	* bed_works - Byte
