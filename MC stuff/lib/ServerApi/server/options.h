@@ -23,7 +23,7 @@ class Options
 	static Options options;
 
 public:
-	//thee are not included in server.properties
+	//these are not included in server.properties
 	SERVER_API static const int currentProtocol = 758;
 	SERVER_API static const std::string version;
 	SERVER_API static bool allowJoin;

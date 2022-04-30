@@ -216,7 +216,7 @@ Options::Options()
 			{
 			}
 		}
-		else if (name == "view-distance")
+		else if (name == "simulation-distance")
 		{
 			try
 			{
