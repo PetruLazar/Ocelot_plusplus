@@ -13,7 +13,7 @@ const char* socketDisconnected = "Socket Disconnected unexpectedly";
 std::vector<Player*> Player::players;
 eidDispenser::Player Player::eidDispenser;
 
-Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser, Entity::type::minecraft_player, 0, 0, 0, .0, .0), chunkLoaderHelper(Options::viewDistance()
+Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser, Entity::type::minecraft_player, 0, 0, 0, .0, .0), chunkLoaderHelper(Options::viewDistance())
 {
 	socket->setBlocking(false);
 
@@ -309,6 +309,38 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 	}
 
 	if (newChunkZ != chunkZ)
+	{
+		int delta = newChunkZ - chunkZ;
+		if (delta > 0)
+		{
+			for (int z = -viewDistance; z < -viewDistance + delta; z++)
+				for (int x = -viewDistance; x <= viewDistance; x++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			for (int i = 0; i < delta; i++)
+				chunkLoaderHelper.matrix.Shift_negative_z();
+		}
+		else
+		{
+			for (int z = viewDistance; z > viewDistance - delta; z--)
+				for (int x = -viewDistance; x <= viewDistance; x++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			for (int i = 0; i > delta; i--)
+				chunkLoaderHelper.matrix.Shift_positive_z();
+		}
+
+		chunkLoaderHelper.Reset();
+		chunkZ = newChunkZ;
+		chunkChanged = true;
+		//chunkLoaderHelper.matrix.Show();
+	}
+
+	if (chunkChanged) message::play::send::updateViewPosition(this, chunkX, chunkZ);
+
+	/*if (newChunkX != chunkX && newChunkZ != chunkZ)
 	{
 		int delta = newChunkZ - chunkZ;
 		if (delta > 0)
