@@ -2,6 +2,7 @@
 #include "SFML/Network/IpAddress.hpp"
 #include "../types/typedefs.h"
 #include "../types/apidef.h"
+#include "../json.h"
 
 class Options
 {
@@ -20,12 +21,17 @@ class Options
 	Options();
 	~Options();
 
-	static Options options;
+	static bool loaded;
 
 public:
+	SERVER_API static void Load();
+	SERVER_API static void Unload();
+
 	//these are not included in server.properties
-	SERVER_API static const int currentProtocol = 758;
-	SERVER_API static const std::string version;
+	SERVER_API static int currentProtocol();
+	SERVER_API static const std::string& currentVersion();
+	//SERVER_API static const std::string version;
+	SERVER_API static const json_compound version;
 	SERVER_API static bool allowJoin;
 
 	SERVER_API static ush port();

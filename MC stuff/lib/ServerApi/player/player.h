@@ -94,8 +94,10 @@ private:
 
 		class ChunkMatrix
 		{
+		public:
 			using bitsettype = uint;
 
+		private:
 			int viewDistance;
 			class SubMatrix
 			{
@@ -153,6 +155,8 @@ private:
 	} chunkLoaderHelper;
 
 public:
+	static constexpr auto maxViewDistance = sizeof(ChunkLoaderHelper::ChunkMatrix::bitsettype) * 8 - 1;
+
 	mcString username;
 
 	//ip address + port

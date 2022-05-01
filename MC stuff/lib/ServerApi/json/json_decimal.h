@@ -11,7 +11,9 @@ public:
 	SERVER_API std::string stringValue() const;
 
 	SERVER_API double& dValue();
+	SERVER_API const double& dValue() const;
 	SERVER_API operator double& ();
+	SERVER_API operator const double& () const;
 	void SERVER_API operator=(double);
 };
 

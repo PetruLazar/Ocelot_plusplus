@@ -26,6 +26,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 {
 	Log::initialize();
 	Server::AllocConsole();
+	Options::Load();
 
 	//rand seeding
 	srand((uint)time(nullptr));
@@ -197,6 +198,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
 	}
 
+	Options::Unload();
 	Server::FreeConsole();
 	Registry::unloadRegistriesAndPalette();
 	recipe::Manager::unloadRecipes();

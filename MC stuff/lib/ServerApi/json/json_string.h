@@ -10,7 +10,9 @@ public:
 
 	SERVER_API std::string stringValue() const;
 
+	SERVER_API const std::string& value() const;
 	SERVER_API std::string& value();
 	SERVER_API operator std::string& ();
+	SERVER_API operator  const std::string& () const;
 	void SERVER_API operator=(const std::string&);
 };

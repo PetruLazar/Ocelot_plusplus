@@ -30,18 +30,28 @@ std::string json_array::stringValue() const
 	return ret + ']';
 }
 
-json& json_array::value(int i) 
-{ 
+json& json_array::value(int i)
+{
+	return operator[](i);
+}
+const json& json_array::value(int i) const
+{
 	return operator[](i);
 }
 json& json_array::operator[](int i)
-{ 
+{
 	if (i < 0) throw outOfBounds;
 	if (i >= s) throw outOfBounds;
-	return *v[i]; 
+	return *v[i];
+}
+const json& json_array::operator[](int i) const
+{
+	if (i < 0) throw outOfBounds;
+	if (i >= s) throw outOfBounds;
+	return *v[i];
 }
 
-ull json_array::getSize() { return s; }
+ull json_array::getSize()  const { return s; }
 void json_array::resize(ull ns)
 {
 	json** nv = new json * [ns];

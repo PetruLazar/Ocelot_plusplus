@@ -13,9 +13,11 @@ public:
 	SERVER_API std::string stringValue() const;
 
 	SERVER_API json& value(int);
+	SERVER_API const json& value(int) const;
 	SERVER_API json& operator[](int);
+	SERVER_API const json& operator[](int) const;
 
-	SERVER_API ull getSize();
+	SERVER_API ull getSize() const;
 	void SERVER_API resize(ull);
 };
 

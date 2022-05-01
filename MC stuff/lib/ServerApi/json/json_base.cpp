@@ -5,10 +5,10 @@
 
 const char typeError[] = "Invalid json element type.";
 
-json::json(type t, const std::string& name) : t(t), name(name) { }
-json::~json() { }
+json::json(type t, const std::string& name) : t(t), name(name) {}
+json::~json() {}
 
-std::string json::getName() { return name; }
+const std::string& json::getName() const { return name; }
 json::type json::getType() { return t; }
 json::type json::getChildType() { throw typeError; };
 void json::changeType(type) { throw typeError; }
@@ -19,18 +19,26 @@ std::string json::to_string() const
 }
 
 int& json::iValue() { throw typeError; }
+const int& json::iValue() const { throw typeError; }
 double& json::dValue() { throw typeError; }
+const double& json::dValue() const { throw typeError; }
 bool& json::bValue() { throw typeError; }
+const bool& json::bValue() const { throw typeError; }
 std::string& json::value() { throw typeError; }
+const std::string& json::value() const { throw typeError; }
 json& json::value(int) { throw typeError; }
+const json& json::value(int) const { throw typeError; }
 json& json::value(const std::string&) { throw typeError; }
+const json& json::value(const std::string&) const { throw typeError; }
 void json::operator=(int) { throw typeError; }
 void json::operator=(const std::string&) { throw typeError; }
 json& json::operator[](int) { throw typeError; }
+const json& json::operator[](int) const { throw typeError; }
 json& json::operator[](const std::string&) { throw typeError; }
-bool json::has(const std::string&) { throw typeError; }
+const json& json::operator[](const std::string&) const { throw typeError; }
+bool json::has(const std::string&) const { throw typeError; }
 
-ull json::getSize() { throw typeError; }
+ull json::getSize() const { throw typeError; }
 void json::resize(ull) { throw typeError; }
 void json::add(json*) { throw typeError; }
 void json::remove(json*) { throw typeError; }
@@ -172,7 +180,7 @@ json* json::parse(std::fstream& f, bool canHaveName)
 		}
 		f.unget();
 
-		if(decimals)
+		if (decimals)
 			return new json_decimal(name, value);
 
 		return new json_int(name, (int)value);

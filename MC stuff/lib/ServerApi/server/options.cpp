@@ -2,6 +2,8 @@
 #include "log.h"
 #include <iostream>
 #include <fstream>
+#include "../player/player.h"
+#include "../mcexception.h"
 
 using namespace std;
 
@@ -19,10 +21,16 @@ Byte Options::_simulationDistance = 10;
 bool Options::_chunkCompression = true;
 short Options::_networkCompression = 128;
 
-Options Options::options;
+bool Options::loaded = false;
 
-const string Options::version = "\"version\":{\"name\":\"1.18.2\",\"protocol\":758}";
+//const string Options::version = "\"version\":{\"name\":\"1.18.2\",\"protocol\":758}";
+const json_compound Options::version("version", new json*[2]{
+		new json_string("name","1.18.2"),
+		new json_int("protocol", 758)
+	}, 2);
 bool Options::allowJoin = true;
+int Options::currentProtocol() { return version["protocol"].iValue(); }
+const string& Options::currentVersion() { return version["version"].value(); }
 
 ull parseUnsigned(const string& name, const string& value, ull linenumber)
 {
@@ -149,8 +157,10 @@ Byte parseByte(const string& name, const string& value, ull linenumber)
 	return (Byte)v;
 }
 
-Options::Options()
+void Options::Load()
 {
+	if (loaded) throw mcexception(mcexception::UNSPECIFIED, "server.properties already loaded", "options.cpp", __LINE__);
+
 	ifstream opt(optionsFileName);
 	if (!opt.is_open())
 	{
@@ -210,6 +220,12 @@ Options::Options()
 		{
 			try
 			{
+				Byte val = parseByte(name, value, linenumber);
+				if (val > Player::maxViewDistance)
+				{
+					cout << "Error on line " << linenumber << ": value " << value << " is too large for \"" << name << "\". The maximum is \"" << Player::maxViewDistance << "\".\n";
+					throw 0;
+				}
 				_viewDistance = parseByte(name, value, linenumber);
 			}
 			catch (...)
@@ -257,9 +273,10 @@ Options::Options()
 		}
 	}
 	opt.close();
+	loaded = true;
 	delete[] line;
 }
-Options::~Options()
+void Options::Unload()
 {
 
 }

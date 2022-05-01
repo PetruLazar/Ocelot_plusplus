@@ -58,7 +58,7 @@ void message::status::send::pong(Player* p, blong payload)
 void message::status::receive::request(Player* p)
 {
 	Log::info() << p->netId() << " is pinging the server.\n";
-	message::status::send::respose(p, "{" + Options::version + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"CosminPerRam\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
+	message::status::send::respose(p, "{" + Options::version.to_string() + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"CosminPerRam\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
 }
 void message::status::receive::ping(Player* p, blong payload)
 {
@@ -113,9 +113,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 		login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
 		return;
 	}
-	if (p->protocolVersion != Options::currentProtocol)
+	if (p->protocolVersion != Options::currentProtocol())
 	{
-		login::send::disconnect(p, "{\"text\":\"Use 1.18.1, " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
+		login::send::disconnect(p, "{\"text\":\"Use " + Options::currentVersion() + ", " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
 		return;
 	}
 

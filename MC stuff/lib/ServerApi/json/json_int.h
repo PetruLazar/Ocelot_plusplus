@@ -11,7 +11,9 @@ public:
 	SERVER_API std::string stringValue() const;
 
 	SERVER_API int& iValue();
+	SERVER_API const int& iValue() const;
 	SERVER_API operator int& ();
+	SERVER_API operator const int& () const;
 	void SERVER_API operator=(int);
 };
 
