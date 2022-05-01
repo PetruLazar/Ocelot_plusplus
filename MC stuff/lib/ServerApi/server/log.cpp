@@ -169,14 +169,19 @@ LogStream& LogStream::operator<<(const std::thread::id& n)
 }
 LogStream& LogStream::operator<<(const void* n)
 {
-	if (Server::HasConsole()) cout << n;
-	if (toFile->is_open()) *toFile << n;
+	if (this->enabled) {
+		if (Server::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
 	return *this;
 }
 LogStream& LogStream::operator<<(const sf::IpAddress& n)
 {
-	if (Server::HasConsole()) cout << n;
-	if (toFile->is_open()) *toFile << n;
+	if (this->enabled) {
+		if (Server::HasConsole()) cout << n;
+		if (toFile->is_open()) *toFile << n;
+	}
+
 	return *this;
 }
 
