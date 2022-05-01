@@ -651,7 +651,7 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 		}
 		else {
 			picked = stackableSize - containedSlot->count;
-			containedSlot->count = stackableSize;
+			containedSlot->count = (Byte)stackableSize;
 		}
 
 		addedIndex = index;
@@ -764,7 +764,7 @@ void Player::setWorld(World* world)
 	message::play::send::playerPosAndLook(this, x, y, z, yaw, pitch, 0, false);
 
 	//send the selected slot
-	message::play::send::heldItemChange(this, inventory->getSelectedIndex());
+	message::play::send::heldItemChange(this, (Byte)inventory->getSelectedIndex());
 
 	//send old items
 	//...

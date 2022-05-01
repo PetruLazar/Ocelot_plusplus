@@ -39,7 +39,7 @@ Region::Region(const mcString& worldName, int rX, int rZ) : rX(rX), rZ(rZ)
 	}
 	//get the file size in bytes and in 1024B sections
 	ull fileSize = regionFile.seekg(0, std::ios::_Seekend).tellg();
-	uint fileSectionCount = fileSize >> 10;
+	uint fileSectionCount = (uint)(fileSize >> 10);
 	if (fileSize & 0x3ff) fileSectionCount++;
 	//building the file map
 	regionFileMap.resize(fileSectionCount, false);
@@ -59,7 +59,7 @@ Region::~Region()
 
 uint getFreeZone(const std::vector<bool>& map, uint size)
 {
-	uint mapSize = map.size();
+	uint mapSize = (uint)map.size();
 	uint len = 0, lastFreeZoneBegin = 4;
 	for (uint i = 4; i < mapSize; i++) if (!map[i])
 	{
@@ -75,7 +75,7 @@ uint getFreeZone(const std::vector<bool>& map, uint size)
 }
 bool isFreeZone(const std::vector<bool>& map, uint start, uint end)
 {
-	if (end > map.size()) end = map.size();
+	if (end > map.size()) end = (uint)map.size();
 	for (uint i = start; i < end; i++) if (map[i]) return false;
 	return true;
 }
@@ -83,7 +83,7 @@ void markZone(std::vector<bool>& map, uint start, uint end, bool occupied)
 {
 	if (end > map.size())
 	{
-		size_t oldSize = map.size();
+		uint oldSize = (uint)map.size();
 		map.resize(end, occupied);
 		end = oldSize; //only go from start to oldSize because the new elements are already set
 	}
@@ -167,7 +167,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 
 		//compress chunk
 		char* decompressedData = (char*)bufferContents.c_str();
-		size_t decompressedSize = bufferContents.length();
+		uint decompressedSize = (uint)bufferContents.length();
 		data = new char[9 + decompressedSize];
 		size = decompressedSize;
 		zlibCompressNoAlloc(decompressedData, decompressedSize, data + 9, size);
@@ -192,7 +192,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 
 		//get data address and length
 		data = (char*)bufferContents.c_str();
-		size = bufferContents.length();
+		size = (uint)bufferContents.length();
 	}
 	//transform the size from bytes to 1024B sections
 	uint chunkSize = (size >> 10) + ((size & 0x3ff) != 0);
