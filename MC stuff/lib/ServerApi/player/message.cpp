@@ -1,4 +1,5 @@
 #include "message.h"
+
 #include "../server/options.h"
 #include "../types/gametags.h"
 #include "../types/chat.h"

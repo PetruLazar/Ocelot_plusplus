@@ -9,6 +9,8 @@
 #include "../types/slot.h"
 #include "../types/window.h"
 #include "../server/options.h"
+#include "inventory.h"
+#include "windower.h"
 
 #include <queue>
 
@@ -85,47 +87,8 @@ public:
 	void updateRotation(bfloat yaw, bfloat pitch);
 	bool positionInRange(Position);
 
-	class _inventory {
-	private:
-		Slot* slots[46];
-		Byte selectedHotbar = 0; //main hand selected slot
-		Slot* floatingItem = new Slot();;
-
-	public:
-		_inventory();
-		~_inventory();
-
-		void setSelectedSlot(Byte selectedSlot);
-		Byte getSelectedIndex(bool raw = false);
-
-		Slot*& getSelectedSlot();
-		Slot*& getOffhandSlot();
-		Slot*& getHotbarSlot(bshort index);
-		Slot*& getInventorySlot(bshort index);
-
-		Slot*& getFloatingSlot();
-		void setFloatingSlot(Slot* newSlot);
-
-		Byte getSlotWithLeastID(varInt itemID);
-		Byte getFreeSlot();
-
-		unsigned add(Slot& theItem, unsigned& addedIndex);
-		void swapSlots(bshort a, bshort b);
-
-		void setInventorySlot(bshort index, Slot* slot);
-	} *inventory = new _inventory();
-
-	class _windower {
-	private:
-		std::queue<std::pair<window::type, unsigned>> que;
-		unsigned indexer = 1;
-
-	public:
-		unsigned open(window::type theWindow);
-		void close(unsigned ID);
-
-		window::type getLatest(unsigned ID);
-	} *windower = new _windower();;
+	mcp::inventory* inventory = new mcp::inventory();
+	mcp::windower* windower = new mcp::windower();
 
 	//player info
 	varInt ping;
