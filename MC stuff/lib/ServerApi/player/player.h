@@ -8,6 +8,7 @@
 #include "../types/entity.h"
 #include "../types/slot.h"
 #include "../types/window.h"
+#include "../server/options.h"
 
 #include <queue>
 
@@ -42,8 +43,8 @@ public:
 
 private:
 	sf::TcpSocket* socket;
-	bool connected = true,
-		scheduledDisconnect = false;
+
+	bool connected = true, scheduledDisconnect = false;
 	//info about buffering (bit mask)
 	//	bit 0 - buffering packet length
 	//  bit 1 - buffering packet
@@ -51,21 +52,21 @@ private:
 	//length of awaiting packet
 	varInt len;
 	//buffer for incoming packet length
-	char lengthBuffer[3],
+	char lengthBuffer[3] = {0},
 		//buffer for incoming packet
-		* buffer = 0,
+		* buffer = nullptr,
 		//current position of any of the receiving buffers
-		* current;
+		* current = nullptr;
 
 	MessageBuffer sendBuffer;
 
 public:
-	mcString username;
+	mcString username = "";
 
 	//ip address + port
 	std::string netId();
 
-	int protocolVersion;
+	int protocolVersion = Options::currentProtocol;
 	ConnectionState state;
 
 	//data for keep alive messages
@@ -77,9 +78,9 @@ public:
 	int64 lastKeepAliveId = -1; //the expected id for which a keep alive is pending or -1 if there is no pending response
 
 	//world and position information
-	World* world; // pointer to the world the player is in
-	int chunkX, chunkZ;
-	bool onGround;
+	World* world = nullptr; // pointer to the world the player is in
+	int chunkX = 0, chunkZ = 0;
+	bool onGround = false;
 	void updatePosition(bdouble X, bdouble Y, bdouble Z);
 	void updateRotation(bfloat yaw, bfloat pitch);
 	bool positionInRange(Position);
@@ -87,15 +88,15 @@ public:
 	class _inventory {
 	private:
 		Slot* slots[46];
-		bshort selectedHotbar = 0; //main hand selected slot
-		Slot* floatingItem;
+		Byte selectedHotbar = 0; //main hand selected slot
+		Slot* floatingItem = new Slot();;
 
 	public:
 		_inventory();
 		~_inventory();
 
-		void setSelectedSlot(bshort selectedSlot);
-		bshort getSelectedIndex(bool raw = false);
+		void setSelectedSlot(Byte selectedSlot);
+		Byte getSelectedIndex(bool raw = false);
 
 		Slot*& getSelectedSlot();
 		Slot*& getOffhandSlot();
@@ -105,14 +106,14 @@ public:
 		Slot*& getFloatingSlot();
 		void setFloatingSlot(Slot* newSlot);
 
-		bshort getSlotWithLeastID(varInt itemID);
-		bshort getFreeSlot();
+		Byte getSlotWithLeastID(varInt itemID);
+		Byte getFreeSlot();
 
 		unsigned add(Slot& theItem, unsigned& addedIndex);
 		void swapSlots(bshort a, bshort b);
 
 		void setInventorySlot(bshort index, Slot* slot);
-	} *inventory;
+	} *inventory = new _inventory();
 
 	class _windower {
 	private:
@@ -124,11 +125,11 @@ public:
 		void close(unsigned ID);
 
 		window::type getLatest(unsigned ID);
-	} *windower;
+	} *windower = new _windower();;
 
 	//player info
 	varInt ping;
-	bool hasDisplayName;
+	bool hasDisplayName = false;
 	Chat* displayName = nullptr;
 
 	//set compression
@@ -148,16 +149,16 @@ public:
 	void exitSight(Player*);
 	void exitSight(ull);
 
-	gamemode gm;
+	gamemode gm = gamemode::none;
 
 	//user settings
 	mcString locale = "en_US";
-	int viewDistance;
-	int simulationDistance;
-	ChatMode chatMode;		//---\/
-	bool chatColors;		//to do: processing chat
-	bool enableTextFiltering;
-	bool allowServerListings;
+	int viewDistance = 10;
+	int simulationDistance = 10;
+	ChatMode chatMode = ChatMode::enabled;	//---\/
+	bool chatColors = true;					//to do: processing chat
+	bool enableTextFiltering = true;
+	bool allowServerListings = false;
 
 	SERVER_API Player(sf::TcpSocket*);
 	SERVER_API ~Player();

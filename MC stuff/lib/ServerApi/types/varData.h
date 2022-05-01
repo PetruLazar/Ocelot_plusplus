@@ -9,6 +9,8 @@ class varInt
 public:
 	SERVER_API varInt() : v(0) {}
 	SERVER_API varInt(int value) : v(value) {}
+	SERVER_API varInt(unsigned int value) : v(static_cast<int>(value)) {}
+	SERVER_API varInt(size_t value) : v(static_cast<int>(value)) {}
 	void SERVER_API read(std::fstream& is)
 	{
 		v = 0;

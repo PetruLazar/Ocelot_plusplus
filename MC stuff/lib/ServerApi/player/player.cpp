@@ -18,9 +18,6 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 
 	//player initializations
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
-
-	inventory = new _inventory();
-	windower = new _windower();
 }
 Player::~Player()
 {
@@ -202,8 +199,6 @@ Player::_inventory::_inventory()
 {
 	for (int i = 0; i < 46; i++)
 		slots[i] = new Slot();
-
-	floatingItem = new Slot();
 }
 
 Player::_inventory::~_inventory()
@@ -214,12 +209,12 @@ Player::_inventory::~_inventory()
 	delete floatingItem;
 }
 
-void Player::_inventory::setSelectedSlot(bshort selectedSlot)
+void Player::_inventory::setSelectedSlot(Byte selectedSlot)
 {
 	this->selectedHotbar = selectedSlot;
 }
 
-bshort Player::_inventory::getSelectedIndex(bool raw)
+Byte Player::_inventory::getSelectedIndex(bool raw)
 {
 	if (!raw)
 		return this->selectedHotbar;
@@ -257,9 +252,9 @@ void Player::_inventory::setFloatingSlot(Slot* newSlot)
 	this->floatingItem = newSlot;
 }
 
-bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
+Byte Player::_inventory::getSlotWithLeastID(varInt itemID)
 {
-	bshort indexMin = -1, minCount = MAXSHORT;
+	Byte indexMin = 255, minCount = 255;
 	for (int i = 36; i < 45; i++) {
 		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
 			minCount = slots[i]->count;
@@ -276,7 +271,7 @@ bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
 
 	return indexMin;
 }
-bshort Player::_inventory::getFreeSlot()
+Byte Player::_inventory::getFreeSlot()
 {
 	for (int i = 36; i < 45; i++) {
 		if (!this->slots[i]->isPresent())
@@ -293,49 +288,46 @@ bshort Player::_inventory::getFreeSlot()
 
 unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 {
-	Byte picked = 0;
+	Byte picked = 0, index, stackableSize = items::getStackableSize(theItem.getItemId());
 
-	bshort index, stackableSize = items::getStackableSize(theItem.getItemId());
-
-	if (stackableSize == 1) {
+	if (stackableSize == 1) { //firstly, check if the item can be stacked at all
 		index = this->getFreeSlot();
 
-		if (index != -1) {
+		if (index != 255) {
 			picked = theItem.count;
 			
 			this->setInventorySlot(index, new Slot(theItem));
 
 			addedIndex = index;
 		}
-
-		return picked;
 	}
+	else { //if the item can be stacked...
+		index = this->getSlotWithLeastID(theItem.getItemId()); //find a slot with the least amount of it
 
-	index = this->getSlotWithLeastID(theItem.getItemId());
+		if (index != 255) { //found a slot with that item
+			Slot*& containedSlot = this->getInventorySlot(index);
 
-	if (index != -1) {
-		Slot*& containedSlot = this->getInventorySlot(index);
-
-		if (containedSlot->count + theItem.count < stackableSize + 1) {
-			picked = theItem.count;
-			containedSlot->count = containedSlot->count + theItem.count;
-		}
-		else {
-			picked = stackableSize - containedSlot->count;
-			containedSlot->count = stackableSize;
-		}
-
-		addedIndex = index;
-	}
-	else {
-		index = this->getFreeSlot();
-
-		if (index != -1) {
-			picked = theItem.count;
-
-			this->setInventorySlot(index, new Slot(theItem));
+			if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
+				picked = theItem.count;
+				containedSlot->count = containedSlot->count + theItem.count;
+			}
+			else { //not the entire stash can be pickedup...
+				picked = stackableSize - containedSlot->count;
+				containedSlot->count = stackableSize;
+			}
 
 			addedIndex = index;
+		}
+		else { //no slot with the same item, putting in a new one
+			index = this->getFreeSlot(); //if this fails, there are no free slots, therefore cant pick the item up
+
+			if (index != 255) {
+				picked = theItem.count;
+
+				this->setInventorySlot(index, new Slot(theItem));
+
+				addedIndex = index;
+			}
 		}
 	}
 

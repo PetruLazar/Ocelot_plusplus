@@ -39,7 +39,7 @@ Region::Region(const mcString& worldName, int rX, int rZ) : rX(rX), rZ(rZ)
 	}
 	//get the file size in bytes and in 1024B sections
 	ull fileSize = regionFile.seekg(0, std::ios::_Seekend).tellg();
-	uint fileSectionCount = fileSize >> 10;
+	ull fileSectionCount = fileSize >> 10;
 	if (fileSize & 0x3ff) fileSectionCount++;
 	//building the file map
 	regionFileMap.resize(fileSectionCount, false);

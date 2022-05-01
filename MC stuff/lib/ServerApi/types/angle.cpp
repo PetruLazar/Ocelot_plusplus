@@ -9,11 +9,11 @@ Angle::Angle(float value) : v(Byte(fmod(value, 360) / 360 * 256)) { }
 
 Angle::operator float()
 {
-	return v * 1.40625;
+	return v * 1.40625f;
 }
 Angle::operator bfloat()
 {
-	return v * 1.40625;
+	return v * 1.40625f;
 }
 void Angle::operator=(double value)
 {

@@ -171,7 +171,7 @@ void Chunk::write(ostream& file)
 		file.write((char*)(&sec.useGlobalPallete), 4);
 
 		//write paletteSize
-		ush paletteSize = sec.palette.size();
+		size_t paletteSize = sec.palette.size();
 		file.write((char*)(&paletteSize), 2);
 
 		//write palette

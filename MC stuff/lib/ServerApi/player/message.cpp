@@ -1921,6 +1921,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	Log::info() << Log::endl;
 
 	int inventoryFirstSlotIndex = (windowID == 0) ? 9 : window::getWindowSlotCount(p->windower->getLatest(windowID));
+	Log::info() << "iFSI: " << inventoryFirstSlotIndex << Log::endl;
 
 	switch (mode)
 	{
@@ -2003,13 +2004,13 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		break;
 	case 2:
 		if (button == 40)
-		{ //offhand swap
-			bshort positionIndex = p->inventory->getSelectedIndex(true);
+		{	//offhand swap
+			//bshort positionIndex = p->inventory->getSelectedIndex(true);
 
-			p->inventory->swapSlots(45, positionIndex);
+			//p->inventory->swapSlots(45, positionIndex);
 
-			message::play::send::setSlot(p, 0, 0, 45, p->inventory->getInventorySlot(45));
-			message::play::send::setSlot(p, 0, 0, positionIndex, p->inventory->getInventorySlot(positionIndex));
+			//message::play::send::setSlot(p, 0, 0, 45, p->inventory->getInventorySlot(45));
+			//message::play::send::setSlot(p, 0, 0, positionIndex, p->inventory->getInventorySlot(positionIndex));
 		}
 		else
 		{ //button is hotbar index from 0
@@ -2185,6 +2186,7 @@ void message::play::receive::chatMessage(Player* p, mcString& content)
 }
 void processGroundItem(Player* p)
 {
+	//minecraft picks up the entire batch if its pickupable, here, it picks up a batch, then the remaining one
 	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item)) {
 		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
 		{
