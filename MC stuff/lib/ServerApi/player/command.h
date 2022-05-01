@@ -12,6 +12,7 @@ namespace CommandHandlers
 	void tellWorld(CommandHandlerArguments);
 	void tellPing(CommandHandlerArguments);
 	void test(CommandHandlerArguments);
+	void teleport(CommandHandlerArguments);
 }
 
 namespace SuggestionsHandler

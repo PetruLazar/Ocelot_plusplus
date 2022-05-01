@@ -281,8 +281,27 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 	if (newChunkX != chunkX)
 	{
 		int delta = newChunkX - chunkX;
+		if (abs(delta) > 2 * viewDistance + 1)
+		{
+			for (int x = -viewDistance; x < viewDistance; x++)
+				for (int z = -viewDistance; z <= viewDistance; z++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			chunkLoaderHelper.matrix.Empty();
+			chunkLoaderHelper.Reset();
+			chunkX = newChunkX;
+			chunkZ = newChunkZ;
+			message::play::send::updateViewPosition(this, chunkX, chunkZ);
+			Player::x = X;
+			Player::y = Y;
+			Player::z = Z;
+
+			return;
+		}
 		if (delta > 0)
 		{
+
 			for (int x = -viewDistance; x < -viewDistance + delta; x++)
 				for (int z = -viewDistance; z <= viewDistance; z++)
 					if (chunkLoaderHelper.matrix.get(x, z))
@@ -291,7 +310,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			for (int i = 0; i < delta; i++)
 				chunkLoaderHelper.matrix.Shift_negative_x();
 		}
-		else
+		else if (delta < 0)
 		{
 			for (int x = viewDistance; x > viewDistance - delta; x--)
 				for (int z = -viewDistance; z <= viewDistance; z++)
@@ -305,12 +324,28 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		chunkLoaderHelper.Reset();
 		chunkX = newChunkX;
 		chunkChanged = true;
-		//chunkLoaderHelper.matrix.Show();
 	}
 
 	if (newChunkZ != chunkZ)
 	{
 		int delta = newChunkZ - chunkZ;
+		if (abs(delta) > 2 * viewDistance + 1)
+		{
+			for (int x = -viewDistance; x < viewDistance; x++)
+				for (int z = -viewDistance; z <= viewDistance; z++)
+					if (chunkLoaderHelper.matrix.get(x, z))
+						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+
+			chunkLoaderHelper.matrix.Empty();
+			chunkLoaderHelper.Reset();
+			chunkZ = newChunkZ;
+			message::play::send::updateViewPosition(this, chunkX, chunkZ);
+			Player::x = X;
+			Player::y = Y;
+			Player::z = Z;
+
+			return;
+		}
 		if (delta > 0)
 		{
 			for (int z = -viewDistance; z < -viewDistance + delta; z++)
@@ -321,7 +356,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			for (int i = 0; i < delta; i++)
 				chunkLoaderHelper.matrix.Shift_negative_z();
 		}
-		else
+		else if (delta < 0)
 		{
 			for (int z = viewDistance; z > viewDistance - delta; z--)
 				for (int x = -viewDistance; x <= viewDistance; x++)
@@ -339,175 +374,6 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 	}
 
 	if (chunkChanged) message::play::send::updateViewPosition(this, chunkX, chunkZ);
-
-	/*if (newChunkX != chunkX && newChunkZ != chunkZ)
-	{
-		int delta = newChunkZ - chunkZ;
-		if (delta > 0)
-		{
-			for (int z = -viewDistance; z < -viewDistance + delta; z++)
-				for (int x = -viewDistance; x <= viewDistance; x++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
-
-			for (int i = 0; i < delta; i++)
-				chunkLoaderHelper.matrix.Shift_negative_z();
-		}
-		else
-		{
-			for (int z = viewDistance; z > viewDistance - delta; z--)
-				for (int x = -viewDistance; x <= viewDistance; x++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
-
-			for (int i = 0; i > delta; i--)
-				chunkLoaderHelper.matrix.Shift_positive_z();
-		}
-
-		chunkLoaderHelper.Reset();
-		chunkZ = newChunkZ;
-		chunkChanged = true;
-		//chunkLoaderHelper.matrix.Show();
-	}
-
-	if (chunkChanged) message::play::send::updateViewPosition(this, chunkX, chunkZ);
-
-	/*if (newChunkX != chunkX && newChunkZ != chunkZ)
-	{
-		message::play::send::updateViewPosition(this, newChunkX, newChunkZ);
-		if (newChunkX < chunkX && newChunkZ < chunkZ)
-		{
-			//towards negative X
-			//towards negative Z
-			bint unloadX = chunkX + viewDistance;
-			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
-			bint unloadZ = chunkZ + viewDistance;
-			for (int x = chunkX - viewDistance; x < chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
-
-			bint loadX = newChunkX - viewDistance;
-			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
-			{
-				message::play::send::chunkDataAndLight(this, (int)loadX, z);
-			}
-			bint loadZ = newChunkZ - viewDistance;
-			for (int x = newChunkX - viewDistance + 1; x <= newChunkX + viewDistance; x++)
-			{
-				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
-			}
-		}
-		else if (newChunkX < chunkX)
-		{
-			//towards negative X
-			//towards positive Z
-			bint unloadX = chunkX + viewDistance;
-			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
-			bint unloadZ = chunkZ - viewDistance;
-			for (int x = chunkX - viewDistance; x < chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
-
-			bint loadX = newChunkX - viewDistance;
-			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
-			{
-				message::play::send::chunkDataAndLight(this, (int)loadX, z);
-			}
-			bint loadZ = newChunkZ + viewDistance;
-			for (int x = newChunkX - viewDistance + 1; x <= newChunkX + viewDistance; x++)
-			{
-				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
-			}
-		}
-		else if (newChunkZ < chunkZ)
-		{
-			//towards positive X
-			//towards negative Z
-			bint unloadX = chunkX - viewDistance;
-			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
-			bint unloadZ = chunkZ + viewDistance;
-			for (int x = chunkX - viewDistance + 1; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
-
-			bint loadX = newChunkX + viewDistance;
-			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
-			{
-				message::play::send::chunkDataAndLight(this, (int)loadX, z);
-			}
-			bint loadZ = newChunkZ - viewDistance;
-			for (int x = newChunkX - viewDistance; x < newChunkX + viewDistance; x++)
-			{
-				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
-			}
-		}
-		else
-		{
-			//towards positive X
-			//towards positive Z
-			bint unloadX = chunkX - viewDistance;
-			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
-			bint unloadZ = chunkZ - viewDistance;
-			for (int x = chunkX - viewDistance + 1; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
-
-			bint loadX = newChunkX + viewDistance;
-			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
-			{
-				message::play::send::chunkDataAndLight(this, (int)loadX, z);
-			}
-			bint loadZ = newChunkZ + viewDistance;
-			for (int x = newChunkX - viewDistance; x < newChunkX + viewDistance; x++)
-			{
-				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
-			}
-		}
-	}
-	else if (newChunkX != chunkX)
-	{
-		message::play::send::updateViewPosition(this, newChunkX, newChunkZ);
-		if (newChunkX < chunkX)
-		{
-			//towards negative X
-			bint unloadX = chunkX + viewDistance;
-			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
-			bint loadX = newChunkX - viewDistance;
-			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
-			{
-				message::play::send::chunkDataAndLight(this, (int)loadX, z);
-			}
-		}
-		else
-		{
-			//towards positive X
-			bint unloadX = chunkX - viewDistance;
-			for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) message::play::send::unloadChunk(this, unloadX, z);
-			bint loadX = newChunkX + viewDistance;
-			for (int z = newChunkZ - viewDistance; z <= newChunkZ + viewDistance; z++)
-			{
-				message::play::send::chunkDataAndLight(this, (int)loadX, z);
-			}
-		}
-	}
-	else if (newChunkZ != chunkZ)
-	{
-		message::play::send::updateViewPosition(this, newChunkX, newChunkZ);
-		if (newChunkZ < chunkZ)
-		{
-			//towards negative Z
-			bint unloadZ = chunkZ + viewDistance;
-			for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
-			bint loadZ = newChunkZ - viewDistance;
-			for (int x = newChunkX - viewDistance; x <= newChunkX + viewDistance; x++)
-			{
-				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
-			}
-		}
-		else
-		{
-			//towards positive Z
-			bint unloadZ = chunkZ - viewDistance;
-			for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) message::play::send::unloadChunk(this, x, unloadZ);
-			bint loadZ = newChunkZ + viewDistance;
-			for (int x = newChunkX - viewDistance; x <= newChunkX + viewDistance; x++)
-			{
-				message::play::send::chunkDataAndLight(this, x, (int)loadZ);
-			}
-		}
-	}*/
 
 	Player::x = X;
 	Player::y = Y;
@@ -589,15 +455,19 @@ void Player::_inventory::setFloatingSlot(Slot* newSlot)
 bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
 {
 	bshort indexMin = -1, minCount = MAXSHORT;
-	for (int i = 36; i < 45; i++) {
-		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
+	for (int i = 36; i < 45; i++)
+	{
+		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount)
+		{ //change 64 to item maximum regarding to that item
 			minCount = slots[i]->count;
 			indexMin = i;
 		}
 	}
 
-	for (int i = 9; i < 36; i++) {
-		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
+	for (int i = 9; i < 36; i++)
+	{
+		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount)
+		{ //change 64 to item maximum regarding to that item
 			minCount = slots[i]->count;
 			indexMin = i;
 		}
@@ -607,12 +477,14 @@ bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
 }
 bshort Player::_inventory::getFreeSlot()
 {
-	for (int i = 36; i < 45; i++) {
+	for (int i = 36; i < 45; i++)
+	{
 		if (!this->slots[i]->isPresent())
 			return i;
 	}
 
-	for (int i = 9; i < 36; i++) {
+	for (int i = 9; i < 36; i++)
+	{
 		if (!this->slots[i]->isPresent())
 			return i;
 	}
@@ -626,10 +498,12 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 
 	bshort index, stackableSize = items::getStackableSize(theItem.getItemId());
 
-	if (stackableSize == 1) {
+	if (stackableSize == 1)
+	{
 		index = this->getFreeSlot();
 
-		if (index != -1) {
+		if (index != -1)
+		{
 			picked = theItem.count;
 
 			this->setInventorySlot(index, new Slot(theItem));
@@ -642,24 +516,29 @@ unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
 
 	index = this->getSlotWithLeastID(theItem.getItemId());
 
-	if (index != -1) {
+	if (index != -1)
+	{
 		Slot*& containedSlot = this->getInventorySlot(index);
 
-		if (containedSlot->count + theItem.count < stackableSize + 1) {
+		if (containedSlot->count + theItem.count < stackableSize + 1)
+		{
 			picked = theItem.count;
 			containedSlot->count = containedSlot->count + theItem.count;
 		}
-		else {
+		else
+		{
 			picked = stackableSize - containedSlot->count;
 			containedSlot->count = (Byte)stackableSize;
 		}
 
 		addedIndex = index;
 	}
-	else {
+	else
+	{
 		index = this->getFreeSlot();
 
-		if (index != -1) {
+		if (index != -1)
+		{
 			picked = theItem.count;
 
 			this->setInventorySlot(index, new Slot(theItem));
@@ -674,7 +553,7 @@ void Player::_inventory::swapSlots(bshort a, bshort b)
 {
 	Slot* aSlot = this->getInventorySlot(a);
 	Slot* bSlot = this->getInventorySlot(b);
-	
+
 	std::swap(aSlot, bSlot);
 
 	Slot* newA = new Slot(*aSlot); //idfk
@@ -708,7 +587,7 @@ window::type Player::_windower::getLatest(unsigned theID)
 {
 	if (theID == this->que.back().second)
 		return que.back().first;
-	
+
 	Log::warn() << "Player got a wrong ID latest." << Log::endl;
 	return que.back().first;
 }
@@ -719,38 +598,52 @@ void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
 	y = tpY;
 	z = tpZ;
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, yaw, pitch, 0, false);
-	//unload and resend chunks if needed
+	Player::updatePosition(tpX, tpY, tpZ);
 }
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloat tpPitch)
 {
-	x = tpX;
-	y = tpY;
-	z = tpZ;
 	yaw = tpYaw;
 	pitch = tpPitch;
-	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, tpYaw, tpPitch, 0, false);
-	//unload and resend chunks if needed
+	teleport(tpX, tpY, tpZ);
 }
 
-void Player::setWorld(World* world)
+void Player::setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition, const sf::Vector2f* spawnOrientation)
 {
 	Log::debug(DEBUG_SIGHT) << '\n' << this << " is entering world " << world->name;
+	sizeof(*spawnPosition);
 	//set world and position
 	this->world = world;
-	x = world->spawn.X;
-	y = world->spawn.Y;
-	z = world->spawn.Z;
-	chunkX = world->spawn.ChunkX;
-	chunkZ = world->spawn.ChunkZ;
-	yaw = world->spawn.Yaw;
-	pitch = world->spawn.Pitch;
+	if (spawnPosition == nullptr)
+	{
+		x = world->spawn.X;
+		y = world->spawn.Y;
+		z = world->spawn.Z;
+	}
+	else
+	{
+		x = spawnPosition->x;
+		y = spawnPosition->y;
+		z = spawnPosition->z;
+	}
+	chunkX = fastfloor(x) >> 4;
+	chunkZ = fastfloor(z) >> 4;
+	if (spawnOrientation == nullptr)
+	{
+		yaw = world->spawn.Yaw;
+		pitch = world->spawn.Pitch;
+	}
+	else
+	{
+		yaw = spawnOrientation->x;
+		pitch = spawnOrientation->y;
+	}
 
 	//send necessary packets
 	message::play::send::updateViewPosition(this, chunkX, chunkZ);
 
 	message::play::send::timeUpdate(this, 6000i64, 6000i64);
 
-	message::play::send::spawnPosition(this, world->spawn.Absolute, 0.f);
+	message::play::send::spawnPosition(this, Position(x, y, z), 0.f);
 
 	/*for (int x = -viewDistance; x <= viewDistance; x++) for (int z = -viewDistance; z <= viewDistance; z++)
 	{
@@ -807,17 +700,17 @@ void Player::leaveWorld(World* world)
 	}
 	Log::debug(DEBUG_SIGHT) << "Player list of " << world->name << " is now " << world->players.size() << Log::endl;
 }
-void Player::changeWorld(World* newWorld)
+void Player::changeWorld(World* newWorld, const sf::Vector3<bdouble>* spawnPosition, const sf::Vector2f* spawnOrientation)
 {
 	message::play::send::respawn(this, newWorld->characteristics, newWorld->name, 0x5f19a34be6c9129a, gm, gamemode::none, false, newWorld->isFlat, true);
 
 	leaveWorld(world);
 
-	setWorld(newWorld);
+	setWorld(newWorld, spawnPosition, spawnOrientation);
 }
-void Player::changeWorld(const mcString& worldName)
+void Player::changeWorld(const mcString& worldName, const sf::Vector3<bdouble>* spawnPosition, const sf::Vector2f* spawnOrientation)
 {
-	for (uint i = 0; i < World::worlds.size(); i++) if (World::worlds[i]->name == worldName) changeWorld(World::worlds[i]);
+	for (uint i = 0; i < World::worlds.size(); i++) if (World::worlds[i]->name == worldName) changeWorld(World::worlds[i], spawnPosition, spawnOrientation);
 }
 
 void Player::enterSight(Player* other)

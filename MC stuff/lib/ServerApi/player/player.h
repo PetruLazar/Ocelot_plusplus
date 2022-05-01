@@ -212,7 +212,8 @@ public:
 		void setInventorySlot(bshort index, Slot* slot);
 	} *inventory;
 
-	class _windower {
+	class _windower
+	{
 	private:
 		std::queue<std::pair<window::type, unsigned>> que;
 		unsigned indexer = 1;
@@ -261,10 +262,10 @@ public:
 	SERVER_API Player(sf::TcpSocket*);
 	SERVER_API ~Player();
 
-	SERVER_API void setWorld(World* world);
+	SERVER_API void setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition = nullptr, const sf::Vector2f* spawnOrientation = nullptr);
 	SERVER_API void leaveWorld(World* world);
-	SERVER_API void changeWorld(World* newWorld);
-	SERVER_API void changeWorld(const mcString& worldName);
+	SERVER_API void changeWorld(World* newWorld, const sf::Vector3<bdouble>* spawnPosition = nullptr, const sf::Vector2f* spawnOrientation = nullptr);
+	SERVER_API void changeWorld(const mcString& worldName, const sf::Vector3<bdouble>* spawnPosition = nullptr, const sf::Vector2f* spawnOrientation = nullptr);
 
 	SERVER_API void disconnect();
 	//check for incoming data on the socket

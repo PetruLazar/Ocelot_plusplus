@@ -137,34 +137,65 @@ namespace CommandHandlers
 		break;
 		case 6:
 		{
-			Log::info() << Log::endl<<"----------INVENTORY DUMP----------"<<Log::endl;
+			Log::info() << Log::endl << "----------INVENTORY DUMP----------" << Log::endl;
 			Log::info() << "Crafting: " << Log::endl;
 			for (unsigned i = 0; i < 5; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Armor: " << Log::endl;
 			for (unsigned i = 5; i < 9; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Offhand: " << Log::endl;
-			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getInventorySlot(45)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(45)->count<< Log::endl;
+			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getInventorySlot(45)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(45)->count << Log::endl;
 			Log::info() << "Inventory: " << Log::endl;
-			for (unsigned i = 1; i < 4; i++) {
+			for (unsigned i = 1; i < 4; i++)
+			{
 				for (unsigned j = 0; j < 9; j++)
-					Log::none() << "\t"<< 9 * i + j<<": " << executingPlayer->inventory->getInventorySlot(9 * i + j)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(9 * i + j)->count;
+					Log::none() << "\t" << 9 * i + j << ": " << executingPlayer->inventory->getInventorySlot(9 * i + j)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(9 * i + j)->count;
 				Log::none() << Log::endl;
 			}
 			Log::info() << "Hotbar: " << Log::endl;
 			for (unsigned i = 36; i < 45; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId()<<"-"<< (int)executingPlayer->inventory->getInventorySlot(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
 			Log::none() << Log::endl;
-			Log::info() << "Floating item: " << Log::endl<<"\t"<<executingPlayer->inventory->getFloatingSlot()->getItemId()<<"-" << (int)executingPlayer->inventory->getFloatingSlot()->count << Log::endl<<Log::endl;
+			Log::info() << "Floating item: " << Log::endl << "\t" << executingPlayer->inventory->getFloatingSlot()->getItemId() << "-" << (int)executingPlayer->inventory->getFloatingSlot()->count << Log::endl << Log::endl;
 		}
 		break;
 		//add tests here - starting at 1
 		default:
 			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
+	}
+	void teleport(CommandHandlerArguments)
+	{
+		switch (argumentStack.size())
+		{
+		case 1:
+		{
+			throw Chat("WIP", Chat::color::red());
+			mcString& destination = *(mcString*)argumentStack[0];
+		}
+		break;
+		case 2:
+		{
+			throw Chat("WIP", Chat::color::red());
+			mcString& target = *(mcString*)argumentStack[0];
+			mcString& destination = *(mcString*)argumentStack[1];
+		}
+		break;
+		case 3:
+		{
+			executingPlayer->teleport(*(double*)argumentStack[0], *(double*)argumentStack[1], *(double*)argumentStack[2]);
+		}
+		break;
+		case 4:
+		{
+			throw Chat("WIP", Chat::color::red());
+			mcString& target = *(mcString*)argumentStack[0];
+		}
+		}
+
 	}
 }
 

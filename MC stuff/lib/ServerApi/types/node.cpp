@@ -8,7 +8,7 @@ namespace Commands
 {
 	namespace Parser
 	{
-		Parser::~Parser() { }
+		Parser::~Parser() {}
 
 		namespace brigadier
 		{
@@ -19,15 +19,15 @@ namespace Commands
 				Long::protocolIdentifier = "brigadier:long",
 				String::protocolIdentifier = "brigadier:string";
 
-			template <class T> PropertiesMin<T>::PropertiesMin(T min) : min(min) { }
-			template <class T> PropertiesMax<T>::PropertiesMax(T max) : max(max) { }
-			template <class T> PropertiesMinMax<T>::PropertiesMinMax(T min, T max) : PropertiesMin<T>(min), PropertiesMax<T>(max) { }
+			template <class T> PropertiesMin<T>::PropertiesMin(T min) : min(min) {}
+			template <class T> PropertiesMax<T>::PropertiesMax(T max) : max(max) {}
+			template <class T> PropertiesMinMax<T>::PropertiesMinMax(T min, T max) : PropertiesMin<T>(min), PropertiesMax<T>(max) {}
 
 			template <class T> void Properties<T>::write(char*& buffer)
 			{
 				*(buffer++) = flags;
 			}
-			template <class T> void Properties<T>::limit(T value) { }
+			template <class T> void Properties<T>::limit(T value) {}
 			template <class T> void PropertiesMin<T>::write(char*& buffer)
 			{
 				*(buffer++) = flags;
@@ -84,7 +84,7 @@ namespace Commands
 				return false;
 			}
 
-			Double::Double(Properties<bdouble>* props) : properties(props) { }
+			Double::Double(Properties<bdouble>* props) : properties(props) {}
 			Double::~Double()
 			{
 				delete properties;
@@ -114,7 +114,7 @@ namespace Commands
 				return false;
 			}
 
-			Float::Float(Properties<bfloat>* props) : properties(props) { }
+			Float::Float(Properties<bfloat>* props) : properties(props) {}
 			Float::~Float()
 			{
 				delete properties;
@@ -144,7 +144,7 @@ namespace Commands
 				return false;
 			}
 
-			Integer::Integer(Properties<bint>* props) : properties(props) { }
+			Integer::Integer(Properties<bint>* props) : properties(props) {}
 			Integer::~Integer()
 			{
 				delete properties;
@@ -174,7 +174,7 @@ namespace Commands
 				return false;
 			}
 
-			Long::Long(Properties<blong>* props) : properties(props) { }
+			Long::Long(Properties<blong>* props) : properties(props) {}
 			Long::~Long()
 			{
 				delete properties;
@@ -204,7 +204,7 @@ namespace Commands
 				return false;
 			}
 
-			String::String(PropertiesString::Mode mode) : mode(mode) { }
+			String::String(PropertiesString::Mode mode) : mode(mode) {}
 			void String::write(char*& buffer)
 			{
 				protocolIdentifier.write(buffer);
@@ -290,7 +290,7 @@ namespace Commands
 				nbt_compound_tag::protocolIdentifier = "minecraft:nbt_compound_tag",
 				time::protocolIdentifier = "minecraft:time";
 
-			entity::entity(bool singleTargetsOnly, bool playersOnly) : flags((playersOnly << 1) | (int)singleTargetsOnly) { }
+			entity::entity(bool singleTargetsOnly, bool playersOnly) : flags((playersOnly << 1) | (int)singleTargetsOnly) {}
 			void entity::write(char*& buffer)
 			{
 				protocolIdentifier.write(buffer);
@@ -460,7 +460,7 @@ namespace Commands
 			{
 				throw "WIP";
 			}
-			score_holder::score_holder(bool allowsMultiple) : allowsMultiple(allowsMultiple) { }
+			score_holder::score_holder(bool allowsMultiple) : allowsMultiple(allowsMultiple) {}
 			void score_holder::write(char*& buffer)
 			{
 				protocolIdentifier.write(buffer);
@@ -526,7 +526,7 @@ namespace Commands
 			{
 				throw "WIP";
 			}
-			range::range(bool allowsDecimals) : allowsDecimals(allowsDecimals) { }
+			range::range(bool allowsDecimals) : allowsDecimals(allowsDecimals) {}
 			void range::write(char*& buffer)
 			{
 				protocolIdentifier.write(buffer);
@@ -658,18 +658,18 @@ namespace Commands
 
 	//suggestions [mcString] - if flags - hasSuggestions
 
-	Node::Node(std::vector<varInt> children) : children(children) { }
+	Node::Node(std::vector<varInt> children) : children(children) {}
 	void Node::addChild(varInt c)
 	{
 		children.push_back(c);
 	}
-	Node::~Node() { }
+	Node::~Node() {}
 	void Node::execute(Player* executingPlayer, ArgumentStack& argumentStack)
 	{
 		throw Chat("Unknown command", Chat::color::red());
 	}
 
-	RootNode::RootNode(std::vector<varInt> children) : Node(children) { }
+	RootNode::RootNode(std::vector<varInt> children) : Node(children) {}
 	void RootNode::write(char*& buffer) const
 	{
 		*(buffer++) = rootType;
@@ -686,9 +686,9 @@ namespace Commands
 		throw std::exception("root node not parsable");
 	}
 
-	LiteralNode::LiteralNode(const mcString& name, std::vector<varInt> children, Handler handler) : Node(children), name(name), handler(handler), hasRedirect(false) { }
-	LiteralNode::LiteralNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Handler handler) : Node(children), name(name), hasRedirect(true), redirectNode(redirectNode), handler(handler) { }
-	LiteralNode::~LiteralNode() { }
+	LiteralNode::LiteralNode(const mcString& name, std::vector<varInt> children, Handler handler) : Node(children), name(name), handler(handler), hasRedirect(false) {}
+	LiteralNode::LiteralNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Handler handler) : Node(children), name(name), hasRedirect(true), redirectNode(redirectNode), handler(handler) {}
+	LiteralNode::~LiteralNode() {}
 	void LiteralNode::write(char*& buffer) const
 	{
 		*(buffer++) = (hasRedirect << 3) | ((handler != 0) << 2) | literalType;
@@ -716,10 +716,10 @@ namespace Commands
 		handler(executingPlayer, argumentStack);
 	}
 
-	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, children), parser(parser), suggestions(suggestions) { }
-	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Handler handler, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, handler), parser(parser), suggestions(suggestions) { }
-	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, redirectNode), parser(parser), suggestions(suggestions) { }
-	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Handler handler, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, redirectNode, handler), parser(parser), suggestions(suggestions) { }
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, children), parser(parser), suggestions(suggestions) {}
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, Parser::Parser* parser, Handler handler, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, handler), parser(parser), suggestions(suggestions) {}
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, redirectNode), parser(parser), suggestions(suggestions) {}
+	ArgumentNode::ArgumentNode(const mcString& name, std::vector<varInt> children, varInt redirectNode, Parser::Parser* parser, Handler handler, Suggestions::Suggestions* suggestions) : LiteralNode(name, children, redirectNode, handler), parser(parser), suggestions(suggestions) {}
 	ArgumentNode::~ArgumentNode()
 	{
 		delete parser;
@@ -740,19 +740,28 @@ namespace Commands
 		return parser->extract(command, argumentStack);
 	}
 
+	using namespace Parser;
+	using namespace brigadier;
+
 	std::vector<Node*> Commands::commands{
-		new LiteralNode("survival", { }, CommandHandlers::gamemodeSurvival),
-		new LiteralNode("creative", { }, CommandHandlers::gamemodeCreative),
-		new LiteralNode("adventure", { }, CommandHandlers::gamemodeAdventure),
-		new LiteralNode("spectator", { }, CommandHandlers::gamemodeSpectator),
-		new LiteralNode("gamemode", { 0, 1, 2, 3 }),
-		new ArgumentNode("world name", { }, new Parser::brigadier::String(Parser::brigadier::PropertiesString::single_word), CommandHandlers::worldChange, new Suggestions::minecraft::ask_server()),
-		new LiteralNode("world", { 5 }, CommandHandlers::tellWorld),
-		new LiteralNode("ping", { }, CommandHandlers::tellPing),
-		new ArgumentNode("test number", { }, new Parser::brigadier::Integer(new Parser::brigadier::PropertiesMin<bint>(1)), CommandHandlers::test),
-		new LiteralNode("test", { 8 })
+		/*  0 */ new LiteralNode("survival", { }, CommandHandlers::gamemodeSurvival),
+		/*  1 */ new LiteralNode("creative", { }, CommandHandlers::gamemodeCreative),
+		/*  2 */ new LiteralNode("adventure", { }, CommandHandlers::gamemodeAdventure),
+		/*  3 */ new LiteralNode("spectator", { }, CommandHandlers::gamemodeSpectator),
+		/*  4 */ new LiteralNode("gamemode", { 0, 1, 2, 3 }),
+		/*  5 */ new ArgumentNode("world name", { }, new String(PropertiesString::single_word), CommandHandlers::worldChange, new Suggestions::minecraft::ask_server()),
+		/*  6 */ new LiteralNode("world", { 5 }, CommandHandlers::tellWorld),
+		/*  7 */ new LiteralNode("ping", { }, CommandHandlers::tellPing),
+		/*  8 */ new ArgumentNode("test number", { }, new Integer(new PropertiesMin<bint>(1)), CommandHandlers::test),
+		/*  9 */ new LiteralNode("test", { 8 }),
+		/* 10 */ new ArgumentNode("tp z", { }, new Double(new Properties<bdouble>()), CommandHandlers::teleport),
+		/* 11 */ new ArgumentNode("tp y", { 10 }, new Double(new Properties<bdouble>())),
+		/* 12 */ new ArgumentNode("tp x", { 11 }, new Double(new Properties<bdouble>())),
+		/* 13 */ new ArgumentNode("destination player", { }, new String(PropertiesString::single_word), CommandHandlers::teleport),
+		/* 14 */ new ArgumentNode("player", { 12, 13}, new String(PropertiesString::single_word), CommandHandlers::teleport),
+		/* 15 */ new LiteralNode("tp", { 12, 14 }),
 	};
-	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 9 };
+	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 9, 15 };
 
 	Commands Commands::atuomatic;
 	Commands::~Commands()
