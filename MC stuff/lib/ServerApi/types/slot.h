@@ -46,4 +46,13 @@ public:
 		nbt_data = new nbt_compound();
 		*nbt_data = *newData;
 	}
+
+	Slot& operator=(const Slot& other) {
+		count = other.count;
+		itemId = other.itemId;
+		present = other.present;
+		this->updateNBT(other.nbt_data);
+
+		return *this;
+	}
 };

@@ -10,7 +10,6 @@
 #include "../types/window.h"
 #include "../server/options.h"
 #include "inventory.h"
-#include "windower.h"
 
 #include <queue>
 
@@ -88,7 +87,6 @@ public:
 	bool positionInRange(Position);
 
 	mcp::inventory* inventory = new mcp::inventory();
-	mcp::windower* windower = new mcp::windower();
 
 	//player info
 	varInt ping;

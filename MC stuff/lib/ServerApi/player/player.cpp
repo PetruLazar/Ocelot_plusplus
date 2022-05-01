@@ -25,7 +25,6 @@ Player::~Player()
 	if (buffer) delete buffer;
 
 	delete inventory;
-	delete windower;
 }
 
 std::string Player::netId()

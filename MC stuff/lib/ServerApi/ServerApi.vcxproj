@@ -204,7 +204,6 @@
     <ClInclude Include="player\inventory.h" />
     <ClInclude Include="player\message.h" />
     <ClInclude Include="player\player.h" />
-    <ClInclude Include="player\windower.h" />
     <ClInclude Include="server\server.h" />
     <ClInclude Include="server\log.h" />
     <ClInclude Include="server\options.h" />
@@ -283,7 +282,6 @@
     <ClCompile Include="player\inventory.cpp" />
     <ClCompile Include="player\message.cpp" />
     <ClCompile Include="player\player.cpp" />
-    <ClCompile Include="player\windower.cpp" />
     <ClCompile Include="server\server.cpp" />
     <ClCompile Include="server\log.cpp" />
     <ClCompile Include="server\options.cpp" />

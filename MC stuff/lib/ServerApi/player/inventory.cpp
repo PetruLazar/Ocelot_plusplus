@@ -1,66 +1,26 @@
 
 #include "inventory.h"
 #include "../types/item.h"
+#include "../server/log.h"
 
-namespace mcp {
-	inventory::inventory()
-	{
-		for (int i = 0; i < 46; i++)
+namespace mcs::inventory {
+	base::base(size_t size) : size(size) {
+		slots = new Slot * [size];
+		for (size_t i = 0; i < size; i++)
 			slots[i] = new Slot();
 	}
 
-	inventory::~inventory()
-	{
-		for (int i = 0; i < 46; i++)
+	base::~base() {
+		for (size_t i = 0; i < size; i++)
 			delete slots[i];
-
-		delete floatingItem;
+		delete[] slots;
 	}
 
-	void inventory::setSelectedSlot(Byte selectedSlot)
-	{
-		this->selectedHotbar = selectedSlot;
+	size_t base::getSize() {
+		return size;
 	}
 
-	Byte inventory::getSelectedIndex(bool raw)
-	{
-		if (!raw)
-			return this->selectedHotbar;
-
-		return 36 + this->selectedHotbar;
-	}
-
-	Slot*& inventory::getSelectedSlot()
-	{
-		return this->slots[36 + selectedHotbar];
-	}
-
-	Slot*& inventory::getOffhandSlot()
-	{
-		return this->slots[45];
-	}
-
-	Slot*& inventory::getHotbarSlot(bshort index)
-	{
-		return this->slots[36 + index];
-	}
-
-	Slot*& inventory::getInventorySlot(bshort index)
-	{
-		return this->slots[index];
-	}
-
-	Slot*& inventory::getFloatingSlot()
-	{
-		return this->floatingItem;
-	}
-	void inventory::setFloatingSlot(Slot* newSlot)
-	{
-		delete this->floatingItem;
-		this->floatingItem = newSlot;
-	}
-
-	Byte inventory::getSlotWithLeastID(varInt itemID)
+	Byte base::getSlotWithLeastID(varInt itemID)
 	{
 		Byte indexMin = 255, minCount = 255;
 		for (int i = 36; i < 45; i++) {
@@ -79,7 +39,7 @@ namespace mcp {
 
 		return indexMin;
 	}
-	Byte inventory::getFreeSlot()
+	Byte base::getFreeSlot()
 	{
 		for (int i = 36; i < 45; i++) {
 			if (!this->slots[i]->isPresent())
@@ -94,7 +54,136 @@ namespace mcp {
 		return -1;
 	}
 
-	unsigned inventory::add(Slot& theItem, unsigned& addedIndex)
+	void base::swapSlots(bshort a, bshort b)
+	{
+		std::swap(getSlotByIndex(a), getSlotByIndex(b));
+	}
+
+	void base::setSlotByIndex(bshort index, const Slot& slot)
+	{
+		*this->slots[index] = slot;
+	}
+	Slot*& base::getSlotByIndex(bshort index)
+	{
+		return this->slots[index];
+	}
+}
+
+namespace mcp {
+	inventory::~inventory() {
+		delete floatingItem;
+	}
+
+	unsigned inventory::openWindow(window::type theWindow)
+	{
+		windowQue.emplace(std::make_pair(theWindow, windowIndex));
+		isWindowOpen = true;
+
+		switch (theWindow) {
+		case window::type::crafting:
+			openedWindowInventory = new mcs::inventory::crafting();
+			break;
+		default:
+
+			break;
+		}
+
+		inventoryFirstSlotIndex = openedWindowInventory->getSize();
+
+		return windowIndex++;
+	}
+	void inventory::closeWindow(unsigned theID)
+	{
+		delete openedWindowInventory;
+		isWindowOpen = false;
+		inventoryFirstSlotIndex = 9;
+
+		if (theID == windowQue.front().second)
+		{
+			//close current window
+			windowQue.pop();
+			windowIndex--;
+		}
+		else
+			Log::warn() << "Player closed a not-last-opened window." << Log::endl;
+	}
+	window::type inventory::getLatestWindow(unsigned theID)
+	{
+		if (theID == windowQue.back().second)
+			return windowQue.back().first;
+
+		Log::warn() << "Player got a wrong ID latest." << Log::endl;
+		return windowQue.back().first;
+	}
+
+	void inventory::setSelectedSlot(Byte selectedSlot)
+	{
+		this->selectedHotbar = selectedSlot;
+	}
+	Byte inventory::getSelectedIndex(bool raw)
+	{
+		if (!raw)
+			return this->selectedHotbar;
+
+		return 36 + this->selectedHotbar;
+	}
+
+	Slot*& inventory::getSelectedSlot()
+	{
+		return this->slots[36 + selectedHotbar];
+	}
+	Slot*& inventory::getOffhandSlot()
+	{
+		return this->slots[45];
+	}
+	Slot*& inventory::getHotbarSlot(bshort index)
+	{
+		return this->slots[36 + index];
+	}
+
+	void inventory::swapWithFloating(bshort index)
+	{
+		std::swap(getFloatingSlot(), getSlotByIndex(index));
+	}
+
+	Slot*& inventory::getFloatingSlot()
+	{
+		return this->floatingItem;
+	}
+	void inventory::setFloatingSlot(const Slot& newSlot)
+	{
+		*this->floatingItem = newSlot;
+	}
+
+	bool inventory::isIndexLocal(bshort index)
+	{
+		return index >= inventoryFirstSlotIndex;
+	}
+	void inventory::swapSlots(bshort a, bshort b)
+	{
+		std::swap(getSlotByIndex(a), getSlotByIndex(b));
+	}
+	void inventory::setSlotByIndex(bshort index, const Slot& slot)
+	{
+		if(!isWindowOpen)
+			*this->slots[index + 9 - inventoryFirstSlotIndex] = slot;
+		else if (isIndexLocal(index))
+			*this->slots[index + 9 - inventoryFirstSlotIndex] = slot;
+		else
+			this->openedWindowInventory->setSlotByIndex(index, slot);
+	}
+	Slot*& inventory::getSlotByIndex(bshort index)
+	{
+		if(!isWindowOpen)
+			return this->slots[index + 9 - inventoryFirstSlotIndex];
+
+		if (isIndexLocal(index))
+			return this->slots[index + 9 - inventoryFirstSlotIndex];
+
+		return this->openedWindowInventory->getSlotByIndex(index);
+	}
+
+	unsigned inventory::addAnywhere(Slot& theItem, unsigned& addedIndex)
 	{
 		Byte picked = 0, index, stackableSize = items::getStackableSize(theItem.getItemId());
 
@@ -103,9 +192,6 @@ namespace mcp {
 
 			if (index != 255) {
 				picked = theItem.count;
-
-				this->setInventorySlot(index, new Slot(theItem));
-
 				addedIndex = index;
 			}
 		}
@@ -113,7 +199,7 @@ namespace mcp {
 			index = this->getSlotWithLeastID(theItem.getItemId()); //find a slot with the least amount of it
 
 			if (index != 255) { //found a slot with that item
-				Slot*& containedSlot = this->getInventorySlot(index);
+				Slot* containedSlot = this->getSlotByIndex(index);
 
 				if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
 					picked = theItem.count;
@@ -131,9 +217,6 @@ namespace mcp {
 
 				if (index != 255) {
 					picked = theItem.count;
-
-					this->setInventorySlot(index, new Slot(theItem));
-
 					addedIndex = index;
 				}
 			}
@@ -141,14 +224,21 @@ namespace mcp {
 
 		return picked;
 	}
-	void inventory::swapSlots(bshort a, bshort b)
+	unsigned inventory::addToSlot(Slot* theItem, bshort index)
 	{
-		std::swap(this->getInventorySlot(a), this->getInventorySlot(b));
-	}
+		Byte picked = 0, stackableSize = items::getStackableSize(theItem->getItemId());
 
-	void inventory::setInventorySlot(bshort index, Slot* slot)
-	{
-		delete this->slots[index];
-		this->slots[index] = slot;
+		Slot* containedSlot = this->getSlotByIndex(index);
+
+		if (containedSlot->count + theItem->count < stackableSize + 1) { //the stash can be completely picked up
+			picked = theItem->count;
+			containedSlot->count = containedSlot->count + theItem->count;
+		}
+		else { //not the entire stash can be pickedup...
+			picked = stackableSize - containedSlot->count;
+			containedSlot->count = stackableSize;
+		}
+
+		return picked;
 	}
 }

@@ -1921,7 +1921,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	}
 	Log::info() << Log::endl;
 
-	int inventoryFirstSlotIndex = (windowID == 0) ? 9 : window::getWindowSlotCount(p->windower->getLatest(windowID));
+	int inventoryFirstSlotIndex = (windowID == 0) ? 9 : window::getWindowSlotCount(p->inventory->getLatestWindow(windowID));
 	Log::info() << "iFSI: " << inventoryFirstSlotIndex << Log::endl;
 
 	switch (mode)
@@ -1932,7 +1932,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			if (clickedSlot == -999)
 			{ //drop whole slot
 				Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getFloatingSlot());
-				p->inventory->setFloatingSlot(new Slot());
+				p->inventory->setFloatingSlot(Slot());
 
 				p->world->addEntity(theItem);
 
@@ -1949,20 +1949,26 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 				if (clickedSlot == -1)
 					return;
 
-				if (p->inventory->getFloatingSlot()->isPresent()) {
-					p->inventory->setInventorySlot(clickedSlot, new Slot(*p->inventory->getFloatingSlot()));
-					p->inventory->setFloatingSlot(new Slot());
+				Slot* clicked = p->inventory->getSlotByIndex(clickedSlot);
+				Slot* floating = p->inventory->getFloatingSlot();
+
+				if (clicked->getItemId() == floating->getItemId())
+				{
+					unsigned remained = p->inventory->addToSlot(floating, clickedSlot);
+					
+					if (remained != floating->count)
+						floating->count = floating->count - remained;
+					else
+						p->inventory->setFloatingSlot(Slot());
 				}
-				else {
-					p->inventory->setFloatingSlot(new Slot(*p->inventory->getInventorySlot(clickedSlot)));
-					p->inventory->setInventorySlot(clickedSlot, new Slot());
-				}
+				else
+					p->inventory->swapWithFloating(clickedSlot);
 			}
 		}
 		else
-		{ //button == 1
+		{	//button == 1
 			if (clickedSlot == -999)
-			{ //drop one item from slot
+			{	//drop one item from slot
 				Slot* floatingSlot = p->inventory->getFloatingSlot();
 				floatingSlot->count--; //decrease the floating item count;
 
@@ -1982,16 +1988,16 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 				message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 			}
 			else
-			{ //select half from slot
+			{	//select half from slot
 				if (clickedSlot == -1)
 					return;
 
-				Slot* selectedSlot = p->inventory->getInventorySlot(clickedSlot);
-				Slot* newFloatingSlot = new Slot(*selectedSlot);
+				Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+				Slot newFloatingSlot = *selectedSlot;
 				
-				newFloatingSlot->count /= 2;
+				newFloatingSlot.count /= 2;
 				if (selectedSlot->count % 2 == 1)
-					newFloatingSlot->count++;
+					newFloatingSlot.count++;
 
 				p->inventory->setFloatingSlot(newFloatingSlot);
 				selectedSlot->count = selectedSlot->count / 2;
@@ -2006,16 +2012,23 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	case 2:
 		if (button == 40)
 		{	//offhand swap
-			//bshort positionIndex = p->inventory->getSelectedIndex(true);
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* floatingSlot = p->inventory->getFloatingSlot();
 
-			//p->inventory->swapSlots(45, positionIndex);
+			std::swap(selectedSlot, floatingSlot);
 
-			//message::play::send::setSlot(p, 0, 0, 45, p->inventory->getInventorySlot(45));
-			//message::play::send::setSlot(p, 0, 0, positionIndex, p->inventory->getInventorySlot(positionIndex));
+			message::play::send::setSlot(p, 0, 0, 45, floatingSlot);
+			message::play::send::setSlot(p, 0, 0, clickedSlot, selectedSlot);
 		}
 		else
-		{ //button is hotbar index from 0
-			
+		{	//button is hotbar index from 0
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* hotbarSlot = p->inventory->getHotbarSlot(button);
+
+			std::swap(selectedSlot, hotbarSlot);
+
+			message::play::send::setSlot(p, 0, 0, 36 + button, hotbarSlot);
+			message::play::send::setSlot(p, 0, 0, clickedSlot, selectedSlot);
 		}
 		break;
 	case 3:
@@ -2024,10 +2037,13 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 
 		break;
 	case 4:
+		if (clickedSlot == -999 || clickedSlot == -1)
+			return;
+
 		if (button == 0)
 		{ //q, drop one from whole slot
-			Slot* selectedSlot = p->inventory->getInventorySlot(clickedSlot);
-			selectedSlot->count--; //decrease the floating item count;
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			selectedSlot->count -= 1; //decrease the floating item count;
 
 			Slot dropSlot = *selectedSlot;
 			dropSlot.count = 1; //copy the floating item, but with 1 count
@@ -2046,8 +2062,8 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		}
 		else
 		{ //ctrl + q, button == 1 drop whole slot
-			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getInventorySlot(clickedSlot));
-			p->inventory->setInventorySlot(clickedSlot, new Slot());
+			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getSlotByIndex(clickedSlot));
+			p->inventory->setSlotByIndex(clickedSlot, Slot());
 
 			p->world->addEntity(theItem);
 
@@ -2101,7 +2117,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 void message::play::receive::closeWindow(Player* p, Byte winId)
 {
 	if(winId != 0)
-		p->windower->close(winId);
+		p->inventory->closeWindow(winId);
 
 	message::play::send::closeWindow(p, winId);
 }
@@ -2124,7 +2140,7 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 
 	if (hasTitle)
 	{
-		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot(943, bookData));
+		p->inventory->setSlotByIndex(p->inventory->getSelectedIndex(true), Slot(943, bookData));
 
 		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 
@@ -2197,12 +2213,17 @@ void processGroundItem(Player* p)
 				continue;
 
 			unsigned addedIndex = -1;
-			unsigned picked = p->inventory->add(droppedItem->theItem, addedIndex);
+			unsigned picked = p->inventory->addAnywhere(droppedItem->theItem, addedIndex);
 
 			if (picked != 0) {
 				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), picked);
 
-				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, p->inventory->getInventorySlot(addedIndex));
+				Slot* pickedupSlot = p->inventory->getSlotByIndex(addedIndex);
+				Log::info() << "aasdasdasdsad:" << picked << " ddddd: " << (int)droppedItem->theItem.count<< Log::endl;
+				Log::info() << "b:" << (int)pickedupSlot->count<< Log::endl;
+				pickedupSlot->count += (Byte)picked;  //broken
+				Log::info() << "a:" << (int)pickedupSlot->count << Log::endl;
+				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, pickedupSlot);
 
 				if (picked == droppedItem->theItem.count) { //all of the entity got picked up, destroy it
 					message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
@@ -2323,7 +2344,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 	}
 	else
 	{ //put in inventory
-		p->inventory->setInventorySlot(slot, clickedItem);
+		p->inventory->setSlotByIndex(slot, *clickedItem);
 
 		if (p->inventory->getSelectedIndex() == slot)
 		{
@@ -2396,7 +2417,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
-		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
+		p->inventory->setSlotByIndex(p->inventory->getSelectedIndex(true), Slot());
 
 		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 		for (Player* seener : p->seenBy)
@@ -2428,7 +2449,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		playerItem->count -= 1;
 		if (playerItem->count == 0)
 		{
-			p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
+			p->inventory->setSlotByIndex(p->inventory->getSelectedIndex(true), Slot());
 
 			Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 			for (Player* seener : p->seenBy)
@@ -2447,8 +2468,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 
 		p->inventory->swapSlots(45, positionIndex);
 
-		message::play::send::setSlot(p, 0, 0, 45, p->inventory->getInventorySlot(45));
-		message::play::send::setSlot(p, 0, 0, positionIndex, p->inventory->getInventorySlot(positionIndex));
+		message::play::send::setSlot(p, 0, 0, 45, p->inventory->getSlotByIndex(45));
+		message::play::send::setSlot(p, 0, 0, positionIndex, p->inventory->getSlotByIndex(positionIndex));
 	}
 	break;
 	}
