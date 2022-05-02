@@ -20,24 +20,33 @@ namespace mcs::inventory {
 		return size;
 	}
 
-	Byte base::getSlotWithLeastID(varInt itemID)
+	Byte base::getSlotWithID(varInt itemID)
 	{
-		Byte indexMin = 255, minCount = 255;
 		for (int i = 36; i < 45; i++) {
-			if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
-				minCount = slots[i]->count;
-				indexMin = i;
-			}
+			if (slots[i]->getItemId() == itemID)
+				return i;
 		}
 
 		for (int i = 9; i < 36; i++) {
-			if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount) { //change 64 to item maximum regarding to that item
-				minCount = slots[i]->count;
-				indexMin = i;
-			}
+			if (slots[i]->getItemId() == itemID)
+				return i;
 		}
 
-		return indexMin;
+		return 255;
+	}
+	Byte base::getStackableSlotWithID(varInt itemID)
+	{
+		for (int i = 36; i < 45; i++) {
+			if (slots[i]->getItemId() == itemID && slots[i]->count != items::getStackableSize(slots[i]->getItemId()))
+				return i;
+		}
+
+		for (int i = 9; i < 36; i++) {
+			if (slots[i]->getItemId() == itemID && slots[i]->count != items::getStackableSize(slots[i]->getItemId()))
+				return i;
+		}
+
+		return 255;
 	}
 	Byte base::getFreeSlot()
 	{
@@ -183,7 +192,7 @@ namespace mcp {
 		return this->openedWindowInventory->getSlotByIndex(index);
 	}
 
-	unsigned inventory::addAnywhere(Slot& theItem, unsigned& addedIndex)
+	std::pair<Byte, Byte> inventory::addAnywhere(const Slot& theItem)
 	{
 		Byte picked = 0, index, stackableSize = items::getStackableSize(theItem.getItemId());
 
@@ -192,47 +201,87 @@ namespace mcp {
 
 			if (index != 255) {
 				picked = theItem.count;
-				addedIndex = index;
+				this->setSlotByIndex(index, theItem);
 			}
 		}
 		else { //if the item can be stacked...
-			index = this->getSlotWithLeastID(theItem.getItemId()); //find a slot with the least amount of it
+			Slot* selectedSlot = this->getSelectedSlot();
 
-			if (index != 255) { //found a slot with that item
-				Slot* containedSlot = this->getSlotByIndex(index);
-
-				if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
+			//if the currently holding item is the ground item and can be picked up in it...
+			if (selectedSlot->getItemId() == theItem.getItemId() && selectedSlot->count != items::getStackableSize(selectedSlot->getItemId())) {
+				if (selectedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
 					picked = theItem.count;
-					containedSlot->count = containedSlot->count + theItem.count;
+					selectedSlot->count = selectedSlot->count + theItem.count;
 				}
 				else { //not the entire stash can be pickedup...
-					picked = stackableSize - containedSlot->count;
-					containedSlot->count = stackableSize;
+					picked = stackableSize - selectedSlot->count;
+					selectedSlot->count = stackableSize;
 				}
 
-				addedIndex = index;
+				index = this->getSelectedIndex(true);
 			}
-			else { //no slot with the same item, putting in a new one
-				index = this->getFreeSlot(); //if this fails, there are no free slots, therefore cant pick the item up
+			else { //if the currently holding item is not the ground item...
+				index = this->getStackableSlotWithID(theItem.getItemId()); //find a slot with the same ID
 
-				if (index != 255) {
-					picked = theItem.count;
-					addedIndex = index;
+				if (index != 255) { //found a slot with that item
+					Slot* containedSlot = this->getSlotByIndex(index);
+
+					if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
+						picked = theItem.count;
+						containedSlot->count = containedSlot->count + theItem.count;
+					}
+					else { //not the entire stash can be pickedup...
+						picked = stackableSize - containedSlot->count;
+						containedSlot->count = stackableSize;
+					}
+				}
+				else { //no slot with the same item, putting in a new one
+					index = this->getFreeSlot(); //if this fails, there are no free slots, therefore cant pick the item up
+
+					if (index != 255) {
+						picked = theItem.count;
+						this->setSlotByIndex(index, theItem);
+					}
 				}
 			}
 		}
 
-		return picked;
+		return std::make_pair(picked, index);
 	}
-	unsigned inventory::addToSlot(Slot* theItem, bshort index)
+	std::vector<std::pair<Byte, Byte>> inventory::addToInventory(const Slot& theItem)
 	{
-		Byte picked = 0, stackableSize = items::getStackableSize(theItem->getItemId());
+		std::vector<std::pair<Byte, Byte>> pickedDataArray;
+		std::pair<Byte, Byte> picked;
+
+		Slot* processingItem = new Slot(theItem);
+
+		bool exit = false;
+		while (!exit) {
+			picked = this->addAnywhere(*processingItem);
+			
+			if (picked.first == 0)
+				exit = true;
+			else {
+				pickedDataArray.emplace_back(picked);
+				processingItem->count -= picked.first;
+
+				exit = processingItem->count == 0;
+			}
+		}
+
+		delete processingItem;
+
+		return pickedDataArray;
+	}
+	unsigned inventory::addToSlot(const Slot& theItem, bshort index)
+	{
+		Byte picked = 0, stackableSize = items::getStackableSize(theItem.getItemId());
 
 		Slot* containedSlot = this->getSlotByIndex(index);
 
-		if (containedSlot->count + theItem->count < stackableSize + 1) { //the stash can be completely picked up
-			picked = theItem->count;
-			containedSlot->count = containedSlot->count + theItem->count;
+		if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
+			picked = theItem.count;
+			containedSlot->count = containedSlot->count + theItem.count;
 		}
 		else { //not the entire stash can be pickedup...
 			picked = stackableSize - containedSlot->count;

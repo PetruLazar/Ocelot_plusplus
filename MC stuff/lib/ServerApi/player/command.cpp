@@ -150,8 +150,10 @@ namespace CommandHandlers
 			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getSlotByIndex(45)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(45)->count<< Log::endl;
 			Log::info() << "Inventory: " << Log::endl;
 			for (unsigned i = 1; i < 4; i++) {
-				for (unsigned j = 0; j < 9; j++)
-					Log::none() << "\t"<< 9 * i + j<<": " << executingPlayer->inventory->getSlotByIndex(9 * i + j)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(9 * i + j)->count;
+				for (unsigned j = 0; j < 9; j++) {
+					Slot* inventorySlot = executingPlayer->inventory->getSlotByIndex(9 * i + j);
+					Log::none() << "\t" << 9 * i + j << ": " << inventorySlot->getItemId() << "-" << (int)inventorySlot->count << "  ";
+				}
 				Log::none() << Log::endl;
 			}
 			Log::info() << "Hotbar: " << Log::endl;

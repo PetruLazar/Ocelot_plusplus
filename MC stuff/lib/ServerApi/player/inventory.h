@@ -18,7 +18,8 @@ namespace mcs::inventory {
 
 		size_t getSize();
 
-		Byte getSlotWithLeastID(varInt itemID);
+		Byte getSlotWithID(varInt itemID);
+		Byte getStackableSlotWithID(varInt itemID);
 		Byte getFreeSlot();
 
 		virtual void swapSlots(bshort a, bshort b);
@@ -72,7 +73,8 @@ namespace mcp {
 		void setSlotByIndex(bshort index, const Slot& slot) override;
 		Slot*& getSlotByIndex(bshort index) override;
 
-		unsigned addAnywhere(Slot& theItem, unsigned& addedIndex);
-		unsigned addToSlot(Slot* theItem, bshort index);
+		std::pair<Byte, Byte> addAnywhere(const Slot& theItem); //first is the amount added and second the index
+		std::vector<std::pair<Byte, Byte>> addToInventory(const Slot& theItem);
+		unsigned addToSlot(const Slot& theItem, bshort index);
 	};
 }

@@ -39,7 +39,7 @@ public:
 	void read(char*& buffer);
 
 	bool isPresent() { return present; }
-	varInt getItemId() { return itemId; }
+	varInt getItemId() const { return itemId; }
 
 	void updateNBT(nbt* newData) {
 		delete nbt_data;
