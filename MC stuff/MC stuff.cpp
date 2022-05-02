@@ -26,7 +26,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 {
 	Log::initialize();
 	Server::AllocConsole();
-	Options::Load();
+	if (!Options::Load())
+	{
+		Log::error() << "Failed to load server.properties." << Log::flush;
+		system("pause");
+		Server::FreeConsole();
+		return 0;
+	}
 
 	//rand seeding
 	srand((uint)time(nullptr));

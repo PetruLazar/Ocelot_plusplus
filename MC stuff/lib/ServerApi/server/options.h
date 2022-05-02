@@ -24,7 +24,7 @@ class Options
 	static bool loaded;
 
 public:
-	SERVER_API static void Load();
+	SERVER_API static bool Load();
 	SERVER_API static void Unload();
 
 	//these are not included in server.properties

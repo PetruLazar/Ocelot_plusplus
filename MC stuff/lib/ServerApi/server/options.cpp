@@ -25,150 +25,107 @@ bool Options::loaded = false;
 
 //const string Options::version = "\"version\":{\"name\":\"1.18.2\",\"protocol\":758}";
 const json_compound Options::version("version", new json*[2]{
-		new json_string("name","1.18.2"),
+		new json_string("name", "1.18.2"),
 		new json_int("protocol", 758)
 	}, 2);
 bool Options::allowJoin = true;
 int Options::currentProtocol() { return version["protocol"].iValue(); }
 const string& Options::currentVersion() { return version["version"].value(); }
 
-ull parseUnsigned(const string& name, const string& value, ull linenumber)
+ull parseUnsigned(const string& value)
 {
-	ull v;
-	try
-	{
-		v = stoull(value);
-	}
-	catch (out_of_range)
-	{
-		cout << "Error on line " << linenumber << ": value " << value << " too big for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (invalid_argument)
-	{
-		cout << "Error on line " << linenumber << ": value " << value << " is invalid for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (...)
-	{
-		cout << "Unknown error on line " << linenumber << " during value evaluation.\n";
-		throw 0;
-	}
+	size_t check;
+	ull v = stoull(value, &check);
+	if (check != value.length()) throw invalid_argument("");
 	return v;
 }
-int64 parse(const string& name, const string& value, ull linenumber)
+int64 parse(const string& value)
 {
-	int64 v;
-	try
-	{
-		v = stoll(value);
-	}
-	catch (out_of_range)
-	{
-		cout << "Error on line " << linenumber << ": value " << value << " too big for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (invalid_argument)
-	{
-		cout << "Error on line " << linenumber << ": value " << value << " is invalid for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (...)
-	{
-		cout << "Unknown error on line " << linenumber << " during value evaluation.\n";
-		throw 0;
-	}
+	size_t check;
+	int64 v = stoll(value, &check);
+	if (check != value.length()) throw invalid_argument("");
 	return v;
 }
-ush parseUShort(const string& name, const string& value, ull linenumber)
+ush parseUShort(const string& value)
 {
-	ull v;
-	try
-	{
-		v = parseUnsigned(name, value, linenumber);
-		if (v > 0xffff) throw out_of_range(0);
-	}
-	catch (out_of_range)
-	{
-		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (...)
-	{
-		throw 0;
-	}
+	ull v = parseUnsigned(value);
+	if (v > 0xffff) throw out_of_range("");
 	return (ush)v;
 }
-int parseInt(const string& name, const string& value, ull linenumber)
+int parseInt(const string& value)
 {
-	int64 v;
-	try
-	{
-		v = parse(name, value, linenumber);
-		if (v > 0x7fffffffi64 || v < 0xffffffff80000000i64) throw out_of_range(0);
-	}
-	catch (out_of_range)
-	{
-		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (...)
-	{
-		throw 0;
-	}
+	size_t check;
+	int v = stoi(value,&check);
+	if (check != value.length()) throw invalid_argument("");
+	return v;
+}
+short parseShort(const string& value)
+{
+	int v = parseInt(value);
+	if (v > 0x7fff || v < 0xffff8000i32) throw out_of_range("");
+
 	return (int)v;
 }
-int parseShort(const string& name, const string& value, ull linenumber)
+Byte parseByte(const string& value)
 {
-	int64 v;
-	try
-	{
-		v = parse(name, value, linenumber);
-		if (v > 0x7fffi64 || v < 0xffffffffffff8000i64) throw out_of_range(0);
-	}
-	catch (out_of_range)
-	{
-		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (...)
-	{
-		throw 0;
-	}
-	return (int)v;
-}
-Byte parseByte(const string& name, const string& value, ull linenumber)
-{
-	ull v;
-	try
-	{
-		v = parseUnsigned(name, value, linenumber);
-		if (v > 0xff) throw out_of_range(0);
-	}
-	catch (out_of_range)
-	{
-		cout << "Error on line " << linenumber << ": value " << v << " too big for \"" << name << "\".\n";
-		throw 0;
-	}
-	catch (...)
-	{
-		throw 0;
-	}
+	ull v = parseUnsigned(value);
+	if (v > 0xff) throw out_of_range("");
+
 	return (Byte)v;
 }
+bool parseBool(const string& value)
+{
+	if (value == "true") return true;
+	if (value == "false") return false;
+	throw std::invalid_argument("");
+}
 
-void Options::Load()
+template<class T>
+T parse(const string& name, const string& value, ull linenumber, T(*parse_func)(const string&))
+{
+	try
+	{
+		return parse_func(value);
+	}
+	catch (out_of_range&)
+	{
+		Log::error() << "Error on line " << linenumber << ": value \"" << value << "\" too big for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (invalid_argument&)
+	{
+		Log::error() << "Error on line " << linenumber << ": value \"" << value << "\" is invalid for \"" << name << "\".\n";
+		throw 0;
+	}
+	catch (...)
+	{
+		Log::error() << "Unknown error on line " << linenumber << " evaluating value \"" << value << "\" for \"" << name << "\".\n";
+		throw 0;
+	}
+}
+
+bool Options::Load()
 {
 	if (loaded) throw mcexception(mcexception::UNSPECIFIED, "server.properties already loaded", "options.cpp", __LINE__);
 
+	bool success = true;
 	ifstream opt(optionsFileName);
 	if (!opt.is_open())
 	{
 		Log::warn() << "File \"server.properties\" not found, so one has been generated.\n";
 		ofstream out(optionsFileName);
-		out << "#lines that begin with a '#' are ignored\n#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n#port=25565\n#max-players=100\n#main-world-name=world\n#motd={\"text\":\"A Minecraft server.\"}\n#ip=0.0.0.0\n#view-distance=10\n#chunk-compression=true\n#network-compression-threshold=128";
+		out << "#lines that begin with a '#' are ignored\n"
+			"#remove the '#' at the beginning of a line and modify the value of the property if you want to use a different value for that property instead of the default value\n"
+			"#port=25565\n"
+			"#max-players=100\n"
+			"#main-world-name=world\n"
+			"#motd={\"text\":\"A Minecraft server.\"}\n"
+			"#ip=0.0.0.0\n"
+			"#view-distance=10\n"
+			"#chunk-compression=true\n"
+			"#network-compression-threshold=128";
 		out.close();
-		return;
+		return loaded = true;
 	}
 	char* line = new char[4096];
 	ull linenumber = 0;
@@ -184,101 +141,74 @@ void Options::Load()
 		}
 		*(str_value++) = 0;
 		string name = line, value = str_value;
-		if (name == "port")
+		try
 		{
-			try
+			if (name == "port")
 			{
-				_port = parseUShort(name, value, linenumber);
+				//_port = parseUShort(name, value, linenumber);
+				_port = parse(name, value, linenumber, parseUShort);
 			}
-			catch (...)
+			else if (name == "ip")
 			{
+				_ip = value;
 			}
-		}
-		else if (name == "ip")
-		{
-			_ip = value;
-		}
-		else if (name == "max-players")
-		{
-			try
+			else if (name == "max-players")
 			{
-				_max_players = parseInt(name, value, linenumber);
+				//_max_players = parseInt(name, value, linenumber);
+				_max_players = parse(name, value, linenumber, parseInt);
 			}
-			catch (...)
+			else if (name == "motd")
 			{
+				_motd = value;
 			}
-		}
-		else if (name == "motd")
-		{
-			_motd = value;
-		}
-		else if (name == "main-world-name")
-		{
-			_mainWorldName = value;
-		}
-		else if (name == "view-distance")
-		{
-			try
+			else if (name == "main-world-name")
 			{
-				Byte val = parseByte(name, value, linenumber);
+				_mainWorldName = value;
+			}
+			else if (name == "view-distance")
+			{
+				//Byte val = parseByte(name, value, linenumber);
+				Byte val = parse(name, value, linenumber, parseByte);
 				if (val > Player::maxViewDistance)
 				{
-					cout << "Error on line " << linenumber << ": value " << value << " is too large for \"" << name << "\". The maximum is \"" << Player::maxViewDistance << "\".\n";
+					Log::error() << "Error on line " << linenumber << ": value " << value << " is too large for \"" << name << "\". The maximum is \"" << Player::maxViewDistance << "\".\n";
 					throw 0;
 				}
-				_viewDistance = parseByte(name, value, linenumber);
+				_viewDistance = val;
 			}
-			catch (...)
+			else if (name == "simulation-distance")
 			{
+				//_simulationDistance = parseByte(name, value, linenumber);
+				_simulationDistance = parse(name, value, linenumber, parseByte);
 			}
-		}
-		else if (name == "simulation-distance")
-		{
-			try
+			else if (name == "chunk-compression")
 			{
-				_simulationDistance = parseByte(name, value, linenumber);
+				_chunkCompression = parse(name, value, linenumber, parseBool);
 			}
-			catch (...)
+			else if (name == "network-compression-threshold")
 			{
-			}
-		}
-		else if (name == "chunk-compression")
-		{
-			if (value == "true")
-			{
-				_chunkCompression = true;
-			}
-			else if (value == "false")
-			{
-				_chunkCompression = false;
+				//_networkCompression = parseShort(name, value, linenumber);
+				_networkCompression = parse(name, value, linenumber, parseShort);
 			}
 			else
 			{
-				cout << "Error on line " << linenumber << ": value " << value << " is invalid for \"" << name << "\".\n";
+				Log::error() << "Error on line " << linenumber << ": unkown property name \"" << name << "\".\n";
+				throw 0;
 			}
 		}
-		else if (name == "network-compression-threshold")
+		catch (int e)
 		{
-			try
-			{
-				_networkCompression = parseShort(name, value, linenumber);
-			}
-			catch (...)
-			{
-			}
-		}
-		else
-		{
-			Log::error() << "Error on line " << linenumber << ": unkown property name \"" << name << "\".\n";
+			if (e == 0) success = false;
 		}
 	}
 	opt.close();
-	loaded = true;
+	if (success) loaded = true;
 	delete[] line;
+	return loaded;
 }
 void Options::Unload()
 {
-
+	if (!loaded) throw mcexception(mcexception::UNSPECIFIED, "server.properties not loaded", "options.cpp", __LINE__);
 }
 
 ush Options::port() { return _port; }
