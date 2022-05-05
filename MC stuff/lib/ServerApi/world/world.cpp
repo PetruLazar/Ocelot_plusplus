@@ -384,6 +384,21 @@ World::~World()
 	//update characteristics.bin
 }
 
+void World::setSpawn(bdouble X, bdouble Y, bdouble Z)
+{
+	spawn.X = X;
+	spawn.Y = Y;
+	spawn.Z = Z;
+
+	spawn.ChunkX = int(floor(spawn.X)) >> 4;
+	spawn.ChunkZ = int(floor(spawn.Z)) >> 4;
+	spawn.Absolute = sf::Vector3i(int(floor(spawn.X)), int(floor(spawn.Y)), int(floor(spawn.Z)));
+}
+void World::setSpawn(bdouble X, bdouble Y, bdouble Z, bfloat Yaw, bfloat Pitch)
+{
+	setSpawn(X, Y, Z);
+}
+
 eidDispenser::Entity* World::getEidDispenser()
 {
 	return &this->eidDispenser;

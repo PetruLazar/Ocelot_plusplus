@@ -13,6 +13,8 @@ namespace CommandHandlers
 	void tellPing(CommandHandlerArguments);
 	void test(CommandHandlerArguments);
 	void teleport(CommandHandlerArguments);
+	void spawn(CommandHandlerArguments);
+	void setSpawn(CommandHandlerArguments);
 }
 
 namespace SuggestionsHandler

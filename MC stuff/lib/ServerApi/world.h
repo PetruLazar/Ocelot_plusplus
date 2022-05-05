@@ -31,7 +31,7 @@ public:
 
 	mcString name;
 	std::vector<Player*> players;
-	
+
 	eidDispenser::Entity* getEidDispenser();
 	void addEntity(Entity::entity* entity);
 	bool removeEntity(varInt eid);
@@ -65,6 +65,9 @@ public:
 		bfloat Yaw, Pitch;
 		int ChunkX, ChunkZ;
 	} spawn;
+	SERVER_API void setSpawn(bdouble X, bdouble Y, bdouble Z);
+	SERVER_API void setSpawn(bdouble X, bdouble Y, bdouble Z, bfloat Yaw, bfloat Pitch);
+
 	bool isFlat;
 	enum GeneratorType : Byte
 	{
