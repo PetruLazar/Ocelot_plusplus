@@ -7,6 +7,7 @@
 #include "types/slot.h"
 #include "types/enums.h"
 #include <mutex>
+#include <forward_list>
 
 class Player;
 #include "player/player.h"
@@ -30,7 +31,7 @@ public:
 	SERVER_API ~World();
 
 	mcString name;
-	std::vector<Player*> players;
+	std::forward_list<Player*> players;
 
 	eidDispenser::Entity* getEidDispenser();
 	void addEntity(Entity::entity* entity);
@@ -106,7 +107,7 @@ public:
 	SERVER_API static bool loadAll();
 	SERVER_API static void unloadAll();
 
-	SERVER_API static std::vector<World*> worlds;
+	SERVER_API static std::forward_list<World*> worlds;
 	SERVER_API static World* getWorld(const mcString& worldName);
 
 	//temporary variable

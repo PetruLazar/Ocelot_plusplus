@@ -1,6 +1,10 @@
 #pragma once
 #include "../nbt.h"
 #include "section.h"
+#include <forward_list>
+
+class Player;
+//#include "../player/player.h"
 
 class Chunk
 {
@@ -35,6 +39,10 @@ public:
 	varInt nOfBlockEntities;
 	//block Entities
 
+	//currently unused
+	std::forward_list<Player*> players;
+	//std::forward_list<Entity*> entities;
+
 	//for loading/saving from/to file
 	SERVER_API void read(std::istream& file);
 	SERVER_API void write(std::ostream& file);
@@ -50,5 +58,9 @@ public:
 
 	//includes data size field of the packet
 	SERVER_API void writeSectionData(char*&);
+
+	//currently unused
+	SERVER_API void addPlayer(Player*);
+	SERVER_API void removePlayer(Player*);
 };
 

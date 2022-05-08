@@ -245,3 +245,12 @@ void Chunk::writeSectionData(char*&)
 {
 	throw runtimeError("Chunk::writeSectionData not implemented yet");
 }
+
+void Chunk::addPlayer(Player* p)
+{
+	players.emplace_front(p);
+}
+void Chunk::removePlayer(Player* p)
+{
+	players.remove(p);
+}

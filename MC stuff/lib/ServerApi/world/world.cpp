@@ -21,7 +21,7 @@ const int terrainHeightAverage = 85;
 const int terrainHeightAmplitude = 35;
 const double noiseFactor_x = 1. / 128, noiseFactor_z = 1. / 128;
 
-std::vector<World*> World::worlds;
+std::forward_list<World*> World::worlds;
 World* World::spawnWorld;
 
 nbt_compound World::dimension_codec("", new nbt*[2]{
@@ -1056,6 +1056,7 @@ Chunk* World::getChunk(int x, int z, bool increaseLoadCount)
 			return chunk;
 		}
 		//chunk not found in region, generate
+		if (!increaseLoadCount) return nullptr;
 		chunk = generatorFunction(this, x, z);
 		chunk->loadCount = 1;
 		Log::debug(REGION_DEBUG) << "Chunk [" << x << ", " << z << "] generated(" << chunk->loadCount << ")" << Log::flush;
@@ -1064,6 +1065,7 @@ Chunk* World::getChunk(int x, int z, bool increaseLoadCount)
 	}
 
 	//region not found, create region and load chunk
+	if (!increaseLoadCount) return nullptr;
 	Region* region = new Region(name, rX, rZ);
 	regions.emplace_back(region);
 	Log::debug(REGION_DEBUG) << "Regions is now " << regions.size() << Log::flush;
@@ -1095,7 +1097,6 @@ int World::AbsToRelHeight(int y)
 bool World::checkCoordinates(int y)
 {
 	return y >= 0 && y < height;
-
 }
 BlockState& World::getPaletteEntry(int x, int y, int z)
 {
@@ -1183,9 +1184,9 @@ bool World::loadAll()
 	}
 
 	for (auto&& fut : futures)
-		worlds.emplace_back(fut.get());
+		worlds.emplace_front(fut.get());
 
-	Log::info() << "Finished loading " << worlds.size() << " worlds! " << Log::Bench("worlds") << Log::flush;
+	Log::info() << "Finished loading " << futures.size() << " worlds! " << Log::Bench("worlds") << Log::flush;
 	worldList.close();
 
 	spawnWorld = getWorld(Options::mainWorldName());
@@ -1194,6 +1195,7 @@ bool World::loadAll()
 void World::unloadAll()
 {
 	for (World* w : worlds) delete w;
+	worlds.clear();
 }
 
 World* World::getWorld(const mcString& worldName)

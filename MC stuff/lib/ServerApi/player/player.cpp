@@ -10,7 +10,7 @@ const char* invalidPacketLengthError = "Invalid Packet Length";
 const char* socketError = "Socket error occured";
 const char* socketDisconnected = "Socket Disconnected unexpectedly";
 
-std::vector<Player*> Player::players;
+std::forward_list<Player*> Player::players;
 eidDispenser::Player Player::eidDispenser;
 
 Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socket(socket), Entity::player(&eidDispenser, Entity::type::minecraft_player, 0, 0, 0, .0, .0), chunkLoaderHelper(Options::viewDistance())
@@ -645,15 +645,6 @@ void Player::setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition, c
 
 	message::play::send::spawnPosition(this, Position(x, y, z), 0.f);
 
-	/*for (int x = -viewDistance; x <= viewDistance; x++) for (int z = -viewDistance; z <= viewDistance; z++)
-	{
-		Log::debug(true) << "Sending chunk " << x + chunkX << ' ' << z + chunkZ << '\n';
-		message::play::send::chunkDataAndLight(this, x + chunkX, z + chunkZ, true);
-		chunkLoaderHelper.matrix.set(x, z, true);
-		//message::play::send::updateLight(this, x, z);
-		//message::play::send::chunkData(this, x, z);
-	}*/
-
 	message::play::send::playerPosAndLook(this, x, y, z, yaw, pitch, 0, false);
 
 	//send the selected slot
@@ -672,8 +663,8 @@ void Player::setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition, c
 		}
 	}
 	//add the player to the world's player list
-	world->players.emplace_back(this);
-	Log::debug(DEBUG_SIGHT) << "Player list for " << world->name << " is now " << world->players.size() << Log::endl;
+	world->players.emplace_front(this);
+	//Log::debug(DEBUG_SIGHT) << "Player list for " << world->name << " is now " << world->players.size() << Log::endl;
 }
 void Player::leaveWorld(World* world)
 {
@@ -683,22 +674,15 @@ void Player::leaveWorld(World* world)
 	chunkLoaderHelper.Reset();
 	chunkLoaderHelper.matrix.Empty();
 
-	//destroy the player entity for the players who see this player
-	ull size = seenBy.size();
-	for (ull i = 0; i < size--; i++)
+	for (Player* p : seenBy)
 	{
-		seenBy[i]->exitSight(this);
-		exitSight(i--);
+		p->exitSight(this);
+		exitSight(p);
 	}
 
 	//remove the player from the world's player list
-	size = world->players.size();
-	for (ull i = 0; i < size; i++) if (world->players[i] == this)
-	{
-		world->players.erase(world->players.begin() + i);
-		break;
-	}
-	Log::debug(DEBUG_SIGHT) << "Player list of " << world->name << " is now " << world->players.size() << Log::endl;
+	world->players.remove(this);
+	//Log::debug(DEBUG_SIGHT) << "Player list of " << world->name << " is now " << world->players.size() << Log::endl;
 }
 void Player::changeWorld(World* newWorld, const sf::Vector3<bdouble>* spawnPosition, const sf::Vector2f* spawnOrientation)
 {
@@ -710,7 +694,7 @@ void Player::changeWorld(World* newWorld, const sf::Vector3<bdouble>* spawnPosit
 }
 void Player::changeWorld(const mcString& worldName, const sf::Vector3<bdouble>* spawnPosition, const sf::Vector2f* spawnOrientation)
 {
-	for (uint i = 0; i < World::worlds.size(); i++) if (World::worlds[i]->name == worldName) changeWorld(World::worlds[i], spawnPosition, spawnOrientation);
+	for (World* wld : World::worlds) if (wld->name == worldName) changeWorld(wld, spawnPosition, spawnOrientation);
 }
 
 void Player::enterSight(Player* other)
@@ -718,25 +702,32 @@ void Player::enterSight(Player* other)
 	Log::debug(DEBUG_SIGHT) << "Player " << other << " entering sight of " << this << Log::endl;
 	ignoreExceptions(message::play::send::spawnPlayer(this, other->getEid(), *other->euuid, other->x, other->y, other->z, (float)other->yaw, (float)other->pitch));
 	ignoreExceptions(message::play::send::entityHeadLook(this, other->getEid(), (float)other->yaw));
-	seenBy.emplace_back(other);
-	Log::debug(DEBUG_SIGHT) << "Sight of " << this << " is now " << seenBy.size() << Log::endl;
+	seenBy.emplace_front(other);
+	//Log::debug(DEBUG_SIGHT) << "Sight of " << this << " is now " << seenBy.size() << Log::endl;
 }
 void Player::exitSight(Player* other)
 {
-	ull size = seenBy.size();
+	//called for the other player: searches the player and calls exitSight(ull) on themselves
+
+	seenBy.remove(other);
+
+	/*ull size = seenBy.size();
 	for (ull i = 0; i < size; i++) if (seenBy[i] == other)
 	{
 		exitSight(i);
 		return;
-	}
+	}*/
 }
-void Player::exitSight(ull otherI)
+/*void Player::exitSight(std::forward_list<Player*>::iterator prev_it)
 {
-	Log::debug(DEBUG_SIGHT) << "Player " << seenBy[otherI] << " exiting sight of " << this << Log::endl;
-	ignoreExceptions(message::play::send::destroyEntities(this, 1, &seenBy[otherI]->eid));
+	//called to remove the entry on the same object
+
+	//Log::debug(DEBUG_SIGHT) << "Player " << seenBy[otherI] << " exiting sight of " << this << Log::endl;
+	ignoreExceptions(message::play::send::destroyEntities(this, 1, &(*it)->eid));
+	//seenBy.erase(seenBy.begin() + otherI);
 	seenBy.erase(seenBy.begin() + otherI);
-	Log::debug(DEBUG_SIGHT) << "Sight of " << this << " is now " << seenBy.size() << Log::endl;
-}
+	//Log::debug(DEBUG_SIGHT) << "Sight of " << this << " is now " << seenBy.size() << Log::endl;
+}*/
 
 void Player::disconnect()
 {
@@ -1017,16 +1008,30 @@ void Player::schedulePacket(char* buffer, ull size, char* toDelete, bool disconn
 bool Player::Connected() { return connected; }
 bool Player::ScheduledDisconnect() { return scheduledDisconnect; }
 
+
+Player* Player::getPlayer(const mcString& name)
+{
+	for (Player* p : players) if (p->username == name) return p;
+	return nullptr;
+}
+
 void Player::clearDisconnectedPlayers()
 {
-	ull size = players.size();
+	players.remove_if([](Player* p)
+	{
+		bool ret = !p->connected;
+		if (ret) delete p;
+		return ret;
+	});
+
+	/*ull size = players.size();
 	for (ull i = 0; i < size; i++) if (!players[i]->connected)
 	{
 		delete players[i];
 		for (ull j = i-- + 1; j < size; j++) players[j - 1] = players[j];
 		players.pop_back();
 		size--;
-	}
+	}*/
 }
 void Player::broadcastChat(const Chat& msg, Player* ignore)
 {
@@ -1056,4 +1061,54 @@ void Player::UpdateViewDistance(int newViewDistance)
 	viewDistance = newViewDistance;
 	chunkLoaderHelper.UpdateViewDistance(viewDistance);
 	//chunkLoaderHelper.matrix.Show();
+}
+
+void Player::updateAll()
+{
+	auto it = players.before_begin();
+	while (true)
+	{
+		auto& pnode = it._Ptr->_Next;
+		if (!pnode) break;
+		Player* p = pnode->_Myval;
+
+		try
+		{
+			p->updateNet();
+		}
+		catch (runtimeError obj)
+		{
+			Log::error() << "Runtime error: " << obj.msg << Log::endl;
+		}
+		catch (runtimeWarning obj)
+		{
+			Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
+		}
+		catch (protocolError obj)
+		{
+			Log::error() << "Protocol error: " << obj.msg << Log::endl;
+		}
+		catch (protocolWarning obj)
+		{
+			Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
+		}
+		catch (const char* err_msg)
+		{
+			Log::error() << "Error (old format): " << err_msg << Log::endl;
+		}
+		catch (const std::exception& e)
+		{
+			Log::error() << "Exception thrown: " << e.what() << Log::endl;
+		}
+		catch (...)
+		{
+			Log::error() << "Unknown error." << Log::endl;
+		}
+		if (!p->connected)
+		{
+			delete p;
+			players.remove(p);
+		}
+		else it++;
+	}
 }

@@ -90,45 +90,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		//accept connections
 		if (listener.accept(*buffer) == sockStat::Done)
 		{
-			Player::players.emplace_back(new Player(buffer));
+			Player::players.emplace_front(new Player(buffer));
 			Log::debug(PROTOCOL_WARNINGS) << buffer->getRemoteAddress() << ':' << buffer->getRemotePort() << " connected.\n";
 			buffer = new sf::TcpSocket;
 		}
 
-		//receive messages
-		for (int64 i = 0; i < (int64)Player::players.size(); i++) try
-		{
-			Player::players[i]->updateNet();
-		}
-		catch (runtimeError obj)
-		{
-			Log::error() << "Runtime error: " << obj.msg << Log::endl;
-		}
-		catch (runtimeWarning obj)
-		{
-			Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
-		}
-		catch (protocolError obj)
-		{
-			Log::error() << "Protocol error: " << obj.msg << Log::endl;
-		}
-		catch (protocolWarning obj)
-		{
-			Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
-		}
-		catch (const char* err_msg)
-		{
-			Log::error() << "Error (old format): " << err_msg << Log::endl;
-		}
-		catch (const std::exception& e)
-		{
-			Log::error() << "Exception thrown: " << e.what() << Log::endl;
-		}
-		catch (...)
-		{
-			Log::error() << "Unknown error." << Log::endl;
-		}
-		Player::clearDisconnectedPlayers();
+		//receive and send messages
+		Player::updateAll();
 
 		//exit on escape - makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
 		if (_kbhit())
@@ -145,9 +113,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 	}
 
 	Log::info() << "Kicking players..." << Log::endl;
-	for (int64 i = 0; i < (int64)Player::players.size(); i++) try
+	for (Player* p : Player::players) try
 	{
-		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
+		message::play::send::disconnect(p, Chat("Server closed."));
 		//Player::players[i]->disconnect();
 	}
 	catch (runtimeError obj)
@@ -175,10 +143,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::error() << "Unknown error." << Log::endl;
 	}
 
-	for (int64 i = 0; i < (int64)Player::players.size(); i++)
+	for (Player* p : Player::players)
 	{
-		while (Player::players[i]->Connected()) Player::players[i]->updateNet();
-		delete Player::players[i];
+		while (p->Connected()) p->updateNet();
+		delete p;
 	}
 
 	delete buffer;

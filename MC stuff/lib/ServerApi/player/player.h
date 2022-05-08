@@ -242,10 +242,10 @@ public:
 	void teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat yaw, bfloat pitch);
 
 	//other players visibility
-	std::vector<Player*> seenBy;
+	std::forward_list<Player*> seenBy;
 	void enterSight(Player*);
 	void exitSight(Player*);
-	void exitSight(ull);
+	//void exitSight(ull);
 
 	gamemode gm;
 
@@ -276,10 +276,12 @@ public:
 	SERVER_API bool Connected();
 	SERVER_API bool ScheduledDisconnect();
 
-	SERVER_API static std::vector<Player*> players;
+	SERVER_API static std::forward_list<Player*> players;
 	SERVER_API static eidDispenser::Player eidDispenser;
+	SERVER_API static Player* getPlayer(const mcString& name);
 
 	//clears the players list of disconnected players
 	SERVER_API static void clearDisconnectedPlayers();
 	SERVER_API static void broadcastChat(const Chat&, Player* ignore = nullptr);
+	SERVER_API static void updateAll();
 };
