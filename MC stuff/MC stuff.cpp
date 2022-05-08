@@ -27,7 +27,7 @@ const int mc_zlib_compression_level = 6;
 
 bool keepServerOpen = true;
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
+int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR pCmdLine, _In_ int nCmdShow)
 {
 	Log::initialize();
 	Server::AllocConsole();
