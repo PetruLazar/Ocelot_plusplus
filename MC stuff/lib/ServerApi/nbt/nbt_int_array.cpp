@@ -112,7 +112,10 @@ void nbt_int_array::operator=(const nbt& that)
 }
 void nbt_int_array::operator=(const nbt_int_array& that)
 {
+	name = that.name;
+
 	_size = that._size;
 	values = new bint[_size];
-	for (uint i = 0; i < _size; i++) values[i] = that.values[i];
+	for (uint i = 0; i < _size; i++) 
+		values[i] = that.values[i];
 }

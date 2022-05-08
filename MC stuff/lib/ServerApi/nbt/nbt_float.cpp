@@ -55,6 +55,7 @@ void nbt_float::operator=(const nbt& that)
 }
 void nbt_float::operator=(const nbt_float& that)
 {
+	name = that.name;
 	value = that.value;
 }
 void nbt_float::operator=(float v) { value = v; }

@@ -1,5 +1,5 @@
 #include "chunk.h"
-#include "../types/error.h"
+#include "../debug/mcexceptions.h"
 #include "../types/utils.h"
 #include "../world.h"
 

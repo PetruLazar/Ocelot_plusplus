@@ -1,10 +1,9 @@
 #include "region.h"
 #include "../world.h"
-#include "../types/error.h"
-#include "../server/log.h"
+#include "../debug/mcexceptions.h"
+#include "../debug/log.h"
 #include <iostream>
 #include "../types/basic.h"
-#include "../mcexception.h"
 #include <sstream>
 #include <filesystem>
 #include "../server/options.h"
@@ -34,7 +33,7 @@ Region::Region(const mcString& worldName, int rX, int rZ) : rX(rX), rZ(rZ)
 			tmp.close();
 		}
 		regionFile.open(regionFileName, std::ios::binary | std::ios::in | std::ios::out);
-		if (!regionFile.is_open()) throw mcexception(mcexception::WORLD, "Cannot access or create region file", "world/region.cpp", __LINE__);
+		if (!regionFile.is_open()) throw genException("Cannot access or create region file");
 		for (uint i = 0; i < 512; i++) *((ull*)regionHeader + i) = 0;
 	}
 	//get the file size in bytes and in 1024B sections
@@ -359,25 +358,28 @@ bool Region::hasChunksLoaded() { return loadedChunks; }
 BlockState& Region::getPaletteEntry(int relX, int relY, int relZ)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
-	if (!chunk) //throw chunkNotLoaded("Region::getPaletteEntry(int3): Chunk not loaded");
-		throw mcexception(mcexception::WORLD, "Chunk not loaded", "world/region.cpp", __LINE__);
+	if (!chunk)
+		throw genException("Chunk not loaded");
 	return chunk->getPaletteEntry(relX & 0xf, relY, relZ & 0xf);
 }
 BlockState& Region::getPaletteEntry(int chunkX, int sectionY, int chunkZ, int paletteIndex)
 {
 	Chunk* chunk = chunks[chunkX][chunkZ];
-	if (!chunk) throw mcexception(mcexception::WORLD, "Chunk not loaded", "world/region.cpp", __LINE__);
+	if (!chunk) 
+		throw genException("Chunk not loaded");
 	return chunk->getPaletteEntry(sectionY, paletteIndex);
 }
 BlockState Region::getBlock(int relX, int relY, int relZ)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
-	if (!chunk) throw mcexception(mcexception::WORLD, "Chunk not loaded", "world/region.cpp", __LINE__);
+	if (!chunk)
+		throw genException("Chunk not loaded");
 	return chunk->getBlock(relX & 0xf, relY, relZ & 0xf);
 }
 void Region::setBlock(int relX, int relY, int relZ, const BlockState& bl)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
-	if (!chunk) throw mcexception(mcexception::WORLD, "Chunk not loaded", "world/region.cpp", __LINE__);
+	if (!chunk)
+		throw genException("Chunk not loaded");
 	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, bl);
 }

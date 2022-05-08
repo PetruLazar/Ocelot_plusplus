@@ -55,6 +55,7 @@ void nbt_short::operator=(const nbt& that)
 }
 void nbt_short::operator=(const nbt_short& that)
 {
+	name = that.name;
 	value = that.value;
 }
 void nbt_short::operator=(short v) { value = v; }

@@ -54,6 +54,7 @@ void nbt_Byte::operator= (const nbt& that)
 }
 void nbt_Byte::operator=(const nbt_Byte& that)
 {
+	name = that.name;
 	value = that.value;
 }
 void nbt_Byte::operator=(char v) { value = v; }

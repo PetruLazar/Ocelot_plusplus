@@ -1,19 +1,24 @@
+
+#include <iostream>
+#include <filesystem>
+#include <conio.h>
+#include <Windows.h>
+
+#include <SFML/Network/TcpListener.hpp>
+
+#include "debug/debug.h"
+#include "debug/log.h"
+#include "debug/mcexceptions.h"
+
 #include "player/player.h"
 #include "server/options.h"
-#include "server/log.h"
-#include "types/error.h"
-#include "player/message.h"
-#include <iostream>
-#include "types/chat.h"
-#include <server/server.h>
-#include <conio.h>
-#include <SFML/Network/TcpListener.hpp>
-#include <Windows.h>
-#include <world/noise.h>
-#include <debug.cpp>
-#include <filesystem>
+
+#include "server/server.h"
 #include "types/registry.h"
+#include "types/chat.h"
 #include "player/command.h"
+#include "player/message.h"
+#include "world/noise.h"
 
 namespace fs = std::filesystem;
 using namespace std;
@@ -22,7 +27,7 @@ const int mc_zlib_compression_level = 6;
 
 bool keepServerOpen = true;
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdLineShow)
+int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR pCmdLine, _In_ int nCmdShow)
 {
 	Log::initialize();
 	Server::AllocConsole();
@@ -118,29 +123,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		message::play::send::disconnect(p, Chat("Server closed."));
 		//Player::players[i]->disconnect();
 	}
-	catch (runtimeError obj)
+	catch (const mcException& e)
 	{
-		Log::error() << "Runtime error: " << obj.msg << Log::endl;
-	}
-	catch (runtimeWarning obj)
-	{
-		Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
-	}
-	catch (protocolError obj)
-	{
-		Log::error() << "Protocol error: " << obj.msg << Log::endl;
-	}
-	catch (protocolWarning obj)
-	{
-		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
-	}
-	catch (const char* err_msg)
-	{
-		Log::error() << "Error: " << err_msg << Log::endl;
-	}
-	catch (...)
-	{
-		Log::error() << "Unknown error." << Log::endl;
+		Log::error() << e.what() << Log::endl;
 	}
 
 	for (Player* p : Player::players)
@@ -155,26 +140,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::info() << "Unloading worlds..." << Log::endl;
 		World::unloadAll();
 	}
-	catch (runtimeError obj)
+	catch (const mcException& e)
 	{
-		Log::error() << "Runtime error: " << obj.msg << Log::endl;
-	}
-	catch (runtimeWarning obj)
-	{
-		Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
-	}
-	catch (protocolError obj)
-	{
-		Log::error() << "Protocol error: " << obj.msg << Log::endl;
-	}
-	catch (protocolWarning obj)
-	{
-		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
+		Log::error() << e.what() << Log::endl;
 	}
 
 	Options::Unload();
-	Server::FreeConsole();
 	Registry::unloadRegistriesAndPalette();
 	recipe::Manager::unloadRecipes();
+	Server::FreeConsole();
 	return 0;
 }

@@ -1,16 +1,17 @@
 #include "message.h"
+
+#include "../debug/mcexceptions.h"
+#include "../debug/debug.h"
+#include "../debug/log.h"
 #include "../server/options.h"
 #include "../types/gametags.h"
 #include "../types/chat.h"
-#include "../types/error.h"
 #include "../types/utils.h"
 #include "../types/node.h"
-#include "command.h"
 #include "../types/enums.h"
 #include "../types/basic.h"
-#include "../server/log.h"
-#include "../mcexception.h"
 #include "../types/window.h"
+#include "command.h"
 
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
 #define prepareSendMacroNoDecl(x) data = new char[x] + 6; start = data
@@ -1429,7 +1430,7 @@ void message::play::send::windowProperty(Player* p, Byte winId, bshort property,
 
 	finishSendMacro;
 }
-void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, const Slot& slotData)
+void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort slot, Slot* slotData)
 {
 	varInt id = (int)id::setSlot;
 	prepareSendMacro(1024 * 1024);
@@ -1438,7 +1439,7 @@ void message::play::send::setSlot(Player* p, Byte winId, varInt stateId, bshort 
 	*(data++) = winId;
 	stateId.write(data);
 	slot.write(data);
-	slotData.write(data);
+	slotData->write(data);
 
 	finishSendMacro;
 }
@@ -1921,7 +1922,8 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	}
 	Log::info() << Log::endl;
 
-	int inventoryFirstSlotIndex = (windowID == 0) ? 9 : window::getWindowSlotCount(p->windower->getLatest(windowID));
+	int inventoryFirstSlotIndex = (windowID == 0) ? 9 : window::getWindowSlotCount(p->inventory->getLatestWindow(windowID));
+	Log::info() << "iFSI: " << inventoryFirstSlotIndex << Log::endl;
 
 	switch (mode)
 	{
@@ -1931,7 +1933,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			if (clickedSlot == -999)
 			{ //drop whole slot
 				Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getFloatingSlot());
-				p->inventory->setFloatingSlot(new Slot());
+				p->inventory->setFloatingSlot(Slot());
 
 				p->world->addEntity(theItem);
 
@@ -1945,22 +1947,29 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			}
 			else
 			{ //select or place slot
-				if (p->inventory->getFloatingSlot()->isPresent())
+				if (clickedSlot == -1)
+					return;
+
+				Slot* clicked = p->inventory->getSlotByIndex(clickedSlot);
+				Slot* floating = p->inventory->getFloatingSlot();
+
+				if (clicked->getItemId() == floating->getItemId())
 				{
-					p->inventory->setInventorySlot(clickedSlot, new Slot(*p->inventory->getFloatingSlot()));
-					p->inventory->setFloatingSlot(new Slot());
+					unsigned remained = p->inventory->addToSlot(*floating, clickedSlot);
+					
+					if (remained != floating->count)
+						floating->count = floating->count - remained;
+					else
+						p->inventory->setFloatingSlot(Slot());
 				}
 				else
-				{
-					p->inventory->setFloatingSlot(new Slot(*p->inventory->getInventorySlot(clickedSlot)));
-					p->inventory->setInventorySlot(clickedSlot, new Slot());
-				}
+					p->inventory->swapWithFloating(clickedSlot);
 			}
 		}
 		else
-		{ //button == 1
+		{	//button == 1
 			if (clickedSlot == -999)
-			{ //drop one item from slot
+			{	//drop one item from slot
 				Slot* floatingSlot = p->inventory->getFloatingSlot();
 				floatingSlot->count--; //decrease the floating item count;
 
@@ -1980,13 +1989,16 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 				message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 			}
 			else
-			{ //select half from slot
-				Slot* selectedSlot = p->inventory->getInventorySlot(clickedSlot);
-				Slot* newFloatingSlot = new Slot(*selectedSlot);
+			{	//select half from slot
+				if (clickedSlot == -1)
+					return;
 
-				newFloatingSlot->count /= 2;
+				Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+				Slot newFloatingSlot = *selectedSlot;
+				
+				newFloatingSlot.count /= 2;
 				if (selectedSlot->count % 2 == 1)
-					newFloatingSlot->count++;
+					newFloatingSlot.count++;
 
 				p->inventory->setFloatingSlot(newFloatingSlot);
 				selectedSlot->count = selectedSlot->count / 2;
@@ -2000,17 +2012,24 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		break;
 	case 2:
 		if (button == 40)
-		{ //offhand swap
-			bshort positionIndex = p->inventory->getSelectedIndex(true);
+		{	//offhand swap
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* floatingSlot = p->inventory->getFloatingSlot();
 
-			p->inventory->swapSlots(45, positionIndex);
+			std::swap(selectedSlot, floatingSlot);
 
-			message::play::send::setSlot(p, 0, 0, 45, *p->inventory->getInventorySlot(45));
-			message::play::send::setSlot(p, 0, 0, positionIndex, *p->inventory->getInventorySlot(positionIndex));
+			message::play::send::setSlot(p, 0, 0, 45, floatingSlot);
+			message::play::send::setSlot(p, 0, 0, clickedSlot, selectedSlot);
 		}
 		else
-		{ //button is hotbar index from 0
+		{	//button is hotbar index from 0
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* hotbarSlot = p->inventory->getHotbarSlot(button);
 
+			std::swap(selectedSlot, hotbarSlot);
+
+			message::play::send::setSlot(p, 0, 0, 36 + button, hotbarSlot);
+			message::play::send::setSlot(p, 0, 0, clickedSlot, selectedSlot);
 		}
 		break;
 	case 3:
@@ -2019,10 +2038,13 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 
 		break;
 	case 4:
+		if (clickedSlot == -999 || clickedSlot == -1)
+			return;
+
 		if (button == 0)
 		{ //q, drop one from whole slot
-			Slot* selectedSlot = p->inventory->getInventorySlot(clickedSlot);
-			selectedSlot->count--; //decrease the floating item count;
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			selectedSlot->count -= 1; //decrease the floating item count;
 
 			Slot dropSlot = *selectedSlot;
 			dropSlot.count = 1; //copy the floating item, but with 1 count
@@ -2041,8 +2063,8 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		}
 		else
 		{ //ctrl + q, button == 1 drop whole slot
-			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getInventorySlot(clickedSlot));
-			p->inventory->setInventorySlot(clickedSlot, new Slot());
+			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *p->inventory->getSlotByIndex(clickedSlot));
+			p->inventory->setSlotByIndex(clickedSlot, Slot());
 
 			p->world->addEntity(theItem);
 
@@ -2095,8 +2117,8 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 }
 void message::play::receive::closeWindow(Player* p, Byte winId)
 {
-	if (winId != 0)
-		p->windower->close(winId);
+	if(winId != 0)
+		p->inventory->closeWindow(winId);
 
 	message::play::send::closeWindow(p, winId);
 }
@@ -2105,7 +2127,7 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 	nbt** pagesToNbt = new nbt * [count];
 	for (int i = 0; i < count; i++)
 		pagesToNbt[i] = new nbt_string(std::to_string(i), pages[i]);
-
+	
 	nbt_compound* bookData;
 
 	if (hasTitle)
@@ -2119,22 +2141,19 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 
 	if (hasTitle)
 	{
-		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot(true, 943, 1, bookData));
+		p->inventory->setSlotByIndex(p->inventory->getSelectedIndex(true), Slot(943, bookData));
 
-		Equipment** eqp = new Equipment * [1];
-		eqp[0] = new Equipment(0, p->inventory->getSelectedSlot());
+		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 
 		for (Player* seener : p->seenBy)
 			message::play::send::entityEquipment(seener, p->getEid(), eqp);
 
 		message::play::send::entityEquipment(p, p->getEid(), eqp);
 
-		delete[] eqp;
+		delete eqp;
 	}
 	else
-	{
 		p->inventory->getSelectedSlot()->updateNBT(bookData);
-	}
 }
 void message::play::receive::interactEntity(Player* p, varInt eid, varInt type, bfloat targetX, bfloat targetY, bfloat targetZ, Hand mainHand, bool sneaking)
 {
@@ -2183,6 +2202,43 @@ void message::play::receive::chatMessage(Player* p, mcString& content)
 			message::play::send::chatMessage(pl, msg, 0, *p->euuid);
 	}
 }
+void processGroundItem(Player* p)
+{
+	//minecraft picks up the entire batch if its pickupable, here, it picks up a batch, then the remaining one
+	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item)) {
+		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
+		{
+			Entity::item* droppedItem = static_cast<Entity::item*>(groundItem);
+
+			if (droppedItem->spawnedTimeStamp + 1500 > utility::time::timeSinceEpoch())
+				continue;
+
+			auto pickedDataArray = p->inventory->addToInventory(droppedItem->theItem);
+			Byte totalPickedCount = 0;
+			
+			for(auto& pickedData : pickedDataArray) {
+				Byte pickedCount = pickedData.first;
+				Byte pickedIndex = pickedData.second;
+
+				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), pickedCount);
+
+				Slot* pickedupSlot = p->inventory->getSlotByIndex(pickedIndex);
+				message::play::send::setSlot(p, (pickedIndex > 35 ? 0 : -2), 0, pickedIndex, pickedupSlot);
+
+				totalPickedCount += pickedCount;
+			}
+
+			if (totalPickedCount == droppedItem->theItem.count) { //all of the entity got picked up, destroy it
+				message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
+				p->world->removeEntity(droppedItem->getEid());
+			}
+			else if (totalPickedCount < droppedItem->theItem.count) { //not everything got picked up, update the data
+				droppedItem->theItem.count = droppedItem->theItem.count - totalPickedCount;
+				message::play::send::entityMetadata(p, droppedItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &droppedItem->theItem) });
+			}
+		}
+	}
+}
 void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY, bdouble Z, bool onGround)
 {
 	if (p->pendingTpId != -1)
@@ -2194,37 +2250,7 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
 
-	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item))
-	{
-		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
-		{
-			Entity::item* droppedItem = static_cast<Entity::item*>(groundItem);
-
-			if (droppedItem->spawnedTimeStamp + 1500 > utility::time::timeSinceEpoch())
-				continue;
-
-			unsigned addedIndex = -1;
-			unsigned picked = p->inventory->add(droppedItem->theItem, addedIndex);
-
-			if (picked != 0)
-			{
-				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), picked);
-
-				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, *p->inventory->getInventorySlot(addedIndex));
-
-				if (picked == droppedItem->theItem.count)
-				{ //all of the entity got picked up, destroy it
-					message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
-					p->world->removeEntity(droppedItem->getEid());
-				}
-				else if (picked < droppedItem->theItem.count)
-				{ //not everything got picked up, update the data
-					droppedItem->theItem.count = droppedItem->theItem.count - picked;
-					message::play::send::entityMetadata(p, droppedItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &droppedItem->theItem) });
-				}
-			}
-		}
-	}
+	processGroundItem(p);
 }
 void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdouble Y, bdouble Z, bfloat yaw, bfloat pitch, bool onGround)
 {
@@ -2240,37 +2266,7 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
 
-	for (Entity::entity* groundItem : p->world->getEntitiesByType(Entity::type::minecraft_item))
-	{
-		if (Position::inRange(groundItem->x, groundItem->y, groundItem->z, p->x, p->y, p->z, 2))
-		{
-			Entity::item* droppedItem = static_cast<Entity::item*>(groundItem);
-
-			if (droppedItem->spawnedTimeStamp + 1500 > utility::time::timeSinceEpoch())
-				continue;
-
-			unsigned addedIndex = -1;
-			unsigned picked = p->inventory->add(droppedItem->theItem, addedIndex);
-
-			if (picked != 0)
-			{
-				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), picked);
-
-				message::play::send::setSlot(p, (addedIndex > 35 ? 0 : -2), 0, addedIndex, *p->inventory->getInventorySlot(addedIndex));
-
-				if (picked == droppedItem->theItem.count)
-				{ //all of the entity got picked up, destroy it
-					message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
-					p->world->removeEntity(droppedItem->getEid());
-				}
-				else if (picked < droppedItem->theItem.count)
-				{ //not everything got picked up, update the data
-					droppedItem->theItem.count = droppedItem->theItem.count - picked;
-					message::play::send::entityMetadata(p, droppedItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &droppedItem->theItem) });
-				}
-			}
-		}
-	} //this is repeated for playerposition, maybe make a function?
+	processGroundItem(p);
 }
 void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch, bool onGround)
 {
@@ -2350,7 +2346,7 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 	}
 	else
 	{ //put in inventory
-		p->inventory->setInventorySlot(slot, clickedItem);
+		p->inventory->setSlotByIndex(slot, *clickedItem);
 
 		if (p->inventory->getSelectedIndex() == slot)
 		{
@@ -2423,7 +2419,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
 
-		p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
+		*playerItem = Slot();
 
 		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 		for (Player* seener : p->seenBy)
@@ -2436,11 +2432,23 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 	{
 		Slot* playerItem = p->inventory->getSelectedSlot();
 
-		if (playerItem->count == 0) //empty slot
+		if (!playerItem->isPresent()) //empty slot
 			return;
 
 		Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), *playerItem);
 		theItem->theItem.count = 1;
+		
+		playerItem->count -= 1;
+		if (playerItem->count == 0)
+		{
+			*playerItem = Slot();
+
+			Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
+			for (Player* seener : p->seenBy)
+				message::play::send::entityEquipment(seener, p->getEid(), eqp);
+
+			delete eqp;
+		}
 
 		p->world->addEntity(theItem);
 
@@ -2451,18 +2459,6 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		}
 		message::play::send::spawnEntity(p, theItem, 100, 0, 100);
 		message::play::send::entityMetadata(p, theItem->getEid(), { Entity::Metadata(8, Entity::Metadata::type::_Slot, &theItem->theItem) });
-
-		playerItem->count -= 1;
-		if (playerItem->count == 0)
-		{
-			p->inventory->setInventorySlot(p->inventory->getSelectedIndex(true), new Slot());
-
-			Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
-			for (Player* seener : p->seenBy)
-				message::play::send::entityEquipment(seener, p->getEid(), eqp);
-
-			delete eqp;
-		}
 	}
 	break;
 	case playerDigging::shootArrow: //also finish eating
@@ -2474,8 +2470,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 
 		p->inventory->swapSlots(45, positionIndex);
 
-		message::play::send::setSlot(p, 0, 0, 45, *p->inventory->getInventorySlot(45));
-		message::play::send::setSlot(p, 0, 0, positionIndex, *p->inventory->getInventorySlot(positionIndex));
+		message::play::send::setSlot(p, 0, 0, 45, p->inventory->getSlotByIndex(45));
+		message::play::send::setSlot(p, 0, 0, positionIndex, p->inventory->getSlotByIndex(positionIndex));
 	}
 	break;
 	}
@@ -2517,7 +2513,7 @@ void message::play::receive::entityAction(Player* p, varInt eid, varInt actionId
 	{
 		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(0, Entity::Metadata::type::_Byte, &p->attributes) });
 
-		varInt entityPose = (p->attributes >> 0x02) & 1 ? Entity::pose::sneaking : Entity::pose::standing;
+		varInt entityPose = p->attributes == 0x02 ? Entity::pose::sneaking : Entity::pose::standing;
 		message::play::send::entityMetadata(seener, eid, { Entity::Metadata(6, Entity::Metadata::type::_Pose, &entityPose) });
 	}
 }
@@ -3191,7 +3187,7 @@ void message::dispatch(Player* p, char* data, uint size)
 					item_data->read(data);
 			}
 
-			Slot* item = new Slot(present, itemId, count, item_data);
+			Slot* item = new Slot(itemId, present, count, item_data);
 			play::receive::creativeInventoryAction(p, slot, item);
 		}
 		break;

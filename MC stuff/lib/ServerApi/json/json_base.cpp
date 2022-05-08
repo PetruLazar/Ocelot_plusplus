@@ -1,7 +1,7 @@
 #include "json_base.h"
 #include "../json.h"
 #include <fstream>
-#include "../types/error.h"
+#include "../debug/mcexceptions.h"
 
 const char typeError[] = "Invalid json element type.";
 

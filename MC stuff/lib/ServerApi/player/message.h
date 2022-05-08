@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include "player.h"
 #include "../nbt.h"
 #include "../json.h"
@@ -317,7 +318,7 @@ struct message
 			SERVER_API static void closeWindow(Player*, Byte winId);
 			SERVER_API static void windowItems(Player*, Byte winId, varInt stateId, varInt count, Slot** slots, Slot* carried);
 			SERVER_API static void windowProperty(Player*, Byte winId, bshort property, bshort value);
-			SERVER_API static void setSlot(Player*, Byte winId, varInt stateId, bshort slot, const Slot& data);
+			SERVER_API static void setSlot(Player*, Byte winId, varInt stateId, bshort slot, Slot* data);
 			SERVER_API static void setCooldown(Player*, varInt itemId, varInt cooldown);
 			SERVER_API static void pluginMessage(Player*, const mcString& channel, ull dataSize, const char* data);
 			SERVER_API static void namedSoundEffect(Player*, const mcString& soundName, varInt category, bint effectX, bint effectY, bint effectZ, bfloat volume, bfloat pitch);

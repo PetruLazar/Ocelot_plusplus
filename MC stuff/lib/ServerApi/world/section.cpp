@@ -1,5 +1,5 @@
 #include "section.h"
-#include "../types/error.h"
+#include "../debug/mcexceptions.h"
 #include "../types/utils.h"
 
 Section::Section() { }

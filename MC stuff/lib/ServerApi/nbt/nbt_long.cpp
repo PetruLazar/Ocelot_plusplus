@@ -55,6 +55,7 @@ void nbt_long::operator= (const nbt& that)
 }
 void nbt_long::operator=(const nbt_long& that)
 {
+	name = that.name;
 	value = that.value;
 }
 void nbt_long::operator=(int64 v) { value = v; }

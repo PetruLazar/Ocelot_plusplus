@@ -1,9 +1,12 @@
-#include "options.h"
-#include "log.h"
+
 #include <iostream>
 #include <fstream>
 #include "../player/player.h"
 #include "../mcexception.h"
+
+#include "options.h"
+
+#include "../debug/log.h"
 
 using namespace std;
 

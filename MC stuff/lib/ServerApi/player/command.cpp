@@ -1,6 +1,6 @@
 #include "command.h"
 #include "message.h"
-#include "../server/log.h"
+#include "../debug/log.h"
 
 namespace CommandHandlers
 {
@@ -140,24 +140,25 @@ namespace CommandHandlers
 			Log::info() << Log::endl << "----------INVENTORY DUMP----------" << Log::endl;
 			Log::info() << "Crafting: " << Log::endl;
 			for (unsigned i = 0; i < 5; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getSlotByIndex(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Armor: " << Log::endl;
 			for (unsigned i = 5; i < 9; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getSlotByIndex(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Offhand: " << Log::endl;
-			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getInventorySlot(45)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(45)->count << Log::endl;
+			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getSlotByIndex(45)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(45)->count<< Log::endl;
 			Log::info() << "Inventory: " << Log::endl;
-			for (unsigned i = 1; i < 4; i++)
-			{
-				for (unsigned j = 0; j < 9; j++)
-					Log::none() << "\t" << 9 * i + j << ": " << executingPlayer->inventory->getInventorySlot(9 * i + j)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(9 * i + j)->count;
+			for (unsigned i = 1; i < 4; i++) {
+				for (unsigned j = 0; j < 9; j++) {
+					Slot* inventorySlot = executingPlayer->inventory->getSlotByIndex(9 * i + j);
+					Log::none() << "\t" << 9 * i + j << ": " << inventorySlot->getItemId() << "-" << (int)inventorySlot->count << "  ";
+				}
 				Log::none() << Log::endl;
 			}
 			Log::info() << "Hotbar: " << Log::endl;
 			for (unsigned i = 36; i < 45; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getInventorySlot(i)->getItemId() << "-" << (int)executingPlayer->inventory->getInventorySlot(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId()<<"-"<< (int)executingPlayer->inventory->getSlotByIndex(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Floating item: " << Log::endl << "\t" << executingPlayer->inventory->getFloatingSlot()->getItemId() << "-" << (int)executingPlayer->inventory->getFloatingSlot()->count << Log::endl << Log::endl;
 		}

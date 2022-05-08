@@ -30,35 +30,37 @@ namespace recipe
 
 	Ingredient* Manager::getItemOrTag(json* data)
 	{
-		Slot** slotArray = new Slot * [1];
-		size_t slotArraySize = 1;
+		Slot** slotArray = nullptr;
+		size_t slotArraySize = 0;
 
 		if (data->getType() == json::type::array) {
-			delete[] slotArray;
 			slotArraySize = data->getSize();
 			slotArray = new Slot * [slotArraySize];
 
 			for (int j = 0; j < slotArraySize; j++) //array obj can be only item?
-				slotArray[j] = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)[j]["item"].value()), 1);
-			return new Ingredient(slotArraySize, slotArray);
+				slotArray[j] = new Slot(Registry::getId(Registry::itemRegistry, (*data)[j]["item"].value()));
 		}
-		//else, compound
+		else { //compound
+			if (data->has("item")) {
+				slotArraySize = 1;
+				slotArray = new Slot * [1];
 
-		if (data->has("item"))
-			slotArray[0] = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)["item"].value()), 1);
-		else { //tag
-			std::string tagName = (*data)["tag"].value();
+				slotArray[0] = new Slot(Registry::getId(Registry::itemRegistry, (*data)["item"].value()));
+			}
+			else { //tag
+				std::string tagName = (*data)["tag"].value();
 
-			const TagGroup::Tag* theTag = TagGroup::getTag(TagGroup::itemTags, tagName); //search it
+				const TagGroup::Tag* theTag = TagGroup::getTag(TagGroup::itemTags, tagName); //search it
 
-			if (theTag == nullptr)
-				throw "tag not found, recipe couldn't be parsed";
+				if (theTag == nullptr)
+					throw "tag not found, recipe couldn't be parsed";
 
-			delete[] slotArray;
-			slotArraySize = theTag->entries.size();
-			slotArray = new Slot * [slotArraySize];
-			for (int j = 0; j < slotArraySize; j++)
-				slotArray[j] = new Slot(true, theTag->entries[j], 1);
+				slotArraySize = theTag->entries.size();
+				slotArray = new Slot * [slotArraySize];
+
+				for (int j = 0; j < slotArraySize; j++)
+					slotArray[j] = new Slot(theTag->entries[j]);
+			}
 		}
 
 		return new Ingredient(slotArraySize, slotArray);
@@ -74,7 +76,8 @@ namespace recipe
 	{
 		//std::cout << "acacia planks: " << Registry::getId(Registry::itemRegistry, "minecraft:acacia_planks") << std::endl; //26
 		//std::cout << "acacia boat: " << Registry::getId(Registry::itemRegistry, "minecraft:acacia_boat") << std::endl; //674
-		//Manager::addRecipe("acacia_boat", new recipe::crafting_shaped("acacia_boat", 3, 2, "boat", new Ingredient * [3 * 2]{ new Slot(true, 674, 1) }, new Slot(true, 674, 1)));
+		//Manager::addRecipe("acacia_boat", new recipe::crafting_shaped("acacia_boat", 3, 2, "boat", new Ingredient * [3 * 2]{ new Ingredient(new Slot(true, 674, 1)), new Ingredient(new Slot(true, 674, 1)), new Ingredient(new Slot(true, 674, 1)),
+		//																													new Ingredient(new Slot(true, 674, 1)), new Ingredient(new Slot(true, 674, 1)), new Ingredient(new Slot(true, 674, 1)) }, new Slot(true, 674, 1)));
 	}
 
 	void Manager::loadDynamicRecipes()
@@ -99,7 +102,7 @@ namespace recipe
 				varInt resultCount = 1;
 				if ((*data)["result"].has("count"))
 					resultCount = (*data)["result"]["count"].iValue();
-				Slot* result = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)["result"]["item"].value()), resultCount);
+				Slot* result = new Slot(Registry::getId(Registry::itemRegistry, (*data)["result"]["item"].value()), resultCount);
 
 				varInt ingredientCount = (*data)["ingredients"].getSize();
 				Ingredient** ingredients = new Ingredient * [ingredientCount];
@@ -115,7 +118,7 @@ namespace recipe
 				varInt resultCount = 1;
 				if ((*data)["result"].has("count"))
 					resultCount = (*data)["result"]["count"].iValue();
-				Slot* result = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)["result"]["item"].value()), resultCount);
+				Slot* result = new Slot(Registry::getId(Registry::itemRegistry, (*data)["result"]["item"].value()), resultCount);
 
 				size_t height = (*data)["pattern"].getSize();
 				size_t width = 1;
@@ -134,17 +137,14 @@ namespace recipe
 					std::string row = (*data)["pattern"][x].value();
 					int accessY = 0;
 					for (int y = 0; y < width; y++) {
-						if (row[accessY] == ' ') {
-							Slot** slotArray = new Slot * [1];
-							slotArray[0] = new Slot(false, 0);
-							ingredients[y + x * width] = new Ingredient(1, slotArray);
-						}
+						if (row[accessY] == ' ') 
+							ingredients[y + x * width] = new Ingredient();
 						else if (row[accessY] == '\\') {
 							ingredients[y + x * width] = getItemOrTag(&(*data)["key"][row.substr(accessY, 6)]);
 							accessY = accessY + 5;
 						}
 						else
-							ingredients[y + x * width] = getItemOrTag(&(*data)["key"][std::string(1, row[accessY])]);
+							ingredients[y + x * width] = getItemOrTag(&(*data)["key"][std::string(1, row[accessY])]); //transforming the char to string because it thinks its a index (int)
 
 						accessY += 1;
 					}
@@ -156,7 +156,7 @@ namespace recipe
 				mcString group = recipeFile.path().stem().string();
 				if (data->has("group"))
 					group = (*data)["group"].value();
-				Slot* result = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)["result"].value()), 1); //maximum of 1 item?
+				Slot* result = new Slot(Registry::getId(Registry::itemRegistry, (*data)["result"].value()));
 				bfloat experience = (*data)["experience"].dValue();
 				varInt cookingTime = (*data)["cookingtime"].iValue();
 
@@ -178,7 +178,7 @@ namespace recipe
 				varInt resultCount = 1;
 				if ((*data).has("count"))
 					resultCount = (*data)["count"].iValue();
-				Slot* result = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)["result"].value()), resultCount);
+				Slot* result = new Slot(Registry::getId(Registry::itemRegistry, (*data)["result"].value()), resultCount);
 
 				Ingredient* ingredient = getItemOrTag(&(*data)["ingredient"]);
 
@@ -188,7 +188,7 @@ namespace recipe
 				Ingredient* base = getItemOrTag(&(*data)["base"]);
 				Ingredient* addition = getItemOrTag(&(*data)["addition"]);
 
-				Slot* result = new Slot(true, Registry::getId(Registry::itemRegistry, (*data)["result"]["item"].value()), 1);
+				Slot* result = new Slot(Registry::getId(Registry::itemRegistry, (*data)["result"]["item"].value()));
 
 				theRecipe = new recipe::smithing(recipeFile.path().stem().string(), base, addition, result);
 			}

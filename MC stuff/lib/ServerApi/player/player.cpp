@@ -1,8 +1,8 @@
 #include "player.h"
 #include "message.h"
-#include "../types/error.h"
+#include "../debug/mcexceptions.h"
 #include "../types/enums.h"
-#include "../server/log.h"
+#include "../debug/log.h"
 #include "../types/entity.h"
 #include "../server/options.h"
 
@@ -19,9 +19,6 @@ Player::Player(sf::TcpSocket* socket) : state(ConnectionState::handshake), socke
 
 	//player initializations
 	keepAliveTimeoutPoint = cycleTime + keepAliveTimeoutAfter;
-
-	inventory = new _inventory();
-	windower = new _windower();
 }
 Player::~Player()
 {
@@ -29,7 +26,6 @@ Player::~Player()
 	if (buffer) delete buffer;
 
 	delete inventory;
-	delete windower;
 }
 
 std::string Player::netId()
@@ -391,205 +387,6 @@ bool Player::positionInRange(Position location)
 	if (cX < chunkX - viewDistance || cX > chunkX + viewDistance ||
 		cZ < chunkZ - viewDistance || cZ > chunkZ + viewDistance) return false;
 	return true;
-}
-
-Player::_inventory::_inventory()
-{
-	for (int i = 0; i < 46; i++)
-		slots[i] = new Slot();
-
-	floatingItem = new Slot();
-}
-
-Player::_inventory::~_inventory()
-{
-	for (int i = 0; i < 46; i++)
-		delete slots[i];
-
-	delete floatingItem;
-}
-
-void Player::_inventory::setSelectedSlot(bshort selectedSlot)
-{
-	this->selectedHotbar = selectedSlot;
-}
-
-bshort Player::_inventory::getSelectedIndex(bool raw)
-{
-	if (!raw)
-		return this->selectedHotbar;
-
-	return 36 + this->selectedHotbar;
-}
-
-Slot*& Player::_inventory::getSelectedSlot()
-{
-	return this->slots[36 + selectedHotbar];
-}
-
-Slot*& Player::_inventory::getOffhandSlot()
-{
-	return this->slots[45];
-}
-
-Slot*& Player::_inventory::getHotbarSlot(bshort index)
-{
-	return this->slots[36 + index];
-}
-
-Slot*& Player::_inventory::getInventorySlot(bshort index)
-{
-	return this->slots[index];
-}
-
-Slot*& Player::_inventory::getFloatingSlot()
-{
-	return this->floatingItem;
-}
-void Player::_inventory::setFloatingSlot(Slot* newSlot)
-{
-	delete this->floatingItem;
-	this->floatingItem = newSlot;
-}
-
-bshort Player::_inventory::getSlotWithLeastID(varInt itemID)
-{
-	bshort indexMin = -1, minCount = MAXSHORT;
-	for (int i = 36; i < 45; i++)
-	{
-		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount)
-		{ //change 64 to item maximum regarding to that item
-			minCount = slots[i]->count;
-			indexMin = i;
-		}
-	}
-
-	for (int i = 9; i < 36; i++)
-	{
-		if (slots[i]->getItemId() == itemID && slots[i]->count != 64 && slots[i]->count < minCount)
-		{ //change 64 to item maximum regarding to that item
-			minCount = slots[i]->count;
-			indexMin = i;
-		}
-	}
-
-	return indexMin;
-}
-bshort Player::_inventory::getFreeSlot()
-{
-	for (int i = 36; i < 45; i++)
-	{
-		if (!this->slots[i]->isPresent())
-			return i;
-	}
-
-	for (int i = 9; i < 36; i++)
-	{
-		if (!this->slots[i]->isPresent())
-			return i;
-	}
-
-	return -1;
-}
-
-unsigned Player::_inventory::add(Slot& theItem, unsigned& addedIndex)
-{
-	Byte picked = 0;
-
-	bshort index, stackableSize = items::getStackableSize(theItem.getItemId());
-
-	if (stackableSize == 1)
-	{
-		index = this->getFreeSlot();
-
-		if (index != -1)
-		{
-			picked = theItem.count;
-
-			this->setInventorySlot(index, new Slot(theItem));
-
-			addedIndex = index;
-		}
-
-		return picked;
-	}
-
-	index = this->getSlotWithLeastID(theItem.getItemId());
-
-	if (index != -1)
-	{
-		Slot*& containedSlot = this->getInventorySlot(index);
-
-		if (containedSlot->count + theItem.count < stackableSize + 1)
-		{
-			picked = theItem.count;
-			containedSlot->count = containedSlot->count + theItem.count;
-		}
-		else
-		{
-			picked = stackableSize - containedSlot->count;
-			containedSlot->count = (Byte)stackableSize;
-		}
-
-		addedIndex = index;
-	}
-	else
-	{
-		index = this->getFreeSlot();
-
-		if (index != -1)
-		{
-			picked = theItem.count;
-
-			this->setInventorySlot(index, new Slot(theItem));
-
-			addedIndex = index;
-		}
-	}
-
-	return picked;
-}
-void Player::_inventory::swapSlots(bshort a, bshort b)
-{
-	Slot* aSlot = this->getInventorySlot(a);
-	Slot* bSlot = this->getInventorySlot(b);
-
-	std::swap(aSlot, bSlot);
-
-	Slot* newA = new Slot(*aSlot); //idfk
-	Slot* newB = new Slot(*bSlot);
-	this->setInventorySlot(a, newA);
-	this->setInventorySlot(b, newB);
-}
-
-void Player::_inventory::setInventorySlot(bshort index, Slot* slot)
-{
-	delete this->slots[index];
-	this->slots[index] = slot;
-}
-
-unsigned Player::_windower::open(window::type theWindow)
-{
-	this->que.emplace(std::make_pair(theWindow, indexer));
-	return indexer++;
-}
-void Player::_windower::close(unsigned theID)
-{
-	if (theID == this->que.front().second)
-	{
-		this->que.pop();
-		indexer--;
-	}
-	else
-		Log::warn() << "Player closed a not-last-opened window." << Log::endl;
-}
-window::type Player::_windower::getLatest(unsigned theID)
-{
-	if (theID == this->que.back().second)
-		return que.back().first;
-
-	Log::warn() << "Player got a wrong ID latest." << Log::endl;
-	return que.back().first;
 }
 
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)

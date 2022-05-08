@@ -1,5 +1,5 @@
 #include "entity.h"
-#include "../server/log.h"
+#include "../debug/log.h"
 
 #include "chat.h"
 #include "slot.h"

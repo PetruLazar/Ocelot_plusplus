@@ -157,7 +157,12 @@ void nbt_compound::operator=(const nbt& that)
 }
 void nbt_compound::operator=(const nbt_compound& that)
 {
+	this->name = that.getName();
+
 	ull size = that.values.size();
 	values.resize(size);
-	for (ull i = 0; i < size; i++) values[i] = that.values[i];
+	for (ull i = 0; i < size; i++) {
+		values[i] = nbt::getTagP(that.values[i]->type);
+		*(values[i]) = *(that.values[i]);
+	}
 }

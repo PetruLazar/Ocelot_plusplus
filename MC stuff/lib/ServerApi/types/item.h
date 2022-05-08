@@ -1,5 +1,7 @@
 #pragma once
 
+#include "typedefs.h"
+
 enum class Item
 {
 	minecraft_air = 0,
@@ -1107,5 +1109,5 @@ enum class Item
 
 namespace items
 {
-	short getStackableSize(int i);
+	Byte getStackableSize(int i);
 }

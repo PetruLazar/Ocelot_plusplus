@@ -1,7 +1,7 @@
 
 #include "item.h"
 
-short items::getStackableSize(int i) {
+Byte items::getStackableSize(int i) {
 	switch (static_cast<Item>(i))
 	{
 	case Item::minecraft_diamond_horse_armor:
