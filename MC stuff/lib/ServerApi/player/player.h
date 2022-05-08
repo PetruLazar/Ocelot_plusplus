@@ -164,7 +164,7 @@ public:
 	//ip address + port
 	std::string netId();
 
-	int protocolVersion = Options::currentProtocol;
+	int protocolVersion = Options::currentProtocol();
 	ConnectionState state;
 
 	//data for keep alive messages

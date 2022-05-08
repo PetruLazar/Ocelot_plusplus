@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include "../player/player.h"
-#include "../mcexception.h"
+#include "../debug/mcexceptions.h"
 
 #include "options.h"
 
@@ -109,7 +109,7 @@ T parse(const string& name, const string& value, ull linenumber, T(*parse_func)(
 
 bool Options::Load()
 {
-	if (loaded) throw mcexception(mcexception::UNSPECIFIED, "server.properties already loaded", "options.cpp", __LINE__);
+	if (loaded) throw runtimeError("server.properties already loaded");
 
 	bool success = true;
 	ifstream opt(optionsFileName);
@@ -211,7 +211,7 @@ bool Options::Load()
 }
 void Options::Unload()
 {
-	if (!loaded) throw mcexception(mcexception::UNSPECIFIED, "server.properties not loaded", "options.cpp", __LINE__);
+	if (!loaded) throw runtimeError("server.properties not loaded");
 }
 
 ush Options::port() { return _port; }
