@@ -6,4 +6,4 @@
 #define SERVER_API _declspec(dllimport)
 #endif
 
-#include "../debug.h"
+#include "../debug/debug.h"

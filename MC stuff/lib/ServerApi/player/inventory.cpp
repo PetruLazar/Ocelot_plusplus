@@ -1,7 +1,7 @@
 
 #include "inventory.h"
 #include "../types/item.h"
-#include "../server/log.h"
+#include "../debug/log.h"
 
 namespace mcs::inventory {
 	base::base(size_t size) : size(size) {

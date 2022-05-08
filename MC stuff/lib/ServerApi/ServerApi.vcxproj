@@ -176,7 +176,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="debug.h" />
+    <ClInclude Include="debug\debug.h" />
+    <ClInclude Include="debug\log.h" />
+    <ClInclude Include="debug\mcexceptions.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="json\json_array.h" />
     <ClInclude Include="json\json_base.h" />
@@ -185,7 +187,6 @@
     <ClInclude Include="json\json_decimal.h" />
     <ClInclude Include="json\json_int.h" />
     <ClInclude Include="json\json_string.h" />
-    <ClInclude Include="mcexception.h" />
     <ClInclude Include="nbt.h" />
     <ClInclude Include="nbt\nbt_base.h" />
     <ClInclude Include="nbt\nbt_byte.h" />
@@ -205,7 +206,6 @@
     <ClInclude Include="player\message.h" />
     <ClInclude Include="player\player.h" />
     <ClInclude Include="server\server.h" />
-    <ClInclude Include="server\log.h" />
     <ClInclude Include="server\options.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="types\advancements.h" />
@@ -221,7 +221,6 @@
     <ClInclude Include="types\entity.h" />
     <ClInclude Include="types\enums.h" />
     <ClInclude Include="types\Equipment.h" />
-    <ClInclude Include="types\error.h" />
     <ClInclude Include="types\fixedPoint.h" />
     <ClInclude Include="types\fluid.h" />
     <ClInclude Include="types\gameevent.h" />
@@ -255,7 +254,8 @@
     <ClInclude Include="world\section.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="debug.cpp" />
+    <ClCompile Include="debug\debug.cpp" />
+    <ClCompile Include="debug\log.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="json\json_array.cpp" />
     <ClCompile Include="json\json_base.cpp" />
@@ -283,7 +283,6 @@
     <ClCompile Include="player\message.cpp" />
     <ClCompile Include="player\player.cpp" />
     <ClCompile Include="server\server.cpp" />
-    <ClCompile Include="server\log.cpp" />
     <ClCompile Include="server\options.cpp" />
     <ClCompile Include="types\advancements.cpp" />
     <ClCompile Include="types\angle.cpp" />
@@ -294,7 +293,6 @@
     <ClCompile Include="types\chat.cpp" />
     <ClCompile Include="types\entity.cpp" />
     <ClCompile Include="types\Equipment.cpp" />
-    <ClCompile Include="types\error.cpp" />
     <ClCompile Include="types\fixedPoint.cpp" />
     <ClCompile Include="types\gametags.cpp" />
     <ClCompile Include="types\item.cpp" />

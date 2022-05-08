@@ -1,19 +1,24 @@
+
+#include <iostream>
+#include <filesystem>
+#include <conio.h>
+#include <Windows.h>
+
+#include <SFML/Network/TcpListener.hpp>
+
+#include "debug/debug.h"
+#include "debug/log.h"
+#include "debug/mcexceptions.h"
+
 #include "player/player.h"
 #include "server/options.h"
-#include "server/log.h"
-#include "types/error.h"
-#include "player/message.h"
-#include <iostream>
-#include "types/chat.h"
-#include <server/server.h>
-#include <conio.h>
-#include <SFML/Network/TcpListener.hpp>
-#include <Windows.h>
-#include <world/noise.h>
-#include <debug.cpp>
-#include <filesystem>
+
+#include "server/server.h"
 #include "types/registry.h"
+#include "types/chat.h"
 #include "player/command.h"
+#include "player/message.h"
+#include "world/noise.h"
 
 namespace fs = std::filesystem;
 using namespace std;
@@ -93,34 +98,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		{
 			Player::players[i]->updateNet();
 		}
-		catch (runtimeError obj)
+		catch (const mcException& e)
 		{
-			Log::error() << "Runtime error: " << obj.msg << Log::endl;
+			Log::error() << e.what() << Log::endl;
 		}
-		catch (runtimeWarning obj)
-		{
-			Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
-		}
-		catch (protocolError obj)
-		{
-			Log::error() << "Protocol error: " << obj.msg << Log::endl;
-		}
-		catch (protocolWarning obj)
-		{
-			Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
-		}
-		catch (const char* err_msg)
-		{
-			Log::error() << "Error (old format): " << err_msg << Log::endl;
-		}
-		catch (const std::exception& e)
-		{
-			Log::error() << "Exception thrown: " << e.what() << Log::endl;
-		}
-		catch (...)
-		{
-			Log::error() << "Unknown error." << Log::endl;
-		}
+
 		Player::clearDisconnectedPlayers();
 
 		//exit on escape - makes checking for memory leaks with _CrtDumpMemoryLeaks() possible - comment the next line if needed
@@ -143,29 +125,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		message::play::send::disconnect(Player::players[i], Chat("Server closed."));
 		//Player::players[i]->disconnect();
 	}
-	catch (runtimeError obj)
+	catch (const mcException& e)
 	{
-		Log::error() << "Runtime error: " << obj.msg << Log::endl;
-	}
-	catch (runtimeWarning obj)
-	{
-		Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
-	}
-	catch (protocolError obj)
-	{
-		Log::error() << "Protocol error: " << obj.msg << Log::endl;
-	}
-	catch (protocolWarning obj)
-	{
-		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
-	}
-	catch (const char* err_msg)
-	{
-		Log::error() << "Error: " << err_msg << Log::endl;
-	}
-	catch (...)
-	{
-		Log::error() << "Unknown error." << Log::endl;
+		Log::error() << e.what() << Log::endl;
 	}
 
 	for (int64 i = 0; i < (int64)Player::players.size(); i++)
@@ -180,21 +142,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine
 		Log::info() << "Unloading worlds..." << Log::endl;
 		World::unloadAll();
 	}
-	catch (runtimeError obj)
+	catch (const mcException& e)
 	{
-		Log::error() << "Runtime error: " << obj.msg << Log::endl;
-	}
-	catch (runtimeWarning obj)
-	{
-		Log::warn() << "Runtime warning: " << obj.msg << Log::endl;
-	}
-	catch (protocolError obj)
-	{
-		Log::error() << "Protocol error: " << obj.msg << Log::endl;
-	}
-	catch (protocolWarning obj)
-	{
-		Log::warn() << "Protocol warning: " << obj.msg << Log::endl;
+		Log::error() << e.what() << Log::endl;
 	}
 
 	Registry::unloadRegistriesAndPalette();

@@ -1,8 +1,8 @@
 #include "player.h"
 #include "message.h"
-#include "../types/error.h"
+#include "../debug/mcexceptions.h"
 #include "../types/enums.h"
-#include "../server/log.h"
+#include "../debug/log.h"
 #include "../types/entity.h"
 
 const char* invalidPacketLengthError = "Invalid Packet Length";

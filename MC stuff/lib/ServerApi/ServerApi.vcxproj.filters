@@ -138,9 +138,6 @@
     <ClInclude Include="types\enums.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
-    <ClInclude Include="types\error.h">
-      <Filter>Header Files\types</Filter>
-    </ClInclude>
     <ClInclude Include="types\fixedPoint.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
@@ -216,9 +213,6 @@
     <ClInclude Include="types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="server\log.h">
-      <Filter>Header Files\server</Filter>
-    </ClInclude>
     <ClInclude Include="server\options.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
@@ -230,9 +224,6 @@
     </ClInclude>
     <ClInclude Include="player\player.h">
       <Filter>Header Files\player</Filter>
-    </ClInclude>
-    <ClInclude Include="debug.h">
-      <Filter>Header Files\debug</Filter>
     </ClInclude>
     <ClInclude Include="server\server.h">
       <Filter>Header Files\server</Filter>
@@ -276,9 +267,6 @@
     <ClInclude Include="types\window.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
-    <ClInclude Include="mcexception.h">
-      <Filter>Header Files\debug</Filter>
-    </ClInclude>
     <ClInclude Include="json\json_decimal.h">
       <Filter>Header Files\json</Filter>
     </ClInclude>
@@ -287,6 +275,15 @@
     </ClInclude>
     <ClInclude Include="player\inventory.h">
       <Filter>Header Files\player</Filter>
+    </ClInclude>
+    <ClInclude Include="debug\debug.h">
+      <Filter>Header Files\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="debug\mcexceptions.h">
+      <Filter>Header Files\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="debug\log.h">
+      <Filter>Header Files\debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -362,9 +359,6 @@
     <ClCompile Include="types\chat.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="types\error.cpp">
-      <Filter>Source Files\types</Filter>
-    </ClCompile>
     <ClCompile Include="types\fixedPoint.cpp">
       <Filter>Source Files\types</Filter>
     </ClCompile>
@@ -422,14 +416,8 @@
     <ClCompile Include="player\player.cpp">
       <Filter>Source Files\player</Filter>
     </ClCompile>
-    <ClCompile Include="server\log.cpp">
-      <Filter>Source Files\server</Filter>
-    </ClCompile>
     <ClCompile Include="server\options.cpp">
       <Filter>Source Files\server</Filter>
-    </ClCompile>
-    <ClCompile Include="debug.cpp">
-      <Filter>Source Files\debug</Filter>
     </ClCompile>
     <ClCompile Include="server\server.cpp">
       <Filter>Source Files\server</Filter>
@@ -487,6 +475,12 @@
     </ClCompile>
     <ClCompile Include="player\inventory.cpp">
       <Filter>Source Files\player</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\debug.cpp">
+      <Filter>Source Files\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\log.cpp">
+      <Filter>Source Files\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

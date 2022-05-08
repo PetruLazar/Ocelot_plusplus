@@ -1,7 +1,7 @@
 
 #include "log.h"
 
-#include "server.h"
+#include "../server/server.h"
 
 #include <iostream>
 #include <chrono>

@@ -1,5 +1,7 @@
 #pragma once
-#include "types/apidef.h"
+#include "../types/apidef.h"
+
+#define __FILENAME__ strrchr("\\" __FILE__, '\\') + 1
 
 //set to true/false to switch between custom new operator and usual new operator
 #define DEBUG_ALLOCATIONS false

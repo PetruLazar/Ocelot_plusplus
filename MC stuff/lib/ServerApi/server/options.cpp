@@ -1,7 +1,10 @@
-#include "options.h"
-#include "log.h"
+
 #include <iostream>
 #include <fstream>
+
+#include "options.h"
+
+#include "../debug/log.h"
 
 using namespace std;
 

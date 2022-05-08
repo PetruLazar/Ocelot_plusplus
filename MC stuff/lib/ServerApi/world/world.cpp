@@ -3,9 +3,9 @@
 #include "../server/server.h"
 
 #include "noise.h"
-#include "../types/error.h"
+#include "../debug/mcexceptions.h"
 #include "../types/basic.h"
-#include "../server/log.h"
+#include "../debug/log.h"
 #include "../server/options.h"
 #include "../player/message.h"
 #include <filesystem>

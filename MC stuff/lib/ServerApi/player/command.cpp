@@ -1,6 +1,6 @@
 #include "command.h"
 #include "message.h"
-#include "../server/log.h"
+#include "../debug/log.h"
 
 namespace CommandHandlers
 {

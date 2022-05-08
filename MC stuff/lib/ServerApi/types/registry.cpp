@@ -1,6 +1,8 @@
-#include "registry.h"
+
 #include <fstream>
-#include "error.h"
+
+#include "../debug/mcexceptions.h"
+#include "registry.h"
 
 json* Registry::registries, * Registry::globalPalette;
 ull Registry::blockStatesCount;

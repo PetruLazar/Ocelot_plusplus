@@ -2,7 +2,7 @@
 
 #if DEBUG_ALLOCATIONS
 
-#include "server/log.h"
+#include "debug/log.h"
 #include <iostream>
 
 //decomment this and select a block id if needed, or comment if you are not targeting a specific id

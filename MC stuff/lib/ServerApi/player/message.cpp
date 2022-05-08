@@ -1,17 +1,17 @@
 #include "message.h"
 
+#include "../debug/mcexceptions.h"
+#include "../debug/debug.h"
+#include "../debug/log.h"
 #include "../server/options.h"
 #include "../types/gametags.h"
 #include "../types/chat.h"
-#include "../types/error.h"
 #include "../types/utils.h"
 #include "../types/node.h"
-#include "command.h"
 #include "../types/enums.h"
 #include "../types/basic.h"
-#include "../server/log.h"
-#include "../mcexception.h"
 #include "../types/window.h"
+#include "command.h"
 
 #define prepareSendMacro(x) char* data = new char[x] + 6, *start = data
 #define prepareSendMacroNoDecl(x) data = new char[x] + 6; start = data

@@ -9,7 +9,6 @@
 #include "types/endian.h"
 #include "types/entity.h"
 #include "types/enums.h"
-#include "types/error.h"
 #include "types/fixedPoint.h"
 #include "types/fluid.h"
 #include "types/gameevent.h"
