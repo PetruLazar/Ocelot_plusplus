@@ -25,8 +25,6 @@ using namespace std;
 
 const int mc_zlib_compression_level = 6;
 
-bool keepServerOpen = true;
-
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR pCmdLine, _In_ int nCmdShow)
 {
 	Log::initialize();
@@ -89,7 +87,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	Log::info() << "Server started! " << Log::Bench("server") << Log::flush;
 
 	//main loop
-	while (keepServerOpen)
+	while (Server::keepServerOpen)
 	{
 		cycleTime = clock();
 		//accept connections
@@ -109,7 +107,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			switch (_getch())
 			{
 			case 27: //escape
-				keepServerOpen = false;
+				Server::keepServerOpen = false;
 				break;
 			}
 		}

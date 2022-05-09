@@ -334,6 +334,7 @@ void Region::set(int relX, int relZ, Chunk* p)
 
 Chunk* Region::get(World* parent, int relX, int relZ, bool increaseLoadCount)
 {
+	Log::debug(CHUNK_DEBUG) << "Loading chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "]" << Log::endl;
 	Chunk*& chunk = chunks[relX][relZ];
 	if (chunk)
 	{
@@ -341,7 +342,7 @@ Chunk* Region::get(World* parent, int relX, int relZ, bool increaseLoadCount)
 		return chunk;
 	}
 	//try to load it from file
-	//Log::txt() << "\nLoading chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] from file";
+	//Log::debug(true) << "Loading chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] from file" << Log::endl;
 	chunk = load(parent, relX, relZ);
 	if (chunk)
 	{

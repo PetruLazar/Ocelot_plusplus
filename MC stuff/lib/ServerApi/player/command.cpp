@@ -1,6 +1,7 @@
 #include "command.h"
 #include "message.h"
 #include "../debug/log.h"
+#include "../server/server.h"
 
 namespace CommandHandlers
 {
@@ -206,6 +207,10 @@ namespace CommandHandlers
 	void setSpawn(CommandHandlerArguments)
 	{
 		executingPlayer->world->setSpawn(*(double*)argumentStack[0], *(double*)argumentStack[1], *(double*)argumentStack[2]);
+	}
+	void stopServer(CommandHandlerArguments)
+	{
+		Server::keepServerOpen = false;
 	}
 }
 

@@ -760,12 +760,13 @@ namespace Commands
 		/* 13 */ new ArgumentNode("destination player", { }, new String(PropertiesString::single_word), CommandHandlers::teleport),
 		/* 14 */ new ArgumentNode("player", { 12, 13}, new String(PropertiesString::single_word), CommandHandlers::teleport),
 		/* 15 */ new LiteralNode("tp", { 12, 14 }),
-		/* 16 */ new ArgumentNode("spawn z", {}, new Double(new Properties<bdouble>()),CommandHandlers::setSpawn),
+		/* 16 */ new ArgumentNode("spawn z", { }, new Double(new Properties<bdouble>()),CommandHandlers::setSpawn),
 		/* 17 */ new ArgumentNode("spawn y", { 16 }, new Double(new Properties<bdouble>())),
 		/* 18 */ new ArgumentNode("spawn x", { 17 }, new Double(new Properties<bdouble>())),
 		/* 19 */ new LiteralNode("spawn", {18}, CommandHandlers::spawn),
+		/* 20 */ new LiteralNode("stop", { }, CommandHandlers::stopServer),
 	};
-	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 9, 15, 19};
+	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 9, 15, 19, 20 };
 
 	Commands Commands::atuomatic;
 	Commands::~Commands()

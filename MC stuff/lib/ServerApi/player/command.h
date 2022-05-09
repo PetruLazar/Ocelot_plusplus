@@ -15,6 +15,7 @@ namespace CommandHandlers
 	void teleport(CommandHandlerArguments);
 	void spawn(CommandHandlerArguments);
 	void setSpawn(CommandHandlerArguments);
+	void stopServer(CommandHandlerArguments);
 }
 
 namespace SuggestionsHandler

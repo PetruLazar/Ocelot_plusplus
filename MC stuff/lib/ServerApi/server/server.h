@@ -8,6 +8,7 @@ class Server
 	static bool hasConsole;
 public:
 	static ThreadPool threadPool;
+	SERVER_API static bool keepServerOpen;
 
 	SERVER_API static void AllocConsole();
 	SERVER_API static bool HasConsole();

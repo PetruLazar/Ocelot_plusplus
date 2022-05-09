@@ -274,11 +274,23 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 
 	bool chunkChanged = false;
 
+	/*chunkChanged = newChunkX != chunkX || newChunkZ != chunkZ;
+	if (chunkChanged)
+	{
+		for (int x = -viewDistance; x <= viewDistance; x++)
+		{
+			for (int z = -viewDistance; z <= viewDistance; z++) std::cout << chunkLoaderHelper.matrix.get(x, z) << ' ';
+			std::cout << '\n';
+		}
+		std::cout << '\n';
+	}*/
+
 	if (newChunkX != chunkX)
 	{
 		int delta = newChunkX - chunkX;
 		if (abs(delta) > 2 * viewDistance + 1)
 		{
+			//Log::debug(true) << "Distance too big, unload all";
 			for (int x = -viewDistance; x < viewDistance; x++)
 				for (int z = -viewDistance; z <= viewDistance; z++)
 					if (chunkLoaderHelper.matrix.get(x, z))
@@ -297,7 +309,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		}
 		if (delta > 0)
 		{
-
+			//Log::debug(true) << "delta > 0" << Log::endl;
 			for (int x = -viewDistance; x < -viewDistance + delta; x++)
 				for (int z = -viewDistance; z <= viewDistance; z++)
 					if (chunkLoaderHelper.matrix.get(x, z))
@@ -308,7 +320,8 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		}
 		else if (delta < 0)
 		{
-			for (int x = viewDistance; x > viewDistance - delta; x--)
+			//Log::debug(true) << "delta < 0" << Log::endl;
+			for (int x = viewDistance; x > viewDistance + delta; x--)
 				for (int z = -viewDistance; z <= viewDistance; z++)
 					if (chunkLoaderHelper.matrix.get(x, z))
 						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
@@ -354,7 +367,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		}
 		else if (delta < 0)
 		{
-			for (int z = viewDistance; z > viewDistance - delta; z--)
+			for (int z = viewDistance; z > viewDistance + delta; z--)
 				for (int x = -viewDistance; x <= viewDistance; x++)
 					if (chunkLoaderHelper.matrix.get(x, z))
 						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
@@ -369,7 +382,16 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		//chunkLoaderHelper.matrix.Show();
 	}
 
-	if (chunkChanged) message::play::send::updateViewPosition(this, chunkX, chunkZ);
+	if (chunkChanged)
+	{
+		message::play::send::updateViewPosition(this, chunkX, chunkZ);
+		/*for (int x = -viewDistance; x <= viewDistance; x++)
+		{
+			for (int z = -viewDistance; z <= viewDistance; z++) std::cout << chunkLoaderHelper.matrix.get(x, z) << ' ';
+			std::cout << '\n';
+		}
+		std::cout << '\n';*/
+	}
 
 	Player::x = X;
 	Player::y = Y;

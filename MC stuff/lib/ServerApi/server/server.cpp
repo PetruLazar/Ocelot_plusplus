@@ -7,6 +7,8 @@
 #include <thread>
 
 bool Server::hasConsole = false;
+bool Server::keepServerOpen = true;
+
 ThreadPool Server::threadPool(std::thread::hardware_concurrency());
 
 void Server::AllocConsole()
