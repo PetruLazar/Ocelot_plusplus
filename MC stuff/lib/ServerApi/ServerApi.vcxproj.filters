@@ -55,6 +55,9 @@
     <Filter Include="Header Files\debug">
       <UniqueIdentifier>{861dd252-a16f-4729-b784-27b15e1fb44d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\player\message">
+      <UniqueIdentifier>{14cfdb0c-c2de-4cb9-be31-7f59ccf159d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nbt\nbt_base.h">
@@ -410,9 +413,6 @@
     <ClCompile Include="player\command.cpp">
       <Filter>Source Files\player</Filter>
     </ClCompile>
-    <ClCompile Include="player\message.cpp">
-      <Filter>Source Files\player</Filter>
-    </ClCompile>
     <ClCompile Include="player\player.cpp">
       <Filter>Source Files\player</Filter>
     </ClCompile>
@@ -481,6 +481,15 @@
     </ClCompile>
     <ClCompile Include="debug\log.cpp">
       <Filter>Source Files\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="player\message\send.cpp">
+      <Filter>Source Files\player\message</Filter>
+    </ClCompile>
+    <ClCompile Include="player\message\receive.cpp">
+      <Filter>Source Files\player\message</Filter>
+    </ClCompile>
+    <ClCompile Include="player\message\dispatch.cpp">
+      <Filter>Source Files\player\message</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

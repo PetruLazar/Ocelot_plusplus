@@ -280,7 +280,9 @@
     <ClCompile Include="nbt\nbt_string.cpp" />
     <ClCompile Include="player\command.cpp" />
     <ClCompile Include="player\inventory.cpp" />
-    <ClCompile Include="player\message.cpp" />
+    <ClCompile Include="player\message\dispatch.cpp" />
+    <ClCompile Include="player\message\receive.cpp" />
+    <ClCompile Include="player\message\send.cpp" />
     <ClCompile Include="player\player.cpp" />
     <ClCompile Include="server\server.cpp" />
     <ClCompile Include="server\options.cpp" />
