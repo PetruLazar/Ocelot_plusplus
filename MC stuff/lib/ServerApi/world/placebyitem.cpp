@@ -29,6 +29,61 @@ enum class doorHinge :Byte
 	left
 };
 
+std::string blockFacingToString(const blockFacing& face)
+{
+	switch (face)
+	{
+	case blockFacing::north:
+		return "borth";
+	case blockFacing::south:
+		return "south";
+	case blockFacing::west:
+		return "west";
+	case blockFacing::east:
+		return "east";
+	case blockFacing::up:
+		return "up";
+	case blockFacing::down:
+		return "down";
+	}
+}
+std::string playerDiggingToString(const playerDigging::face& face)
+{
+	switch (face)
+	{
+	case playerDigging::bottom:
+		return "down";
+	case playerDigging::top:
+		return "up";
+	case playerDigging::north:
+		return "north";
+	case playerDigging::south:
+		return "south";
+	case playerDigging::west:
+		return "west";
+	case playerDigging::east:
+		return "east";
+	}
+}
+blockFacing playerdiggingToBlockfacing(const playerDigging::face& face)
+{
+	switch (face)
+	{
+	case playerDigging::top:
+		return blockFacing::up;
+	case playerDigging::bottom:
+		return blockFacing::down;
+	case playerDigging::east:
+		return blockFacing::east;
+	case playerDigging::west:
+		return blockFacing::west;
+	case playerDigging::south:
+		return blockFacing::south;
+	case playerDigging::north:
+		return blockFacing::north;
+	}
+}
+
 const int waterSurceBlockStateId = 34;
 
 Block stateToBlock(const BlockState& state)
@@ -145,36 +200,27 @@ blockFacing getHorizontalFacing(Player* p, float playerYaw, Item itemId)
 {
 	//yaw modulation [0, 360)
 	playerYaw += rotationOffset(itemId);
-	int yawInt = (int)(playerYaw);
-	yawInt -= yawInt % 360;
-	playerYaw -= yawInt;
-	if (playerYaw < 0) playerYaw += 360;
+	int yawInt = playerYaw;
+	playerYaw -= (yawInt - yawInt % 360);
+	if (playerYaw < 0) 
+		playerYaw += 360;
 
-	//temp
-	if (playerYaw == 45.f || playerYaw == 135.f || playerYaw == 225.f || playerYaw == 315.f)
-		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-
-	if (playerYaw < 45 || playerYaw>315)
-	{
+	if (playerYaw <= 45 || playerYaw > 315)
 		return blockFacing::north;
-	}
-	if (playerYaw <= 135)
-	{
+	else if (playerYaw <= 135)
 		return blockFacing::east;
-	}
-	if (playerYaw < 225)
-	{
+	else if (playerYaw <= 225)
 		return blockFacing::south;
-	}
+	
 	return blockFacing::west;
 }
 blockFacing get3DFacing(Player* p, float playerYaw, float playerPitch, Item itemId)
 {
-	if (playerPitch == 45.f || playerPitch == -45.f)
-		message::play::send::chatMessage(p, Chat("Are you a robot?", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+	if (playerPitch >= 45.f) 
+		return blockFacing::up;
+	else if (playerPitch <= -45.f) 
+		return blockFacing::down;
 
-	if (playerPitch >= 45.f) return blockFacing::up;
-	if (playerPitch <= -45.f) return blockFacing::down;
 	return getHorizontalFacing(p, playerYaw, itemId);
 }
 
@@ -2623,24 +2669,12 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		bool leftIsDoor = isDoorLower(bottomLeftBlock, bottomLeftState),
 			rightIsDoor = isDoorLower(bottomRightBlock, bottomRightState);
 
-		if (leftIsDoor && rightIsDoor)
-		{
-			//doors on both sides
-			//hinge dep on cursor
-			return curX < .5f ? doorHinge::left : doorHinge::right;
-		}
-		if (leftIsDoor)
-		{
-			//door on left
-			//hinge on right
-			return doorHinge::right;
-		}
-		if (rightIsDoor)
-		{
-			//door on right
-			//hinge on left
-			return doorHinge::left;
-		}
+		if (leftIsDoor && rightIsDoor)								//doors on both sides
+			return curX < .5f ? doorHinge::left : doorHinge::right; //hinge dep on cursor
+		else if (leftIsDoor)		//door on left
+			return doorHinge::right;//hinge on right
+		else if (rightIsDoor)		//door on right
+			return doorHinge::left; //hinge on left
 
 		BlockState topLeftState = wld->getBlock(destX - 1, destY, destZ),
 			topRightState = wld->getBlock(destX + 1, destY, destZ);
@@ -2651,24 +2685,14 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		Byte leftWallCount = (Byte)canSupportDoorHinge(bottomLeftBlock) + canSupportDoorHinge(topLeftBlock),
 			rightWallCount = (Byte)canSupportDoorHinge(bottomRightBlock) + canSupportDoorHinge(topRightBlock);
 
-		if (leftWallCount > rightWallCount)
-		{
-			//more wall on left
-			//hinge on left
-			return doorHinge::left;
-		}
-		else if (leftWallCount < rightWallCount)
-		{
-			//more wall on right
-			//hinge on right
-			return doorHinge::right;
-		}
-		else
-		{
-			//the same amound of walls on both sides
-			//hinge dep on cursor
-			return curX < .5f ? doorHinge::left : doorHinge::right;
-		}
+		if (leftWallCount > rightWallCount) //more wall on left
+			return doorHinge::left; //hinge on left
+		else if (leftWallCount < rightWallCount) //more wall on right
+			return doorHinge::right; //hinge on right
+
+		//the same amound of walls on both sides
+		//hinge dep on cursor
+		return curX < .5f ? doorHinge::left : doorHinge::right;
 	}
 	break;
 	case blockFacing::south:
@@ -2682,24 +2706,12 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		bool leftIsDoor = isDoorLower(bottomLeftBlock, bottomLeftState),
 			rightIsDoor = isDoorLower(bottomRightBlock, bottomRightState);
 
-		if (leftIsDoor && rightIsDoor)
-		{
-			//doors on both sides
-			//hinge dep on cursor
-			return curX >= .5f ? doorHinge::left : doorHinge::right;
-		}
-		if (leftIsDoor)
-		{
-			//door on left
-			//hinge on right
-			return doorHinge::right;
-		}
-		if (rightIsDoor)
-		{
-			//door on right
-			//hinge on left
-			return doorHinge::left;
-		}
+		if (leftIsDoor && rightIsDoor)									//doors on both sides
+			return curX >= .5f ? doorHinge::left : doorHinge::right;	//hinge dep on cursor
+		else if (leftIsDoor)			//door on left
+			return doorHinge::right;	//hinge on right
+		else if (rightIsDoor)		//door on right
+			return doorHinge::left; //hinge on left
 
 		BlockState topLeftState = wld->getBlock(destX + 1, destY, destZ),
 			topRightState = wld->getBlock(destX - 1, destY, destZ);
@@ -2710,24 +2722,14 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		Byte leftWallCount = (Byte)canSupportDoorHinge(bottomLeftBlock) + canSupportDoorHinge(topLeftBlock),
 			rightWallCount = (Byte)canSupportDoorHinge(bottomRightBlock) + canSupportDoorHinge(topRightBlock);
 
-		if (leftWallCount > rightWallCount)
-		{
-			//more wall on left
-			//hinge on left
-			return doorHinge::left;
-		}
-		else if (leftWallCount < rightWallCount)
-		{
-			//more wall on right
-			//hinge on right
-			return doorHinge::right;
-		}
-		else
-		{
-			//the same amound of walls on both sides
-			//hinge dep on cursor
-			return curX >= .5f ? doorHinge::left : doorHinge::right;
-		}
+		if (leftWallCount > rightWallCount) //more wall on left
+			return doorHinge::left;			//hinge on left
+		else if (leftWallCount < rightWallCount)	//more wall on right
+			return doorHinge::right;				//hinge on right
+
+		//the same amound of walls on both sides
+		//hinge dep on cursor
+		return curX >= .5f ? doorHinge::left : doorHinge::right;
 	}
 	break;
 	case blockFacing::east:
@@ -2741,24 +2743,12 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		bool leftIsDoor = isDoorLower(bottomLeftBlock, bottomLeftState),
 			rightIsDoor = isDoorLower(bottomRightBlock, bottomRightState);
 
-		if (leftIsDoor && rightIsDoor)
-		{
-			//doors on both sides
-			//hinge dep on cursor
-			return curZ < .5f ? doorHinge::left : doorHinge::right;
-		}
-		if (leftIsDoor)
-		{
-			//door on left
-			//hinge on right
-			return doorHinge::right;
-		}
-		if (rightIsDoor)
-		{
-			//door on right
-			//hinge on left
-			return doorHinge::left;
-		}
+		if (leftIsDoor && rightIsDoor)								//doors on both sides
+			return curZ < .5f ? doorHinge::left : doorHinge::right; //hinge dep on cursor
+		else if (leftIsDoor)			//door on left
+			return doorHinge::right;	//hinge on right
+		else if (rightIsDoor)		//door on right
+			return doorHinge::left; //hinge on left
 
 		BlockState topLeftState = wld->getBlock(destX, destY, destZ - 1),
 			topRightState = wld->getBlock(destX, destY, destZ + 1);
@@ -2769,24 +2759,14 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		Byte leftWallCount = (Byte)canSupportDoorHinge(bottomLeftBlock) + canSupportDoorHinge(topLeftBlock),
 			rightWallCount = (Byte)canSupportDoorHinge(bottomRightBlock) + canSupportDoorHinge(topRightBlock);
 
-		if (leftWallCount > rightWallCount)
-		{
-			//more wall on left
-			//hinge on left
-			return doorHinge::left;
-		}
-		else if (leftWallCount < rightWallCount)
-		{
-			//more wall on right
-			//hinge on right
-			return doorHinge::right;
-		}
-		else
-		{
-			//the same amound of walls on both sides
-			//hinge dep on cursor
-			return curZ < .5f ? doorHinge::left : doorHinge::right;
-		}
+		if (leftWallCount > rightWallCount)	//more wall on left
+			return doorHinge::left;			//hinge on left
+		else if (leftWallCount < rightWallCount)	//more wall on right
+			return doorHinge::right;				//hinge on right
+
+		//the same amound of walls on both sides
+		//hinge dep on cursor
+		return curZ < .5f ? doorHinge::left : doorHinge::right;
 	}
 	break;
 	case blockFacing::west:
@@ -2800,24 +2780,12 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		bool leftIsDoor = isDoorLower(bottomLeftBlock, bottomLeftState),
 			rightIsDoor = isDoorLower(bottomRightBlock, bottomRightState);
 
-		if (leftIsDoor && rightIsDoor)
-		{
-			//doors on both sides
-			//hinge dep on cursor
-			return curZ >= .5f ? doorHinge::left : doorHinge::right;
-		}
-		if (leftIsDoor)
-		{
-			//door on left
-			//hinge on right
-			return doorHinge::right;
-		}
-		if (rightIsDoor)
-		{
-			//door on right
-			//hinge on left
-			return doorHinge::left;
-		}
+		if (leftIsDoor && rightIsDoor)									//doors on both sides
+			return curZ >= .5f ? doorHinge::left : doorHinge::right;	//hinge dep on cursor
+		else if (leftIsDoor)			//door on left
+			return doorHinge::right;	//hinge on right
+		else if (rightIsDoor)		//door on right
+			return doorHinge::left; //hinge on left
 
 		BlockState topLeftState = wld->getBlock(destX, destY, destZ + 1),
 			topRightState = wld->getBlock(destX, destY, destZ - 1);
@@ -2828,24 +2796,14 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 		Byte leftWallCount = (Byte)canSupportDoorHinge(bottomLeftBlock) + canSupportDoorHinge(topLeftBlock),
 			rightWallCount = (Byte)canSupportDoorHinge(bottomRightBlock) + canSupportDoorHinge(topRightBlock);
 
-		if (leftWallCount > rightWallCount)
-		{
-			//more wall on left
-			//hinge on left
-			return doorHinge::left;
-		}
-		else if (leftWallCount < rightWallCount)
-		{
-			//more wall on right
-			//hinge on right
-			return doorHinge::right;
-		}
-		else
-		{
-			//the same amound of walls on both sides
-			//hinge dep on cursor
-			return curZ >= .5f ? doorHinge::left : doorHinge::right;
-		}
+		if (leftWallCount > rightWallCount) //more wall on left
+			return doorHinge::left; //hinge on left
+		else if (leftWallCount < rightWallCount) //more wall on right
+			return doorHinge::right; //hinge on right
+
+		//the same amound of walls on both sides
+		//hinge dep on cursor
+		return curZ >= .5f ? doorHinge::left : doorHinge::right;
 	}
 	}
 	throw std::exception("Could not choose door hinge");
@@ -3080,6 +3038,31 @@ std::string getStairShape(World* wld, blockFacing refStairFacing, char half, int
 	return "straight";
 }
 
+void modifyXYZbyFace(const playerDigging::face& face, int& destX, int& destY, int& destZ)
+{
+	switch (face)
+	{
+	case playerDigging::top:
+		destY++;
+		break;
+	case playerDigging::bottom:
+		destY--;
+		break;
+	case playerDigging::east:
+		destX++;
+		break;
+	case playerDigging::west:
+		destX--;
+		break;
+	case playerDigging::south:
+		destZ++;
+		break;
+	case playerDigging::north:
+		destZ--;
+		break;
+	}
+}
+
 //is this block waterloggable?
 bool waterloggable(Block id, const BlockState& state)
 {
@@ -3134,7 +3117,8 @@ bool waterloggable(Block id, const BlockState& state)
 	case Block::minecraft_polished_deepslate_slab:
 	case Block::minecraft_deepslate_brick_slab:
 	case Block::minecraft_deepslate_tile_slab:
-		if (state.getState("waterlogged")[0] == 'f' && state.getState("type")[0] != 'd') return true;
+		if (state.getState("waterlogged")[0] == 'f' && state.getState("type")[0] != 'd') 
+			return true;
 		return false;
 	case Block::minecraft_small_amethyst_bud:
 	case Block::minecraft_medium_amethyst_bud:
@@ -3359,9 +3343,11 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 			wld->setBlock(destX, destY, destZ, state);
 
 			//open the upper door too
-			if (!p->world->checkCoordinates(++destY)) throw std::exception("Door outside of world used");
+			if (!p->world->checkCoordinates(++destY)) 
+				throw std::exception("Door outside of world used");
 			BlockState upperState = wld->getBlock(destX, destY, destZ);
-			if (stateToBlock(upperState) != bid) throw std::exception("Upper half of door not found");
+			if (stateToBlock(upperState) != bid) 
+				throw std::exception("Upper half of door not found");
 			upperState.setState("open", inverseOpen);
 			wld->setBlock(destX, destY, destZ, upperState);
 		}
@@ -3372,9 +3358,11 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 			wld->setBlock(destX, destY, destZ, state);
 
 			//open the lower door too
-			if (!p->world->checkCoordinates(--destY)) throw std::exception("Door outside of world used");
+			if (!p->world->checkCoordinates(--destY)) 
+				throw std::exception("Door outside of world used");
 			BlockState lowerState = wld->getBlock(destX, destY, destZ);
-			if (stateToBlock(lowerState) != bid) throw std::exception("Lower half of door not found");
+			if (stateToBlock(lowerState) != bid) 
+				throw std::exception("Lower half of door not found");
 			lowerState.setState("open", inverseOpen);
 			wld->setBlock(destX, destY, destZ, lowerState);
 		}
@@ -3420,19 +3408,15 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 	std::string targetBlockName = Registry::getBlock(targetBlockState.id);
 	Block targetBlockId = (Block)Registry::getId(Registry::blockRegistry, targetBlockName);
 
-	if (rightClickBlock(p, targetBlockId, destX, destY, destZ, targetBlockState, loc))
-	{
-		//block succsessfully right clicked
+	if (rightClickBlock(p, targetBlockId, destX, destY, destZ, targetBlockState, loc)) //block succsessfully right clicked
 		return;
-	}
 
 	try
 	{
 		switch ((Item)itemId)
 		{
-			//unplaceable items
 			{
-		case Item::minecraft_air:
+		case Item::minecraft_air: //unplaceable items
 		case Item::minecraft_saddle:
 			return;
 			}
@@ -3701,35 +3685,16 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
 				break;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; 
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
 			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
 
-			if (replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
+			if (replaceableIndirect(oldBlockId)) 
+				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
 			break;
 			}
 
@@ -3766,38 +3731,20 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				{
 					//get the block below, if in world
 					int soilY = destY - 1;
-					if (!p->world->checkCoordinates(soilY)) break;
+					if (!p->world->checkCoordinates(soilY)) 
+						break;
 					BlockState soilBlockState = getBlock(destX, soilY, destZ);
 					std::string soilBlockName = Registry::getBlock(soilBlockState.id);
 					Block soilBlockId = (Block)Registry::getId(Registry::blockRegistry, soilBlockName);
 					//check if the block below is dirt
-					if (!TagGroup::checkTagEntry("minecraft:block", "minecraft:dirt", (int)soilBlockId)) break;
+					if (!TagGroup::checkTagEntry("minecraft:block", "minecraft:dirt", (int)soilBlockId)) 
+						break;
 					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; 
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -3806,12 +3753,14 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				if (heldBlockId != oldBlockId && replaceableIndirect(oldBlockId))
 				{
 					int soilY = destY - 1;
-					if (!p->world->checkCoordinates(soilY)) break;
+					if (!p->world->checkCoordinates(soilY)) 
+						break;
 					BlockState soilBlockState = getBlock(destX, soilY, destZ);
 					std::string soilBlockName = Registry::getBlock(soilBlockState.id);
 					Block soilBlockId = (Block)Registry::getId(Registry::blockRegistry, soilBlockName);
 					//check if the block below is dirt
-					if (!TagGroup::checkTagEntry("minecraft:block", "minecraft:dirt", (int)soilBlockId)) break;
+					if (!TagGroup::checkTagEntry("minecraft:block", "minecraft:dirt", (int)soilBlockId)) 
+						break;
 					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
 				}
 				break;
@@ -3869,8 +3818,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		case Item::minecraft_blackstone_stairs:
 		case Item::minecraft_polished_blackstone_stairs:
 		case Item::minecraft_polished_blackstone_brick_stairs:
-			if (curY == .5f && face != playerDigging::bottom && face != playerDigging::top) message::play::send::chatMessage(p, Chat("Are you a robot?"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
-			//return;
+			if (curY == .5f && face != playerDigging::bottom && face != playerDigging::top) 
+				message::play::send::chatMessage(p, Chat("Are you a robot?"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			
 			if (replaceableDirect(targetBlockId))
 			{
 				BlockProperty* props = new BlockProperty[4];
@@ -3887,7 +3837,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					props[1].value = "bottom";
 					break;
 				default:
-
 					props[1].value = curY < .5f ? "bottom" : "top";
 				}
 				props[2].name = "shape";
@@ -3898,29 +3847,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				delete[] props;
 				break;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -3942,7 +3871,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					props[1].value = "bottom";
 					break;
 				default:
-
 					props[1].value = curY < .5f ? "bottom" : "top";
 				}
 				props[2].name = "shape";
@@ -3991,29 +3919,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4043,29 +3951,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4096,29 +3984,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4151,29 +4019,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4211,29 +4059,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
-				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+				modifyXYZbyFace(face, destX, destY, destZ);
+				if (!p->world->checkCoordinates(destY)) 
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4264,29 +4092,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4318,29 +4126,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4371,29 +4159,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4440,60 +4208,15 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				{
 					BlockProperty* props = new BlockProperty[1];
 					props[0].name = "facing";
-					switch (face)
-					{
-					case playerDigging::bottom:
-						props[0].value = "down";
-						break;
-					case playerDigging::top:
-						props[0].value = "up";
-						break;
-					case playerDigging::north:
-						props[0].value = "north";
-						break;
-					case playerDigging::south:
-						props[0].value = "south";
-						break;
-					case playerDigging::west:
-						props[0].value = "west";
-						break;
-					case playerDigging::east:
-						props[0].value = "east";
-					}
+					props[0].value = playerDiggingToString(face);
 					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 					delete[] props;
 					break;
 				}
-				blockFacing facing;
-				switch (face)
-				{
-				case playerDigging::top:
-					facing = blockFacing::up;
-					destY++;
-					break;
-				case playerDigging::bottom:
-					facing = blockFacing::down;
-					destY--;
-					break;
-				case playerDigging::east:
-					facing = blockFacing::east;
-					destX++;
-					break;
-				case playerDigging::west:
-					facing = blockFacing::west;
-					destX--;
-					break;
-				case playerDigging::south:
-					facing = blockFacing::south;
-					destZ++;
-					break;
-				case playerDigging::north:
-					facing = blockFacing::north;
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
+				blockFacing facing = playerdiggingToBlockfacing(face);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4503,26 +4226,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				{
 					BlockProperty* props = new BlockProperty[1];
 					props[0].name = "facing";
-					switch (facing)
-					{
-					case blockFacing::north:
-						props[0].value = "north";
-						break;
-					case blockFacing::south:
-						props[0].value = "south";
-						break;
-					case blockFacing::west:
-						props[0].value = "west";
-						break;
-					case blockFacing::east:
-						props[0].value = "east";
-						break;
-					case blockFacing::up:
-						props[0].value = "up";
-						break;
-					case blockFacing::down:
-						props[0].value = "down";
-					}
+					props[0].value = blockFacingToString(facing);
 					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 					delete[] props;
 				}
@@ -4537,62 +4241,17 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				{
 					BlockProperty* props = new BlockProperty[2];
 					props[0].name = "facing";
-					switch (face)
-					{
-					case playerDigging::bottom:
-						props[0].value = "down";
-						break;
-					case playerDigging::top:
-						props[0].value = "up";
-						break;
-					case playerDigging::north:
-						props[0].value = "north";
-						break;
-					case playerDigging::south:
-						props[0].value = "south";
-						break;
-					case playerDigging::west:
-						props[0].value = "west";
-						break;
-					case playerDigging::east:
-						props[0].value = "east";
-					}
+					props[0].value = playerDiggingToString(face);
 					props[1].name = "waterlogged";
 					props[1].value = "false";
 					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
 					delete[] props;
 					break;
 				}
-				blockFacing facing;
-				switch (face)
-				{
-				case playerDigging::top:
-					facing = blockFacing::up;
-					destY++;
-					break;
-				case playerDigging::bottom:
-					facing = blockFacing::down;
-					destY--;
-					break;
-				case playerDigging::east:
-					facing = blockFacing::east;
-					destX++;
-					break;
-				case playerDigging::west:
-					facing = blockFacing::west;
-					destX--;
-					break;
-				case playerDigging::south:
-					facing = blockFacing::south;
-					destZ++;
-					break;
-				case playerDigging::north:
-					facing = blockFacing::north;
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
+				blockFacing facing = playerdiggingToBlockfacing(face);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4602,26 +4261,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				{
 					BlockProperty* props = new BlockProperty[2];
 					props[0].name = "facing";
-					switch (facing)
-					{
-					case blockFacing::north:
-						props[0].value = "north";
-						break;
-					case blockFacing::south:
-						props[0].value = "south";
-						break;
-					case blockFacing::west:
-						props[0].value = "west";
-						break;
-					case blockFacing::east:
-						props[0].value = "east";
-						break;
-					case blockFacing::up:
-						props[0].value = "up";
-						break;
-					case blockFacing::down:
-						props[0].value = "down";
-					}
+					props[0].value = blockFacingToString(facing);
 					props[1].name = "waterlogged";
 					props[1].value = oldBlockState.id == waterSurceBlockStateId ? "true" : "false";
 					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -4635,26 +4275,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				{
 					BlockProperty* props = new BlockProperty[3];
 					props[0].name = "facing";
-					switch (face)
-					{
-					case playerDigging::bottom:
-						props[0].value = "down";
-						break;
-					case playerDigging::top:
-						props[0].value = "up";
-						break;
-					case playerDigging::north:
-						props[0].value = "north";
-						break;
-					case playerDigging::south:
-						props[0].value = "south";
-						break;
-					case playerDigging::west:
-						props[0].value = "west";
-						break;
-					case playerDigging::east:
-						props[0].value = "east";
-					}
+					props[0].value = playerDiggingToString(face);
 					props[1].name = "waterlogged";
 					props[1].value = "false";
 					props[2].name = "powered";
@@ -4663,36 +4284,10 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				blockFacing facing;
-				switch (face)
-				{
-				case playerDigging::top:
-					facing = blockFacing::up;
-					destY++;
-					break;
-				case playerDigging::bottom:
-					facing = blockFacing::down;
-					destY--;
-					break;
-				case playerDigging::east:
-					facing = blockFacing::east;
-					destX++;
-					break;
-				case playerDigging::west:
-					facing = blockFacing::west;
-					destX--;
-					break;
-				case playerDigging::south:
-					facing = blockFacing::south;
-					destZ++;
-					break;
-				case playerDigging::north:
-					facing = blockFacing::north;
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
+				blockFacing facing = playerdiggingToBlockfacing(face);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4702,26 +4297,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				{
 					BlockProperty* props = new BlockProperty[3];
 					props[0].name = "facing";
-					switch (facing)
-					{
-					case blockFacing::north:
-						props[0].value = "north";
-						break;
-					case blockFacing::south:
-						props[0].value = "south";
-						break;
-					case blockFacing::west:
-						props[0].value = "west";
-						break;
-					case blockFacing::east:
-						props[0].value = "east";
-						break;
-					case blockFacing::up:
-						props[0].value = "up";
-						break;
-					case blockFacing::down:
-						props[0].value = "down";
-					}
+					props[0].value = blockFacingToString(facing);
 					props[1].name = "waterlogged";
 					props[1].value = oldBlockState.id == waterSurceBlockStateId ? "true" : "false";
 					props[2].name = "powered";
@@ -4762,29 +4338,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4945,8 +4501,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				if (!stateJson)
 				{
 					if (!checkCoordinates(destY))
-						//block out of world
-						return;
+						return; //block out of world
 
 					BlockState oldBlockState = getBlock(destX, destY, destZ);
 					std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -4964,7 +4519,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 								oldBlockState.setState("waterlogged", "false");
 								stateJson = oldBlockState.getJsonState();
 							}
-							else return;
+							else 
+								return;
 						}
 						else
 						{
@@ -4975,7 +4531,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 								oldBlockState.setState("waterlogged", "false");
 								stateJson = oldBlockState.getJsonState();
 							}
-							else return;
+							else 
+								return;
 						}
 					}
 					else
@@ -5097,8 +4654,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					axis = logAxis::z;
 				}
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
@@ -5150,29 +4706,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					delete[] props;
 					break;
 				}
-				switch (face)
-				{
-				case playerDigging::top:
-					destY++;
-					break;
-				case playerDigging::bottom:
-					destY--;
-					break;
-				case playerDigging::east:
-					destX++;
-					break;
-				case playerDigging::west:
-					destX--;
-					break;
-				case playerDigging::south:
-					destZ++;
-					break;
-				case playerDigging::north:
-					destZ--;
-				}
+				modifyXYZbyFace(face, destX, destY, destZ);
 				if (!p->world->checkCoordinates(destY))
-					//destY out of world
-					return;
+					return; //destY out of world
 
 				BlockState oldBlockState = getBlock(destX, destY, destZ);
 				std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -5217,29 +4753,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				//setblock water_cauldron instead of the cauldron
 				return;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -5267,35 +4783,16 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				//setblock water_cauldron instead of the cauldron
 				return;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
 			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
 
-			if (destroyedByWater(oldBlockId) || replaceableIndirect(oldBlockId)) stateJson = &Registry::getBlockState("minecraft:lava");
+			if (destroyedByWater(oldBlockId) || replaceableIndirect(oldBlockId)) 
+				stateJson = &Registry::getBlockState("minecraft:lava");
 			break;
 		}
 		case Item::minecraft_powder_snow_bucket:
@@ -5311,29 +4808,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				//setblock water_cauldron instead of the cauldron
 				return;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -5456,8 +4933,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				destZ--;
 			}
 			if (!checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -5501,16 +4977,13 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 			if (replaceableDirect(targetBlockId))
 			{
 				if (!checkCoordinates(destY - 1) || !checkCoordinates(destY + 1))
-					//door cannot have floor or the upper half is outside world
-					break;
+					break; //door cannot have floor or the upper half is outside world
 				BlockState floorState = getBlock(destX, destY - 1, destZ);
 				Block floorBlock = stateToBlock(floorState);
 				if (!canSupportDoor(floorBlock, floorState))
-					//floor block cannot support a door
-					break;
+					break; //floor block cannot support a door
 				if (!replaceableIndirect(stateToBlock(getBlock(destX, destY + 1, destZ))))
-					//canno place top part
-					break;
+					break; //canno place top part
 
 				BlockProperty* props = new BlockProperty[5];
 				props[0].name = "facing";
@@ -5667,29 +5140,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				delete[] props;
 				break;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -5832,29 +5285,37 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					{
 						BlockState blockState = getBlock(destX + 1, destY, destZ);
 						Block blockId = stateToBlock(blockState);
-						if (generalConnectible((Item)itemId, blockId, playerDigging::face::west, blockState)) props[0].value = "true";
-						else props[0].value = "false";
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::west, blockState)) 
+							props[0].value = "true";
+						else 
+							props[0].value = "false";
 					}
 					//north connection
 					{
 						BlockState blockState = getBlock(destX, destY, destZ - 1);
 						Block blockId = stateToBlock(blockState);
-						if (generalConnectible((Item)itemId, blockId, playerDigging::face::south, blockState)) props[1].value = "true";
-						else props[1].value = "false";
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::south, blockState)) 
+							props[1].value = "true";
+						else 
+							props[1].value = "false";
 					}
 					//south connection
 					{
 						BlockState blockState = getBlock(destX, destY, destZ + 1);
 						Block blockId = stateToBlock(blockState);
-						if (generalConnectible((Item)itemId, blockId, playerDigging::face::north, blockState)) props[2].value = "true";
-						else props[2].value = "false";
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::north, blockState)) 
+							props[2].value = "true";
+						else 
+							props[2].value = "false";
 					}
 					//west connection
 					{
 						BlockState blockState = getBlock(destX - 1, destY, destZ);
 						Block blockId = stateToBlock(blockState);
-						if (generalConnectible((Item)itemId, blockId, playerDigging::face::east, blockState)) props[4].value = "true";
-						else props[4].value = "false";
+						if (generalConnectible((Item)itemId, blockId, playerDigging::face::east, blockState)) 
+							props[4].value = "true";
+						else 
+							props[4].value = "false";
 					}
 				}
 				}
@@ -5897,7 +5358,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[1];
+						BlockProperty* props = new BlockProperty[1];
 						props[0].name = "facing";
 						props[0].value = "north";
 						stateJson = &Registry::getBlockState(itemName, props);
@@ -5913,7 +5374,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[1];
+						BlockProperty* props = new BlockProperty[1];
 						props[0].name = "facing";
 						props[0].value = "east";
 						stateJson = &Registry::getBlockState(itemName, props);
@@ -5929,7 +5390,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[1];
+						BlockProperty* props = new BlockProperty[1];
 						props[0].name = "facing";
 						props[0].value = "south";
 						stateJson = &Registry::getBlockState(itemName, props);
@@ -5945,7 +5406,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[1];
+						BlockProperty* props = new BlockProperty[1];
 						props[0].name = "facing";
 						props[0].value = "west";
 						stateJson = &Registry::getBlockState(itemName, props);
@@ -5956,29 +5417,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				}
 				break;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -6014,7 +5455,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "north";
 							stateJson = &Registry::getBlockState(itemName, props);
@@ -6030,7 +5471,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "east";
 							stateJson = &Registry::getBlockState(itemName, props);
@@ -6046,7 +5487,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "south";
 							stateJson = &Registry::getBlockState(itemName, props);
@@ -6062,7 +5503,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "west";
 							stateJson = &Registry::getBlockState(itemName, props);
@@ -6081,7 +5522,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "north";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6114,7 +5555,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "east";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6132,7 +5573,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "south";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6150,7 +5591,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "west";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6171,7 +5612,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "south";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6204,7 +5645,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "north";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6222,7 +5663,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "east";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6240,7 +5681,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "west";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6261,7 +5702,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "west";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6294,7 +5735,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "north";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6312,7 +5753,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "east";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6330,7 +5771,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "south";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6351,7 +5792,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "east";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6384,7 +5825,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "north";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6402,7 +5843,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "south";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6420,7 +5861,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[1];
+							BlockProperty* props = new BlockProperty[1];
 							props[0].name = "facing";
 							props[0].value = "west";
 							std::string itemName = Registry::getName(Registry::itemRegistry, itemId);
@@ -6468,7 +5909,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[2];
+						BlockProperty* props = new BlockProperty[2];
 						props[0].name = "facing";
 						props[0].value = "north";
 						props[1].name = "lit";
@@ -6486,7 +5927,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[2];
+						BlockProperty* props = new BlockProperty[2];
 						props[0].name = "facing";
 						props[0].value = "east";
 						props[1].name = "lit";
@@ -6504,7 +5945,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[2];
+						BlockProperty* props = new BlockProperty[2];
 						props[0].name = "facing";
 						props[0].value = "south";
 						props[1].name = "lit";
@@ -6522,7 +5963,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 					Block supportBlock = stateToBlock(supportBlockState);
 					if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 					{
-						BlockProperty*props = new BlockProperty[2];
+						BlockProperty* props = new BlockProperty[2];
 						props[0].name = "facing";
 						props[0].value = "west";
 						props[1].name = "lit";
@@ -6535,29 +5976,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				}
 				break;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -6597,7 +6018,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "north";
 							props[1].name = "lit";
@@ -6615,7 +6036,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "east";
 							props[1].name = "lit";
@@ -6633,7 +6054,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "south";
 							props[1].name = "lit";
@@ -6651,7 +6072,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "west";
 							props[1].name = "lit";
@@ -6672,7 +6093,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "north";
 							props[1].name = "lit";
@@ -6711,7 +6132,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "east";
 							props[1].name = "lit";
@@ -6731,7 +6152,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "south";
 							props[1].name = "lit";
@@ -6751,7 +6172,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "west";
 							props[1].name = "lit";
@@ -6774,7 +6195,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "south";
 							props[1].name = "lit";
@@ -6813,7 +6234,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "north";
 							props[1].name = "lit";
@@ -6833,7 +6254,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "east";
 							props[1].name = "lit";
@@ -6853,7 +6274,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "west";
 							props[1].name = "lit";
@@ -6876,7 +6297,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "west";
 							props[1].name = "lit";
@@ -6898,7 +6319,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 							Block supportBlock = stateToBlock(supportBlockState);
 							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
 							{
-								BlockProperty*props = new BlockProperty[1];
+								BlockProperty* props = new BlockProperty[1];
 								props[0].name = "lit";
 								props[0].value = "true";
 								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -6915,7 +6336,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "north";
 							props[1].name = "lit";
@@ -6935,7 +6356,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "east";
 							props[1].name = "lit";
@@ -6955,7 +6376,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "south";
 							props[1].name = "lit";
@@ -6978,7 +6399,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::east, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "east";
 							props[1].name = "lit";
@@ -7000,7 +6421,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 							Block supportBlock = stateToBlock(supportBlockState);
 							if (canSupportTorch(supportBlock, playerDigging::top, supportBlockState))
 							{
-								BlockProperty*props = new BlockProperty[1];
+								BlockProperty* props = new BlockProperty[1];
 								props[0].name = "lit";
 								props[0].value = "true";
 								stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId), props);
@@ -7017,7 +6438,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::north, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "north";
 							props[1].name = "lit";
@@ -7037,7 +6458,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::south, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "south";
 							props[1].name = "lit";
@@ -7057,7 +6478,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 						Block supportBlock = stateToBlock(supportBlockState);
 						if (canSupportTorch(supportBlock, playerDigging::west, supportBlockState))
 						{
-							BlockProperty*props = new BlockProperty[2];
+							BlockProperty* props = new BlockProperty[2];
 							props[0].name = "facing";
 							props[0].value = "west";
 							props[1].name = "lit";
@@ -7095,29 +6516,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				delete[] props;
 				break;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
@@ -7190,29 +6591,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 				delete[] props;
 				break;
 			}
-			switch (face)
-			{
-			case playerDigging::top:
-				destY++;
-				break;
-			case playerDigging::bottom:
-				destY--;
-				break;
-			case playerDigging::east:
-				destX++;
-				break;
-			case playerDigging::west:
-				destX--;
-				break;
-			case playerDigging::south:
-				destZ++;
-				break;
-			case playerDigging::north:
-				destZ--;
-			}
+			modifyXYZbyFace(face, destX, destY, destZ);
 			if (!p->world->checkCoordinates(destY))
-				//destY out of world
-				return;
+				return; //destY out of world
 
 			BlockState oldBlockState = getBlock(destX, destY, destZ);
 			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
