@@ -7,6 +7,8 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+#include <thread>
+#include <sstream>
 
 using namespace std;
 
@@ -227,7 +229,10 @@ std::string Log::preLogPrint()
 
 	strftime(buffer + 1, sizeof(buffer), "%H:%M:%S", &newtime);
 
-	return buffer;
+	std::ostringstream ss;
+	ss << buffer << ' ' << std::this_thread::get_id() << '\t';
+
+	return ss.str();
 }
 
 LogStream& Log::none()
@@ -236,24 +241,24 @@ LogStream& Log::none()
 }
 LogStream& Log::info()
 {
-	infoStream << preLogPrint() << "  INFO]: ";
+	infoStream << preLogPrint() << " INFO]: ";
 	return infoStream;
 }
 LogStream& Log::warn()
 {
-	warningStream << preLogPrint() << "  WARN]: ";
+	warningStream << preLogPrint() << " WARN]: ";
 	return warningStream;
 }
 LogStream& Log::error()
 {
-	errorStream << preLogPrint() << " ERROR]: ";
+	errorStream << preLogPrint() << "ERROR]: ";
 	return errorStream;
 }
 LogStream& Log::debug(bool print)
 {
 	debugStream.setState(print);
 
-	debugStream << preLogPrint() << " DEBUG]: ";
+	debugStream << preLogPrint() << "DEBUG]: ";
 	return debugStream;
 }
 

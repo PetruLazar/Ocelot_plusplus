@@ -78,7 +78,7 @@ public:
 	SERVER_API static LogStream& none();
 	SERVER_API static LogStream& info();
 	SERVER_API static LogStream& warn();
-	SERVER_API static LogStream& debug(bool print = false);
+	SERVER_API static LogStream& debug(bool print = true);
 	SERVER_API static LogStream& error();
 
 	SERVER_API static void Bin(const char*, const ull);
