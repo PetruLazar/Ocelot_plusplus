@@ -12,8 +12,8 @@ namespace recipe
 		Recipe::crafting_special_firework_star = "minecraft:crafting_special_firework_star", Recipe::crafting_special_firework_star_fade = "minecraft:crafting_special_firework_star_fade", Recipe::crafting_special_repairitem = "minecraft:crafting_special_repairitem", Recipe::crafting_special_tippedarrow = "minecraft:crafting_special_tippedarrow", Recipe::crafting_special_bannerduplicate = "minecraft:crafting_special_bannerduplicate",
 		Recipe::crafting_special_banneraddpattern = "minecraft:crafting_special_banneraddpattern", Recipe::crafting_special_shielddecoration = "minecraft:crafting_special_shielddecoration", Recipe::crafting_special_shulkerboxcoloring = "minecraft:crafting_special_shulkerboxcoloring", Recipe::crafting_special_suspiciousstew = "minecraft:crafting_special_suspiciousstew";
 
-	std::vector<Recipe*>* Manager::recipes;
-	std::vector<mcString>* Manager::recipesIDs;
+	std::vector<Recipe*> Manager::recipes;
+	std::vector<mcString> Manager::recipesIDs;
 
 	void Ingredient::write(char*& buffer) const
 	{
@@ -68,8 +68,8 @@ namespace recipe
 
 	void Manager::addRecipe(const mcString& id, recipe::Recipe* recipe)
 	{
-		recipesIDs->emplace_back(id);
-		recipes->emplace_back(recipe);
+		recipesIDs.emplace_back(id);
+		recipes.emplace_back(recipe);
 	}
 
 	void Manager::loadStaticRecipes()
@@ -201,7 +201,7 @@ namespace recipe
 
 	const Recipe* Manager::getRecipe(const std::string& recipeID)
 	{
-		for (Recipe* recipe : *recipes)
+		for (Recipe* recipe : recipes)
 		{
 			if (recipe->getRecipeID() == recipeID)
 				return recipe;
@@ -212,19 +212,14 @@ namespace recipe
 
 	void Manager::loadRecipes()
 	{
-		recipes = new std::vector<Recipe*>();
-		recipesIDs = new std::vector<mcString>();
-
 		loadStaticRecipes();
 		loadDynamicRecipes();
 	}
 
 	void Manager::unloadRecipes()
 	{
-		for (Recipe* r : *recipes)
+		for (Recipe* r : recipes)
 			delete r;
-
-		delete recipes;
 	}
 
 	void crafting_shapeless::write(char*& buffer) const

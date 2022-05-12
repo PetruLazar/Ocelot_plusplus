@@ -37,6 +37,7 @@ namespace recipe
 
 	public:
 		Recipe(mcString type, mcString recipeID) : type(type), recipeID(recipeID) {}
+		virtual ~Recipe() {};
 
 		static const std::string crafting_shapeless, crafting_shaped, smelting, blasting, smoking, campfire_cooking, stonecutting, smithing,
 			crafting_special_armordye, crafting_special_bookcloning, crafting_special_mapcloning, crafting_special_mapextending, crafting_special_firework_rocket,
@@ -59,8 +60,8 @@ namespace recipe
 		static void loadDynamicRecipes();
 
 	public:
-		static std::vector<Recipe*>* recipes;
-		static std::vector<mcString>* recipesIDs;
+		static std::vector<Recipe*> recipes;
+		static std::vector<mcString> recipesIDs;
 
 		SERVER_API static const Recipe* getRecipe(const std::string& recipeID);
 
@@ -78,6 +79,14 @@ namespace recipe
 
 		crafting_shapeless(mcString recipeID, mcString group, varInt ingredientCount, Ingredient** ingredients, Slot* result)
 			: group(group), ingredientCount(ingredientCount), ingredients(ingredients), result(result), Recipe("crafting_shapeless", recipeID) {}
+		~crafting_shapeless() {
+			delete result;
+
+			for (int i = 0; i < ingredientCount; i++)
+				delete ingredients[i];
+
+			delete[] ingredients;
+		}
 
 		void write(char*& buffer) const;
 	};
@@ -92,6 +101,14 @@ namespace recipe
 
 		crafting_shaped(mcString recipeID, varInt width, varInt height, mcString group, Ingredient** ingredients, Slot* result) 
 			: width(width), height(height), group(group), ingredients(ingredients), result(result), Recipe("crafting_shaped", recipeID) {}
+		~crafting_shaped() {
+			delete result;
+
+			for (int i = 0; i < width * height; i++)
+				delete ingredients[i];
+
+			delete[] ingredients;
+		}
 
 		void write(char*& buffer) const;
 	};
@@ -191,6 +208,10 @@ namespace recipe
 
 		smelting(mcString recipeID, mcString group, Ingredient* ingredient, Slot* result, bfloat experience, varInt cookingTime)
 			: group(group), ingredient(ingredient), result(result), experience(experience), cookingTime(cookingTime), Recipe("smelting", recipeID) {}
+		~smelting() {
+			delete ingredient;
+			delete result;
+		}
 
 		void write(char*& buffer) const;
 	};
@@ -206,6 +227,10 @@ namespace recipe
 
 		blasting(mcString recipeID, mcString group, Ingredient* ingredient, Slot* result, bfloat experience, varInt cookingTime) 
 			: group(group), ingredient(ingredient), result(result), experience(experience), cookingTime(cookingTime), Recipe("blasting", recipeID) {}
+		~blasting() {
+			delete ingredient;
+			delete result;
+		}
 
 		void write(char*& buffer) const;
 	};
@@ -221,6 +246,10 @@ namespace recipe
 
 		smoking(mcString recipeID, mcString group, Ingredient* ingredient, Slot* result, bfloat experience, varInt cookingTime) 
 			: group(group), ingredient(ingredient), result(result), experience(experience), cookingTime(cookingTime), Recipe("smoking", recipeID) {}
+		~smoking() {
+			delete ingredient;
+			delete result;
+		}
 
 		void write(char*& buffer) const;
 	};
@@ -236,6 +265,10 @@ namespace recipe
 
 		campfire_cooking(mcString recipeID, mcString group, Ingredient* ingredient, Slot* result, bfloat experience, varInt cookingTime) 
 			: group(group), ingredient(ingredient), result(result), experience(experience), cookingTime(cookingTime), Recipe("campfire_cooking", recipeID) {}
+		~campfire_cooking() {
+			delete ingredient;
+			delete result;
+		}
 
 		void write(char*& buffer) const;
 	};
@@ -249,6 +282,10 @@ namespace recipe
 
 		stonecutting(mcString recipeID, mcString group, Ingredient* ingredient, Slot* result) 
 			: group(group), ingredient(ingredient), result(result), Recipe("stonecutting", recipeID) {}
+		~stonecutting() {
+			delete ingredient;
+			delete result;
+		}
 
 		void write(char*& buffer) const;
 	};
@@ -256,11 +293,16 @@ namespace recipe
 	class smithing : public Recipe
 	{
 	public:
-		Ingredient* base, * addition;
-		Slot* result;
+		Ingredient *base, *addition;
+		Slot *result;
 
 		smithing(mcString recipeID, Ingredient* base, Ingredient* addition, Slot* result) 
 			: base(base), addition(addition), result(result), Recipe("smithing", recipeID) {}
+		~smithing() {
+			delete base;
+			delete addition;
+			delete result;
+		}
 
 		void write(char*& buffer) const;
 	};

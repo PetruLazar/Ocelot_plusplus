@@ -82,9 +82,9 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::playerAbilities(p, true, true, true, p->gm == gamemode::creative, 0.05f, 0.1f);
 
-	play::send::declareRecipes(p, (int)recipe::Manager::recipes->size(), recipe::Manager::recipes);
+	play::send::declareRecipes(p, (int)recipe::Manager::recipes.size(), &recipe::Manager::recipes);
 	//unlock all recipes by default
-	play::send::unlockRecipes(p, 0, false, false, false, false, false, false, false, false, (int)recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs, recipe::Manager::recipesIDs->size(), recipe::Manager::recipesIDs);
+	play::send::unlockRecipes(p, 0, false, false, false, false, false, false, false, false, (int)recipe::Manager::recipesIDs.size(), &recipe::Manager::recipesIDs, recipe::Manager::recipesIDs.size(), &recipe::Manager::recipesIDs);
 
 	std::vector<Player*> inGamePlayers;
 	for (Player* player : Player::players) if (player->state == ConnectionState::play && player->Connected()) inGamePlayers.emplace_back(player);
