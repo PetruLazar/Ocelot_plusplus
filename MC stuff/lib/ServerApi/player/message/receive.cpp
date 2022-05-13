@@ -499,9 +499,6 @@ void message::play::receive::playerPosition(Player* p, bdouble X, bdouble feetY,
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy)
-		ignoreExceptions(message::play::send::entityPosition(seener, p->getEid(), short((X - p->x) * 4096), short((feetY - p->y) * 4096), short((Z - p->z) * 4096), onGround));
-
 	p->updatePosition(X, feetY, Z);
 	p->onGround = onGround;
 
@@ -512,27 +509,16 @@ void message::play::receive::playerPositionAndRotation(Player* p, bdouble X, bdo
 	if (p->pendingTpId != -1)
 		return;
 
-	for (Player* seener : p->seenBy)
-	{
-		ignoreExceptions(message::play::send::entityPositionAndRotation(seener, p->getEid(), short((X - p->x) * 4096), short((Y - p->y) * 4096), short((Z - p->z) * 4096), (float)yaw, (float)pitch, onGround));
-		ignoreExceptions(message::play::send::entityHeadLook(seener, p->getEid(), (float)p->yaw));
-	}
+	p->onGround = onGround;
 	p->updatePosition(X, Y, Z);
 	p->updateRotation(yaw, pitch);
-	p->onGround = onGround;
 
 	processGroundItem(p);
 }
 void message::play::receive::playerRotation(Player* p, bfloat yaw, bfloat pitch, bool onGround)
 {
-	for (Player* seener : p->seenBy)
-	{
-		ignoreExceptions(message::play::send::entityRotation(seener, p->getEid(), (float)yaw, (float)pitch, onGround));
-		ignoreExceptions(message::play::send::entityHeadLook(seener, p->getEid(), (float)p->yaw));
-	}
-
-	p->updateRotation(yaw, pitch);
 	p->onGround = onGround;
+	p->updateRotation(yaw, pitch);
 }
 void message::play::receive::pickItem(Player* p, varInt slot)
 {

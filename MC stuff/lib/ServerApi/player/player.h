@@ -227,6 +227,9 @@ public:
 	SERVER_API void changeWorld(World* newWorld, const sf::Vector3<bdouble>* spawnPosition = nullptr, const sf::Vector2f* spawnOrientation = nullptr);
 	SERVER_API void changeWorld(const mcString& worldName, const sf::Vector3<bdouble>* spawnPosition = nullptr, const sf::Vector2f* spawnOrientation = nullptr);
 
+	SERVER_API Chunk* sendChunk(int deltaX, int deltaZ);
+	SERVER_API void unloadChunk(int deltaX, int deltaZ);
+
 	SERVER_API void disconnect();
 	//check for incoming data on the socket
 	SERVER_API void updateNet();

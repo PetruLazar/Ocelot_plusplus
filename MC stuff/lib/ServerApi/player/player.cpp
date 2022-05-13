@@ -97,7 +97,7 @@ sf::Vector2i Player::ChunkLoaderHelper::Generate()
 	return sf::Vector2i(-y, x);
 }
 
-Player::ChunkLoaderHelper::ChunkLoaderHelper(int viewDistance) : v(viewDistance), a(0), i(0), e(3), matrix(viewDistance) {}
+Player::ChunkLoaderHelper::ChunkLoaderHelper(int viewDistance) : v(viewDistance), a(1), i(0), e(0), matrix(viewDistance) {}
 void Player::ChunkLoaderHelper::UpdateViewDistance(int viewDistance)
 {
 	v = viewDistance;
@@ -108,8 +108,8 @@ void Player::ChunkLoaderHelper::UpdateViewDistance(int viewDistance)
 void Player::ChunkLoaderHelper::Reset()
 {
 	enabled = true;
-	a = i = 0;
-	e = 3;
+	e = i = 0;
+	a = 1;
 }
 sf::Vector2i Player::ChunkLoaderHelper::Next()
 {
@@ -272,20 +272,14 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 	int newChunkX = fastfloor(X) >> 4,
 		newChunkZ = fastfloor(Z) >> 4;
 
-	bool chunkChanged = false;
+	bool chunkChangedX = newChunkX != chunkX,
+		chunkChangedZ = newChunkZ != chunkZ,
+		chunkChanged = chunkChangedX || chunkChangedZ;
 
-	/*chunkChanged = newChunkX != chunkX || newChunkZ != chunkZ;
 	if (chunkChanged)
-	{
-		for (int x = -viewDistance; x <= viewDistance; x++)
-		{
-			for (int z = -viewDistance; z <= viewDistance; z++) std::cout << chunkLoaderHelper.matrix.get(x, z) << ' ';
-			std::cout << '\n';
-		}
-		std::cout << '\n';
-	}*/
+		world->getChunk(chunkX, chunkZ)->removePlayer(this);
 
-	if (newChunkX != chunkX)
+	if (chunkChangedX)
 	{
 		int delta = newChunkX - chunkX;
 		if (abs(delta) > 2 * viewDistance + 1)
@@ -293,8 +287,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			//Log::debug(true) << "Distance too big, unload all";
 			for (int x = -viewDistance; x < viewDistance; x++)
 				for (int z = -viewDistance; z <= viewDistance; z++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+					unloadChunk(x, z);
 
 			chunkLoaderHelper.matrix.Empty();
 			chunkLoaderHelper.Reset();
@@ -312,8 +305,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			//Log::debug(true) << "delta > 0" << Log::endl;
 			for (int x = -viewDistance; x < -viewDistance + delta; x++)
 				for (int z = -viewDistance; z <= viewDistance; z++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+					unloadChunk(x, z);
 
 			for (int i = 0; i < delta; i++)
 				chunkLoaderHelper.matrix.Shift_negative_x();
@@ -323,8 +315,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 			//Log::debug(true) << "delta < 0" << Log::endl;
 			for (int x = viewDistance; x > viewDistance + delta; x--)
 				for (int z = -viewDistance; z <= viewDistance; z++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+					unloadChunk(x, z);
 
 			for (int i = 0; i > delta; i--)
 				chunkLoaderHelper.matrix.Shift_positive_x();
@@ -332,18 +323,16 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 
 		chunkLoaderHelper.Reset();
 		chunkX = newChunkX;
-		chunkChanged = true;
 	}
 
-	if (newChunkZ != chunkZ)
+	if (chunkChangedZ)
 	{
 		int delta = newChunkZ - chunkZ;
 		if (abs(delta) > 2 * viewDistance + 1)
 		{
 			for (int x = -viewDistance; x < viewDistance; x++)
 				for (int z = -viewDistance; z <= viewDistance; z++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+					unloadChunk(x, z);
 
 			chunkLoaderHelper.matrix.Empty();
 			chunkLoaderHelper.Reset();
@@ -359,8 +348,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		{
 			for (int z = -viewDistance; z < -viewDistance + delta; z++)
 				for (int x = -viewDistance; x <= viewDistance; x++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+					unloadChunk(x, z);
 
 			for (int i = 0; i < delta; i++)
 				chunkLoaderHelper.matrix.Shift_negative_z();
@@ -369,8 +357,7 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		{
 			for (int z = viewDistance; z > viewDistance + delta; z--)
 				for (int x = -viewDistance; x <= viewDistance; x++)
-					if (chunkLoaderHelper.matrix.get(x, z))
-						message::play::send::unloadChunk(this, x + chunkX, z + chunkZ);
+					unloadChunk(x, z);
 
 			for (int i = 0; i > delta; i--)
 				chunkLoaderHelper.matrix.Shift_positive_z();
@@ -378,13 +365,19 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 
 		chunkLoaderHelper.Reset();
 		chunkZ = newChunkZ;
-		chunkChanged = true;
-		//chunkLoaderHelper.matrix.Show();
 	}
 
 	if (chunkChanged)
 	{
 		message::play::send::updateViewPosition(this, chunkX, chunkZ);
+		Chunk* ch = sendChunk(0, 0);
+		if (!ch) ch = world->getChunk(chunkX, chunkZ, false);
+		ch->addPlayer(this);
+		/*if (!chunkLoaderHelper.matrix.get(0, 0))
+		{
+			message::play::send::chunkDataAndLight(this, chunkX, chunkZ);
+			chunkLoaderHelper.matrix.set(0, 0, true);
+		}*/
 		/*for (int x = -viewDistance; x <= viewDistance; x++)
 		{
 			for (int z = -viewDistance; z <= viewDistance; z++) std::cout << chunkLoaderHelper.matrix.get(x, z) << ' ';
@@ -392,6 +385,16 @@ void Player::updatePosition(bdouble X, bdouble Y, bdouble Z)
 		}
 		std::cout << '\n';*/
 	}
+
+	double dX = X - x;
+	double dY = Y - y;
+	double dZ = Z - z;
+	if (abs(dX) < 8 && abs(dY) < 8 && abs(dZ) < 8)
+		for (Player* seener : seenBy)
+			ignoreExceptions(message::play::send::entityPosition(seener, eid, short(dX * 4096), short(dY * 4096), short(dZ * 4096), onGround))
+	else
+		for (Player* seener : seenBy)
+			ignoreExceptions(message::play::send::entityTeleport(seener, eid, X, Y, Z, yaw, pitch, onGround));
 
 	Player::x = X;
 	Player::y = Y;
@@ -401,6 +404,12 @@ void Player::updateRotation(bfloat yaw, bfloat pitch)
 {
 	Player::yaw = yaw;
 	Player::pitch = pitch;
+
+	for (Player* seener : seenBy)
+	{
+		ignoreExceptions(message::play::send::entityRotation(seener, eid, (float)yaw, (float)pitch, onGround));
+		ignoreExceptions(message::play::send::entityHeadLook(seener, eid, (float)yaw));
+	}
 }
 bool Player::positionInRange(Position location)
 {
@@ -413,9 +422,9 @@ bool Player::positionInRange(Position location)
 
 void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ)
 {
-	x = tpX;
+	/*x = tpX;
 	y = tpY;
-	z = tpZ;
+	z = tpZ;*/
 	message::play::send::playerPosAndLook(this, tpX, tpY, tpZ, yaw, pitch, 0, false);
 	Player::updatePosition(tpX, tpY, tpZ);
 }
@@ -426,10 +435,41 @@ void Player::teleport(bdouble tpX, bdouble tpY, bdouble tpZ, bfloat tpYaw, bfloa
 	teleport(tpX, tpY, tpZ);
 }
 
+Chunk* Player::sendChunk(int deltaX, int deltaZ)
+{
+	if (chunkLoaderHelper.matrix.get(deltaX, deltaZ)) return nullptr;
+	int absX = chunkX + deltaX, absZ = chunkZ + deltaZ;
+	Chunk* chunk = world->getChunk(absX, absZ, true);
+	message::play::send::chunkDataAndLight(this, chunk, absX, absZ);
+	chunkLoaderHelper.matrix.set(deltaX, deltaZ, true);
+
+	//send any players or entities in that chunk
+	for (Player* p : chunk->players)
+	{
+		enterSight(p);
+		p->enterSight(this);
+	}
+
+	return chunk;
+}
+void Player::unloadChunk(int deltaX, int deltaZ)
+{
+	if (!chunkLoaderHelper.matrix.get(deltaX, deltaZ)) return;
+	int absX = chunkX + deltaX, absZ = chunkZ + deltaZ;
+
+	Chunk* chunk = world->getChunk(absX, absZ, false);
+	for (Player* p : chunk->players)
+	{
+		exitSight(p);
+		p->exitSight(this);
+	}
+
+	message::play::send::unloadChunk(this, absX, absZ);
+}
+
 void Player::setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition, const sf::Vector2f* spawnOrientation)
 {
 	Log::debug(DEBUG_SIGHT) << '\n' << this << " is entering world " << world->name;
-	sizeof(*spawnPosition);
 	//set world and position
 	this->world = world;
 	if (spawnPosition == nullptr)
@@ -472,15 +512,10 @@ void Player::setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition, c
 	//send old items
 	//...
 
-	//check for players in sight
-	for (Player* otherP : world->players)
-	{
-		if (otherP->state == ConnectionState::play && Position::inRange(otherP->chunkX, otherP->chunkZ, chunkX, chunkZ, viewDistance))
-		{
-			enterSight(otherP);
-			otherP->enterSight(this);
-		}
-	}
+	sendChunk(0, 0)->addPlayer(this);
+	/*message::play::send::chunkDataAndLight(this, chunkX, chunkZ);
+	chunkLoaderHelper.matrix.set(0, 0, true);*/
+
 	//add the player to the world's player list
 	world->players.emplace_front(this);
 	//Log::debug(DEBUG_SIGHT) << "Player list for " << world->name << " is now " << world->players.size() << Log::endl;
@@ -489,6 +524,8 @@ void Player::leaveWorld(World* world)
 {
 	Log::debug(DEBUG_SIGHT) << "Player " << this << " is leaving world " << world->name << Log::endl;
 	//unload chunks in the world
+	world->getChunk(chunkX, chunkZ)->removePlayer(this);
+	//for (int x = -viewDistance; x <= viewDistance; x++) for (int z = -viewDistance; z <= viewDistance; z++) ignoreExceptions(unloadChunk(x,z));
 	for (int x = chunkX - viewDistance; x <= chunkX + viewDistance; x++) for (int z = chunkZ - viewDistance; z <= chunkZ + viewDistance; z++) ignoreExceptions(world->unload(x, z));
 	chunkLoaderHelper.Reset();
 	chunkLoaderHelper.matrix.Empty();
@@ -527,26 +564,9 @@ void Player::enterSight(Player* other)
 void Player::exitSight(Player* other)
 {
 	//called for the other player: searches the player and calls exitSight(ull) on themselves
-
+	message::play::send::destroyEntity(this, other->eid);
 	seenBy.remove(other);
-
-	/*ull size = seenBy.size();
-	for (ull i = 0; i < size; i++) if (seenBy[i] == other)
-	{
-		exitSight(i);
-		return;
-	}*/
 }
-/*void Player::exitSight(std::forward_list<Player*>::iterator prev_it)
-{
-	//called to remove the entry on the same object
-
-	//Log::debug(DEBUG_SIGHT) << "Player " << seenBy[otherI] << " exiting sight of " << this << Log::endl;
-	ignoreExceptions(message::play::send::destroyEntities(this, 1, &(*it)->eid));
-	//seenBy.erase(seenBy.begin() + otherI);
-	seenBy.erase(seenBy.begin() + otherI);
-	//Log::debug(DEBUG_SIGHT) << "Sight of " << this << " is now " << seenBy.size() << Log::endl;
-}*/
 
 void Player::disconnect()
 {
@@ -585,9 +605,11 @@ void Player::updateNet()
 	while (!chunkLoaderHelper.Finished())
 	{
 		sf::Vector2i pos = chunkLoaderHelper.Next();
-		if (chunkLoaderHelper.matrix.get(pos.x, pos.y)) continue;
+		if (!sendChunk(pos.x, pos.y)) continue;
+		//break;
+		/*if (chunkLoaderHelper.matrix.get(pos.x, pos.y)) continue;
 		message::play::send::chunkDataAndLight(this, chunkX + pos.x, chunkZ + pos.y);
-		chunkLoaderHelper.matrix.set(pos.x, pos.y, true);
+		chunkLoaderHelper.matrix.set(pos.x, pos.y, true);*/
 	}
 
 	//send data
@@ -867,14 +889,14 @@ void Player::UpdateViewDistance(int newViewDistance)
 		for (int x = viewDistance; x > newViewDistance; x--) //+x and -x edges
 			for (int z = -viewDistance; z <= viewDistance; z++)
 			{
-				if (chunkLoaderHelper.matrix.get(x, z)) message::play::send::unloadChunk(this, chunkX + x, chunkZ + z);
-				if (chunkLoaderHelper.matrix.get(-x, z)) message::play::send::unloadChunk(this, chunkX - x, chunkZ + z);
+				unloadChunk(x, z);
+				unloadChunk(-x, z);
 			}
 		for (int z = viewDistance; z > newViewDistance; z--) //+z and -z edges
 			for (int x = -newViewDistance; x <= newViewDistance; x++)
 			{
-				if (chunkLoaderHelper.matrix.get(x, z)) message::play::send::unloadChunk(this, chunkX + x, chunkZ + z);
-				if (chunkLoaderHelper.matrix.get(x, -z)) message::play::send::unloadChunk(this, chunkX + x, chunkZ - z);
+				unloadChunk(x, z);
+				unloadChunk(x, -z);
 			}
 	}
 	viewDistance = newViewDistance;

@@ -490,9 +490,8 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 
 	finishSendMacro;
 }
-void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, bool increaseLoadCount)
+void message::play::send::chunkDataAndLight(Player* p, Chunk* chunk, bint cX, bint cZ)
 {
-	Chunk* chunk = p->world->getChunk(cX, cZ, increaseLoadCount);
 	uint sectionCount = (uint)chunk->sections.size();
 
 	//build the heightmaps

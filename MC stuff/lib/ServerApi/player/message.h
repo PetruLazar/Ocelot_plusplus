@@ -331,7 +331,7 @@ struct message
 			SERVER_API static void initializeWorldBorder(Player*, bdouble x, bdouble z, bdouble oldDiameter, bdouble newDiameter, varLong speed, varInt portalTeleportBoundary, varInt warningBlocks, varInt warningTime);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
 			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities, bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask, varInt skyLightArrayCount, BitArray** skyLightArrays, varInt blockLightArrayCount, BitArray** blockLightArrays);
-			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, bool increaseLoadCount = true);
+			SERVER_API static void chunkDataAndLight(Player*, Chunk* chunk, bint cX, bint cZ);
 			SERVER_API static void effect(Player*, bint effectId, const Position& location, bint data, bool disableRelativeVolume);
 			SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle);
 			//SERVER_API static void updateLight(Player*, varInt cX, varInt cZ, bool trustEdges, varInt length1, blong* skyLightMask, varInt length2, blong* blockLightMask, varInt length3, blong* emptySkyLightMask, varInt length4, blong* emptyBlockLightMask, varInt skyLightArrayCount, char** skyLightArrays, varInt blockLightArrayCount, char** blockLightArrays);

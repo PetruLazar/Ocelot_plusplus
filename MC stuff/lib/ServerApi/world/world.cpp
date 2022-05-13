@@ -396,6 +396,8 @@ void World::setSpawn(bdouble X, bdouble Y, bdouble Z)
 }
 void World::setSpawn(bdouble X, bdouble Y, bdouble Z, bfloat Yaw, bfloat Pitch)
 {
+	spawn.Yaw = Yaw;
+	spawn.Pitch = Pitch;
 	setSpawn(X, Y, Z);
 }
 
