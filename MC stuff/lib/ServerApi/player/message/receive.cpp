@@ -286,7 +286,11 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	case 3:
 		//button is always 2
 		//middle click, for creative players in non-player inventories
-
+		if (p->gm == gamemode::creative)
+		{
+			Slot* clicked = p->inventory->getSlotByIndex(clickedSlot);
+			p->inventory->setFloatingSlot(*clicked);
+		}
 		break;
 	case 4:
 		if (clickedSlot == -999 || clickedSlot == -1)
