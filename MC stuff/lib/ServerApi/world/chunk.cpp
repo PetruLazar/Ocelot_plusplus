@@ -254,3 +254,11 @@ void Chunk::removePlayer(Player* p)
 {
 	players.remove(p);
 }
+void Chunk::addEntity(Entity::entity* en)
+{
+	entities.emplace_front(en);
+}
+void Chunk::removeEntity(Entity::entity* en)
+{
+	entities.remove(en);
+}

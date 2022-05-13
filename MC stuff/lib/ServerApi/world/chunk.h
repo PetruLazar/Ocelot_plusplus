@@ -41,7 +41,7 @@ public:
 
 	//currently unused
 	std::forward_list<Player*> players;
-	//std::forward_list<Entity*> entities;
+	std::forward_list<Entity::entity*> entities;
 
 	//for loading/saving from/to file
 	SERVER_API void read(std::istream& file);
@@ -59,8 +59,9 @@ public:
 	//includes data size field of the packet
 	SERVER_API void writeSectionData(char*&);
 
-	//currently unused
 	SERVER_API void addPlayer(Player*);
 	SERVER_API void removePlayer(Player*);
+	SERVER_API void addEntity(Entity::entity*);
+	SERVER_API void removeEntity(Entity::entity*);
 };
 
