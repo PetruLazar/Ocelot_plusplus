@@ -6,6 +6,7 @@ Section::Section() { }
 Section::~Section()
 {
 	delete blockStates;
+	delete biomes;
 }
 
 BlockState& Section::getPaletteEntry(int relX, int relY, int relZ)

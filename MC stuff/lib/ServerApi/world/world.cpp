@@ -1028,6 +1028,7 @@ void World::unload(int x, int z)
 		region->unload(this, relX, relZ);
 		if (!region->hasChunksLoaded())
 		{
+			delete regions[i];
 			regions.erase(regions.begin() + i);
 			Log::debug(REGION_DEBUG) << "Regions is now " << regions.size() << Log::endl;
 		}
