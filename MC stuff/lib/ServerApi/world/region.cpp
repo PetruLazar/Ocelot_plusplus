@@ -283,6 +283,7 @@ Chunk* Region::load(World* parent, int relX, int relZ)
 		std::stringstream stream(std::string(decompressedData, dataSizes[1]));
 		ch->read(stream);
 		delete[] decompressedData;
+		delete[] compressedData;
 		return ch;
 	}
 	//not compressed
