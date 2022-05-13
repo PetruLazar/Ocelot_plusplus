@@ -195,6 +195,8 @@ namespace recipe
 			else //other recipies that dont have any extra data
 				theRecipe = new recipe::Recipe(type, recipeFile.path().stem().string());
 
+			delete data;
+
 			Manager::addRecipe(recipeFile.path().stem().string(), theRecipe);
 		}
 	}
