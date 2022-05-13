@@ -905,6 +905,20 @@ void message::play::send::entityMetadata(Player* p, varInt eid, const std::vecto
 
 	finishSendMacro;
 }
+void message::play::send::entityMetadata(Player* p, varInt eid, const Entity::Metadata& metadata)
+{
+	varInt id = (int)id::entityMetadata;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	eid.write(data);
+
+	metadata.write(data);
+		
+	*(data++) = (Byte)0xff;
+
+	finishSendMacro;
+}
 void message::play::send::attachEntity(Player* p, bint attachedEid, bint holdingEid)
 {
 	varInt id = (int)id::attachEntity;

@@ -319,6 +319,13 @@ void message::dispatch(Player* p, char* data, uint size)
 				clickedItem->read(data);
 
 			play::receive::clickWindow(p, windowID, stateID, clickedSlot, button, mode, length, slotNumbers, slots, clickedItem);
+
+			for (int i = 0; i < length; i++)
+				delete slots[i];
+
+			delete[] slots;
+			delete[] slotNumbers;
+			delete clickedItem;
 		}
 		break;
 		case play::id::closeWindow_serverbound:
@@ -614,6 +621,8 @@ void message::dispatch(Player* p, char* data, uint size)
 
 			Slot* item = new Slot(itemId, present, count, item_data);
 			play::receive::creativeInventoryAction(p, slot, item);
+
+			delete item;
 		}
 		break;
 		case play::id::updateJigsawBlock:
