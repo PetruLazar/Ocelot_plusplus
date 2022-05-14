@@ -8,6 +8,7 @@
 
 bool Server::hasConsole = false;
 bool Server::keepServerOpen = true;
+bool Server::restartOnClose = false;
 
 ThreadPool Server::threadPool(std::thread::hardware_concurrency());
 

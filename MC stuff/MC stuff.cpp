@@ -114,6 +114,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 		Log::Flush();
 	}
+	listener.close();
 
 	Log::info() << "Kicking players..." << Log::endl;
 	for (Player* p : Player::players) try
@@ -147,5 +148,11 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	Registry::unloadRegistriesAndPalette();
 	recipe::Manager::unloadRecipes();
 	Server::FreeConsole();
+
+	if (Server::restartOnClose)
+	{
+		system("start \"\" \"MC stuff.exe\"");
+	}
+
 	return 0;
 }
