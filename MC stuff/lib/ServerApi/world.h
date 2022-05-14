@@ -68,6 +68,9 @@ public:
 	} spawn;
 	SERVER_API void setSpawn(bdouble X, bdouble Y, bdouble Z);
 	SERVER_API void setSpawn(bdouble X, bdouble Y, bdouble Z, bfloat Yaw, bfloat Pitch);
+	SERVER_API void loadArea(int chunkX, int chunkZ, int radius);
+	SERVER_API void unloadArea(int chunkX, int chunkZ, int radius);
+	SERVER_API void updateMainFile();
 
 	bool isFlat;
 	enum GeneratorType : Byte

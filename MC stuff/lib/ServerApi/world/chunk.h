@@ -2,6 +2,7 @@
 #include "../nbt.h"
 #include "section.h"
 #include <forward_list>
+#include "../types/entity.h"
 
 class Player;
 //#include "../player/player.h"
