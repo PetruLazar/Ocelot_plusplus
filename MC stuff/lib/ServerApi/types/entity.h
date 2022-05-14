@@ -363,8 +363,7 @@ namespace Entity {
 		entity(eidDispenser::General *eidDispenser, Entity::type type, bdouble spawnX, bdouble spawnY, bdouble spawnZ, Angle pitch, Angle yaw, bint data = 0, Byte attributes = 0, varInt airTicks = 300, Chat *customName = nullptr, bool isCustomNameVisible = false,
 			bool isSilent = false, bool hasGravity = false, pose thePose = pose::standing, varInt ticksFrozen = 0);
 		entity(const entity& e);
-
-		~entity();
+		virtual ~entity();
 
 		varInt getEid();
 		Entity::type getType();
@@ -372,51 +371,69 @@ namespace Entity {
 
 	struct thrownEgg : entity
 	{
-		Slot item;
+		Slot* item;
 
-		thrownEgg(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
+		thrownEgg(entity theEntity, Slot* item = new Slot(344)) : item(item), entity(theEntity) {}
+		~thrownEgg() {
+			delete item;
+		}
 	};
 
 	struct thrownEnderPearl : entity
 	{
-		Slot item;
+		Slot* item;
 
-		thrownEnderPearl(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
+		thrownEnderPearl(entity theEntity, Slot* item = new Slot(368)) : item(item), entity(theEntity) {}
+		~thrownEnderPearl() {
+			delete item;
+		}
 	};
 
 	struct thrownExperienceBottle : entity
 	{
-		Slot item;
+		Slot* item;
 
-		thrownExperienceBottle(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
+		thrownExperienceBottle(entity theEntity, Slot* item = new Slot(384)) : item(item), entity(theEntity) {}
+		~thrownExperienceBottle() {
+			delete item;
+		}
 	};
 
 	struct thrownPotion : entity
 	{
-		Slot item;
+		Slot* item;
 
-		thrownPotion(entity theEntity, Slot item) : item(item), entity(theEntity) {}
+		thrownPotion(entity theEntity, Slot* item) : item(item), entity(theEntity) {}
+		~thrownPotion() {
+			delete item;
+		}
 	};
 
 	struct snowball : entity
 	{
-		Slot item;
+		Slot* item;
 
-		snowball(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
+		snowball(entity theEntity, Slot* item = new Slot(332)) : item(item), entity(theEntity) {}
+		~snowball() {
+			delete item;
+		}
 	};
 
 	struct eyeOfEnder : entity
 	{
-		Slot item;
+		Slot* item;
 
-		eyeOfEnder(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
+		eyeOfEnder(entity theEntity, Slot* item = new Slot(381)) : item(item), entity(theEntity) {}
+		~eyeOfEnder() {
+			delete item;
+		}
 	};
 
 	struct fallingBlock : entity
 	{
 		Position position;
 
-		fallingBlock(entity theEntity, Position position = Position(0, 0, 0)) : position(position), entity(theEntity) {}
+		fallingBlock(entity theEntity, Position position) : position(position), entity(theEntity) {}
 	};
 
 	struct areaEffectCloud : entity
@@ -428,6 +445,9 @@ namespace Entity {
 
 		areaEffectCloud(entity theEntity, bfloat radius = 0.5, varInt color = 0, bool ignoreRadius = false, particle::Particle* theParticle = new particle::ParticleEnumed(particle::type::effect))
 			: radius(radius), color(color), ignoreRadius(ignoreRadius), theParticle(theParticle), entity(theEntity) {} 
+		~areaEffectCloud() {
+			delete theParticle;
+		}
 	};
 
 	struct fishingHook : entity
@@ -493,16 +513,22 @@ namespace Entity {
 
 	struct smallFireball : entity
 	{
-		Slot item;
+		Slot* item;
 
-		smallFireball(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
+		smallFireball(entity theEntity, Slot* item = new Slot(385)) : item(item), entity(theEntity) {} //385???
+		~smallFireball() {
+			delete item;
+		}
 	};
 
 	struct fireball : entity
 	{
-		Slot item;
+		Slot* item;
 
-		fireball(entity theEntity, Slot item = Slot()) : item(item), entity(theEntity) {}
+		fireball(entity theEntity, Slot* item = new Slot(385)) : item(item), entity(theEntity) {}
+		~fireball() {
+			delete item;
+		}
 	};
 
 	struct witherSkull : entity
@@ -514,28 +540,37 @@ namespace Entity {
 
 	struct firework : entity
 	{
-		Slot fireworkInfo;
+		Slot* fireworkInfo;
 		varInt entityID;
 		bool isShotAtAngle;
 
-		firework(entity theEntity, Slot fireworkInfo, varInt entityID, bool isShotAtAngle = false)
+		firework(entity theEntity, Slot* fireworkInfo, varInt entityID, bool isShotAtAngle = false)
 			: fireworkInfo(fireworkInfo), entityID(entityID), isShotAtAngle(isShotAtAngle), entity(theEntity) {}
+		~firework() {
+			delete fireworkInfo;
+		}
 	};
 
 	struct itemFrame : entity
 	{
-		Slot theItem;
+		Slot* theItem;
 		varInt rotation;
 
-		itemFrame(entity theEntity, Slot theItem = Slot(), varInt rotation = 0) : theItem(theItem), rotation(rotation), entity(theEntity) {}
+		itemFrame(entity theEntity, Slot* theItem = new Slot(), varInt rotation = 0) : theItem(theItem), rotation(rotation), entity(theEntity) {}
+		~itemFrame() {
+			delete theItem;
+		}
 	};
 
 	struct item : entity
 	{
-		Slot theItem;
+		Slot* theItem;
 		unsigned long long spawnedTimeStamp;
 
-		item(const entity& theEntity, const Slot& theItem = Slot()) : theItem(theItem), entity(theEntity), spawnedTimeStamp(utility::time::timeSinceEpoch()) {}
+		item(const entity& theEntity, Slot* theItem) : theItem(theItem), entity(theEntity), spawnedTimeStamp(utility::time::timeSinceEpoch()) {}
+		~item() {
+			delete theItem;
+		}
 	};
 
 	struct LivingEntity : public entity
@@ -563,6 +598,10 @@ namespace Entity {
 
 		player(const LivingEntity& theLivingEntity, bfloat additionalHearts = 0.0, varInt score = 0, Byte displayedSkinParts = 0, Byte mainHand = 1, nbt* leftShoulderEntityData = nullptr, nbt* rightShoulderEntityData = nullptr)
 			: additionalHearts(additionalHearts), score(score), displayedSkinParts(displayedSkinParts), mainHand(mainHand), leftShoulderEntityData(leftShoulderEntityData), rightShoulderEntityData(rightShoulderEntityData), LivingEntity(theLivingEntity) {}
+		~player() {
+			delete leftShoulderEntityData;
+			delete rightShoulderEntityData;
+		}
 
 		using LivingEntity::LivingEntity;
 	};
@@ -615,7 +654,7 @@ namespace Entity {
 		Position treasurePosition;
 		bool canFindTreasure, hasFish;
 
-		dolphin(WaterAnimal theWaterAnimal, Position treasurePosition = Position(0, 0, 0), bool canFindTreasure = false, bool hasFish = false)
+		dolphin(WaterAnimal theWaterAnimal, Position treasurePosition, bool canFindTreasure = false, bool hasFish = false)
 			: treasurePosition(treasurePosition), canFindTreasure(canFindTreasure), hasFish(hasFish), WaterAnimal(theWaterAnimal) {}
 	};
 
@@ -772,7 +811,7 @@ namespace Entity {
 		Position homePosition, travelPosition;
 		bool hasEggs, isLayingEggs, isGoingHome, isTravelling;
 
-		turtle(Animal theAnimal, Position homePosition = Position(0,0,0), bool hasEggs = false, bool isLayingEggs = false, Position travelPosition = Position(0, 0, 0), bool isGoingHome = false, bool isTravelling = false)
+		turtle(Animal theAnimal, Position homePosition, bool hasEggs = false, bool isLayingEggs = false, Position travelPosition = Position(0, 0, 0), bool isGoingHome = false, bool isTravelling = false)
 			: homePosition(homePosition), hasEggs(hasEggs), isLayingEggs(isLayingEggs), travelPosition(travelPosition), isGoingHome(isGoingHome), isTravelling(isTravelling), Animal(theAnimal) {}
 	};
 
@@ -1216,8 +1255,11 @@ namespace Entity {
 		mcString command;
 		Chat* lastOutput;
 
-		minecartCommandBlock(AbstractMinecart theAbstractMinecart, mcString command = "", Chat* lastOutput = nullptr)
+		minecartCommandBlock(AbstractMinecart theAbstractMinecart, mcString command = "", Chat* lastOutput = new Chat())
 			: command(command), lastOutput(lastOutput), AbstractMinecart(theAbstractMinecart) {}
+		~minecartCommandBlock() {
+			delete lastOutput;
+		}
 	};
 
 	struct primedTNT : entity
