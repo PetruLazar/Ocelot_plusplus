@@ -284,7 +284,6 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		}
 		break;
 	case 3:
-		//button is always 2
 		//middle click, for creative players in non-player inventories
 		if (p->gm == gamemode::creative)
 		{
@@ -364,9 +363,14 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			break;
 		}
 		break;
-	case 6:
+	case 6: {
 		//double click
+		Slot* clicked = p->inventory->getFloatingSlot();
+		if (!clicked->isPresent())
+			return;
 
+		p->inventory->stackItem(clicked);
+	}
 		break;
 	}
 }
@@ -565,7 +569,7 @@ void message::play::receive::advancementTab(Player*, varInt action, const mcStri
 }
 void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
-	p->inventory->setSelectedSlot(slot);
+	p->inventory->setSelectedIndex((Byte)slot);
 
 	Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 

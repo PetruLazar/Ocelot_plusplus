@@ -24,3 +24,13 @@ void Slot::read(char*& buffer) {
 		else throw std::exception("Invalid slot nbt");
 	}
 }
+
+Byte Slot::getStackableSize(Slot* slot) {
+	return getStackableSize(*slot);
+}
+Byte Slot::getStackableSize(const Slot& slot) {
+	if (slot.nbt_data->getSize() != 0)
+		return 1;
+
+	return items::getStackableSize(slot.getItemId());
+}

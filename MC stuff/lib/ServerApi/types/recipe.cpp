@@ -157,7 +157,7 @@ namespace recipe
 				if (data->has("group"))
 					group = (*data)["group"].value();
 				Slot* result = new Slot(Registry::getId(Registry::itemRegistry, (*data)["result"].value()));
-				bfloat experience = (*data)["experience"].dValue();
+				bfloat experience = float((*data)["experience"].dValue());
 				varInt cookingTime = (*data)["cookingtime"].iValue();
 
 				Ingredient* ingredient = getItemOrTag(&(*data)["ingredient"]);

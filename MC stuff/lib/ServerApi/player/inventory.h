@@ -13,19 +13,24 @@ namespace mcs::inventory {
 		size_t size;
 
 	public:
-		base(size_t size);
-		~base();
+		SERVER_API base(size_t size);
+		SERVER_API ~base();
 
-		size_t getSize();
+		SERVER_API size_t getSize();
 
-		Byte getSlotWithID(varInt itemID);
-		Byte getStackableSlotWithID(varInt itemID);
-		Byte getFreeSlot();
+		SERVER_API Byte getSlotIndexWithID(varInt itemID);
+		SERVER_API Byte getStackableSlotIndexWithID(varInt itemID);
+		SERVER_API Byte getFreeSlotIndex();
 
-		virtual void swapSlots(bshort a, bshort b);
+		SERVER_API void swapSlots(bshort a, bshort b);
 
-		virtual void setSlotByIndex(bshort index, const Slot& slot);
-		virtual Slot*& getSlotByIndex(bshort index);
+		SERVER_API void setSlotByIndex(bshort index, const Slot& slot);
+		SERVER_API Slot*& getSlotByIndex(bshort index);
+
+		SERVER_API std::pair<Byte, Byte> addAnywhere(const Slot& theItem); //first is the amount added and second the index
+		SERVER_API std::vector<std::pair<Byte, Byte>> addToInventory(const Slot& theItem);
+		SERVER_API Byte addToSlot(const Slot& theItem, bshort index);
+		SERVER_API virtual bool stackItem(Slot* theItem);
 	};
 
 	class crafting : public base
@@ -43,38 +48,49 @@ namespace mcp {
 
 		mcs::inventory::base* openedWindowInventory = nullptr;
 		bool isWindowOpen = false;
-		unsigned inventoryFirstSlotIndex = 9;
+		Byte inventoryFirstSlotIndex = 9;
 
 		std::queue<std::pair<window::type, unsigned>> windowQue;
 		unsigned windowIndex = 1;
 
-	public:
-		inventory() : mcs::inventory::base(46) { };
-		~inventory();
-
-		unsigned openWindow(window::type theWindow);
-		void closeWindow(unsigned ID);
-		window::type getLatestWindow(unsigned ID);
-
-		void setSelectedSlot(Byte selectedSlot);
-		Byte getSelectedIndex(bool raw = false);
-
-		Slot*& getSelectedSlot();
-		Slot*& getOffhandSlot();
-		Slot*& getHotbarSlot(bshort index);
-
-		void swapWithFloating(bshort index);
-
-		Slot*& getFloatingSlot();
-		void setFloatingSlot(const Slot& newSlot);
-
 		bool isIndexLocal(bshort index);
-		void swapSlots(bshort a, bshort b) override;
-		void setSlotByIndex(bshort index, const Slot& slot) override;
-		Slot*& getSlotByIndex(bshort index) override;
+		Byte getTrueIndex(Byte index);
 
-		std::pair<Byte, Byte> addAnywhere(const Slot& theItem); //first is the amount added and second the index
-		std::vector<std::pair<Byte, Byte>> addToInventory(const Slot& theItem);
-		unsigned addToSlot(const Slot& theItem, bshort index);
+	public:
+		SERVER_API inventory() : mcs::inventory::base(46) { };
+		SERVER_API ~inventory();
+
+		SERVER_API unsigned openWindow(window::type theWindow);
+		SERVER_API void closeWindow(unsigned ID);
+		SERVER_API window::type getLatestWindow(unsigned ID);
+
+		SERVER_API void setSelectedIndex(Byte selectedSlot);
+		SERVER_API Byte getSelectedIndex(bool raw = false);
+		SERVER_API Slot*& getSelectedSlot();
+		SERVER_API void setSelectedSlot(const Slot& slot);
+
+		SERVER_API void setOffhandSlot(const Slot& slot);
+		SERVER_API Slot*& getOffhandSlot();
+
+		SERVER_API void setHotbarSlot(Byte index, const Slot& slot);
+		SERVER_API Slot*& getHotbarSlot(Byte index);
+
+		SERVER_API Byte getSlotIndexWithID(varInt itemID);
+		SERVER_API Byte getStackableSlotIndexWithID(varInt itemID);
+		SERVER_API Byte getFreeSlotIndex();
+
+		SERVER_API void swapWithFloating(bshort index);
+		SERVER_API Slot*& getFloatingSlot();
+		SERVER_API void setFloatingSlot(const Slot& newSlot);
+
+		SERVER_API void swapSlots(bshort a, bshort b);
+		SERVER_API void setSlotByIndex(bshort index, const Slot& slot);
+		SERVER_API Slot*& getSlotByIndex(bshort index);
+
+		SERVER_API std::pair<Byte, Byte> addAnywhere(const Slot& theItem); //first is the amount added and second the index
+		SERVER_API std::vector<std::pair<Byte, Byte>> addToInventory(const Slot& theItem);
+		SERVER_API Byte addToSlot(const Slot& theItem, bshort index);
+
+		SERVER_API virtual bool stackItem(Slot* theItem) override;
 	};
 }

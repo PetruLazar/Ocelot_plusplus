@@ -144,7 +144,6 @@ Byte items::getStackableSize(int i) {
 	case Item::minecraft_rabbit_stew:
 	case Item::minecraft_filled_map:
 	case Item::minecraft_map:
-	case Item::minecraft_book:
 	case Item::minecraft_writable_book:
 	case Item::minecraft_written_book:
 	case Item::minecraft_enchanted_book:

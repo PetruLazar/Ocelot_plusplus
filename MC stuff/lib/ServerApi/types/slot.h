@@ -1,6 +1,8 @@
 #pragma once
 #include "../nbt.h"
 #include "varData.h"
+#include "../types/item.h"
+#include "../debug/log.h"
 
 class Slot
 {
@@ -55,4 +57,7 @@ public:
 
 		return *this;
 	}
+
+	static Byte getStackableSize(Slot* slot);
+	static Byte getStackableSize(const Slot& slot);
 };
