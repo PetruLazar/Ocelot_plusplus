@@ -234,14 +234,14 @@ void message::play::send::blockBreakAnimation(Player* p, varInt eid, const Posit
 
 	finishSendMacro;
 }
-void message::play::send::blockEntityData(Player* p, const Position& location, blockEntityData::action action, const nbt& blockData)
+void message::play::send::blockEntityData(Player* p, const Position& location, varInt blockEntityType, const nbt& blockData)
 {
 	varInt id = (int)id::blockEntityData;
 	prepareSendMacro(1024 * 1024);
 
 	id.write(data);
 	location.write(data);
-	varInt((int)action).write(data);
+	blockEntityType.write(data);
 	blockData.write(data);
 
 	finishSendMacro;
