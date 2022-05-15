@@ -3,6 +3,8 @@
 #include "../types/apidef.h"
 #include "../../ThreadPool/ThreadPool.h"
 
+#define versionName "v0.1.0"
+
 class Server
 {
 	static bool hasConsole;

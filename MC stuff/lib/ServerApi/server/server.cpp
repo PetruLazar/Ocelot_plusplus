@@ -20,6 +20,13 @@ void Server::AllocConsole()
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 	freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
 	hasConsole = true;
+
+	HANDLE handleOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD consoleMode;
+	GetConsoleMode(handleOut, &consoleMode);
+	consoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	consoleMode |= DISABLE_NEWLINE_AUTO_RETURN;
+	SetConsoleMode(handleOut, consoleMode);
 }
 bool Server::HasConsole() { return hasConsole; }
 void Server::FreeConsole()

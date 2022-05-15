@@ -26,14 +26,13 @@ short Options::_networkCompression = 128;
 
 bool Options::loaded = false;
 
-//const string Options::version = "\"version\":{\"name\":\"1.18.2\",\"protocol\":758}";
 const json_compound Options::version("version", new json*[2]{
 		new json_string("name", "1.18.2"),
 		new json_int("protocol", 758)
 	}, 2);
 bool Options::allowJoin = true;
 int Options::currentProtocol() { return version["protocol"].iValue(); }
-const string& Options::currentVersion() { return version["version"].value(); }
+const string& Options::currentVersion() { return version["name"].value(); }
 
 ull parseUnsigned(const string& value)
 {

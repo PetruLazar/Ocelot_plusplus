@@ -2,15 +2,19 @@
 #include "log.h"
 
 #include "../server/server.h"
+#include "../server/options.h"
 
 #include <iostream>
 #include <chrono>
 #include <iomanip>
 #include <ctime>
 #include <thread>
+#include <mutex>
 #include <sstream>
 
 using namespace std;
+
+std::mutex printMutex;
 
 bool		Log::initialized = false;
 const char	Log::binFileName[] = "log.bin", Log::logFileName[] = "log.txt", Log::debugFileName[] = "debug.txt";
@@ -175,6 +179,7 @@ LogStream& LogStream::operator<<(const void* n)
 		if (Server::HasConsole()) cout << n;
 		if (toFile->is_open()) *toFile << n;
 	}
+
 	return *this;
 }
 LogStream& LogStream::operator<<(const sf::IpAddress& n)
@@ -213,13 +218,21 @@ void Log::initialize()
 	logFile.open(logFileName /*,ios::app*/);
 	debugFile.open(debugFileName /*,ios::app*/);
 
+	Log::info() <<		  "  ____          __     __    __    __ \n"
+					"\t\t\t / __ \\_______ / /__  / /___/ /___/ /_\n"
+					"\t\t\t/ /_/ / __/ -_) / _ \\/ __/_  __/_  __/\n"
+					"\t\t\t\\____/\\__/\\__/_/\\___/\\__/ /_/   /_/   \n" << Log::endl;
+	Log::info() << versionName << " (x64) (Windows)" << Log::endl;
+	Log::info() << "Minecraft version: " << Options::currentVersion() << " (" << Options::currentProtocol() << ")" << Log::endl;
+
 	initialized = true;
 }
 bool Log::Initialized()
 {
 	return initialized;
 }
-std::string Log::preLogPrint()
+
+void Log::preLogPrint(LogStream& stream)
 {
 	struct tm newtime;
 	time_t now = time(0);
@@ -230,9 +243,45 @@ std::string Log::preLogPrint()
 	strftime(buffer + 1, sizeof(buffer), "%H:%M:%S", &newtime);
 
 	std::ostringstream ss;
-	ss << buffer << ' ' << std::this_thread::get_id() << '\t';
+	ss << std::this_thread::get_id();
 
-	return ss.str();
+	stream << buffer << ' ';
+	colorPrint(stream, ss.str(), color::GRAY);
+	stream << '\t';
+}
+
+void Log::colorPrint(LogStream& stream, const std::string& text, color c) {
+	if (Server::HasConsole() && stream.getState()) {
+		const std::lock_guard<std::mutex> lock(printMutex);
+
+		switch (c) {
+		case color::BLACK:
+			std::cout << "\033[30m";
+			break;
+		case color::RED:
+			std::cout << "\033[31m";
+			break;
+		case color::GREEN:
+			std::cout << "\033[32m";
+			break;
+		case color::BLUE:
+			std::cout << "\033[34m";
+			break;
+		case color::WHITE:
+			std::cout << "\033[97m";
+			break;
+		case color::GRAY:
+			std::cout << "\033[90m";
+			break;
+		case color::YELLOW:
+			std::cout << "\033[33m";
+			break;
+		}
+
+		stream << text;
+
+		std::cout << "\033[0m";
+	}
 }
 
 LogStream& Log::none()
@@ -241,29 +290,44 @@ LogStream& Log::none()
 }
 LogStream& Log::info()
 {
-	infoStream << preLogPrint() << " INFO]: ";
+	preLogPrint(infoStream);
+	colorPrint(infoStream, " INFO", color::WHITE);
+	infoStream << "]: ";
+
 	return infoStream;
 }
 LogStream& Log::warn()
 {
-	warningStream << preLogPrint() << " WARN]: ";
+	preLogPrint(warningStream);
+	colorPrint(warningStream, " WARN", color::YELLOW);
+	warningStream << "]: ";
+
 	return warningStream;
 }
 LogStream& Log::error()
 {
-	errorStream << preLogPrint() << "ERROR]: ";
+	preLogPrint(errorStream);
+	colorPrint(errorStream, "ERROR", color::RED);
+	errorStream << "]: ";
+
 	return errorStream;
 }
 LogStream& Log::debug(bool print)
 {
 	debugStream.setState(print);
 
-	debugStream << preLogPrint() << "DEBUG]: ";
+	preLogPrint(debugStream);
+	colorPrint(debugStream, "DEBUG", color::BLUE);
+	debugStream << "]: ";
+
 	return debugStream;
 }
 
 void LogStream::setState(bool state) {
 	this->enabled = state;
+}
+bool LogStream::getState() {
+	return enabled;
 }
 
 void Log::Bin(const char* data, const ull length)

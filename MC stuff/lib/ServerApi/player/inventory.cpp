@@ -195,7 +195,7 @@ namespace mcp {
 			break;
 		}
 
-		inventoryFirstSlotIndex = openedWindowInventory->getSize();
+		inventoryFirstSlotIndex = (Byte)openedWindowInventory->getSize();
 
 		return windowIndex++;
 	}

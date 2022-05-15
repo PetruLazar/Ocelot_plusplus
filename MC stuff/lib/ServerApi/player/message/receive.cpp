@@ -37,12 +37,12 @@ void message::login::receive::start(Player* p, const mcString& username)
 {
 	if (!Options::allowJoin)
 	{
-		login::send::disconnect(p, "{\"text\":\"Fuck off, " + (std::string)username + "!\",\"color\":\"dark_red\",\"bold\":\"true\"}");
+		login::send::disconnect(p, "{\"text\":\"Not allowed to join!\"}");
 		return;
 	}
 	if (p->protocolVersion != Options::currentProtocol())
 	{
-		login::send::disconnect(p, "{\"text\":\"Use " + Options::currentVersion() + ", " + (std::string)username + ", you nitwit!\",\"color\":\"red\",\"bold\":\"true\"}");
+		login::send::disconnect(p, "{\"text\":\"Use version " + Options::currentVersion() + "!\"}");
 		return;
 	}
 
@@ -76,7 +76,7 @@ void message::login::receive::start(Player* p, const mcString& username)
 
 	play::send::joinGame(p, (int)p->getEid(), false, gamemode::creative, gamemode::none, 0, nullptr, World::dimension_codec, World::spawnWorld->characteristics, World::spawnWorld->name, 0x5f19a34be6c9129a, 0, p->viewDistance, p->simulationDistance, false, false, false, World::spawnWorld->isFlat);
 
-	play::send::pluginMessage(p, "minecraft:brand", 10, "\x9lazorenii");
+	play::send::pluginMessage(p, "minecraft:brand", 9, "\x8Ocelot++");
 
 	play::send::serverDifficulty(p, 2, false);
 

@@ -30,7 +30,6 @@ public:
 	//these are not included in server.properties
 	SERVER_API static int currentProtocol();
 	SERVER_API static const std::string& currentVersion();
-	//SERVER_API static const std::string version;
 	SERVER_API static const json_compound version;
 	SERVER_API static bool allowJoin;
 

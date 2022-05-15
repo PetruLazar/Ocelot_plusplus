@@ -36,6 +36,7 @@ public:
 	LogStream(const std::string& title, std::ofstream* toFile);
 
 	void setState(bool state);
+	bool getState();
 
 	SERVER_API LogStream& operator<<(const bool n);
 	SERVER_API LogStream& operator<<(const char n);
@@ -60,6 +61,9 @@ public:
 
 class Log
 {
+private:
+	enum color { BLACK, RED, GREEN, BLUE, WHITE, GRAY, YELLOW };
+
 	SERVER_API static const char binFileName[], logFileName[], debugFileName[];
 
 	SERVER_API static std::ofstream binFile, logFile, debugFile;
@@ -67,7 +71,8 @@ class Log
 
 	static LogStream noneStream, infoStream, warningStream, errorStream, debugStream;
 
-	static std::string preLogPrint();
+	static void preLogPrint(LogStream& stream);
+	static void colorPrint(LogStream& stream, const std::string& text, color c);
 
 	static std::unordered_map<std::string, std::chrono::steady_clock::time_point> benches;
 

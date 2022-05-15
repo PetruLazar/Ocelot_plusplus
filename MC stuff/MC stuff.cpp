@@ -53,8 +53,8 @@ void DisplayTicksPerSec()
 
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR pCmdLine, _In_ int nCmdShow)
 {
-	Log::initialize();
 	Server::AllocConsole();
+	Log::initialize();
 	if (!Options::Load())
 	{
 		Log::error() << "Failed to load server.properties." << Log::flush;
