@@ -53,9 +53,9 @@ int main(int argc, char** args)
 		//fill the enum
 		json& registry = registries[registryMapping[r][0]]["entries"];
 		ull entryCount = registry.getSize();
-		for (ull i = 0; i < entryCount; i++)
+		for (ull i = 0u; i < entryCount; i++)
 		{
-			json& entry = registry[i];
+			json& entry = registry[(int)i];
 			string name = entry.getName();
 			//replace the ':' in the entry's name with a '_'
 			name[9] = '_';

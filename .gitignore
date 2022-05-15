@@ -113,9 +113,13 @@ MC stuff/Build
 Build/*/log.txt
 Build/*/log.bin
 Build/*/debug.txt
-MC stuff/lib/ServerApi/Build/
-GlobalPalleteTranslator
+MC stuff/lib/ServerApi/Build
 MC stuff/generators/*/Build
+GlobalPalleteTranslator
+packages/
+UnitTests/x64/
+Utils/EnumGenerator/Debug
+Utils/EnumGenerator/Release
 
 # Custom world generators
 Build/*/worlds/*/generator.*
