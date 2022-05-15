@@ -752,22 +752,23 @@ namespace Commands
 		/*  5 */ new ArgumentNode("world name", { }, new String(PropertiesString::single_word), CommandHandlers::worldChange, new Suggestions::minecraft::ask_server()),
 		/*  6 */ new LiteralNode("world", { 5 }, CommandHandlers::tellWorld),
 		/*  7 */ new LiteralNode("ping", { }, CommandHandlers::tellPing),
-		/*  8 */ new ArgumentNode("test number", { }, new Integer(new PropertiesMin<bint>(1)), CommandHandlers::test),
-		/*  9 */ new LiteralNode("test", { 8 }),
-		/* 10 */ new ArgumentNode("tp z", { }, new Double(new Properties<bdouble>()), CommandHandlers::teleport),
-		/* 11 */ new ArgumentNode("tp y", { 10 }, new Double(new Properties<bdouble>())),
-		/* 12 */ new ArgumentNode("tp x", { 11 }, new Double(new Properties<bdouble>())),
-		/* 13 */ new ArgumentNode("destination player", { }, new String(PropertiesString::single_word), CommandHandlers::teleport),
-		/* 14 */ new ArgumentNode("player", { 12, 13}, new String(PropertiesString::single_word), CommandHandlers::teleport),
-		/* 15 */ new LiteralNode("tp", { 12, 14 }),
-		/* 16 */ new ArgumentNode("spawn z", { }, new Double(new Properties<bdouble>()),CommandHandlers::setSpawn),
-		/* 17 */ new ArgumentNode("spawn y", { 16 }, new Double(new Properties<bdouble>())),
-		/* 18 */ new ArgumentNode("spawn x", { 17 }, new Double(new Properties<bdouble>())),
-		/* 19 */ new LiteralNode("spawn", {18}, CommandHandlers::spawn),
-		/* 20 */ new LiteralNode("stop", { }, CommandHandlers::stopServer),
-		/* 21 */ new LiteralNode("restart", { }, CommandHandlers::restartServer),
+		/*  8 */ new ArgumentNode("test arguments", { }, new String(PropertiesString::greedy_phrase), CommandHandlers::test),
+		/*  9 */ new ArgumentNode("test number", { 8 }, new Integer(new PropertiesMin<bint>(1)), CommandHandlers::test),
+		/* 10 */ new LiteralNode("test", { 9 }),
+		/* 11 */ new ArgumentNode("tp z", { }, new Double(new Properties<bdouble>()), CommandHandlers::teleport),
+		/* 12 */ new ArgumentNode("tp y", { 11 }, new Double(new Properties<bdouble>())),
+		/* 13 */ new ArgumentNode("tp x", { 12 }, new Double(new Properties<bdouble>())),
+		/* 14 */ new ArgumentNode("destination player", { }, new String(PropertiesString::single_word), CommandHandlers::teleport),
+		/* 15 */ new ArgumentNode("player", { 13, 14}, new String(PropertiesString::single_word), CommandHandlers::teleport),
+		/* 16 */ new LiteralNode("tp", { 13, 15 }),
+		/* 17 */ new ArgumentNode("spawn z", { }, new Double(new Properties<bdouble>()),CommandHandlers::setSpawn),
+		/* 18 */ new ArgumentNode("spawn y", { 17 }, new Double(new Properties<bdouble>())),
+		/* 19 */ new ArgumentNode("spawn x", { 18 }, new Double(new Properties<bdouble>())),
+		/* 20 */ new LiteralNode("spawn", { 19 }, CommandHandlers::spawn),
+		/* 21 */ new LiteralNode("stop", { }, CommandHandlers::stopServer),
+		/* 22 */ new LiteralNode("restart", { }, CommandHandlers::restartServer),
 	};
-	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 9, 15, 19, 20, 21 };
+	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 10, 16, 20, 21, 22 };
 
 	Commands Commands::atuomatic;
 	Commands::~Commands()

@@ -56,6 +56,10 @@ Chat::Chat(const char* text, optionalComponent opt) :
 			new json_string("text",text)
 		}, 1)
 {
+	std::string& textComp = operator[]("text").value();
+	for (int i = (int)textComp.length() - 1; i >= 0; i--)
+		if (textComp[i] == '\\' || textComp[i] == '"')
+			textComp.insert(i, 1, '\\');
 	opt.addCompsToChat(*this);
 }
 

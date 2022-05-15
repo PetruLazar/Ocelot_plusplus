@@ -141,17 +141,19 @@ namespace CommandHandlers
 			Log::info() << Log::endl << "----------INVENTORY DUMP----------" << Log::endl;
 			Log::info() << "Crafting: " << Log::endl;
 			for (unsigned i = 0; i < 5; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getSlotByIndex(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Armor: " << Log::endl;
 			for (unsigned i = 5; i < 9; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId()<<"-" << (int)executingPlayer->inventory->getSlotByIndex(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Offhand: " << Log::endl;
-			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getSlotByIndex(45)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(45)->count<< Log::endl;
+			Log::none() << "\t" << 45 << ": " << executingPlayer->inventory->getSlotByIndex(45)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(45)->count << Log::endl;
 			Log::info() << "Inventory: " << Log::endl;
-			for (unsigned i = 1; i < 4; i++) {
-				for (unsigned j = 0; j < 9; j++) {
+			for (unsigned i = 1; i < 4; i++)
+			{
+				for (unsigned j = 0; j < 9; j++)
+				{
 					Slot* inventorySlot = executingPlayer->inventory->getSlotByIndex(9 * i + j);
 					Log::none() << "\t" << 9 * i + j << ": " << inventorySlot->getItemId() << "-" << (int)inventorySlot->count << "  ";
 				}
@@ -159,9 +161,41 @@ namespace CommandHandlers
 			}
 			Log::info() << "Hotbar: " << Log::endl;
 			for (unsigned i = 36; i < 45; i++)
-				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId()<<"-"<< (int)executingPlayer->inventory->getSlotByIndex(i)->count;
+				Log::none() << "\t" << i << ": " << executingPlayer->inventory->getSlotByIndex(i)->getItemId() << "-" << (int)executingPlayer->inventory->getSlotByIndex(i)->count;
 			Log::none() << Log::endl;
 			Log::info() << "Floating item: " << Log::endl << "\t" << executingPlayer->inventory->getFloatingSlot()->getItemId() << "-" << (int)executingPlayer->inventory->getFloatingSlot()->count << Log::endl << Log::endl;
+		}
+		break;
+		case 7:
+		{
+			int x = fastfloor(executingPlayer->x),
+				y = fastfloor(executingPlayer->y),
+				z = fastfloor(executingPlayer->z);
+			if (argumentStack.size() < 2) throw Chat("Expected a \"block entity id\" argument", Chat::color::red());
+			int id;
+			try
+			{
+				id = std::stoi(*(mcString*)argumentStack[1]);
+			}
+			catch (...)
+			{
+				throw Chat("Invalid argument: int expected", Chat::color::red());
+			}
+
+			Position pos(x, y, z);
+			nbt_compound thenbt("", new nbt * [4] {
+				new nbt_int("x", x),
+				new nbt_int("y", y),
+				new nbt_int("z", z),
+				new nbt_string("id", "minecraft:enchanting_table")
+				}, 4);
+			message::play::send::chatMessage(executingPlayer, Chat(
+				(std::to_string(x) + ' ' +
+				std::to_string(y) + ' ' + 
+				std::to_string(z) + ' ' +
+				std::to_string(id) + " becomes " + 
+				thenbt.to_string()).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			message::play::send::blockEntityData(executingPlayer, pos, id, thenbt);
 		}
 		break;
 		//add tests here - starting at 1
