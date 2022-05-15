@@ -502,7 +502,7 @@ void Player::setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition, c
 
 	message::play::send::timeUpdate(this, 6000i64, 6000i64);
 
-	message::play::send::spawnPosition(this, Position(x, y, z), 0.f);
+	message::play::send::spawnPosition(this, Position((int)x, (int)y, (int)z), 0.f);
 
 	message::play::send::playerPosAndLook(this, x, y, z, yaw, pitch, 0, false);
 
@@ -512,7 +512,7 @@ void Player::setWorld(World* world, const sf::Vector3<bdouble>* spawnPosition, c
 	//send old items
 	//...
 
-	sendChunk(0, 0)->addPlayer(this);
+	this->sendChunk(0, 0)->addPlayer(this);
 	/*message::play::send::chunkDataAndLight(this, chunkX, chunkZ);
 	chunkLoaderHelper.matrix.set(0, 0, true);*/
 

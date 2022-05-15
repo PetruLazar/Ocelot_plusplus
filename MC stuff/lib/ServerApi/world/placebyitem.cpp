@@ -43,9 +43,9 @@ std::string blockFacingToString(const blockFacing& face)
 		return "east";
 	case blockFacing::up:
 		return "up";
-	case blockFacing::down:
-		return "down";
 	}
+
+	return "down"; //blockFacing::down:
 }
 std::string playerDiggingToString(const playerDigging::face& face)
 {
@@ -61,9 +61,9 @@ std::string playerDiggingToString(const playerDigging::face& face)
 		return "south";
 	case playerDigging::west:
 		return "west";
-	case playerDigging::east:
-		return "east";
 	}
+
+	return "east"; //playerDigging::east:
 }
 blockFacing playerdiggingToBlockfacing(const playerDigging::face& face)
 {
@@ -79,9 +79,9 @@ blockFacing playerdiggingToBlockfacing(const playerDigging::face& face)
 		return blockFacing::west;
 	case playerDigging::south:
 		return blockFacing::south;
-	case playerDigging::north:
-		return blockFacing::north;
 	}
+
+	return blockFacing::north; //playerDigging::north:
 }
 
 const int waterSurceBlockStateId = 34;
@@ -200,7 +200,7 @@ blockFacing getHorizontalFacing(Player* p, float playerYaw, Item itemId)
 {
 	//yaw modulation [0, 360)
 	playerYaw += rotationOffset(itemId);
-	int yawInt = playerYaw;
+	int yawInt = (int)playerYaw;
 	playerYaw -= (yawInt - yawInt % 360);
 	if (playerYaw < 0) 
 		playerYaw += 360;
