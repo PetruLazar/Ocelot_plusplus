@@ -26,7 +26,9 @@ void message::handshake::receive::legacy(Player* p, Byte payload)
 void message::status::receive::request(Player* p)
 {
 	Log::info() << p->netId() << " is pinging the server.\n";
-	message::status::send::respose(p, "{" + Options::version.to_string() + ",\"players\":{\"max\":" + std::to_string(rand() % 20 + 20) + ",\"online\":" + std::to_string(rand() % 20) + ",\"sample\":[{\"name\":\"TheGoldenSnowman\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"},{\"name\":\"CosminPerRam\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d21\"},{\"name\":\"NativeLog05\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d22\"},{\"name\":\"TimmyBrott\",\"id\":\"4566e69f-c907-48ee-8d71-d7ba5aa00d23\"}]},\"description\":" + Options::motd() + "}");
+
+	//redo sample players
+	message::status::send::respose(p, "{" + Options::version.to_string() + ",\"players\":{\"max\":" + std::to_string(Options::max_players()) + ",\"online\":" + std::to_string(Player::computeOnlinePlayers()) + "},\"description\":" + Options::motd() + "}");
 }
 void message::status::receive::ping(Player* p, blong payload)
 {

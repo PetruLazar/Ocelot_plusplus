@@ -849,7 +849,20 @@ void Player::schedulePacket(char* buffer, ull size, char* toDelete, bool disconn
 bool Player::Connected() { return connected; }
 bool Player::ScheduledDisconnect() { return scheduledDisconnect; }
 
+unsigned Player::computeOnlinePlayers()
+{
+	unsigned size = 0;
+	for (Player* p : players) {
+		if (p->world != nullptr)
+			size++;
+	}
 
+	return size;
+}//better to do and update the data when a players enters/leaves the server
+std::string Player::computeSamplePlayers()
+{
+	return "[{}]";
+}
 Player* Player::getPlayer(const mcString& name)
 {
 	for (Player* p : players) if (p->username == name) return p;

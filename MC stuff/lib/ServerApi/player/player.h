@@ -239,6 +239,8 @@ public:
 	SERVER_API bool Connected();
 	SERVER_API bool ScheduledDisconnect();
 
+	SERVER_API static unsigned computeOnlinePlayers();
+	SERVER_API static std::string computeSamplePlayers();
 	SERVER_API static std::forward_list<Player*> players;
 	SERVER_API static eidDispenser::Player eidDispenser;
 	SERVER_API static Player* getPlayer(const mcString& name);
