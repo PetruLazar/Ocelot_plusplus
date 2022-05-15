@@ -37,27 +37,6 @@ struct blockEntity
 	}
 };
 
-namespace blockEntityData
-{
-	enum class action
-	{
-		setMobSpawnerData,
-		setCommandBlockText,
-		setBeaconData,
-		mobHeadData,
-		declareConduit,
-		setBannerData,
-		setStructureBlockData,
-		setEndGatewayDest,
-		setSignText,
-		unused,
-		declareBed,
-		setJigsawBlockData,
-		setCampfireItems,
-		beehiveInfo
-	};
-}
-
 struct message
 {
 	//struct for each connection state
@@ -305,7 +284,7 @@ struct message
 			//SERVER_API static void statistics(Player*, varInt count, statistic* stats);
 			SERVER_API static void acknowledgePlayerDigging(Player*, const Position& location, varInt block, varInt status, bool successful);
 			SERVER_API static void blockBreakAnimation(Player*, varInt eid, const Position& location, Byte destroyStage);
-			SERVER_API static void blockEntityData(Player*, const Position& location, blockEntityData::action action, const nbt& data);
+			SERVER_API static void blockEntityData(Player*, const Position& location, varInt blockEntityType, const nbt& data);
 			SERVER_API static void blockAction(Player*, const Position& location, Byte actionId, Byte actionParam, varInt blockType);
 			SERVER_API static void blockChange(Player*, const Position& location, varInt blockId);
 			SERVER_API static void bossBar(Player*, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField);

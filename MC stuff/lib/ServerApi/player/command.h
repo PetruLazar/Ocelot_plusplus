@@ -16,6 +16,7 @@ namespace CommandHandlers
 	void spawn(CommandHandlerArguments);
 	void setSpawn(CommandHandlerArguments);
 	void stopServer(CommandHandlerArguments);
+	void restartServer(CommandHandlerArguments);
 }
 
 namespace SuggestionsHandler

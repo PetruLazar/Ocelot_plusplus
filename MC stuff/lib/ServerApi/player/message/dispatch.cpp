@@ -280,7 +280,7 @@ void message::dispatch(Player* p, char* data, uint size)
 		break;
 		case play::id::tabComplete_serverbound:
 		{
-			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: tab complete";
+			Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: tab complete" << Log::endl;
 		}
 		break;
 		case play::id::clickWindowButton:

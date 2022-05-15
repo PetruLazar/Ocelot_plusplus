@@ -13,10 +13,6 @@
 namespace fs = std::filesystem;
 using namespace std;
 
-const char invalidMainFile[] = "Invalid characteristics.bin file.";
-const char noAccesMainFile[] = "Could not open characteristics.bin file";
-const ull levelDatMaxSize = 1024 * 1024; //size after decompression
-
 const int terrainHeightAverage = 85;
 const int terrainHeightAmplitude = 35;
 const double noiseFactor_x = 1. / 128, noiseFactor_z = 1. / 128;
@@ -289,28 +285,25 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 {
 	Log::debug(WORLD_LOAD_DEBUG) << "Loading world \"" << c_name << "\"..." << Log::flush;
 	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::in);
+
 	if (!worldMain.is_open())
-	{
-		Log::info() << "Error: cannot open charactestics.bin" << Log::flush;
-		throw 0;
-	}
+		throw runtimeError("Error: cannot open charactestics.bin");
 	if (!nbt::checkTag(worldMain))
-	{
-		Log::info() << "Error: charactestics.bin has an invalid format" << Log::flush;
-		throw 0;
-	}
+		throw runtimeError("Error: charactestics.bin has an invalid format");
+
 	characteristics.read(worldMain);
 	height = characteristics["height"].vInt();
 	min_y = characteristics["min_y"].vInt();
 
 	spawn.X.read(worldMain);
+	spawn.Y.read(worldMain);
 	spawn.Z.read(worldMain);
 	spawn.Yaw.read(worldMain);
 	spawn.Pitch.read(worldMain);
 
-	spawn.ChunkX = int(floor(spawn.X)) >> 4;
-	spawn.ChunkZ = int(floor(spawn.Z)) >> 4;
-	spawn.Absolute = sf::Vector3i(int(floor(spawn.X)), int(floor(spawn.Y)), int(floor(spawn.Z)));
+	spawn.ChunkX = int(fastfloor(spawn.X)) >> 4;
+	spawn.ChunkZ = int(fastfloor(spawn.Z)) >> 4;
+	spawn.Absolute = sf::Vector3i(int(fastfloor(spawn.X)), int(fastfloor(spawn.Y)), int(fastfloor(spawn.Z)));
 
 	worldMain.read((char*)&isFlat, 1);
 	worldMain.read((char*)&generatorType, 1);
@@ -342,7 +335,7 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 				throw 0;
 			}
 		}
-		catch (...)
+		catch (int)
 		{
 			Log::info() << "Could not load custom generator for world \"" << c_name << "\", using default instead." << Log::flush;
 			generatorFunction = generate_def;
@@ -359,11 +352,10 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	}
 
 	Log::debug(WORLD_LOAD_DEBUG) << "Loading spawn area..." << Log::flush;
-	for (int x = spawn.ChunkX - Options::viewDistance(); x <= spawn.ChunkX + Options::viewDistance(); x++)
-		for (int z = spawn.ChunkZ - Options::viewDistance(); z <= spawn.ChunkZ + Options::viewDistance(); z++)
-			this->getChunk(x, z, true);
+	loadArea(spawn.ChunkX, spawn.ChunkZ, Options::viewDistance());
 
-	spawn.Y = double(characteristics["min_y"].vInt()) + getChunk(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
+	if (reinterpret_cast<long long&>(spawn.Y) == -1)
+		spawn.Y = double(characteristics["min_y"].vInt()) + getChunk(spawn.ChunkX, spawn.ChunkZ)->heightmaps->getElement(((ull)spawn.Absolute.z() - ((ull)spawn.ChunkZ << 4)) * 16 + ((ull)spawn.Absolute.x() - ((ull)spawn.ChunkX << 4)));
 	Log::debug(WORLD_LOAD_DEBUG) << "Done!" << Log::flush;
 }
 
@@ -390,15 +382,53 @@ void World::setSpawn(bdouble X, bdouble Y, bdouble Z)
 	spawn.Y = Y;
 	spawn.Z = Z;
 
-	spawn.ChunkX = int(floor(spawn.X)) >> 4;
-	spawn.ChunkZ = int(floor(spawn.Z)) >> 4;
-	spawn.Absolute = sf::Vector3i(int(floor(spawn.X)), int(floor(spawn.Y)), int(floor(spawn.Z)));
+	//unload the old spawn area and load the new spawn area
+	int oldSpawnChunkX = spawn.ChunkX,
+		oldSpawnChunkZ = spawn.ChunkZ;
+
+	spawn.ChunkX = int(fastfloor(spawn.X)) >> 4;
+	spawn.ChunkZ = int(fastfloor(spawn.Z)) >> 4;
+	spawn.Absolute = sf::Vector3i(int(fastfloor(spawn.X)), int(fastfloor(spawn.Y)), int(fastfloor(spawn.Z)));
+
+	loadArea(spawn.ChunkX, spawn.ChunkZ, Options::viewDistance());
+	unloadArea(oldSpawnChunkX, oldSpawnChunkZ, Options::viewDistance());
+	updateMainFile();
 }
 void World::setSpawn(bdouble X, bdouble Y, bdouble Z, bfloat Yaw, bfloat Pitch)
 {
 	spawn.Yaw = Yaw;
 	spawn.Pitch = Pitch;
 	setSpawn(X, Y, Z);
+}
+void World::loadArea(int chunkX, int chunkZ, int radius)
+{
+	for (int x = chunkX - radius; x <= chunkX + radius; x++)
+		for (int z = chunkZ - radius; z <= chunkZ + radius; z++)
+			getChunk(x, z, true);
+}
+void World::unloadArea(int chunkX, int chunkZ, int radius)
+{
+	for (int x = chunkX - radius; x <= chunkX + radius; x++)
+		for (int z = chunkZ - radius; z <= chunkZ + radius; z++)
+			unload(x, z);
+}
+void World::updateMainFile()
+{
+	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::out);
+	if (!worldMain.is_open())
+		throw runtimeError("Error: cannot open charactestics.bin");
+
+	characteristics.write(worldMain);
+
+	spawn.X.write(worldMain);
+	spawn.Y.write(worldMain);
+	spawn.Z.write(worldMain);
+	spawn.Yaw.write(worldMain);
+	spawn.Pitch.write(worldMain);
+	worldMain.write((char*)&isFlat, 1);
+	worldMain.write((char*)&generatorType, 1);
+
+	worldMain.close();
 }
 
 eidDispenser::Entity* World::getEidDispenser()
@@ -413,14 +443,17 @@ bool World::removeEntity(varInt eid)
 {
 	unsigned removingEntity = -1;
 
-	for (unsigned i = 0; i < this->entities.size(); i++) {
-		if (entities[i]->getEid() == eid) {
+	for (unsigned i = 0; i < this->entities.size(); i++)
+	{
+		if (entities[i]->getEid() == eid)
+		{
 			removingEntity = i;
 			break;
 		}
 	}
 
-	if (removingEntity != -1) {
+	if (removingEntity != -1)
+	{
 		delete entities[removingEntity];
 		entities.erase(entities.begin() + removingEntity);
 
@@ -433,7 +466,8 @@ std::vector<Entity::entity*> World::getEntitiesByType(Entity::type theType)
 {
 	std::vector<Entity::entity*> typeEntities;
 
-	for (Entity::entity* entity : this->entities) {
+	for (Entity::entity* entity : this->entities)
+	{
 		if (entity->getType() == theType)
 			typeEntities.emplace_back(entity);
 	}
@@ -1175,8 +1209,10 @@ bool World::loadAll()
 	std::string name;
 	static std::mutex loader;
 	std::vector<std::future<World*>> futures;
-	while (worldList >> name) {
-		futures.emplace_back(Server::threadPool.enqueue([name] {
+	while (worldList >> name)
+	{
+		futures.emplace_back(Server::threadPool.enqueue([name]
+		{
 			Log::Bench(name);
 			World* zaWarudo = new World(name.c_str());
 			loader.lock();

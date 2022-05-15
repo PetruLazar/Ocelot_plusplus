@@ -9,6 +9,7 @@ class Server
 public:
 	static ThreadPool threadPool;
 	SERVER_API static bool keepServerOpen;
+	SERVER_API static bool restartOnClose;
 
 	SERVER_API static void AllocConsole();
 	SERVER_API static bool HasConsole();

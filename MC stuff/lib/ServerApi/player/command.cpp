@@ -212,6 +212,11 @@ namespace CommandHandlers
 	{
 		Server::keepServerOpen = false;
 	}
+	void restartServer(CommandHandlerArguments)
+	{
+		Server::restartOnClose = true;
+		Server::keepServerOpen = false;
+	}
 }
 
 namespace Commands
