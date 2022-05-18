@@ -5,6 +5,8 @@
 #include "../types/window.h"
 #include <queue>
 
+enum inventoryPaint { left, middle, right };
+
 namespace mcs::inventory {
 	class base
 	{
@@ -50,19 +52,32 @@ namespace mcp {
 		bool isWindowOpen = false;
 		Byte inventoryFirstSlotIndex = 9;
 
-		std::queue<std::pair<window::type, unsigned>> windowQue;
 		unsigned windowIndex = 1;
-
+		std::queue<std::pair<window::type, unsigned>> windowQue;
+		
 		bool isIndexLocal(bshort index);
 		Byte getTrueIndex(Byte index);
+
+		bool paintStarted = false;
+		inventoryPaint paintSide = inventoryPaint::left;
+		std::vector<Byte> paintList;
+
+		bool paintProcessLeft(bshort* slotNumbers, Byte slotsCount);
+		bool paintProcessMiddle(bshort* slotNumbers, Byte slotsCount);
+		bool paintProcessRight(bshort* slotNumbers, Byte slotsCount);
 
 	public:
 		SERVER_API inventory() : mcs::inventory::base(46) { };
 		SERVER_API ~inventory();
 
-		SERVER_API unsigned openWindow(window::type theWindow);
-		SERVER_API void closeWindow(unsigned ID);
-		SERVER_API window::type getLatestWindow(unsigned ID);
+		bool paintStart(inventoryPaint side);										//
+		void paintReset();															//	paint stuff, not included in SERVER_API as its
+		bool paintProgress(inventoryPaint side, Byte slotIndex);					//	used just internally and NOT MEANT for external use
+		bool paintStop(inventoryPaint side, bshort* slotNumbers, Byte slotsCount);	//
+
+		SERVER_API unsigned openWindow(window::type theWindow); //
+		SERVER_API void closeWindow(unsigned ID);				//	window stuff
+		SERVER_API window::type getLatestWindow(unsigned ID);	//
 
 		SERVER_API void setSelectedIndex(Byte selectedSlot);
 		SERVER_API Byte getSelectedIndex(bool raw = false);

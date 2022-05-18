@@ -223,6 +223,124 @@ namespace mcp {
 		return windowQue.back().first;
 	}
 
+	bool inventory::paintProcessLeft(bshort* slotNumbers, Byte slotsCount)
+	{
+		Slot* floatingSlot = this->getFloatingSlot();
+		Byte remainedAmount = floatingSlot->count % slotsCount;
+
+		floatingSlot->count = floatingSlot->count / slotsCount;
+		for (Byte i = 0; i < slotsCount; i++)
+			this->setSlotByIndex(slotNumbers[i], *floatingSlot);
+		
+		if (remainedAmount == 0)
+			this->setFloatingSlot(Slot());
+		else
+			floatingSlot->count = remainedAmount;
+
+		return true;
+	}
+	bool inventory::paintProcessMiddle(bshort* slotNumbers, Byte slotsCount)
+	{
+		Slot floatingSlot = *this->getFloatingSlot();
+		floatingSlot.count = Slot::getStackableSize(floatingSlot);
+
+		for (Byte i = 0; i < slotsCount; i++)
+			this->setSlotByIndex(slotNumbers[i], floatingSlot);
+
+		this->setFloatingSlot(Slot());
+
+		return true;
+	}
+	bool inventory::paintProcessRight(bshort* slotNumbers, Byte slotsCount)
+	{
+		Slot* floatingSlot = this->getFloatingSlot();
+		Byte remainedAmount = floatingSlot->count - slotsCount;
+
+		floatingSlot->count = 1;
+		for (Byte i = 0; i < slotsCount; i++)
+			this->setSlotByIndex(slotNumbers[i], *floatingSlot);
+		
+		if (remainedAmount == 0)
+			this->setFloatingSlot(Slot());
+		else
+			floatingSlot->count = remainedAmount;
+
+		return true;
+	}
+
+	bool inventory::paintStart(inventoryPaint side)
+	{
+		if (paintStarted)
+		{
+			Log::warn() << "Player sent paint start in wrong order." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		paintSide = side;
+		paintStarted = true;
+		return true;
+	}
+	void inventory::paintReset()
+	{
+		paintStarted = false;
+		paintList.clear();
+	}
+	bool inventory::paintProgress(inventoryPaint side, Byte slotIndex)
+	{
+		if (!paintStarted || paintSide != side)
+		{
+			Log::warn() << "Player sent paint progress in wrong order." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		paintList.emplace_back(slotIndex);
+
+		return true;
+	}
+	bool inventory::paintStop(inventoryPaint side, bshort* slotNumbers, Byte slotsCount)
+	{
+		if (!paintStarted || paintSide != side) {
+			Log::warn() << "Player sent paint stop in wrong order." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		for (Byte i = 0; i < slotsCount; i++) {
+			auto foundSlot = std::find(paintList.begin(), paintList.end(), slotNumbers[i]);
+			if (foundSlot == paintList.end()) {
+				Log::warn() << "Player sent paint stop with bad slots." << Log::endl;
+				paintReset();
+				return false;
+			}
+			else
+				paintList.erase(foundSlot);
+		}
+
+		if (paintList.size()) {
+			Log::warn() << "Player sent paint stop with missing slots." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		if (side == inventoryPaint::left) { //do sanitary checks?
+			if (!paintProcessLeft(slotNumbers, slotsCount))
+				return false;
+		}
+		else if (side == inventoryPaint::middle) {
+			if (!paintProcessMiddle(slotNumbers, slotsCount))
+				return false;
+		}
+		else { // if (side == inventoryPaint::right)
+			if (!paintProcessRight(slotNumbers, slotsCount))
+				return false;
+		}
+
+		paintReset();
+		return true;
+	}
+
 	void inventory::setSelectedIndex(Byte selectedSlot)
 	{
 		this->selectedHotbar = selectedSlot;

@@ -11,6 +11,7 @@
 #include "../../types/enums.h"
 #include "../../types/basic.h"
 #include "../../types/window.h"
+#include "../../player/inventory.h"
 #include "../command.h"
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
@@ -337,31 +338,34 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		switch (button)
 		{
 		case 0: //start left mouse drag
-
+			p->inventory->paintStart(inventoryPaint::left);
 			break;
 		case 4: //start right mouse drag
-
+			p->inventory->paintStart(inventoryPaint::right);
 			break;
-		case 8: //start middle mouse drag (creative players in non-creative players inv) (bugged)
-
+		case 8: //start middle mouse drag (creative players in non-creative players inv)
+			if(p->gm == gamemode::creative)
+				p->inventory->paintStart(inventoryPaint::middle);
 			break;
 		case 1: //add slot left mouse drag
-
+			p->inventory->paintProgress(inventoryPaint::left, (Byte)clickedSlot);
 			break;
 		case 5: //add slot right mouse drag
-
+			p->inventory->paintProgress(inventoryPaint::right, (Byte)clickedSlot);
 			break;
-		case 9: //add slot middle mouse drag (creative players in non-creative players inv) (bugged)
-
+		case 9: //add slot middle mouse drag (creative players in non-creative players inv)
+			if (p->gm == gamemode::creative)
+				p->inventory->paintProgress(inventoryPaint::middle, (Byte)clickedSlot);
 			break;
 		case 2: //end left mouse drag
-
+			p->inventory->paintStop(inventoryPaint::left, slotNumbers, length);
 			break;
 		case 6: //end right mouse drag
-
+			p->inventory->paintStop(inventoryPaint::right, slotNumbers, length);
 			break;
-		case 10: //end slot middle mouse drag (creative players in non-creative players inv) (bugged)
-
+		case 10: //end middle mouse drag (creative players in non-creative players inv)
+			if (p->gm == gamemode::creative)
+				p->inventory->paintStop(inventoryPaint::middle, slotNumbers, length);
 			break;
 		}
 		break;
