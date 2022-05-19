@@ -262,26 +262,24 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		//move whole slot to appropiate slot
 		if (length == 0)
 			return; //pretty much just a notice that the slot wasnt moved
-
-		if (length != 2)
-			Log::warn() << "Click Window: Mode 1, length not 2!" << Log::endl;
+		else if (length != 2)
+		{
+			Log::warn() << "Click Window: Mode 1, length is not 2!" << Log::endl;
+			return;
+		}
 
 		Byte toSlotIndex = slotNumbers[0];
 		if (clickedSlotIndex == toSlotIndex)
 			toSlotIndex = slotNumbers[1];
 
 		//maybe do some sanitary checks?
-		if (!p->inventory->getSlotByIndex(toSlotIndex)->isPresent()) //change this to addToSlot?
-			p->inventory->swapSlots(slotNumbers[0], slotNumbers[1]);
-		else {
-			Slot* clickedSlot = p->inventory->getSlotByIndex(clickedSlotIndex);
-			Byte pickedAmount = p->inventory->addToSlot(*clickedSlot, toSlotIndex);
+		Slot* clickedSlot = p->inventory->getSlotByIndex(clickedSlotIndex);
+		Byte pickedAmount = p->inventory->addToSlot(*clickedSlot, toSlotIndex);
 
-			if (pickedAmount == clickedSlot->count)
-				p->inventory->setSlotByIndex(clickedSlotIndex, Slot());
-			else
-				clickedSlot->count -= pickedAmount;
-		}
+		if (pickedAmount == clickedSlot->count)
+			p->inventory->setSlotByIndex(clickedSlotIndex, Slot());
+		else
+			clickedSlot->count -= pickedAmount;
 	}
 		break;
 	case 2:

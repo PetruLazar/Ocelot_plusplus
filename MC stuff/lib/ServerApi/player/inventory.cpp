@@ -128,9 +128,16 @@ namespace mcs::inventory {
 	}
 	Byte base::addToSlot(const Slot& theItem, bshort index)
 	{
-		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
-
 		Slot* containedSlot = this->getSlotByIndex(index);
+
+		if (!containedSlot->isPresent()) {
+			*containedSlot = theItem;
+			return theItem.count;
+		}
+		else if (containedSlot->getItemId() != theItem.getItemId())
+			return 0;
+
+		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
 
 		if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
 			picked = theItem.count;
@@ -635,9 +642,16 @@ namespace mcp {
 	}
 	Byte inventory::addToSlot(const Slot& theItem, bshort index)
 	{
-		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
-
 		Slot* containedSlot = this->getSlotByIndex(index);
+
+		if (!containedSlot->isPresent()) {
+			*containedSlot = theItem;
+			return theItem.count;
+		}
+		else if (containedSlot->getItemId() != theItem.getItemId())
+			return 0;
+
+		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
 
 		if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
 			picked = theItem.count;
