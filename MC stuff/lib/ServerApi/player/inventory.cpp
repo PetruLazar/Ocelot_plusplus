@@ -185,12 +185,78 @@ namespace mcp {
 	{
 		windowQue.emplace(std::make_pair(theWindow, windowIndex));
 		isWindowOpen = true;
-
+		
 		switch (theWindow) {
+		case window::type::generic_9x1:
+
+			break;
+		case window::type::generic_9x2:
+
+			break;
+		case window::type::generic_9x3:
+
+			break;
+		case window::type::generic_9x4:
+
+			break;
+		case window::type::generic_9x5:
+
+			break;
+		case window::type::generic_9x6:
+
+			break;
+		case window::type::generic_3x3:
+
+			break;
+		case window::type::anvil:
+
+			break;
+		case window::type::beacon:
+
+			break;
+		case window::type::blast_furnace:
+
+			break;
+		case window::type::brewing_stand:
+
+			break;
 		case window::type::crafting:
 			openedWindowInventory = new mcs::inventory::crafting();
 			break;
-		default:
+		case window::type::enchantment:
+
+			break;
+		case window::type::furnace:
+			openedWindowInventory = new mcs::inventory::furnace();
+			break;
+		case window::type::grindstone:
+
+			break;
+		case window::type::hopper:
+
+			break;
+		case window::type::lectern:
+
+			break;
+		case window::type::loom:
+
+			break;
+		case window::type::merchant:
+
+			break;
+		case window::type::shulker_box:
+
+			break;
+		case window::type::smithing:
+
+			break;
+		case window::type::smoker:
+
+			break;
+		case window::type::cartography:
+
+			break;
+		case window::type::stonecutter:
 
 			break;
 		}

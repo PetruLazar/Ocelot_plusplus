@@ -40,6 +40,12 @@ namespace mcs::inventory {
 	public:
 		crafting() : base(10) {};
 	};
+
+	class furnace : public base
+	{
+	public:
+		furnace() : base(3) {};
+	};
 }
 
 namespace mcp {
