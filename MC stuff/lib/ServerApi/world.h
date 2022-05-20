@@ -90,13 +90,14 @@ public:
 
 	//converts a y coordinate from absolute values to relative values (to the min_y of the world)
 	SERVER_API int AbsToRelHeight(int);
+	SERVER_API int RelToAbsHeight(int);
 	//checks whether the y coordinate is in world (relative coordinate)
 	SERVER_API bool checkCoordinates(int y);
 	SERVER_API BlockState& getPaletteEntry(int x, int y, int z);
 	SERVER_API BlockState& getPaletteEntry(int cx, int cy, int cz, int paletteIndex);
 	SERVER_API BlockState getBlock(int x, int y, int z);
-	SERVER_API void setBlock(int x, int y, int z, const BlockState&, Player* broadcastException = nullptr);
-	SERVER_API void setBlockNoBroadcast(int x, int y, int z, const BlockState&);
+	SERVER_API void setBlock(int x, int y, int z, const BlockState&, nbt_compound* nbt_data = nullptr, Player* broadcastException = nullptr);
+	SERVER_API void setBlockNoBroadcast(int x, int y, int z, const BlockState&, nbt_compound* nbt_data = nullptr);
 	SERVER_API void setBlockByItem(Player*, Slot*, Position, playerDigging::face, bfloat curX, bfloat curY, bfloat curZ);
 
 	//generator

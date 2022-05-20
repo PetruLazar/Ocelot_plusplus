@@ -28,7 +28,8 @@ public:
 		gameEventRegistry,
 		enchantsRegistry,
 		mobEffectRegistry,
-		soundEventRegistry;
+		soundEventRegistry,
+		blockEntityRegistry;
 
 	SERVER_API static ull getBlockStateCount();
 

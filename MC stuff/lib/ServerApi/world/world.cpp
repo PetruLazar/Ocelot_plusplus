@@ -1131,6 +1131,10 @@ int World::AbsToRelHeight(int y)
 {
 	return y - min_y;
 }
+int World::RelToAbsHeight(int y)
+{
+	return y + min_y;
+}
 bool World::checkCoordinates(int y)
 {
 	return y >= 0 && y < height;
@@ -1174,7 +1178,7 @@ BlockState World::getBlock(int x, int y, int z)
 	}
 	throw std::exception("World::getBlock: region not loaded");
 }
-void World::setBlock(int x, int y, int z, const BlockState& bl, Player* broadcastException)
+void World::setBlock(int x, int y, int z, const BlockState& bl, nbt_compound* nbt_data, Player* broadcastException)
 {
 	Position loc(x, y + min_y, z);
 
@@ -1184,7 +1188,7 @@ void World::setBlock(int x, int y, int z, const BlockState& bl, Player* broadcas
 
 	Region* reg = getRegion(rX, rZ);
 	if (!reg) throw std::exception("World::setBlock: region not loaded");
-	reg->setBlock(x, y, z, bl);
+	reg->setBlock(x, y, z, bl, nbt_data);
 
 	for (Player* p : players) if (p != broadcastException && p->positionInRange(loc)) message::play::send::blockChange(p, loc, bl.id);
 
@@ -1192,7 +1196,7 @@ void World::setBlock(int x, int y, int z, const BlockState& bl, Player* broadcas
 	//Position destLoc = Position(destX, destY + p->world->min_y, destZ);
 	//for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
 }
-void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl)
+void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl, nbt_compound* nbt_data)
 {
 	int rX = x >> 9,
 		rZ = z >> 9;
@@ -1200,7 +1204,7 @@ void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl)
 
 	Region* reg = getRegion(rX, rZ);
 	if (!reg) throw std::exception("World::setBlock: region not loaded");
-	reg->setBlock(x, y, z, bl);
+	reg->setBlock(x, y, z, bl, nbt_data);
 }
 
 bool World::loadAll()

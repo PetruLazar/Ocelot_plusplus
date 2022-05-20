@@ -378,10 +378,10 @@ BlockState Region::getBlock(int relX, int relY, int relZ)
 		throw genException("Chunk not loaded");
 	return chunk->getBlock(relX & 0xf, relY, relZ & 0xf);
 }
-void Region::setBlock(int relX, int relY, int relZ, const BlockState& bl)
+void Region::setBlock(int relX, int relY, int relZ, const BlockState& bl, nbt_compound* nbt_data)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
 	if (!chunk)
 		throw genException("Chunk not loaded");
-	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, bl);
+	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, bl, nbt_data);
 }

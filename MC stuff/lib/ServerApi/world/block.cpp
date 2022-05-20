@@ -1,8 +1,9 @@
 #include "block.h"
+#include "../types/position.h"
 
-BlockState::BlockState(int id) : id(id), state(&Registry::getBlockState(id)) { }
-BlockState::BlockState(json* blockState) : state(blockState), id((*blockState)["id"].iValue()) { }
-BlockState::BlockState(json& blockState) : state(&blockState), id(blockState["id"].iValue()) { }
+BlockState::BlockState(int id) : id(id), state(&Registry::getBlockState(id)) {}
+BlockState::BlockState(json* blockState) : state(blockState), id((*blockState)["id"].iValue()) {}
+BlockState::BlockState(json& blockState) : state(&blockState), id(blockState["id"].iValue()) {}
 BlockState::BlockState(const std::string blockName) : state(&Registry::getBlockState(blockName))
 {
 	id = (*state)["id"].iValue();
@@ -65,4 +66,24 @@ void BlockState::operator=(const BlockState& that)
 	state = that.state;
 }
 
-PaletteEntry::PaletteEntry(const BlockState& bl, short refCount) : block(bl), referenceCount(refCount) { }
+PaletteEntry::PaletteEntry(const BlockState& bl, short refCount) : block(bl), referenceCount(refCount) {}
+
+BlockEntity::BlockEntity(Byte packedXZ, bshort y, varInt type, nbt_compound* tags) : packedXZ(packedXZ), y(y), type(type), tags(tags) {}
+BlockEntity::~BlockEntity()
+{
+	delete tags;
+}
+
+void BlockEntity::writeExplicit(char*& buffer)
+{
+	Position((*tags)["x"].vInt(), (*tags)["y"].vInt(), (*tags)["z"].vInt()).write(buffer);
+	type.write(buffer);
+	tags->write(buffer);
+}
+void BlockEntity::write(char*& buffer)
+{
+	*(buffer++) = packedXZ;
+	y.write(buffer);
+	type.write(buffer);
+	tags->write(buffer);
+}
