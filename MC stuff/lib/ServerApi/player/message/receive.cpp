@@ -11,6 +11,7 @@
 #include "../../types/enums.h"
 #include "../../types/basic.h"
 #include "../../types/window.h"
+#include "../../player/inventory.h"
 #include "../command.h"
 
 void message::handshake::receive::standard(Player* p, varInt protocolVersion, const mcString& serverAdress, Port port, varInt nextState)
@@ -163,16 +164,14 @@ void message::play::receive::clickWindowButton(Player*, Byte windowID, Byte butt
 {
 	Log::debug(PROTOCOL_WARNINGS) << "Unhandled packet: clickWindowButton";
 }
-void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateID, bshort clickedSlot, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
+void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateID, bshort clickedSlotIndex, Byte button, varInt mode, varInt length, bshort* slotNumbers, Slot** slots, Slot* clickedItem)
 {
 	Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: clickWindow" << Log::endl;
 
 	Log::info() << "WindowID: " << (int)windowID << " StateID: " << stateID << Log::endl;
-	Log::info() << "Mode: " << mode << "\tButton: " << (int)button << "\tClickedSlot : " << (int)clickedSlot << " Length: " << length << Log::endl;
+	Log::info() << "Mode: " << mode << "\tButton: " << (int)button << "\tClickedSlot : " << (int)clickedSlotIndex << " Length: " << length << Log::endl;
 	for (int i = 0; i < length; i++)
-	{
-		Log::info() << "\t" << i << " sn: " << slotNumbers[i] << Log::endl;
-	}
+		Log::info() << "\tindex: " << i << " sn: " << slotNumbers[i] << Log::endl;
 	Log::info() << Log::endl;
 
 	int inventoryFirstSlotIndex = (windowID == 0) ? 9 : window::getWindowSlotCount(p->inventory->getLatestWindow(windowID));
@@ -183,7 +182,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 	case 0:
 		if (button == 0)
 		{
-			if (clickedSlot == -999)
+			if (clickedSlotIndex == -999)
 			{ //drop whole slot
 				Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), new Slot(*p->inventory->getFloatingSlot()));
 				p->inventory->setFloatingSlot(Slot());
@@ -200,15 +199,15 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			}
 			else
 			{ //select or place slot
-				if (clickedSlot == -1)
+				if (clickedSlotIndex == -1)
 					return;
 
-				Slot* clicked = p->inventory->getSlotByIndex(clickedSlot);
+				Slot* clicked = p->inventory->getSlotByIndex(clickedSlotIndex);
 				Slot* floating = p->inventory->getFloatingSlot();
 
 				if (clicked->getItemId() == floating->getItemId())
 				{
-					unsigned remained = p->inventory->addToSlot(*floating, clickedSlot);
+					unsigned remained = p->inventory->addToSlot(*floating, clickedSlotIndex);
 
 					if (remained != floating->count)
 						floating->count = floating->count - remained;
@@ -216,12 +215,12 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 						p->inventory->setFloatingSlot(Slot());
 				}
 				else
-					p->inventory->swapWithFloating(clickedSlot);
+					p->inventory->swapWithFloating(clickedSlotIndex);
 			}
 		}
 		else
 		{	//button == 1
-			if (clickedSlot == -999)
+			if (clickedSlotIndex == -999)
 			{	//drop one item from slot
 				Slot* floatingSlot = p->inventory->getFloatingSlot();
 				floatingSlot->count--; //decrease the floating item count;
@@ -243,10 +242,10 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			}
 			else
 			{	//select half from slot
-				if (clickedSlot == -1)
+				if (clickedSlotIndex == -1)
 					return;
 
-				Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+				Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlotIndex);
 				Slot newFloatingSlot = *selectedSlot;
 
 				newFloatingSlot.count /= 2;
@@ -258,48 +257,68 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			}
 		}
 		break;
-	case 1:
+	case 1: {
 		//button 0 and 1 are doing identical behaviors
 		//move whole slot to appropiate slot
+		if (length == 0)
+			return; //pretty much just a notice that the slot wasnt moved
+		else if (length != 2)
+		{
+			Log::warn() << "Click Window: Mode 1, length is not 2!" << Log::endl;
+			return;
+		}
 
+		Byte toSlotIndex = slotNumbers[0];
+		if (clickedSlotIndex == toSlotIndex)
+			toSlotIndex = slotNumbers[1];
+
+		//maybe do some sanitary checks?
+		Slot* clickedSlot = p->inventory->getSlotByIndex(clickedSlotIndex);
+		Byte pickedAmount = p->inventory->addToSlot(*clickedSlot, toSlotIndex);
+
+		if (pickedAmount == clickedSlot->count)
+			p->inventory->setSlotByIndex(clickedSlotIndex, Slot());
+		else
+			clickedSlot->count -= pickedAmount;
+	}
 		break;
 	case 2:
 		if (button == 40)
 		{	//offhand swap
-			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlotIndex);
 			Slot* floatingSlot = p->inventory->getFloatingSlot();
 
 			std::swap(selectedSlot, floatingSlot);
 
 			message::play::send::setSlot(p, 0, 0, 45, floatingSlot);
-			message::play::send::setSlot(p, 0, 0, clickedSlot, selectedSlot);
+			message::play::send::setSlot(p, 0, 0, clickedSlotIndex, selectedSlot);
 		}
 		else
 		{	//button is hotbar index from 0
-			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlotIndex);
 			Slot* hotbarSlot = p->inventory->getHotbarSlot(button);
 
 			std::swap(selectedSlot, hotbarSlot);
 
 			message::play::send::setSlot(p, 0, 0, 36 + button, hotbarSlot);
-			message::play::send::setSlot(p, 0, 0, clickedSlot, selectedSlot);
+			message::play::send::setSlot(p, 0, 0, clickedSlotIndex, selectedSlot);
 		}
 		break;
 	case 3:
 		//middle click, for creative players in non-player inventories
 		if (p->gm == gamemode::creative)
 		{
-			Slot* clicked = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* clicked = p->inventory->getSlotByIndex(clickedSlotIndex);
 			p->inventory->setFloatingSlot(*clicked);
 		}
 		break;
 	case 4:
-		if (clickedSlot == -999 || clickedSlot == -1)
+		if (clickedSlotIndex == -999 || clickedSlotIndex == -1)
 			return;
 
 		if (button == 0)
 		{ //q, drop one from whole slot
-			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlot);
+			Slot* selectedSlot = p->inventory->getSlotByIndex(clickedSlotIndex);
 			selectedSlot->count -= 1; //decrease the floating item count;
 
 			Slot* dropSlot = new Slot(*selectedSlot);
@@ -319,8 +338,8 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		}
 		else
 		{ //ctrl + q, button == 1 drop whole slot
-			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), new Slot(*p->inventory->getSlotByIndex(clickedSlot)));
-			p->inventory->setSlotByIndex(clickedSlot, Slot());
+			Entity::item* theItem = new Entity::item(Entity::entity(p->world->getEidDispenser(), Entity::type::minecraft_item, p->x, p->y + 1.25, p->z, 0.7, 0.6), new Slot(*p->inventory->getSlotByIndex(clickedSlotIndex)));
+			p->inventory->setSlotByIndex(clickedSlotIndex, Slot());
 
 			p->world->addEntity(theItem);
 
@@ -337,31 +356,34 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		switch (button)
 		{
 		case 0: //start left mouse drag
-
+			p->inventory->paintStart(inventoryPaint::left);
 			break;
 		case 4: //start right mouse drag
-
+			p->inventory->paintStart(inventoryPaint::right);
 			break;
-		case 8: //start middle mouse drag (creative players in non-creative players inv) (bugged)
-
+		case 8: //start middle mouse drag (creative players in non-creative players inv)
+			if(p->gm == gamemode::creative)
+				p->inventory->paintStart(inventoryPaint::middle);
 			break;
 		case 1: //add slot left mouse drag
-
+			p->inventory->paintProgress(inventoryPaint::left, (Byte)clickedSlotIndex);
 			break;
 		case 5: //add slot right mouse drag
-
+			p->inventory->paintProgress(inventoryPaint::right, (Byte)clickedSlotIndex);
 			break;
-		case 9: //add slot middle mouse drag (creative players in non-creative players inv) (bugged)
-
+		case 9: //add slot middle mouse drag (creative players in non-creative players inv)
+			if (p->gm == gamemode::creative)
+				p->inventory->paintProgress(inventoryPaint::middle, (Byte)clickedSlotIndex);
 			break;
 		case 2: //end left mouse drag
-
+			p->inventory->paintStop(inventoryPaint::left, slotNumbers, length);
 			break;
 		case 6: //end right mouse drag
-
+			p->inventory->paintStop(inventoryPaint::right, slotNumbers, length);
 			break;
-		case 10: //end slot middle mouse drag (creative players in non-creative players inv) (bugged)
-
+		case 10: //end middle mouse drag (creative players in non-creative players inv)
+			if (p->gm == gamemode::creative)
+				p->inventory->paintStop(inventoryPaint::middle, slotNumbers, length);
 			break;
 		}
 		break;

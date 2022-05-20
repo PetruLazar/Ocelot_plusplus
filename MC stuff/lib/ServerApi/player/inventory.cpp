@@ -128,9 +128,16 @@ namespace mcs::inventory {
 	}
 	Byte base::addToSlot(const Slot& theItem, bshort index)
 	{
-		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
-
 		Slot* containedSlot = this->getSlotByIndex(index);
+
+		if (!containedSlot->isPresent()) {
+			*containedSlot = theItem;
+			return theItem.count;
+		}
+		else if (containedSlot->getItemId() != theItem.getItemId())
+			return 0;
+
+		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
 
 		if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
 			picked = theItem.count;
@@ -185,12 +192,78 @@ namespace mcp {
 	{
 		windowQue.emplace(std::make_pair(theWindow, windowIndex));
 		isWindowOpen = true;
-
+		
 		switch (theWindow) {
+		case window::type::generic_9x1:
+
+			break;
+		case window::type::generic_9x2:
+
+			break;
+		case window::type::generic_9x3:
+
+			break;
+		case window::type::generic_9x4:
+
+			break;
+		case window::type::generic_9x5:
+
+			break;
+		case window::type::generic_9x6:
+
+			break;
+		case window::type::generic_3x3:
+
+			break;
+		case window::type::anvil:
+
+			break;
+		case window::type::beacon:
+
+			break;
+		case window::type::blast_furnace:
+
+			break;
+		case window::type::brewing_stand:
+
+			break;
 		case window::type::crafting:
 			openedWindowInventory = new mcs::inventory::crafting();
 			break;
-		default:
+		case window::type::enchantment:
+
+			break;
+		case window::type::furnace:
+			openedWindowInventory = new mcs::inventory::furnace();
+			break;
+		case window::type::grindstone:
+
+			break;
+		case window::type::hopper:
+
+			break;
+		case window::type::lectern:
+
+			break;
+		case window::type::loom:
+
+			break;
+		case window::type::merchant:
+
+			break;
+		case window::type::shulker_box:
+
+			break;
+		case window::type::smithing:
+
+			break;
+		case window::type::smoker:
+
+			break;
+		case window::type::cartography:
+
+			break;
+		case window::type::stonecutter:
 
 			break;
 		}
@@ -221,6 +294,124 @@ namespace mcp {
 
 		Log::warn() << "Player got a wrong ID latest." << Log::endl;
 		return windowQue.back().first;
+	}
+
+	bool inventory::paintProcessLeft(bshort* slotNumbers, Byte slotsCount)
+	{
+		Slot* floatingSlot = this->getFloatingSlot();
+		Byte remainedAmount = floatingSlot->count % slotsCount;
+
+		floatingSlot->count = floatingSlot->count / slotsCount;
+		for (Byte i = 0; i < slotsCount; i++)
+			this->setSlotByIndex(slotNumbers[i], *floatingSlot);
+		
+		if (remainedAmount == 0)
+			this->setFloatingSlot(Slot());
+		else
+			floatingSlot->count = remainedAmount;
+
+		return true;
+	}
+	bool inventory::paintProcessMiddle(bshort* slotNumbers, Byte slotsCount)
+	{
+		Slot floatingSlot = *this->getFloatingSlot();
+		floatingSlot.count = Slot::getStackableSize(floatingSlot);
+
+		for (Byte i = 0; i < slotsCount; i++)
+			this->setSlotByIndex(slotNumbers[i], floatingSlot);
+
+		this->setFloatingSlot(Slot());
+
+		return true;
+	}
+	bool inventory::paintProcessRight(bshort* slotNumbers, Byte slotsCount)
+	{
+		Slot* floatingSlot = this->getFloatingSlot();
+		Byte remainedAmount = floatingSlot->count - slotsCount;
+
+		floatingSlot->count = 1;
+		for (Byte i = 0; i < slotsCount; i++)
+			this->setSlotByIndex(slotNumbers[i], *floatingSlot);
+		
+		if (remainedAmount == 0)
+			this->setFloatingSlot(Slot());
+		else
+			floatingSlot->count = remainedAmount;
+
+		return true;
+	}
+
+	bool inventory::paintStart(inventoryPaint side)
+	{
+		if (paintStarted)
+		{
+			Log::warn() << "Player sent paint start in wrong order." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		paintSide = side;
+		paintStarted = true;
+		return true;
+	}
+	void inventory::paintReset()
+	{
+		paintStarted = false;
+		paintList.clear();
+	}
+	bool inventory::paintProgress(inventoryPaint side, Byte slotIndex)
+	{
+		if (!paintStarted || paintSide != side)
+		{
+			Log::warn() << "Player sent paint progress in wrong order." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		paintList.emplace_back(slotIndex);
+
+		return true;
+	}
+	bool inventory::paintStop(inventoryPaint side, bshort* slotNumbers, Byte slotsCount)
+	{
+		if (!paintStarted || paintSide != side) {
+			Log::warn() << "Player sent paint stop in wrong order." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		for (Byte i = 0; i < slotsCount; i++) {
+			auto foundSlot = std::find(paintList.begin(), paintList.end(), slotNumbers[i]);
+			if (foundSlot == paintList.end()) {
+				Log::warn() << "Player sent paint stop with bad slots." << Log::endl;
+				paintReset();
+				return false;
+			}
+			else
+				paintList.erase(foundSlot);
+		}
+
+		if (paintList.size()) {
+			Log::warn() << "Player sent paint stop with missing slots." << Log::endl;
+			paintReset();
+			return false;
+		}
+
+		if (side == inventoryPaint::left) { //do sanitary checks?
+			if (!paintProcessLeft(slotNumbers, slotsCount))
+				return false;
+		}
+		else if (side == inventoryPaint::middle) {
+			if (!paintProcessMiddle(slotNumbers, slotsCount))
+				return false;
+		}
+		else { // if (side == inventoryPaint::right)
+			if (!paintProcessRight(slotNumbers, slotsCount))
+				return false;
+		}
+
+		paintReset();
+		return true;
 	}
 
 	void inventory::setSelectedIndex(Byte selectedSlot)
@@ -451,9 +642,16 @@ namespace mcp {
 	}
 	Byte inventory::addToSlot(const Slot& theItem, bshort index)
 	{
-		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
-
 		Slot* containedSlot = this->getSlotByIndex(index);
+
+		if (!containedSlot->isPresent()) {
+			*containedSlot = theItem;
+			return theItem.count;
+		}
+		else if (containedSlot->getItemId() != theItem.getItemId())
+			return 0;
+
+		Byte picked = 0, stackableSize = Slot::getStackableSize(theItem);
 
 		if (containedSlot->count + theItem.count < stackableSize + 1) { //the stash can be completely picked up
 			picked = theItem.count;
