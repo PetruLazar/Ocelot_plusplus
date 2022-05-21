@@ -622,6 +622,8 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 	{ //put in inventory
 		p->inventory->setSlotByIndex(slot, *clickedItem);
 
+		message::play::send::setSlot(p, (slot > 35 ? 0 : -2), 0, slot, clickedItem);
+
 		if (p->inventory->getSelectedIndex() == slot)
 		{
 			Equipment* eqp = new Equipment(0, clickedItem);
