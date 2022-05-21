@@ -502,23 +502,37 @@ void processGroundItem(Player* p)
 				Byte pickedIndex = pickedData.second;
 
 				message::play::send::collectItem(p, groundItem->getEid(), p->getEid(), pickedCount);
+				for (Player* seener : p->seenBy)
+					message::play::send::collectItem(seener, groundItem->getEid(), p->getEid(), pickedCount);
 
 				Slot* pickedupSlot = p->inventory->getSlotByIndex(pickedIndex);
 				message::play::send::setSlot(p, (pickedIndex > 35 ? 0 : -2), 0, pickedIndex, pickedupSlot);
 
 				totalPickedCount += pickedCount;
+
+				if (p->inventory->getSelectedIndex(true) == pickedIndex)
+				{
+					for (Player* seener : p->seenBy)
+						message::play::send::entityEquipment(seener, p->getEid(), Equipment::Type::MainHand, pickedupSlot);
+				}
 			}
 
 			varInt droppedItemCount = droppedItem->theItem->count;
 			if (totalPickedCount == droppedItemCount)
 			{ //all of the entity got picked up, destroy it
-				message::play::send::destroyEntity(p, droppedItem->getEid()); //seeners too
+				message::play::send::destroyEntity(p, droppedItem->getEid());
+				for (Player* seener : p->seenBy)
+					message::play::send::destroyEntity(seener, droppedItem->getEid());
+
 				p->world->removeEntity(droppedItem->getEid());
 			}
 			else if (totalPickedCount < droppedItemCount)
 			{ //not everything got picked up, update the data
 				droppedItem->theItem->count = droppedItemCount - totalPickedCount;
+
 				message::play::send::entityMetadata(p, droppedItem->getEid(), Entity::Metadata(8, Entity::Metadata::type::_Slot, droppedItem->theItem));
+				for (Player* seener : p->seenBy)
+					message::play::send::entityMetadata(seener, droppedItem->getEid(), Entity::Metadata(8, Entity::Metadata::type::_Slot, droppedItem->theItem));
 			}
 		}
 	}
