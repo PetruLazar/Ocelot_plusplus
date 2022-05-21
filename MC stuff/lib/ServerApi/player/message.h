@@ -19,24 +19,6 @@
 //broadcasting destionation is "player_macro"
 #define broadcastMessageOmitSafe(msg_f_call, omit_player_ptr) for (Player* player_macro : Player::players) if (player_macro != omit_player_ptr && player_macro->connected) ignoreExceptions(msg_f_call);
 
-struct blockEntity
-{
-	Byte packedXY;
-	bshort Y;
-	varInt type;
-	nbt_compound* nbt;
-
-	blockEntity(Byte packedXY, bshort Y, varInt type, nbt_compound* nbt) : packedXY(packedXY), Y(Y), type(type), nbt(nbt) {}
-
-	void write(char*& buffer) const
-	{
-		*(buffer++) = packedXY;
-		Y.write(buffer);
-		type.write(buffer);
-		nbt->write(buffer);
-	}
-};
-
 struct message
 {
 	//struct for each connection state
@@ -285,6 +267,7 @@ struct message
 			SERVER_API static void acknowledgePlayerDigging(Player*, const Position& location, varInt block, varInt status, bool successful);
 			SERVER_API static void blockBreakAnimation(Player*, varInt eid, const Position& location, Byte destroyStage);
 			SERVER_API static void blockEntityData(Player*, const Position& location, varInt blockEntityType, const nbt& data);
+			SERVER_API static void blockEntityData(Player*, BlockEntity* blockEntity);
 			SERVER_API static void blockAction(Player*, const Position& location, Byte actionId, Byte actionParam, varInt blockType);
 			SERVER_API static void blockChange(Player*, const Position& location, varInt blockId);
 			SERVER_API static void bossBar(Player*, const mcUUID& uuid, bossBar::action action, bossBar::mode* actionField);
@@ -309,7 +292,7 @@ struct message
 			SERVER_API static void openHorseWindow(Player*, Byte winId, varInt slotCount, bint eid);
 			SERVER_API static void initializeWorldBorder(Player*, bdouble x, bdouble z, bdouble oldDiameter, bdouble newDiameter, varLong speed, varInt portalTeleportBoundary, varInt warningBlocks, varInt warningTime);
 			SERVER_API static void keepAlive(Player*, blong keepAlive_id);
-			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities, bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask, varInt skyLightArrayCount, BitArray** skyLightArrays, varInt blockLightArrayCount, BitArray** blockLightArrays);
+			SERVER_API static void chunkDataAndLight(Player*, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, const std::vector<BlockEntity*>& blockEntities, bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask, varInt skyLightArrayCount, BitArray** skyLightArrays, varInt blockLightArrayCount, BitArray** blockLightArrays);
 			SERVER_API static void chunkDataAndLight(Player*, Chunk* chunk, bint cX, bint cZ);
 			SERVER_API static void effect(Player*, bint effectId, const Position& location, bint data, bool disableRelativeVolume);
 			SERVER_API static void particle(Player*, bint particleId, bool longDistance, bdouble x, bdouble y, bdouble z, bfloat offsetX, bfloat offsetY, bfloat offsetZ, bfloat particleData, bint count, particle::Particle* particle);

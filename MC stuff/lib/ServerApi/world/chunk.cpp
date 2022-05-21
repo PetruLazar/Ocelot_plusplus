@@ -5,7 +5,8 @@
 
 using namespace std;
 
-Chunk::Chunk() {
+Chunk::Chunk()
+{
 	heightmaps = nullptr;
 
 	skyLightMask = nullptr;
@@ -225,11 +226,18 @@ BlockState Chunk::getBlock(int relX, int relY, int relZ)
 {
 	return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ);
 }
-void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl)
+void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl, nbt_compound* nbt_data)
 {
 	Section& section = sections[relY >> 4];
 	bool hadBlocks = section.blockCount;
 	section.setBlock(relX, relY & 0xf, relZ, bl);
+	if (nbt_data)
+	{
+		varInt type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
+		BlockEntity* blEntity = new BlockEntity(relX << 4 | relZ, relY, type, nbt_data);
+		blockEntities.emplace_back(blEntity);
+		Log::debug() << "Nbt built: " << nbt_data->getStringValue() << Log::endl;
+	}
 	if ((bool)section.blockCount != hadBlocks)
 	{
 		//section mask modified

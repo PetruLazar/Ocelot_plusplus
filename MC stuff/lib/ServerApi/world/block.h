@@ -3,6 +3,7 @@
 #include "../types/varData.h"
 #include "../json.h"
 #include "../types/registry.h"
+#include "../nbt.h"
 
 class BlockState
 {
@@ -36,4 +37,41 @@ public:
 	BlockState block;
 
 	SERVER_API PaletteEntry(const BlockState&, short refCount);
+};
+
+//struct blockEntity
+//{
+//	Byte packedXY;
+//	bshort Y;
+//	varInt type;
+//	nbt_compound* nbt;
+//
+//	blockEntity(Byte packedXY, bshort Y, varInt type, nbt_compound* nbt) : packedXY(packedXY), Y(Y), type(type), nbt(nbt) {}
+//
+//	void write(char*& buffer) const
+//	{
+//		*(buffer++) = packedXY;
+//		Y.write(buffer);
+//		type.write(buffer);
+//		nbt->write(buffer);
+//	}
+//};
+
+class BlockEntity
+{
+	Byte packedXZ;
+	bshort y;
+	varInt type;
+	nbt_compound *tags;
+
+public:
+	//creation on placement
+	//access on right click
+	//access on tick
+	//access on block break
+	SERVER_API BlockEntity(Byte packedXZ, bshort y, varInt type, nbt_compound* tags);
+	SERVER_API ~BlockEntity();
+
+	SERVER_API void writeExplicit(char*& buffer);
+	SERVER_API void write(char*& buffer);
 };

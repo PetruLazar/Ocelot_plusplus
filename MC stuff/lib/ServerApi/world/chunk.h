@@ -39,8 +39,9 @@ public:
 	//data
 	std::vector<Section> sections;
 
-	varInt nOfBlockEntities;
 	//block Entities
+	//varInt nOfBlockEntities;
+	std::vector<BlockEntity*> blockEntities;
 
 	//currently unused
 	std::forward_list<Player*> players;
@@ -57,7 +58,7 @@ public:
 	SERVER_API BlockState& getPaletteEntry(int sectionY, int paletteIndex);
 	//get a copy of the block state at the desired coordinates to use with setBlock
 	SERVER_API BlockState getBlock(int relX, int relY, int relZ);
-	SERVER_API void setBlock(int relX, int relY, int relZ, const BlockState&);
+	SERVER_API void setBlock(int relX, int relY, int relZ, const BlockState&, nbt_compound* nbt_data = nullptr);
 
 	//includes data size field of the packet
 	SERVER_API void writeSectionData(char*&);

@@ -14,7 +14,8 @@ Registry::fluidRegistry = "minecraft:fluid",
 Registry::gameEventRegistry = "minecraft:game_event",
 Registry::enchantsRegistry = "minecraft:enchantment",
 Registry::mobEffectRegistry = "minecraft:mob_effect",
-Registry::soundEventRegistry = "minecraft:sound_event";
+Registry::soundEventRegistry = "minecraft:sound_event",
+Registry::blockEntityRegistry = "minecraft:block_entity_type";
 
 BlockProperty::BlockProperty(const std::string& name, const std::string& val) : name(name), value(val) { }
 BlockProperty::BlockProperty() { }

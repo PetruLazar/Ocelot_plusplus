@@ -246,6 +246,16 @@ void message::play::send::blockEntityData(Player* p, const Position& location, v
 
 	finishSendMacro;
 }
+void message::play::send::blockEntityData(Player* p, BlockEntity* blockEntity)
+{
+	varInt id = (int)id::blockEntityData;
+	prepareSendMacro(1024 * 1024);
+
+	id.write(data);
+	blockEntity->writeExplicit(data);
+
+	finishSendMacro;
+}
 void message::play::send::blockAction(Player* p, const Position& location, Byte actionId, Byte actionParam, varInt blockType)
 {
 	varInt id = (int)id::blockAction;
@@ -441,7 +451,7 @@ void message::play::send::facePlayer(Player* p, varInt pivot, bdouble targetX, b
 
 	finishSendMacro;
 }
-void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, varInt nOfBlockEntities, blockEntity** blockEntities,
+void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const nbt_compound& heightMaps, varInt dataSize, char* chunkData, const std::vector<BlockEntity*>& blockEntities,
 	bool trustEdges, const BitArray& skyLightMask, const BitArray& blockLightMask, const BitArray& emptySkyLightMask, const BitArray& emptyBlockLightMask, varInt skyLightArrayCount, BitArray** skyLightArrays,
 	varInt blockLightArrayCount, BitArray** blockLightArrays)
 {
@@ -457,11 +467,7 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 	dataSize.write(data);
 	std::memmove(data, chunkData, dataSize);
 	data += dataSize;
-	nOfBlockEntities.write(data);
-	for (int i = 0; i < nOfBlockEntities; i++)
-	{
-		blockEntities[i]->write(data);
-	}
+	varInt(0).write(data);
 
 	//light data
 	*(data++) = trustEdges;
@@ -489,6 +495,11 @@ void message::play::send::chunkDataAndLight(Player* p, bint cX, bint cZ, const n
 	}
 
 	finishSendMacro;
+
+	for (auto& blockEntity : blockEntities)
+	{
+		blockEntityData(p, blockEntity);
+	}
 }
 void message::play::send::chunkDataAndLight(Player* p, Chunk* chunk, bint cX, bint cZ)
 {
@@ -544,7 +555,7 @@ void message::play::send::chunkDataAndLight(Player* p, Chunk* chunk, bint cX, bi
 		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightData[i].blockLight);
 	}
 
-	chunkDataAndLight(p, cX, cZ, heightMaps, dataSize, chunkDataStart, 0, nullptr, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, (uint)skyLightArrays.size(), skyLightArrays.data(), (uint)blockLightArrays.size(), blockLightArrays.data());
+	chunkDataAndLight(p, cX, cZ, heightMaps, dataSize, chunkDataStart, chunk->blockEntities, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, (uint)skyLightArrays.size(), skyLightArrays.data(), (uint)blockLightArrays.size(), blockLightArrays.data());
 	delete[] chunkDataStart;
 }
 void message::play::send::effect(Player* p, bint effectId, const Position& location, bint extraData, bool disableRelativeVolume)
@@ -914,7 +925,7 @@ void message::play::send::entityMetadata(Player* p, varInt eid, const Entity::Me
 	eid.write(data);
 
 	metadata.write(data);
-		
+
 	*(data++) = (Byte)0xff;
 
 	finishSendMacro;
