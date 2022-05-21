@@ -426,14 +426,10 @@ void message::play::receive::editBook(Player* p, varInt hand, varInt count, cons
 	{
 		p->inventory->setSlotByIndex(p->inventory->getSelectedIndex(true), Slot(943, bookData));
 
-		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
-
 		for (Player* seener : p->seenBy)
-			message::play::send::entityEquipment(seener, p->getEid(), eqp);
+			message::play::send::entityEquipment(seener, p->getEid(), Equipment::Type::MainHand, p->inventory->getSelectedSlot());
 
-		message::play::send::entityEquipment(p, p->getEid(), eqp);
-
-		delete eqp;
+		message::play::send::entityEquipment(p, p->getEid(), Equipment::Type::MainHand, p->inventory->getSelectedSlot());
 	}
 	else
 		p->inventory->getSelectedSlot()->updateNBT(bookData);
@@ -595,12 +591,8 @@ void message::play::receive::heldItemChange(Player* p, bshort slot)
 {
 	p->inventory->setSelectedIndex((Byte)slot);
 
-	Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
-
 	for (Player* seener : p->seenBy)
-		message::play::send::entityEquipment(seener, p->getEid(), eqp);
-
-	delete eqp;
+		message::play::send::entityEquipment(seener, p->getEid(), Equipment::Type::MainHand, p->inventory->getSelectedSlot());
 }
 void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slot* clickedItem)
 {
@@ -626,12 +618,8 @@ void message::play::receive::creativeInventoryAction(Player* p, bshort slot, Slo
 
 		if (p->inventory->getSelectedIndex() == slot)
 		{
-			Equipment* eqp = new Equipment(0, clickedItem);
-
 			for (Player* seener : p->seenBy)
-				message::play::send::entityEquipment(seener, p->getEid(), eqp);
-
-			delete eqp;
+				message::play::send::entityEquipment(seener, p->getEid(), Equipment::Type::MainHand, clickedItem);
 		}
 	}
 }
@@ -697,11 +685,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 
 		*playerItem = Slot();
 
-		Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 		for (Player* seener : p->seenBy)
-			message::play::send::entityEquipment(seener, p->getEid(), eqp);
-
-		delete eqp;
+			message::play::send::entityEquipment(seener, p->getEid(), Equipment::Type::MainHand, p->inventory->getSelectedSlot());
 	}
 	break;
 	case playerDigging::dropItem:
@@ -719,11 +704,8 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		{
 			*playerItem = Slot();
 
-			Equipment* eqp = new Equipment(0, p->inventory->getSelectedSlot());
 			for (Player* seener : p->seenBy)
-				message::play::send::entityEquipment(seener, p->getEid(), eqp);
-
-			delete eqp;
+				message::play::send::entityEquipment(seener, p->getEid(), Equipment::Type::MainHand, p->inventory->getSelectedSlot());
 		}
 
 		p->world->addEntity(theItem);

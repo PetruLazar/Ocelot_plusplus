@@ -943,7 +943,7 @@ void message::play::send::entityVelocity(Player* p, varInt eid, bshort velocityX
 
 	finishSendMacro;
 }
-void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equipment)
+void message::play::send::entityEquipment(Player* p, varInt eid, Equipment::Type type, Slot* item)
 {
 	varInt id = (int)id::entityEquipment;
 	prepareSendMacro(1024 * 1024);
@@ -951,24 +951,11 @@ void message::play::send::entityEquipment(Player* p, varInt eid, Equipment* equi
 	id.write(data);
 	eid.write(data);
 
-	equipment->unSet();
-	equipment->write(data);
+	Byte typeByte = static_cast<Byte>(type);
+	typeByte &= ~(0x80);
 
-	finishSendMacro;
-}
-void message::play::send::entityEquipment(Player* p, varInt eid, Equipment** equipments)
-{
-	varInt id = (int)id::entityEquipment;
-	prepareSendMacro(1024 * 1024);
-
-	id.write(data);
-	eid.write(data);
-
-	equipments[0]->write(data);
-
-	//				if the top bit is set, another entry follows
-	for (int i = 0; (equipments[i]->getSlot() & 0x80) == 1; i++)
-		equipments[i + 1]->write(data);
+	*(data++) = typeByte;
+	item->write(data);
 
 	finishSendMacro;
 }

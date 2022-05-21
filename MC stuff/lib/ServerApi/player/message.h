@@ -360,8 +360,7 @@ struct message
 			SERVER_API static void entityMetadata(Player*, varInt eid, const Entity::Metadata& metadatas);
 			SERVER_API static void attachEntity(Player*, bint attachedEid, bint holdingEid);
 			SERVER_API static void entityVelocity(Player*, varInt eid, bshort velocityX, bshort velocityY, bshort velocityZ);
-			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment* equipment); //singular of entityEquipment
-			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment** equipments);
+			SERVER_API static void entityEquipment(Player*, varInt eid, Equipment::Type type, Slot* item);
 			SERVER_API static void entityEquipment(Player*, varInt eid, const std::vector<Equipment*>& equipments);
 			SERVER_API static void setXp(Player*, bfloat xpBar, varInt level, varInt totalXp);
 			SERVER_API static void updateHp(Player*, bfloat hp, varInt food, bfloat saturation);
