@@ -16,17 +16,7 @@ std::string to_hexstring(int value)
 	return std::string(cur + 1);
 }
 
-uint bitCount(ull n)
-{
-	if (!n) return 1;
-	uint count = 0;
-	do
-	{
-		count++;
-		n >>= 1;
-	} while (n);
-	return count;
-}
+constexpr uint bitCount(ull n)
 
 int fastfloor(double x)
 {
