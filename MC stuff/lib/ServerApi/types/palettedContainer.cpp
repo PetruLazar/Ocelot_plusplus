@@ -39,19 +39,19 @@ public:
 	};
 	~PalettedContainer() { if (values) delete values; }
 
-	void set(int index, int value)
+	bool set(int index, int value)
 	{
 		if (!values)
 		{
 			//0 bits per block
-			if (palette[0].id == value) return;
+			if (palette[0].id == value) return false;
 			//create the values
 			palette[0].refCount--;
 			palette.emplace_back(value, 1);
 
 			values = new BitArray(size, minBitsPerEntry);
 			values->setElement(index, 1);
-			return;
+			return true;
 		}
 		//1+ bits per entry
 		Byte currentBitsPerEntry = values->getBitsPerEntry();
@@ -60,7 +60,7 @@ public:
 			//local palette
 			int currentIndex = (int)values->getElement(index);
 			BasicPaletteEntry& current = palette[currentIndex];
-			if (current.id == value) return;
+			if (current.id == value) return false;
 			int toPlaceIndex = getPaletteEntryIndex(value);
 			if (current.refCount == 1)
 			{
@@ -80,7 +80,7 @@ public:
 						//only 1 palette entry left, go to single value mode
 						delete values;
 						values = nullptr;
-						return;
+						return true;
 					}
 					values->setElement(index, toPlaceIndex);
 
@@ -111,22 +111,18 @@ public:
 					//check the bitsPerEntry
 					Byte newBitsPerEntry = bitCount(oldPaletteSize);
 
-					if (newBitsPerEntry == currentBitsPerEntry) //bits per entry did not change
-						return;
-
 					if (newBitsPerEntry > maxBitsPerEntry)
 					{
 						//go to global palette
 						values->changeBitsPerEntry(globalPaletteBitsPerEntry);
 						values->setElement(index, oldPaletteSize);
-						for (uint i = 0; i < size; i++) values->setElement(i, palette[values->getElement(i)].id);
+						for (uint i = 0; i < size; i++) 
+							values->setElement(i, palette[values->getElement(i)].id);
 					}
 					else
 					{
 						if (newBitsPerEntry != currentBitsPerEntry) //bits per entry are different
-						{
 							values->changeBitsPerEntry(newBitsPerEntry);
-						}
 						values->setElement(index, oldPaletteSize);
 					}
 				}
@@ -138,12 +134,12 @@ public:
 				}
 			}
 
-			return;
+			return true;
 		}
 
 		//global Palette
 		int currentValue = (int)values->getElement(index);
-		if (currentValue == value) return;
+		if (currentValue == value) return false;
 		int currentIndex = getPaletteEntryIndex(currentValue);
 		BasicPaletteEntry& current = palette[currentIndex];
 		int toPlaceIndex = getPaletteEntryIndex(value);
@@ -179,6 +175,7 @@ public:
 			else
 				palette[toPlaceIndex].refCount++;
 		}
+		return true;
 	}
 
 	int get(int index) const
@@ -201,10 +198,10 @@ BlockStatesContainer::BlockStatesContainer() : container(new blockTemplate(16 * 
 BlockStatesContainer::~BlockStatesContainer() { delete container; }
 
 int BlockStatesContainer::get(int index) const { return asBlock(container)->get(index); }
-void BlockStatesContainer::set(int index, int value) { asBlock(container)->set(index, value); }
+bool BlockStatesContainer::set(int index, int value) { return asBlock(container)->set(index, value); }
 
 BiomesContainer::BiomesContainer() : container(new biomeTemplate(4 * 4 * 4, 0)) {}
 BiomesContainer::~BiomesContainer() { delete container; }
 
 int BiomesContainer::get(int index) const { return asBiome(container)->get(index); }
-void BiomesContainer::set(int index, int value) { asBiome(container)->set(index, value); }
+bool BiomesContainer::set(int index, int value) { return asBiome(container)->set(index, value); }

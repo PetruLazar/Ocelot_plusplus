@@ -357,31 +357,17 @@ Chunk* Region::get(World* parent, int relX, int relZ, bool increaseLoadCount)
 
 bool Region::hasChunksLoaded() { return loadedChunks; }
 
-BlockState& Region::getPaletteEntry(int relX, int relY, int relZ)
-{
-	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
-	if (!chunk)
-		throw genException("Chunk not loaded");
-	return chunk->getPaletteEntry(relX & 0xf, relY, relZ & 0xf);
-}
-BlockState& Region::getPaletteEntry(int chunkX, int sectionY, int chunkZ, int paletteIndex)
-{
-	Chunk* chunk = chunks[chunkX][chunkZ];
-	if (!chunk) 
-		throw genException("Chunk not loaded");
-	return chunk->getPaletteEntry(sectionY, paletteIndex);
-}
-BlockState Region::getBlock(int relX, int relY, int relZ)
+int Region::getBlock(int relX, int relY, int relZ)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
 	if (!chunk)
 		throw genException("Chunk not loaded");
 	return chunk->getBlock(relX & 0xf, relY, relZ & 0xf);
 }
-void Region::setBlock(int relX, int relY, int relZ, const BlockState& bl, nbt_compound* nbt_data)
+void Region::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
 	if (!chunk)
 		throw genException("Chunk not loaded");
-	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, bl, nbt_data);
+	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, blockid, nbt_data);
 }

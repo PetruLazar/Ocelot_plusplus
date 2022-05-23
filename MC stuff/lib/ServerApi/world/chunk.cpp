@@ -214,23 +214,15 @@ void Chunk::write(ostream& file)
 	//throw runtimeError("Chunk::write not implemented yet.");
 }
 
-BlockState& Chunk::getPaletteEntry(int relX, int relY, int relZ)
-{
-	return sections[relY >> 4].getPaletteEntry(relX, relY & 0xf, relZ);
-}
-BlockState& Chunk::getPaletteEntry(int sectionY, int paletteIndex)
-{
-	return sections[sectionY].getPaletteEntry(paletteIndex);
-}
-BlockState Chunk::getBlock(int relX, int relY, int relZ)
+int Chunk::getBlock(int relX, int relY, int relZ)
 {
 	return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ);
 }
-void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl, nbt_compound* nbt_data)
+void Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Section& section = sections[relY >> 4];
 	bool hadBlocks = section.blockCount;
-	section.setBlock(relX, relY & 0xf, relZ, bl);
+	section.setBlock(relX, relY & 0xf, relZ, blockid);
 	if (nbt_data)
 	{
 		varInt type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());

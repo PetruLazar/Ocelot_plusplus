@@ -16,7 +16,7 @@ public:
 	~BlockStatesContainer();
 
 	int get(int index) const;
-	void set(int index, int value);
+	bool set(int index, int value);
 
 	//read
 	//write
@@ -30,7 +30,7 @@ public:
 	~BiomesContainer();
 
 	int get(int index) const;
-	void set(int index, int value);
+	bool set(int index, int value);
 
 	//read
 	//write

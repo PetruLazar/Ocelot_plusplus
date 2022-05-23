@@ -1139,33 +1139,7 @@ bool World::checkCoordinates(int y)
 {
 	return y >= 0 && y < height;
 }
-BlockState& World::getPaletteEntry(int x, int y, int z)
-{
-	int rX = x >> 9,
-		rZ = z >> 9;
-	x &= 0x1ff; z &= 0x1ff;
-
-	Region* reg = getRegion(rX, rZ);
-	if (reg)
-	{
-		return reg->getPaletteEntry(x, y, z);
-	}
-	throw std::exception("World::getBlock: region not loaded");
-}
-BlockState& World::getPaletteEntry(int cx, int cy, int cz, int paletteIndex)
-{
-	int rX = cx >> 5,
-		rZ = cz >> 5;
-	cx &= 0x1f; cz &= 0x1f;
-
-	Region* reg = getRegion(rX, rZ);
-	if (reg)
-	{
-		return reg->getPaletteEntry(cx, cy, cz, paletteIndex);
-	}
-	throw std::exception("World::getBlock: region not loaded");
-}
-BlockState World::getBlock(int x, int y, int z)
+int World::getBlock(int x, int y, int z)
 {
 	int rX = x >> 9,
 		rZ = z >> 9;
@@ -1178,7 +1152,7 @@ BlockState World::getBlock(int x, int y, int z)
 	}
 	throw std::exception("World::getBlock: region not loaded");
 }
-void World::setBlock(int x, int y, int z, const BlockState& bl, nbt_compound* nbt_data, Player* broadcastException)
+void World::setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data, Player* broadcastException)
 {
 	Position loc(x, y + min_y, z);
 
@@ -1188,15 +1162,15 @@ void World::setBlock(int x, int y, int z, const BlockState& bl, nbt_compound* nb
 
 	Region* reg = getRegion(rX, rZ);
 	if (!reg) throw std::exception("World::setBlock: region not loaded");
-	reg->setBlock(x, y, z, bl, nbt_data);
+	reg->setBlock(x, y, z, blockid, nbt_data);
 
-	for (Player* p : players) if (p != broadcastException && p->positionInRange(loc)) message::play::send::blockChange(p, loc, bl.id);
+	for (Player* p : players) if (p != broadcastException && p->positionInRange(loc)) message::play::send::blockChange(p, loc, blockid);
 
 	//setBlock(destX, destY, destZ, stateJson);
 	//Position destLoc = Position(destX, destY + p->world->min_y, destZ);
 	//for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
 }
-void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl, nbt_compound* nbt_data)
+void World::setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data)
 {
 	int rX = x >> 9,
 		rZ = z >> 9;
@@ -1204,7 +1178,7 @@ void World::setBlockNoBroadcast(int x, int y, int z, const BlockState& bl, nbt_c
 
 	Region* reg = getRegion(rX, rZ);
 	if (!reg) throw std::exception("World::setBlock: region not loaded");
-	reg->setBlock(x, y, z, bl, nbt_data);
+	reg->setBlock(x, y, z, blockid, nbt_data);
 }
 
 bool World::loadAll()

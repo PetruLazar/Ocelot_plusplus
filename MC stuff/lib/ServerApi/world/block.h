@@ -5,9 +5,24 @@
 #include "../types/registry.h"
 #include "../nbt.h"
 
+class SnowyBlock;
+class DistanceProperty;
+class LeafPersistentProperty;
+
 class BlockState
 {
-	json* state;
+public:
+	virtual bool directlyReplaceable() { return false; }
+	virtual bool indirectlyReplaceable() { return false; }
+
+	virtual SnowyBlock* snowy() { return nullptr; }
+	virtual DistanceProperty* distance() { return nullptr; }
+	virtual LeafPersistentProperty* persistent() { return nullptr; }
+
+	static const BlockState* const globalPalette[];
+	static constexpr ull globalPaletteSize = 20342;
+
+	/*json* state;
 
 public:
 	varInt id;
@@ -27,16 +42,7 @@ public:
 	SERVER_API void set(const std::string& blockName, BlockProperty* properties);
 
 	SERVER_API bool operator==(const BlockState&) const;
-	SERVER_API void operator=(const BlockState&);
-};
-
-class PaletteEntry
-{
-public:
-	short referenceCount;
-	BlockState block;
-
-	SERVER_API PaletteEntry(const BlockState&, short refCount);
+	SERVER_API void operator=(const BlockState&);*/
 };
 
 //struct blockEntity

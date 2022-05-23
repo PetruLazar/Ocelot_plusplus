@@ -52,13 +52,9 @@ public:
 	SERVER_API void write(std::ostream& file);
 	//writing and reading from buffer after/before compression
 
-	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section
-	SERVER_API BlockState& getPaletteEntry(int relX, int relY, int relZ);
-	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section
-	SERVER_API BlockState& getPaletteEntry(int sectionY, int paletteIndex);
 	//get a copy of the block state at the desired coordinates to use with setBlock
-	SERVER_API BlockState getBlock(int relX, int relY, int relZ);
-	SERVER_API void setBlock(int relX, int relY, int relZ, const BlockState&, nbt_compound* nbt_data = nullptr);
+	SERVER_API int getBlock(int relX, int relY, int relZ);
+	SERVER_API void setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data = nullptr);
 
 	//includes data size field of the packet
 	SERVER_API void writeSectionData(char*&);
