@@ -1,4 +1,3 @@
-#include "chunk.h"
 #include "../debug/mcexceptions.h"
 #include "../types/utils.h"
 #include "../world.h"
@@ -50,7 +49,7 @@ Chunk::~Chunk()
 }
 
 //reading a chunk that already contains data causes a memory leak!
-void Chunk::read(std::istream& file)
+/*void Chunk::read(std::istream& file)
 {
 	//chunk data
 
@@ -212,7 +211,7 @@ void Chunk::write(ostream& file)
 	}
 
 	//throw runtimeError("Chunk::write not implemented yet.");
-}
+}*/
 
 int Chunk::getBlock(int relX, int relY, int relZ)
 {

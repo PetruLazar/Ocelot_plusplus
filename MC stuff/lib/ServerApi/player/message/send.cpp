@@ -517,32 +517,8 @@ void message::play::send::chunkDataAndLight(Player* p, Chunk* chunk, bint cX, bi
 	{
 		Section& section = chunk->sections[i];
 		section.blockCount.write(chunkData);
-		//send blocks
-		if (section.blockCount)
-		{
-			//there are blocks in the section, send blockStates
-			*(chunkData++) = section.bitsPerBlock;
-			if (!section.useGlobalPallete)
-			{
-				varInt((uint)section.palette.size()).write(chunkData);
-				for (PaletteEntry& val : section.palette) val.block.id.write(chunkData);
-			}
-			varInt((uint)section.blockStates->getCompactedSize()).write(chunkData);
-			section.blockStates->write(chunkData);
-		}
-		else
-		{
-			//there are no blocks in the section, send all air
-			*(int*)chunkData = 0;
-			chunkData += 3;
-			// 0 bits per entry
-			// palette is one entry: 0
-			// data array length is 0
-		}
-		//send biomes
-		*(chunkData++) = World::currentBiomeBitsPerEntry;
-		varInt((uint)section.biomes->getCompactedSize()).write(chunkData);
-		section.biomes->write(chunkData);
+		section.blockStates.write(chunkData);
+		section.biomes.write(chunkData);
 	}
 	uint dataSize = (uint)(chunkData - chunkDataStart);
 

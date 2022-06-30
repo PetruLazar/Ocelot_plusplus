@@ -667,7 +667,7 @@ void message::dispatch(Player* p, char* data, uint size)
 			curZ.read(data);
 			insideBlock = *(data++);
 
-			play::receive::playerBlockPlacement(p, (Hand)(int)hand, location, (playerDigging::face)(int)face, curX, curY, curZ, insideBlock);
+			play::receive::playerBlockPlacement(p, (Hand)(int)hand, location, (BlockFace)(int)face, curX, curY, curZ, insideBlock);
 			Log::debug(PROTOCOL_WARNINGS) << "Partially handled packet: player block placement" << Log::endl;
 		}
 		break;

@@ -18,8 +18,8 @@ public:
 	int get(int index) const;
 	bool set(int index, int value);
 
+	void write(char*&) const;
 	//read
-	//write
 };
 class SERVER_API BiomesContainer
 {
@@ -32,6 +32,6 @@ public:
 	int get(int index) const;
 	bool set(int index, int value);
 
+	void write(char*&) const;
 	//read
-	//write
 };

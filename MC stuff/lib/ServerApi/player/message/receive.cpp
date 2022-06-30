@@ -803,7 +803,7 @@ void message::play::receive::nameItem(Player*, const mcString& newName)
 {
 	//de facut cand o sa am anvilurile disponibile
 }
-void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Position& location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
+void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Position& location, BlockFace face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
 	//std::string text = "playerBlockPlacement: ";
 	Slot* slot = nullptr;

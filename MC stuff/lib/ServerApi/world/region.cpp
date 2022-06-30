@@ -1,4 +1,3 @@
-#include "region.h"
 #include "../world.h"
 #include "../debug/mcexceptions.h"
 #include "../debug/log.h"
@@ -161,7 +160,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 
 	if (Options::chunkCompression())
 	{
-		chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
+		//chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
 		std::string bufferContents = buffer.str();
 
 		//compress chunk
@@ -185,8 +184,8 @@ void Region::save(int relX, int relZ, bool autoFlush)
 	else
 	{
 		//leave chunk uncompressed
-		buffer.write("", 1); // 0 for uncompressed
-		chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
+		//buffer.write("", 1); // 0 for uncompressed
+		//chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
 		std::string bufferContents = buffer.str();
 
 		//get data address and length
@@ -252,7 +251,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 		regionFile.write((char*)(&headerEntry), sizeof(HeaderEntry));
 	}
 
-	//flush is autoFlush is true
+	//flush if autoFlush is true
 	if (autoFlush) regionFile.flush();
 
 	//free any memory
@@ -281,7 +280,7 @@ Chunk* Region::load(World* parent, int relX, int relZ)
 		//read chunk
 		Chunk* ch = new Chunk(parent->height);
 		std::stringstream stream(std::string(decompressedData, dataSizes[1]));
-		ch->read(stream);
+		//ch->read(stream);
 		delete[] decompressedData;
 		delete[] compressedData;
 		return ch;
@@ -289,7 +288,7 @@ Chunk* Region::load(World* parent, int relX, int relZ)
 	//not compressed
 	//read chunk from buffer;
 	Chunk* ch = new Chunk(parent->height);
-	ch->read(regionFile);
+	//ch->read(regionFile);
 	return ch;
 
 }
@@ -312,7 +311,7 @@ void Region::unload(World* parent, int relX, int relZ)
 	{
 		//write the chunk to file
 		//Log::txt() << "\nWriting chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] to file";
-		save(relX, relZ);
+		//save(relX, relZ);
 
 		delete chunk;
 		chunk = 0;
@@ -344,7 +343,7 @@ Chunk* Region::get(World* parent, int relX, int relZ, bool increaseLoadCount)
 	}
 	//try to load it from file
 	//Log::debug(true) << "Loading chunk [" << ((rX << 5) | relX) << ", " << ((rZ << 5) | relZ) << "] from file" << Log::endl;
-	chunk = load(parent, relX, relZ);
+	//chunk = load(parent, relX, relZ);
 	if (chunk)
 	{
 		//Log::txt() << "\n\tLoaded chunk";

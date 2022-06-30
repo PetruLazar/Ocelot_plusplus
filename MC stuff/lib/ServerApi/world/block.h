@@ -4,6 +4,19 @@
 #include "../json.h"
 #include "../types/registry.h"
 #include "../nbt.h"
+#include "../types/item.h"
+class World;
+#include "../world.h"
+
+enum class BlockFace
+{
+	bottom,
+	top,
+	north,
+	south,
+	west,
+	east
+};
 
 class SnowyBlock;
 class DistanceProperty;
@@ -12,12 +25,15 @@ class LeafPersistentProperty;
 class BlockState
 {
 public:
-	virtual bool directlyReplaceable() { return false; }
-	virtual bool indirectlyReplaceable() { return false; }
+	virtual bool replaceable() const { return false; }
 
-	virtual SnowyBlock* snowy() { return nullptr; }
-	virtual DistanceProperty* distance() { return nullptr; }
-	virtual LeafPersistentProperty* persistent() { return nullptr; }
+	virtual const SnowyBlock* const snowy() const { return nullptr; }
+	virtual const DistanceProperty* const distance() const { return nullptr; }
+	virtual const LeafPersistentProperty* const persistent() const { return nullptr; }
+
+	virtual bool rightClick() const { return false; }
+
+	virtual void free() const = 0;
 
 	static const BlockState* const globalPalette[];
 	static constexpr ull globalPaletteSize = 20342;
@@ -44,6 +60,13 @@ public:
 	SERVER_API bool operator==(const BlockState&) const;
 	SERVER_API void operator=(const BlockState&);*/
 };
+
+#pragma warning (push)
+#pragma warning (disable : 4250)
+#include "blocks/solid.h"
+#include "blocks/herb.h"
+#include "blocks/leaves/leaves.h"
+#pragma warning (pop)
 
 //struct blockEntity
 //{

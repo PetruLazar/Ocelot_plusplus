@@ -58,6 +58,15 @@
     <Filter Include="Source Files\player\message">
       <UniqueIdentifier>{14cfdb0c-c2de-4cb9-be31-7f59ccf159d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\world\blocks">
+      <UniqueIdentifier>{ecce89e9-e306-4bc8-a3b3-99234df86188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\world\blocks\properties">
+      <UniqueIdentifier>{c13e89d0-6fca-4821-b62a-fa2bd8d6af14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\world\blocks\leaves">
+      <UniqueIdentifier>{cdd86974-0c76-4e78-91f9-9d2cbb857f31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nbt\nbt_base.h">
@@ -288,6 +297,24 @@
     <ClInclude Include="debug\log.h">
       <Filter>Header Files\debug</Filter>
     </ClInclude>
+    <ClInclude Include="world\blocks\properties\snowy.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\distance.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\leaves\leaves.h">
+      <Filter>Header Files\world\blocks\leaves</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\solid.h">
+      <Filter>Header Files\world\blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\herb.h">
+      <Filter>Header Files\world\blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="types\palettedContainer.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -490,6 +517,9 @@
     </ClCompile>
     <ClCompile Include="player\message\dispatch.cpp">
       <Filter>Source Files\player\message</Filter>
+    </ClCompile>
+    <ClCompile Include="types\palettedContainer.cpp">
+      <Filter>Source Files\types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

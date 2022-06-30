@@ -86,16 +86,6 @@ namespace playerDigging
 		//finishEating = shootArrow,
 		swapItemInHand
 	};
-
-	enum face
-	{
-		bottom,
-		top,
-		north,
-		south,
-		west,
-		east
-	};
 }
 
 enum class gamemode : Byte

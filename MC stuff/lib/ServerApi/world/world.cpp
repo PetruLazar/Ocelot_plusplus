@@ -287,9 +287,13 @@ World::World(const char* c_name) : name(c_name), characteristics("", nullptr)
 	fstream worldMain("worlds\\" + name + "\\characteristics.bin", ios::binary | ios::in);
 
 	if (!worldMain.is_open())
-		throw runtimeError("Error: cannot open charactestics.bin");
+		throw runtimeError("Error: cannot open charactestics.bin for world \"" + name + "\"");
+	varInt version;
+	version.read(worldMain);
+	if (version != currentWorldVersion)
+		throw runtimeError("Error: characteristics.bin has an incorrect version for world \"" + name + "\"");
 	if (!nbt::checkTag(worldMain))
-		throw runtimeError("Error: charactestics.bin has an invalid format");
+		throw runtimeError("Error: charactestics.bin has an invalid format for world \"" + name + "\"");
 
 	characteristics.read(worldMain);
 	height = characteristics["height"].vInt();
@@ -529,16 +533,13 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
-		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
+		for (int b = 0; b < 64; b++) section.biomes.set(b, biomeId);
 
 		//block data
 		int section_base = (i << 4);
 		//[y][z][x]
-		Byte blocks[16][16][16]{};
+		//Byte blocks[16][16][16]{};
 		section.blockCount = 0;
-		section.bitsPerBlock = 4;
-		section.useGlobalPallete = false;
 
 		//[y][z][x]
 		bool hasSkyLight = false,
@@ -546,8 +547,8 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
 
-		section.palette.emplace_back(PaletteEntry(BlockState("minecraft:air"), 0));
-		section.palette.emplace_back(PaletteEntry(BlockState("minecraft:stone"), 0));
+		//section.palette.emplace_back(PaletteEntry(BlockState("minecraft:air"), 0));
+		//section.palette.emplace_back(PaletteEntry(BlockState("minecraft:stone"), 0));
 
 		for (int z = 0; z < 16; z++)
 			for (int x = 0; x < 16; x++)
@@ -556,28 +557,24 @@ Chunk* World::generate_def(World* world, int X, int Z)
 				if (adjustedHeight > 16) adjustedHeight = 16;
 				else if (adjustedHeight < 0) adjustedHeight = 0;
 
-				//if (i == 9 && z == 3 && x == 4)
-				//	cout << ' ';
-
 				section.blockCount += adjustedHeight;
 				for (int y = 0; y < adjustedHeight; y++)
 				{
-					blocks[y][z][x] = 1;
+					//blocks[y][z][x] = 1;
+					section.blockStates.set(y << 8 | z << 4 | x, 1);
 					blockLight[y][z][x] = 0;
 					skyLight[y][z][x] = 0;
 				}
 				for (int y = adjustedHeight; y < 16; y++)
 				{
-					blocks[y][z][x] = 0;
+					//blocks[y][z][x] = 0;
 					blockLight[y][z][x] = 0;
 					skyLight[y][z][x] = 15;
 					hasSkyLight = true;
 				}
 			}
 
-		section.palette[1].referenceCount = section.blockCount;
-		section.palette[0].referenceCount = 4096 - section.blockCount;
-		section.blockStates = new BitArray(0x1000, 4, (Byte*)blocks);
+		//section.blockStates = new BitArray(0x1000, 4, (Byte*)blocks);
 		if (section.blockCount) chunk->sectionMask->setElement(i, 1);
 		if (hasSkyLight) chunk->skyLightMask->setElement((ull)i + 1, 1);
 		else chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
@@ -639,10 +636,10 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
-		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
+		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes.set(b, biomeId);
 
-		Byte* blocks = new Byte[16 * 16 * 16];
+		//Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
 		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
@@ -652,23 +649,23 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//bedrock section
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(34), 0xf00));
-			section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
+			//section.palette.emplace_back(PaletteEntry(BlockState(34), 0xf00));
+			//section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
-				blocks[j] = 1;
+				//blocks[j] = 1;
+				section.blockStates.set(j, 33);
 				skyLight[0][j >> 4][j & 15] = 0;
 				blockLight[0][j >> 4][j & 15] = 0;
 			}
 			for (int j = 256; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 34);
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
@@ -678,16 +675,15 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//underground
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(34), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(34), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 34);
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
@@ -697,16 +693,15 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//surface layer
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(34), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(34), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 34);
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = ((j >> 8) - 1) > 0 ? ((j >> 8) - 1) : 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->skyLightMask->setElement((ull)i + 1, 1);
@@ -716,23 +711,21 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//air layer
 			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 			chunk->skyLightMask->setElement((ull)i + 1, 1);
 			chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
 		}
 
 		lightSection.blockLight = new BitArray(4096, 4, (Byte*)blockLight);
 		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
-		delete[] blocks;
+		//delete[] blocks;
 	}
 	else if (rand() < 100) for (uint i = 0; i < sectionCount; i++)
 	{
@@ -741,10 +734,10 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
-		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
+		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes.set(b, biomeId);
 
-		Byte* blocks = new Byte[16 * 16 * 16];
+		//Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
 		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
@@ -754,23 +747,23 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//bedrock section
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(50), 0xf00));
-			section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
+			//section.palette.emplace_back(PaletteEntry(BlockState(50), 0xf00));
+			//section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
-				blocks[j] = 1;
+				//blocks[j] = 1;
+				section.blockStates.set(j, 33);
 				skyLight[0][j >> 4][j & 15] = 0;
 				blockLight[0][j >> 4][j & 15] = 0;
 			}
 			for (int j = 256; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 50);
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
@@ -780,16 +773,15 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//underground layer
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(50), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(50), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 50);
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->skyLightMask->setElement((ull)i + 1, 1);
@@ -799,16 +791,15 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//surface layer
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(50), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(50), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 50);
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = ((j >> 8) - 1) > 0 ? ((j >> 8) - 1) : 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->skyLightMask->setElement((ull)i + 1, 1);
@@ -818,16 +809,14 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//above surface layer
 			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = (14 - (j >> 8)) > 0 ? (14 - (j >> 8)) : 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 			chunk->skyLightMask->setElement((ull)i + 1, 1);
 			chunk->blockLightMask->setElement((ull)i + 1, 1);
 		}
@@ -835,23 +824,21 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//air
 			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 			chunk->skyLightMask->setElement((ull)i + 1, 1);
 			chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
 		}
 
 		lightSection.blockLight = new BitArray(4096, 4, (Byte*)blockLight);
 		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
-		delete[] blocks;
+		//delete[] blocks;
 	}
 	else for (uint i = 0; i < sectionCount; i++)
 	{
@@ -860,10 +847,10 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
-		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
+		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes.set(b, biomeId);
 
-		Byte* blocks = new Byte[16 * 16 * 16];
+		//Byte* blocks = new Byte[16 * 16 * 16];
 		//[y][z][x]
 		Byte skyLight[16][16][16]{},
 			blockLight[16][16][16]{};
@@ -873,23 +860,23 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//bedrock section
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(1), 0xf00));
-			section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
+			//section.palette.emplace_back(PaletteEntry(BlockState(1), 0xf00));
+			//section.palette.emplace_back(PaletteEntry(BlockState(33), 0x100));
 			for (int j = 0; j < 256; j++)
 			{
-				blocks[j] = 1;
+				//blocks[j] = 1;
+				section.blockStates.set(j, 33);
 				blockLight[0][(j >> 4) & 15][j & 15] = 0;
 				skyLight[0][(j >> 4) & 15][j & 15] = 0;
 			}
 			for (int j = 256; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 1);
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
@@ -899,16 +886,15 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//underground layer
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(1), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(1), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
+				section.blockStates.set(j, 1);
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
@@ -918,30 +904,31 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//surface layer
 			section.blockCount = 0x1000;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(1), 0xd00));
-			section.palette.emplace_back(PaletteEntry(BlockState(10), 0x200));
-			section.palette.emplace_back(PaletteEntry(BlockState(9), 0x100));
+			//section.palette.emplace_back(PaletteEntry(BlockState(1), 0xd00));
+			//section.palette.emplace_back(PaletteEntry(BlockState(10), 0x200));
+			//section.palette.emplace_back(PaletteEntry(BlockState(9), 0x100));
 			for (int y0 = 0; y0 < 13; y0++) for (int j = 0; j < 256; j++)
 			{
-				blocks[y0 * 256 + j] = 0;
+				//blocks[y0 * 256 + j] = 0;
+				section.blockStates.set(y0 << 8 | j, 1);
 				blockLight[y0][(j >> 4) & 15][j & 15] = 0;
 				skyLight[y0][(j >> 4) & 15][j & 15] = 0;
 			}
 			for (int y0 = 13; y0 < 15; y0++) for (int j = 0; j < 256; j++)
 			{
-				blocks[y0 * 256 + j] = 1;
+				//blocks[y0 * 256 + j] = 1;
+				section.blockStates.set(y0 << 8 | j, 10);
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 			}
 			for (int j = 0; j < 256; j++)
 			{
-				blocks[15 * 16 * 16 + j] = 2;
+				//blocks[15 * 16 * 16 + j] = 2;
+				section.blockStates.set(15 << 8 | j, 9);
 				blockLight[15][(j >> 4) & 15][j & 15] = 0;
 				skyLight[15][(j >> 4) & 15][j & 15] = 0;
 			}
-			section.blockStates = new BitArray(16 * 16 * 16, 4, blocks);
+			//section.blockStates = new BitArray(16 * 16 * 16, 4, blocks);
 
 			chunk->sectionMask->setElement(i, 1);
 			chunk->emptySkyLightMask->setElement((ull)i + 1, 1);
@@ -951,16 +938,14 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		{
 			//air layer
 			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
+			//section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 			for (int j = 0; j < 4096; j++)
 			{
-				blocks[j] = 0;
+				//blocks[j] = 0;
 				blockLight[j >> 8][(j >> 4) & 15][j & 15] = 0;
 				skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 			}
-			section.blockStates = new BitArray(4096, 4, blocks);
+			//section.blockStates = new BitArray(4096, 4, blocks);
 
 			chunk->skyLightMask->setElement((ull)i + 1, 1);
 			chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);
@@ -968,7 +953,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 
 		lightSection.blockLight = new BitArray(4096, 4, (Byte*)blockLight);
 		lightSection.skyLight = new BitArray(4096, 4, (Byte*)skyLight);
-		delete[] blocks;
+		//delete[] blocks;
 	}
 
 	return chunk;
@@ -1022,22 +1007,19 @@ Chunk* World::generate_void(World* world, int x, int z)
 		LightSection& lightSection = chunk->lightData[(ull)i + 1];
 
 		//biomes
-		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
-		for (int b = 0; b < 64; b++) section.biomes->setElement(b, biomeId);
+		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		for (int b = 0; b < 64; b++) section.biomes.set(b, biomeId);
 
 		//[y][z][x]
 		Byte skyLight[16][16][16]{};
 
 		//data
 		section.blockCount = 0x0;
-		section.bitsPerBlock = 4;
-		section.useGlobalPallete = false;
-		section.palette.emplace_back(PaletteEntry(BlockState(0), 0x1000));
 		for (int j = 0; j < 4096; j++)
 		{
 			skyLight[j >> 8][(j >> 4) & 15][j & 15] = 15;
 		}
-		section.blockStates = new BitArray(4096, 4);
+		//section.blockStates = new BitArray(4096, 4);
 
 		chunk->skyLightMask->setElement((ull)i + 1, 1);
 		chunk->emptyBlockLightMask->setElement((ull)i + 1, 1);

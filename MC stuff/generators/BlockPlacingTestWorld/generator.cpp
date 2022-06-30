@@ -44,26 +44,25 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 
 			//block data
 			section.blockCount = 0x80;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
 
-			section.palette.emplace_back(BlockState("minecraft:air"), 0xf80);
-			section.palette.emplace_back(BlockState("minecraft:stone"), 0x80); //128 stone blocks
+			//section.palette.emplace_back(BlockState("minecraft:air"), 0xf80);
+			//section.palette.emplace_back(BlockState("minecraft:stone"), 0x80); //128 stone blocks
 
 			//			y   z   x
-			Byte blocks[16][16][16]{ 0 };
+			//Byte blocks[16][16][16]{ 0 };
 
 				//upper half
 			for (int z = 1; z < 16; z += 4) for (int x = 0; x < 16; x++)
 			{
-				blocks[0][z][x] = 1;
-				blocks[8][z][x] = 1;
+				//blocks[0][z][x] = 1;
+				section.blockStates.set(z << 4 | x, 1);
+				//blocks[8][z][x] = 1;
 			}
 
-			section.blockStates = new BitArray(4096, section.bitsPerBlock, (Byte*)blocks);
+			//section.blockStates = new BitArray(4096, section.bitsPerBlock, (Byte*)blocks);
 
 			//biome data
-			section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+			//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
 
 			//LIGHTSECTION DATA - this section is light empty
 
@@ -117,13 +116,11 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 
 			//block data
 			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(BlockState("minecraft:air"), 0x1000);
-			section.blockStates = new BitArray(4096, section.bitsPerBlock);
+			//section.palette.emplace_back(BlockState("minecraft:air"), 0x1000);
+			//section.blockStates = new BitArray(4096, section.bitsPerBlock);
 
 			//biome data
-			section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+			//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
 
 			//LIGHTSECTION DATA - this section is light empty
 

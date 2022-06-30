@@ -1,9 +1,5 @@
-#include "block.h"
+#include "../world.h"
 #include "../types/position.h"
-
-#include "blocks/solid.h"
-#include "blocks/herb.h"
-#include "blocks/leaves/leaves.h"
 
 const BlockState* const BlockState::globalPalette[] =
 {
@@ -268,4 +264,23 @@ void BlockEntity::write(char*& buffer)
 	y.write(buffer);
 	type.write(buffer);
 	tags->write(buffer);
+}
+
+bool SolidBlock::placeSolid(World* wld, int x, int y, int z, float curX, float curY, float curZ, BlockFace face, const BlockState& currentBlock, int base_id)
+{
+	if (currentBlock.replaceable())
+	{
+		wld->setBlock(x, y, z, base_id);
+		return true;
+	}
+	return false;
+}
+bool SnowyBlock::placeSnowy(World* wld, int x, int y, int z, float curX, float curY, float curZ, BlockFace face, const BlockState& currentBlock, int base_id)
+{
+	if (currentBlock.replaceable())
+	{
+		wld->setBlock(x, y, z, base_id + 1 /*+1 = snowy: false*/);
+		return true;
+	}
+	return false;
 }

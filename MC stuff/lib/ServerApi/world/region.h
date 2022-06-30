@@ -2,8 +2,6 @@
 #include "chunk.h"
 #include <fstream>
 
-class World;
-
 class Region
 {
 	Chunk* chunks[32][32] = { 0 };

@@ -1,6 +1,6 @@
 #include "palettedContainer.h"
 #include "utils.h"
-#include "../world/block.h"
+#include "../world.h"
 
 struct BasicPaletteEntry
 {
@@ -36,7 +36,8 @@ public:
 		values(nullptr)
 	{
 		palette.emplace_back(single_value, size);
-	};
+	}
+
 	~PalettedContainer() { if (values) delete values; }
 
 	bool set(int index, int value)
@@ -92,7 +93,7 @@ public:
 					}
 
 					Byte newBitsPerEntry = bitCount(newPaletteSize - 1);
-					if (newBitsPerEntry != currentBitsPerEntry && newBitsPerEntry <= minBitsPerEntry)
+					if (newBitsPerEntry != currentBitsPerEntry && newBitsPerEntry >= minBitsPerEntry)
 						values->changeBitsPerEntry(newBitsPerEntry);
 
 					//erasing from the palette when bitsPerEntry did not change only introduces the overhead of decrementing all the entries that point to a palette entry that has moved due to deletion
@@ -116,12 +117,12 @@ public:
 						//go to global palette
 						values->changeBitsPerEntry(globalPaletteBitsPerEntry);
 						values->setElement(index, oldPaletteSize);
-						for (uint i = 0; i < size; i++) 
+						for (uint i = 0; i < size; i++)
 							values->setElement(i, palette[values->getElement(i)].id);
 					}
 					else
 					{
-						if (newBitsPerEntry != currentBitsPerEntry) //bits per entry are different
+						if (newBitsPerEntry != currentBitsPerEntry && newBitsPerEntry >= minBitsPerEntry) //bits per entry are different
 							values->changeBitsPerEntry(newBitsPerEntry);
 						values->setElement(index, oldPaletteSize);
 					}
@@ -184,8 +185,29 @@ public:
 		return values->getBitsPerEntry() == globalPaletteBitsPerEntry ? (int)values->getElement(index) : palette[values->getElement(index)].id;
 	}
 
-	void write(char*&) const;
-	void read(char*&);
+	void write(char*& buffer) const
+	{
+		if (values == nullptr) // single-value palette
+		{
+			*(buffer++) = 0;
+			varInt(palette[0].id).write(buffer);
+			*(buffer++) = 0;
+			return;
+		}
+		Byte bitsPerEntry = values->getBitsPerEntry();
+		*(buffer++) = bitsPerEntry;
+		if (bitsPerEntry != globalPaletteBitsPerEntry) // local palette
+		{
+			varInt(palette.size()).write(buffer);
+			for (auto& entry : palette) varInt(entry.id).write(buffer);
+		}
+		varInt(values->getCompactedSize()).write(buffer);
+		values->write(buffer);
+	}
+	void read(char*& buffer)
+	{
+		throw "WIP";
+	}
 };
 
 using blockTemplate = PalettedContainer<4, 8, bitCount(20342)>;
@@ -196,12 +218,12 @@ inline biomeTemplate* asBiome(void* p) { return (biomeTemplate*)p; }
 
 BlockStatesContainer::BlockStatesContainer() : container(new blockTemplate(16 * 16 * 16, 0)) {}
 BlockStatesContainer::~BlockStatesContainer() { delete container; }
-
 int BlockStatesContainer::get(int index) const { return asBlock(container)->get(index); }
 bool BlockStatesContainer::set(int index, int value) { return asBlock(container)->set(index, value); }
+void BlockStatesContainer::write(char*& buffer) const { asBlock(container)->write(buffer); }
 
 BiomesContainer::BiomesContainer() : container(new biomeTemplate(4 * 4 * 4, 0)) {}
 BiomesContainer::~BiomesContainer() { delete container; }
-
 int BiomesContainer::get(int index) const { return asBiome(container)->get(index); }
 bool BiomesContainer::set(int index, int value) { return asBiome(container)->set(index, value); }
+void BiomesContainer::write(char*& buffer) const { asBiome(container)->write(buffer); }

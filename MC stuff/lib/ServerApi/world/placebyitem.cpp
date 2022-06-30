@@ -2,7 +2,7 @@
 #include "../types/item.h"
 #include "../player/message.h"
 
-enum class slabType : Byte
+/*enum class slabType : Byte
 {
 	bottom,
 	top,
@@ -2646,7 +2646,7 @@ bool canSupportDoor(Block id, const BlockState& state)
 		case Block::minecraft_warped_trapdoor:
 			if (state.getState("half") == "top" && state.getState("open") == "false") return true;
 			return false;*/
-	}
+	/*}
 	return false;
 }
 std::string hingeToString(doorHinge h)
@@ -3038,31 +3038,6 @@ std::string getStairShape(World* wld, blockFacing refStairFacing, char half, int
 	return "straight";
 }
 
-void modifyXYZbyFace(const playerDigging::face& face, int& destX, int& destY, int& destZ)
-{
-	switch (face)
-	{
-	case playerDigging::top:
-		destY++;
-		break;
-	case playerDigging::bottom:
-		destY--;
-		break;
-	case playerDigging::east:
-		destX++;
-		break;
-	case playerDigging::west:
-		destX--;
-		break;
-	case playerDigging::south:
-		destZ++;
-		break;
-	case playerDigging::north:
-		destZ--;
-		break;
-	}
-}
-
 //is this block waterloggable?
 bool waterloggable(Block id, const BlockState& state)
 {
@@ -3388,21 +3363,2282 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 		return true;
 	}
 	return false;
+}*/
+inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, float curZ, BlockFace face, const BlockState& currentBlock, Item itemId)
+{
+	switch (itemId)
+	{
+	case Item::minecraft_air:
+		return false;
+	case Item::minecraft_stone:
+		return Stone::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_granite:
+		return Granite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_polished_granite:
+		return Polished_Granite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_diorite:
+		return Diorite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_polished_diorite:
+		return Polished_Diorite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_andesite:
+		return Andesite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_polished_andesite:
+		return Polished_Andesite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_deepslate:
+		break;
+	case Item::minecraft_cobbled_deepslate:
+		break;
+	case Item::minecraft_polished_deepslate:
+		break;
+	case Item::minecraft_calcite:
+		break;
+	case Item::minecraft_tuff:
+		break;
+	case Item::minecraft_dripstone_block:
+		break;
+	case Item::minecraft_grass_block:
+		return Grass_Block::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_dirt:
+		return Dirt::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_coarse_dirt:
+		return Coarse_Dirt::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_podzol:
+		return Podzol::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_rooted_dirt:
+		break;
+	case Item::minecraft_crimson_nylium:
+		break;
+	case Item::minecraft_warped_nylium:
+		break;
+	case Item::minecraft_cobblestone:
+		return Cobblestone::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_oak_planks:
+		break;
+	case Item::minecraft_spruce_planks:
+		break;
+	case Item::minecraft_birch_planks:
+		break;
+	case Item::minecraft_jungle_planks:
+		break;
+	case Item::minecraft_acacia_planks:
+		break;
+	case Item::minecraft_dark_oak_planks:
+		break;
+	case Item::minecraft_crimson_planks:
+		break;
+	case Item::minecraft_warped_planks:
+		break;
+	case Item::minecraft_oak_sapling:
+		break;
+	case Item::minecraft_spruce_sapling:
+		break;
+	case Item::minecraft_birch_sapling:
+		break;
+	case Item::minecraft_jungle_sapling:
+		break;
+	case Item::minecraft_acacia_sapling:
+		break;
+	case Item::minecraft_dark_oak_sapling:
+		break;
+	case Item::minecraft_bedrock:
+		break;
+	case Item::minecraft_sand:
+		break;
+	case Item::minecraft_red_sand:
+		break;
+	case Item::minecraft_gravel:
+		break;
+	case Item::minecraft_coal_ore:
+		break;
+	case Item::minecraft_deepslate_coal_ore:
+		break;
+	case Item::minecraft_iron_ore:
+		break;
+	case Item::minecraft_deepslate_iron_ore:
+		break;
+	case Item::minecraft_copper_ore:
+		break;
+	case Item::minecraft_deepslate_copper_ore:
+		break;
+	case Item::minecraft_gold_ore:
+		break;
+	case Item::minecraft_deepslate_gold_ore:
+		break;
+	case Item::minecraft_redstone_ore:
+		break;
+	case Item::minecraft_deepslate_redstone_ore:
+		break;
+	case Item::minecraft_emerald_ore:
+		break;
+	case Item::minecraft_deepslate_emerald_ore:
+		break;
+	case Item::minecraft_lapis_ore:
+		break;
+	case Item::minecraft_deepslate_lapis_ore:
+		break;
+	case Item::minecraft_diamond_ore:
+		break;
+	case Item::minecraft_deepslate_diamond_ore:
+		break;
+	case Item::minecraft_nether_gold_ore:
+		break;
+	case Item::minecraft_nether_quartz_ore:
+		break;
+	case Item::minecraft_ancient_debris:
+		break;
+	case Item::minecraft_coal_block:
+		break;
+	case Item::minecraft_raw_iron_block:
+		break;
+	case Item::minecraft_raw_copper_block:
+		break;
+	case Item::minecraft_raw_gold_block:
+		break;
+	case Item::minecraft_amethyst_block:
+		break;
+	case Item::minecraft_budding_amethyst:
+		break;
+	case Item::minecraft_iron_block:
+		break;
+	case Item::minecraft_copper_block:
+		break;
+	case Item::minecraft_gold_block:
+		break;
+	case Item::minecraft_diamond_block:
+		break;
+	case Item::minecraft_netherite_block:
+		break;
+	case Item::minecraft_exposed_copper:
+		break;
+	case Item::minecraft_weathered_copper:
+		break;
+	case Item::minecraft_oxidized_copper:
+		break;
+	case Item::minecraft_cut_copper:
+		break;
+	case Item::minecraft_exposed_cut_copper:
+		break;
+	case Item::minecraft_weathered_cut_copper:
+		break;
+	case Item::minecraft_oxidized_cut_copper:
+		break;
+	case Item::minecraft_cut_copper_stairs:
+		break;
+	case Item::minecraft_exposed_cut_copper_stairs:
+		break;
+	case Item::minecraft_weathered_cut_copper_stairs:
+		break;
+	case Item::minecraft_oxidized_cut_copper_stairs:
+		break;
+	case Item::minecraft_cut_copper_slab:
+		break;
+	case Item::minecraft_exposed_cut_copper_slab:
+		break;
+	case Item::minecraft_weathered_cut_copper_slab:
+		break;
+	case Item::minecraft_oxidized_cut_copper_slab:
+		break;
+	case Item::minecraft_waxed_copper_block:
+		break;
+	case Item::minecraft_waxed_exposed_copper:
+		break;
+	case Item::minecraft_waxed_weathered_copper:
+		break;
+	case Item::minecraft_waxed_oxidized_copper:
+		break;
+	case Item::minecraft_waxed_cut_copper:
+		break;
+	case Item::minecraft_waxed_exposed_cut_copper:
+		break;
+	case Item::minecraft_waxed_weathered_cut_copper:
+		break;
+	case Item::minecraft_waxed_oxidized_cut_copper:
+		break;
+	case Item::minecraft_waxed_cut_copper_stairs:
+		break;
+	case Item::minecraft_waxed_exposed_cut_copper_stairs:
+		break;
+	case Item::minecraft_waxed_weathered_cut_copper_stairs:
+		break;
+	case Item::minecraft_waxed_oxidized_cut_copper_stairs:
+		break;
+	case Item::minecraft_waxed_cut_copper_slab:
+		break;
+	case Item::minecraft_waxed_exposed_cut_copper_slab:
+		break;
+	case Item::minecraft_waxed_weathered_cut_copper_slab:
+		break;
+	case Item::minecraft_waxed_oxidized_cut_copper_slab:
+		break;
+	case Item::minecraft_oak_log:
+		break;
+	case Item::minecraft_spruce_log:
+		break;
+	case Item::minecraft_birch_log:
+		break;
+	case Item::minecraft_jungle_log:
+		break;
+	case Item::minecraft_acacia_log:
+		break;
+	case Item::minecraft_dark_oak_log:
+		break;
+	case Item::minecraft_crimson_stem:
+		break;
+	case Item::minecraft_warped_stem:
+		break;
+	case Item::minecraft_stripped_oak_log:
+		break;
+	case Item::minecraft_stripped_spruce_log:
+		break;
+	case Item::minecraft_stripped_birch_log:
+		break;
+	case Item::minecraft_stripped_jungle_log:
+		break;
+	case Item::minecraft_stripped_acacia_log:
+		break;
+	case Item::minecraft_stripped_dark_oak_log:
+		break;
+	case Item::minecraft_stripped_crimson_stem:
+		break;
+	case Item::minecraft_stripped_warped_stem:
+		break;
+	case Item::minecraft_stripped_oak_wood:
+		break;
+	case Item::minecraft_stripped_spruce_wood:
+		break;
+	case Item::minecraft_stripped_birch_wood:
+		break;
+	case Item::minecraft_stripped_jungle_wood:
+		break;
+	case Item::minecraft_stripped_acacia_wood:
+		break;
+	case Item::minecraft_stripped_dark_oak_wood:
+		break;
+	case Item::minecraft_stripped_crimson_hyphae:
+		break;
+	case Item::minecraft_stripped_warped_hyphae:
+		break;
+	case Item::minecraft_oak_wood:
+		break;
+	case Item::minecraft_spruce_wood:
+		break;
+	case Item::minecraft_birch_wood:
+		break;
+	case Item::minecraft_jungle_wood:
+		break;
+	case Item::minecraft_acacia_wood:
+		break;
+	case Item::minecraft_dark_oak_wood:
+		break;
+	case Item::minecraft_crimson_hyphae:
+		break;
+	case Item::minecraft_warped_hyphae:
+		break;
+	case Item::minecraft_oak_leaves:
+		return Oak_Leaves::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_spruce_leaves:
+		return Spruce_Leaves::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_birch_leaves:
+		return Birch_Leaves::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+	case Item::minecraft_jungle_leaves:
+		break;
+	case Item::minecraft_acacia_leaves:
+		break;
+	case Item::minecraft_dark_oak_leaves:
+		break;
+	case Item::minecraft_azalea_leaves:
+		break;
+	case Item::minecraft_flowering_azalea_leaves:
+		break;
+	case Item::minecraft_sponge:
+		break;
+	case Item::minecraft_wet_sponge:
+		break;
+	case Item::minecraft_glass:
+		break;
+	case Item::minecraft_tinted_glass:
+		break;
+	case Item::minecraft_lapis_block:
+		break;
+	case Item::minecraft_sandstone:
+		break;
+	case Item::minecraft_chiseled_sandstone:
+		break;
+	case Item::minecraft_cut_sandstone:
+		break;
+	case Item::minecraft_cobweb:
+		break;
+	case Item::minecraft_grass:
+		break;
+	case Item::minecraft_fern:
+		break;
+	case Item::minecraft_azalea:
+		break;
+	case Item::minecraft_flowering_azalea:
+		break;
+	case Item::minecraft_dead_bush:
+		break;
+	case Item::minecraft_seagrass:
+		break;
+	case Item::minecraft_sea_pickle:
+		break;
+	case Item::minecraft_white_wool:
+		break;
+	case Item::minecraft_orange_wool:
+		break;
+	case Item::minecraft_magenta_wool:
+		break;
+	case Item::minecraft_light_blue_wool:
+		break;
+	case Item::minecraft_yellow_wool:
+		break;
+	case Item::minecraft_lime_wool:
+		break;
+	case Item::minecraft_pink_wool:
+		break;
+	case Item::minecraft_gray_wool:
+		break;
+	case Item::minecraft_light_gray_wool:
+		break;
+	case Item::minecraft_cyan_wool:
+		break;
+	case Item::minecraft_purple_wool:
+		break;
+	case Item::minecraft_blue_wool:
+		break;
+	case Item::minecraft_brown_wool:
+		break;
+	case Item::minecraft_green_wool:
+		break;
+	case Item::minecraft_red_wool:
+		break;
+	case Item::minecraft_black_wool:
+		break;
+	case Item::minecraft_dandelion:
+		break;
+	case Item::minecraft_poppy:
+		break;
+	case Item::minecraft_blue_orchid:
+		break;
+	case Item::minecraft_allium:
+		break;
+	case Item::minecraft_azure_bluet:
+		break;
+	case Item::minecraft_red_tulip:
+		break;
+	case Item::minecraft_orange_tulip:
+		break;
+	case Item::minecraft_white_tulip:
+		break;
+	case Item::minecraft_pink_tulip:
+		break;
+	case Item::minecraft_oxeye_daisy:
+		break;
+	case Item::minecraft_cornflower:
+		break;
+	case Item::minecraft_lily_of_the_valley:
+		break;
+	case Item::minecraft_wither_rose:
+		break;
+	case Item::minecraft_spore_blossom:
+		break;
+	case Item::minecraft_brown_mushroom:
+		break;
+	case Item::minecraft_red_mushroom:
+		break;
+	case Item::minecraft_crimson_fungus:
+		break;
+	case Item::minecraft_warped_fungus:
+		break;
+	case Item::minecraft_crimson_roots:
+		break;
+	case Item::minecraft_warped_roots:
+		break;
+	case Item::minecraft_nether_sprouts:
+		break;
+	case Item::minecraft_weeping_vines:
+		break;
+	case Item::minecraft_twisting_vines:
+		break;
+	case Item::minecraft_sugar_cane:
+		break;
+	case Item::minecraft_kelp:
+		break;
+	case Item::minecraft_moss_carpet:
+		break;
+	case Item::minecraft_moss_block:
+		break;
+	case Item::minecraft_hanging_roots:
+		break;
+	case Item::minecraft_big_dripleaf:
+		break;
+	case Item::minecraft_small_dripleaf:
+		break;
+	case Item::minecraft_bamboo:
+		break;
+	case Item::minecraft_oak_slab:
+		break;
+	case Item::minecraft_spruce_slab:
+		break;
+	case Item::minecraft_birch_slab:
+		break;
+	case Item::minecraft_jungle_slab:
+		break;
+	case Item::minecraft_acacia_slab:
+		break;
+	case Item::minecraft_dark_oak_slab:
+		break;
+	case Item::minecraft_crimson_slab:
+		break;
+	case Item::minecraft_warped_slab:
+		break;
+	case Item::minecraft_stone_slab:
+		break;
+	case Item::minecraft_smooth_stone_slab:
+		break;
+	case Item::minecraft_sandstone_slab:
+		break;
+	case Item::minecraft_cut_sandstone_slab:
+		break;
+	case Item::minecraft_petrified_oak_slab:
+		break;
+	case Item::minecraft_cobblestone_slab:
+		break;
+	case Item::minecraft_brick_slab:
+		break;
+	case Item::minecraft_stone_brick_slab:
+		break;
+	case Item::minecraft_nether_brick_slab:
+		break;
+	case Item::minecraft_quartz_slab:
+		break;
+	case Item::minecraft_red_sandstone_slab:
+		break;
+	case Item::minecraft_cut_red_sandstone_slab:
+		break;
+	case Item::minecraft_purpur_slab:
+		break;
+	case Item::minecraft_prismarine_slab:
+		break;
+	case Item::minecraft_prismarine_brick_slab:
+		break;
+	case Item::minecraft_dark_prismarine_slab:
+		break;
+	case Item::minecraft_smooth_quartz:
+		break;
+	case Item::minecraft_smooth_red_sandstone:
+		break;
+	case Item::minecraft_smooth_sandstone:
+		break;
+	case Item::minecraft_smooth_stone:
+		break;
+	case Item::minecraft_bricks:
+		break;
+	case Item::minecraft_bookshelf:
+		break;
+	case Item::minecraft_mossy_cobblestone:
+		break;
+	case Item::minecraft_obsidian:
+		break;
+	case Item::minecraft_torch:
+		break;
+	case Item::minecraft_end_rod:
+		break;
+	case Item::minecraft_chorus_plant:
+		break;
+	case Item::minecraft_chorus_flower:
+		break;
+	case Item::minecraft_purpur_block:
+		break;
+	case Item::minecraft_purpur_pillar:
+		break;
+	case Item::minecraft_purpur_stairs:
+		break;
+	case Item::minecraft_spawner:
+		break;
+	case Item::minecraft_oak_stairs:
+		break;
+	case Item::minecraft_chest:
+		break;
+	case Item::minecraft_crafting_table:
+		break;
+	case Item::minecraft_farmland:
+		break;
+	case Item::minecraft_furnace:
+		break;
+	case Item::minecraft_ladder:
+		break;
+	case Item::minecraft_cobblestone_stairs:
+		break;
+	case Item::minecraft_snow:
+		break;
+	case Item::minecraft_ice:
+		break;
+	case Item::minecraft_snow_block:
+		break;
+	case Item::minecraft_cactus:
+		break;
+	case Item::minecraft_clay:
+		break;
+	case Item::minecraft_jukebox:
+		break;
+	case Item::minecraft_oak_fence:
+		break;
+	case Item::minecraft_spruce_fence:
+		break;
+	case Item::minecraft_birch_fence:
+		break;
+	case Item::minecraft_jungle_fence:
+		break;
+	case Item::minecraft_acacia_fence:
+		break;
+	case Item::minecraft_dark_oak_fence:
+		break;
+	case Item::minecraft_crimson_fence:
+		break;
+	case Item::minecraft_warped_fence:
+		break;
+	case Item::minecraft_pumpkin:
+		break;
+	case Item::minecraft_carved_pumpkin:
+		break;
+	case Item::minecraft_jack_o_lantern:
+		break;
+	case Item::minecraft_netherrack:
+		break;
+	case Item::minecraft_soul_sand:
+		break;
+	case Item::minecraft_soul_soil:
+		break;
+	case Item::minecraft_basalt:
+		break;
+	case Item::minecraft_polished_basalt:
+		break;
+	case Item::minecraft_smooth_basalt:
+		break;
+	case Item::minecraft_soul_torch:
+		break;
+	case Item::minecraft_glowstone:
+		break;
+	case Item::minecraft_infested_stone:
+		break;
+	case Item::minecraft_infested_cobblestone:
+		break;
+	case Item::minecraft_infested_stone_bricks:
+		break;
+	case Item::minecraft_infested_mossy_stone_bricks:
+		break;
+	case Item::minecraft_infested_cracked_stone_bricks:
+		break;
+	case Item::minecraft_infested_chiseled_stone_bricks:
+		break;
+	case Item::minecraft_infested_deepslate:
+		break;
+	case Item::minecraft_stone_bricks:
+		break;
+	case Item::minecraft_mossy_stone_bricks:
+		break;
+	case Item::minecraft_cracked_stone_bricks:
+		break;
+	case Item::minecraft_chiseled_stone_bricks:
+		break;
+	case Item::minecraft_deepslate_bricks:
+		break;
+	case Item::minecraft_cracked_deepslate_bricks:
+		break;
+	case Item::minecraft_deepslate_tiles:
+		break;
+	case Item::minecraft_cracked_deepslate_tiles:
+		break;
+	case Item::minecraft_chiseled_deepslate:
+		break;
+	case Item::minecraft_brown_mushroom_block:
+		break;
+	case Item::minecraft_red_mushroom_block:
+		break;
+	case Item::minecraft_mushroom_stem:
+		break;
+	case Item::minecraft_iron_bars:
+		break;
+	case Item::minecraft_chain:
+		break;
+	case Item::minecraft_glass_pane:
+		break;
+	case Item::minecraft_melon:
+		break;
+	case Item::minecraft_vine:
+		break;
+	case Item::minecraft_glow_lichen:
+		break;
+	case Item::minecraft_brick_stairs:
+		break;
+	case Item::minecraft_stone_brick_stairs:
+		break;
+	case Item::minecraft_mycelium:
+		break;
+	case Item::minecraft_lily_pad:
+		break;
+	case Item::minecraft_nether_bricks:
+		break;
+	case Item::minecraft_cracked_nether_bricks:
+		break;
+	case Item::minecraft_chiseled_nether_bricks:
+		break;
+	case Item::minecraft_nether_brick_fence:
+		break;
+	case Item::minecraft_nether_brick_stairs:
+		break;
+	case Item::minecraft_enchanting_table:
+		break;
+	case Item::minecraft_end_portal_frame:
+		break;
+	case Item::minecraft_end_stone:
+		break;
+	case Item::minecraft_end_stone_bricks:
+		break;
+	case Item::minecraft_dragon_egg:
+		break;
+	case Item::minecraft_sandstone_stairs:
+		break;
+	case Item::minecraft_ender_chest:
+		break;
+	case Item::minecraft_emerald_block:
+		break;
+	case Item::minecraft_spruce_stairs:
+		break;
+	case Item::minecraft_birch_stairs:
+		break;
+	case Item::minecraft_jungle_stairs:
+		break;
+	case Item::minecraft_crimson_stairs:
+		break;
+	case Item::minecraft_warped_stairs:
+		break;
+	case Item::minecraft_command_block:
+		break;
+	case Item::minecraft_beacon:
+		break;
+	case Item::minecraft_cobblestone_wall:
+		break;
+	case Item::minecraft_mossy_cobblestone_wall:
+		break;
+	case Item::minecraft_brick_wall:
+		break;
+	case Item::minecraft_prismarine_wall:
+		break;
+	case Item::minecraft_red_sandstone_wall:
+		break;
+	case Item::minecraft_mossy_stone_brick_wall:
+		break;
+	case Item::minecraft_granite_wall:
+		break;
+	case Item::minecraft_stone_brick_wall:
+		break;
+	case Item::minecraft_nether_brick_wall:
+		break;
+	case Item::minecraft_andesite_wall:
+		break;
+	case Item::minecraft_red_nether_brick_wall:
+		break;
+	case Item::minecraft_sandstone_wall:
+		break;
+	case Item::minecraft_end_stone_brick_wall:
+		break;
+	case Item::minecraft_diorite_wall:
+		break;
+	case Item::minecraft_blackstone_wall:
+		break;
+	case Item::minecraft_polished_blackstone_wall:
+		break;
+	case Item::minecraft_polished_blackstone_brick_wall:
+		break;
+	case Item::minecraft_cobbled_deepslate_wall:
+		break;
+	case Item::minecraft_polished_deepslate_wall:
+		break;
+	case Item::minecraft_deepslate_brick_wall:
+		break;
+	case Item::minecraft_deepslate_tile_wall:
+		break;
+	case Item::minecraft_anvil:
+		break;
+	case Item::minecraft_chipped_anvil:
+		break;
+	case Item::minecraft_damaged_anvil:
+		break;
+	case Item::minecraft_chiseled_quartz_block:
+		break;
+	case Item::minecraft_quartz_block:
+		break;
+	case Item::minecraft_quartz_bricks:
+		break;
+	case Item::minecraft_quartz_pillar:
+		break;
+	case Item::minecraft_quartz_stairs:
+		break;
+	case Item::minecraft_white_terracotta:
+		break;
+	case Item::minecraft_orange_terracotta:
+		break;
+	case Item::minecraft_magenta_terracotta:
+		break;
+	case Item::minecraft_light_blue_terracotta:
+		break;
+	case Item::minecraft_yellow_terracotta:
+		break;
+	case Item::minecraft_lime_terracotta:
+		break;
+	case Item::minecraft_pink_terracotta:
+		break;
+	case Item::minecraft_gray_terracotta:
+		break;
+	case Item::minecraft_light_gray_terracotta:
+		break;
+	case Item::minecraft_cyan_terracotta:
+		break;
+	case Item::minecraft_purple_terracotta:
+		break;
+	case Item::minecraft_blue_terracotta:
+		break;
+	case Item::minecraft_brown_terracotta:
+		break;
+	case Item::minecraft_green_terracotta:
+		break;
+	case Item::minecraft_red_terracotta:
+		break;
+	case Item::minecraft_black_terracotta:
+		break;
+	case Item::minecraft_barrier:
+		break;
+	case Item::minecraft_light:
+		break;
+	case Item::minecraft_hay_block:
+		break;
+	case Item::minecraft_white_carpet:
+		break;
+	case Item::minecraft_orange_carpet:
+		break;
+	case Item::minecraft_magenta_carpet:
+		break;
+	case Item::minecraft_light_blue_carpet:
+		break;
+	case Item::minecraft_yellow_carpet:
+		break;
+	case Item::minecraft_lime_carpet:
+		break;
+	case Item::minecraft_pink_carpet:
+		break;
+	case Item::minecraft_gray_carpet:
+		break;
+	case Item::minecraft_light_gray_carpet:
+		break;
+	case Item::minecraft_cyan_carpet:
+		break;
+	case Item::minecraft_purple_carpet:
+		break;
+	case Item::minecraft_blue_carpet:
+		break;
+	case Item::minecraft_brown_carpet:
+		break;
+	case Item::minecraft_green_carpet:
+		break;
+	case Item::minecraft_red_carpet:
+		break;
+	case Item::minecraft_black_carpet:
+		break;
+	case Item::minecraft_terracotta:
+		break;
+	case Item::minecraft_packed_ice:
+		break;
+	case Item::minecraft_acacia_stairs:
+		break;
+	case Item::minecraft_dark_oak_stairs:
+		break;
+	case Item::minecraft_dirt_path:
+		break;
+	case Item::minecraft_sunflower:
+		break;
+	case Item::minecraft_lilac:
+		break;
+	case Item::minecraft_rose_bush:
+		break;
+	case Item::minecraft_peony:
+		break;
+	case Item::minecraft_tall_grass:
+		break;
+	case Item::minecraft_large_fern:
+		break;
+	case Item::minecraft_white_stained_glass:
+		break;
+	case Item::minecraft_orange_stained_glass:
+		break;
+	case Item::minecraft_magenta_stained_glass:
+		break;
+	case Item::minecraft_light_blue_stained_glass:
+		break;
+	case Item::minecraft_yellow_stained_glass:
+		break;
+	case Item::minecraft_lime_stained_glass:
+		break;
+	case Item::minecraft_pink_stained_glass:
+		break;
+	case Item::minecraft_gray_stained_glass:
+		break;
+	case Item::minecraft_light_gray_stained_glass:
+		break;
+	case Item::minecraft_cyan_stained_glass:
+		break;
+	case Item::minecraft_purple_stained_glass:
+		break;
+	case Item::minecraft_blue_stained_glass:
+		break;
+	case Item::minecraft_brown_stained_glass:
+		break;
+	case Item::minecraft_green_stained_glass:
+		break;
+	case Item::minecraft_red_stained_glass:
+		break;
+	case Item::minecraft_black_stained_glass:
+		break;
+	case Item::minecraft_white_stained_glass_pane:
+		break;
+	case Item::minecraft_orange_stained_glass_pane:
+		break;
+	case Item::minecraft_magenta_stained_glass_pane:
+		break;
+	case Item::minecraft_light_blue_stained_glass_pane:
+		break;
+	case Item::minecraft_yellow_stained_glass_pane:
+		break;
+	case Item::minecraft_lime_stained_glass_pane:
+		break;
+	case Item::minecraft_pink_stained_glass_pane:
+		break;
+	case Item::minecraft_gray_stained_glass_pane:
+		break;
+	case Item::minecraft_light_gray_stained_glass_pane:
+		break;
+	case Item::minecraft_cyan_stained_glass_pane:
+		break;
+	case Item::minecraft_purple_stained_glass_pane:
+		break;
+	case Item::minecraft_blue_stained_glass_pane:
+		break;
+	case Item::minecraft_brown_stained_glass_pane:
+		break;
+	case Item::minecraft_green_stained_glass_pane:
+		break;
+	case Item::minecraft_red_stained_glass_pane:
+		break;
+	case Item::minecraft_black_stained_glass_pane:
+		break;
+	case Item::minecraft_prismarine:
+		break;
+	case Item::minecraft_prismarine_bricks:
+		break;
+	case Item::minecraft_dark_prismarine:
+		break;
+	case Item::minecraft_prismarine_stairs:
+		break;
+	case Item::minecraft_prismarine_brick_stairs:
+		break;
+	case Item::minecraft_dark_prismarine_stairs:
+		break;
+	case Item::minecraft_sea_lantern:
+		break;
+	case Item::minecraft_red_sandstone:
+		break;
+	case Item::minecraft_chiseled_red_sandstone:
+		break;
+	case Item::minecraft_cut_red_sandstone:
+		break;
+	case Item::minecraft_red_sandstone_stairs:
+		break;
+	case Item::minecraft_repeating_command_block:
+		break;
+	case Item::minecraft_chain_command_block:
+		break;
+	case Item::minecraft_magma_block:
+		break;
+	case Item::minecraft_nether_wart_block:
+		break;
+	case Item::minecraft_warped_wart_block:
+		break;
+	case Item::minecraft_red_nether_bricks:
+		break;
+	case Item::minecraft_bone_block:
+		break;
+	case Item::minecraft_structure_void:
+		break;
+	case Item::minecraft_shulker_box:
+		break;
+	case Item::minecraft_white_shulker_box:
+		break;
+	case Item::minecraft_orange_shulker_box:
+		break;
+	case Item::minecraft_magenta_shulker_box:
+		break;
+	case Item::minecraft_light_blue_shulker_box:
+		break;
+	case Item::minecraft_yellow_shulker_box:
+		break;
+	case Item::minecraft_lime_shulker_box:
+		break;
+	case Item::minecraft_pink_shulker_box:
+		break;
+	case Item::minecraft_gray_shulker_box:
+		break;
+	case Item::minecraft_light_gray_shulker_box:
+		break;
+	case Item::minecraft_cyan_shulker_box:
+		break;
+	case Item::minecraft_purple_shulker_box:
+		break;
+	case Item::minecraft_blue_shulker_box:
+		break;
+	case Item::minecraft_brown_shulker_box:
+		break;
+	case Item::minecraft_green_shulker_box:
+		break;
+	case Item::minecraft_red_shulker_box:
+		break;
+	case Item::minecraft_black_shulker_box:
+		break;
+	case Item::minecraft_white_glazed_terracotta:
+		break;
+	case Item::minecraft_orange_glazed_terracotta:
+		break;
+	case Item::minecraft_magenta_glazed_terracotta:
+		break;
+	case Item::minecraft_light_blue_glazed_terracotta:
+		break;
+	case Item::minecraft_yellow_glazed_terracotta:
+		break;
+	case Item::minecraft_lime_glazed_terracotta:
+		break;
+	case Item::minecraft_pink_glazed_terracotta:
+		break;
+	case Item::minecraft_gray_glazed_terracotta:
+		break;
+	case Item::minecraft_light_gray_glazed_terracotta:
+		break;
+	case Item::minecraft_cyan_glazed_terracotta:
+		break;
+	case Item::minecraft_purple_glazed_terracotta:
+		break;
+	case Item::minecraft_blue_glazed_terracotta:
+		break;
+	case Item::minecraft_brown_glazed_terracotta:
+		break;
+	case Item::minecraft_green_glazed_terracotta:
+		break;
+	case Item::minecraft_red_glazed_terracotta:
+		break;
+	case Item::minecraft_black_glazed_terracotta:
+		break;
+	case Item::minecraft_white_concrete:
+		break;
+	case Item::minecraft_orange_concrete:
+		break;
+	case Item::minecraft_magenta_concrete:
+		break;
+	case Item::minecraft_light_blue_concrete:
+		break;
+	case Item::minecraft_yellow_concrete:
+		break;
+	case Item::minecraft_lime_concrete:
+		break;
+	case Item::minecraft_pink_concrete:
+		break;
+	case Item::minecraft_gray_concrete:
+		break;
+	case Item::minecraft_light_gray_concrete:
+		break;
+	case Item::minecraft_cyan_concrete:
+		break;
+	case Item::minecraft_purple_concrete:
+		break;
+	case Item::minecraft_blue_concrete:
+		break;
+	case Item::minecraft_brown_concrete:
+		break;
+	case Item::minecraft_green_concrete:
+		break;
+	case Item::minecraft_red_concrete:
+		break;
+	case Item::minecraft_black_concrete:
+		break;
+	case Item::minecraft_white_concrete_powder:
+		break;
+	case Item::minecraft_orange_concrete_powder:
+		break;
+	case Item::minecraft_magenta_concrete_powder:
+		break;
+	case Item::minecraft_light_blue_concrete_powder:
+		break;
+	case Item::minecraft_yellow_concrete_powder:
+		break;
+	case Item::minecraft_lime_concrete_powder:
+		break;
+	case Item::minecraft_pink_concrete_powder:
+		break;
+	case Item::minecraft_gray_concrete_powder:
+		break;
+	case Item::minecraft_light_gray_concrete_powder:
+		break;
+	case Item::minecraft_cyan_concrete_powder:
+		break;
+	case Item::minecraft_purple_concrete_powder:
+		break;
+	case Item::minecraft_blue_concrete_powder:
+		break;
+	case Item::minecraft_brown_concrete_powder:
+		break;
+	case Item::minecraft_green_concrete_powder:
+		break;
+	case Item::minecraft_red_concrete_powder:
+		break;
+	case Item::minecraft_black_concrete_powder:
+		break;
+	case Item::minecraft_turtle_egg:
+		break;
+	case Item::minecraft_dead_tube_coral_block:
+		break;
+	case Item::minecraft_dead_brain_coral_block:
+		break;
+	case Item::minecraft_dead_bubble_coral_block:
+		break;
+	case Item::minecraft_dead_fire_coral_block:
+		break;
+	case Item::minecraft_dead_horn_coral_block:
+		break;
+	case Item::minecraft_tube_coral_block:
+		break;
+	case Item::minecraft_brain_coral_block:
+		break;
+	case Item::minecraft_bubble_coral_block:
+		break;
+	case Item::minecraft_fire_coral_block:
+		break;
+	case Item::minecraft_horn_coral_block:
+		break;
+	case Item::minecraft_tube_coral:
+		break;
+	case Item::minecraft_brain_coral:
+		break;
+	case Item::minecraft_bubble_coral:
+		break;
+	case Item::minecraft_fire_coral:
+		break;
+	case Item::minecraft_horn_coral:
+		break;
+	case Item::minecraft_dead_brain_coral:
+		break;
+	case Item::minecraft_dead_bubble_coral:
+		break;
+	case Item::minecraft_dead_fire_coral:
+		break;
+	case Item::minecraft_dead_horn_coral:
+		break;
+	case Item::minecraft_dead_tube_coral:
+		break;
+	case Item::minecraft_tube_coral_fan:
+		break;
+	case Item::minecraft_brain_coral_fan:
+		break;
+	case Item::minecraft_bubble_coral_fan:
+		break;
+	case Item::minecraft_fire_coral_fan:
+		break;
+	case Item::minecraft_horn_coral_fan:
+		break;
+	case Item::minecraft_dead_tube_coral_fan:
+		break;
+	case Item::minecraft_dead_brain_coral_fan:
+		break;
+	case Item::minecraft_dead_bubble_coral_fan:
+		break;
+	case Item::minecraft_dead_fire_coral_fan:
+		break;
+	case Item::minecraft_dead_horn_coral_fan:
+		break;
+	case Item::minecraft_blue_ice:
+		break;
+	case Item::minecraft_conduit:
+		break;
+	case Item::minecraft_polished_granite_stairs:
+		break;
+	case Item::minecraft_smooth_red_sandstone_stairs:
+		break;
+	case Item::minecraft_mossy_stone_brick_stairs:
+		break;
+	case Item::minecraft_polished_diorite_stairs:
+		break;
+	case Item::minecraft_mossy_cobblestone_stairs:
+		break;
+	case Item::minecraft_end_stone_brick_stairs:
+		break;
+	case Item::minecraft_stone_stairs:
+		break;
+	case Item::minecraft_smooth_sandstone_stairs:
+		break;
+	case Item::minecraft_smooth_quartz_stairs:
+		break;
+	case Item::minecraft_granite_stairs:
+		break;
+	case Item::minecraft_andesite_stairs:
+		break;
+	case Item::minecraft_red_nether_brick_stairs:
+		break;
+	case Item::minecraft_polished_andesite_stairs:
+		break;
+	case Item::minecraft_diorite_stairs:
+		break;
+	case Item::minecraft_cobbled_deepslate_stairs:
+		break;
+	case Item::minecraft_polished_deepslate_stairs:
+		break;
+	case Item::minecraft_deepslate_brick_stairs:
+		break;
+	case Item::minecraft_deepslate_tile_stairs:
+		break;
+	case Item::minecraft_polished_granite_slab:
+		break;
+	case Item::minecraft_smooth_red_sandstone_slab:
+		break;
+	case Item::minecraft_mossy_stone_brick_slab:
+		break;
+	case Item::minecraft_polished_diorite_slab:
+		break;
+	case Item::minecraft_mossy_cobblestone_slab:
+		break;
+	case Item::minecraft_end_stone_brick_slab:
+		break;
+	case Item::minecraft_smooth_sandstone_slab:
+		break;
+	case Item::minecraft_smooth_quartz_slab:
+		break;
+	case Item::minecraft_granite_slab:
+		break;
+	case Item::minecraft_andesite_slab:
+		break;
+	case Item::minecraft_red_nether_brick_slab:
+		break;
+	case Item::minecraft_polished_andesite_slab:
+		break;
+	case Item::minecraft_diorite_slab:
+		break;
+	case Item::minecraft_cobbled_deepslate_slab:
+		break;
+	case Item::minecraft_polished_deepslate_slab:
+		break;
+	case Item::minecraft_deepslate_brick_slab:
+		break;
+	case Item::minecraft_deepslate_tile_slab:
+		break;
+	case Item::minecraft_scaffolding:
+		break;
+	case Item::minecraft_redstone:
+		break;
+	case Item::minecraft_redstone_torch:
+		break;
+	case Item::minecraft_redstone_block:
+		break;
+	case Item::minecraft_repeater:
+		break;
+	case Item::minecraft_comparator:
+		break;
+	case Item::minecraft_piston:
+		break;
+	case Item::minecraft_sticky_piston:
+		break;
+	case Item::minecraft_slime_block:
+		break;
+	case Item::minecraft_honey_block:
+		break;
+	case Item::minecraft_observer:
+		break;
+	case Item::minecraft_hopper:
+		break;
+	case Item::minecraft_dispenser:
+		break;
+	case Item::minecraft_dropper:
+		break;
+	case Item::minecraft_lectern:
+		break;
+	case Item::minecraft_target:
+		break;
+	case Item::minecraft_lever:
+		break;
+	case Item::minecraft_lightning_rod:
+		break;
+	case Item::minecraft_daylight_detector:
+		break;
+	case Item::minecraft_sculk_sensor:
+		break;
+	case Item::minecraft_tripwire_hook:
+		break;
+	case Item::minecraft_trapped_chest:
+		break;
+	case Item::minecraft_tnt:
+		break;
+	case Item::minecraft_redstone_lamp:
+		break;
+	case Item::minecraft_note_block:
+		break;
+	case Item::minecraft_stone_button:
+		break;
+	case Item::minecraft_polished_blackstone_button:
+		break;
+	case Item::minecraft_oak_button:
+		break;
+	case Item::minecraft_spruce_button:
+		break;
+	case Item::minecraft_birch_button:
+		break;
+	case Item::minecraft_jungle_button:
+		break;
+	case Item::minecraft_acacia_button:
+		break;
+	case Item::minecraft_dark_oak_button:
+		break;
+	case Item::minecraft_crimson_button:
+		break;
+	case Item::minecraft_warped_button:
+		break;
+	case Item::minecraft_stone_pressure_plate:
+		break;
+	case Item::minecraft_polished_blackstone_pressure_plate:
+		break;
+	case Item::minecraft_light_weighted_pressure_plate:
+		break;
+	case Item::minecraft_heavy_weighted_pressure_plate:
+		break;
+	case Item::minecraft_oak_pressure_plate:
+		break;
+	case Item::minecraft_spruce_pressure_plate:
+		break;
+	case Item::minecraft_birch_pressure_plate:
+		break;
+	case Item::minecraft_jungle_pressure_plate:
+		break;
+	case Item::minecraft_acacia_pressure_plate:
+		break;
+	case Item::minecraft_dark_oak_pressure_plate:
+		break;
+	case Item::minecraft_crimson_pressure_plate:
+		break;
+	case Item::minecraft_warped_pressure_plate:
+		break;
+	case Item::minecraft_iron_door:
+		break;
+	case Item::minecraft_oak_door:
+		break;
+	case Item::minecraft_spruce_door:
+		break;
+	case Item::minecraft_birch_door:
+		break;
+	case Item::minecraft_jungle_door:
+		break;
+	case Item::minecraft_acacia_door:
+		break;
+	case Item::minecraft_dark_oak_door:
+		break;
+	case Item::minecraft_crimson_door:
+		break;
+	case Item::minecraft_warped_door:
+		break;
+	case Item::minecraft_iron_trapdoor:
+		break;
+	case Item::minecraft_oak_trapdoor:
+		break;
+	case Item::minecraft_spruce_trapdoor:
+		break;
+	case Item::minecraft_birch_trapdoor:
+		break;
+	case Item::minecraft_jungle_trapdoor:
+		break;
+	case Item::minecraft_acacia_trapdoor:
+		break;
+	case Item::minecraft_dark_oak_trapdoor:
+		break;
+	case Item::minecraft_crimson_trapdoor:
+		break;
+	case Item::minecraft_warped_trapdoor:
+		break;
+	case Item::minecraft_oak_fence_gate:
+		break;
+	case Item::minecraft_spruce_fence_gate:
+		break;
+	case Item::minecraft_birch_fence_gate:
+		break;
+	case Item::minecraft_jungle_fence_gate:
+		break;
+	case Item::minecraft_acacia_fence_gate:
+		break;
+	case Item::minecraft_dark_oak_fence_gate:
+		break;
+	case Item::minecraft_crimson_fence_gate:
+		break;
+	case Item::minecraft_warped_fence_gate:
+		break;
+	case Item::minecraft_powered_rail:
+		break;
+	case Item::minecraft_detector_rail:
+		break;
+	case Item::minecraft_rail:
+		break;
+	case Item::minecraft_activator_rail:
+		break;
+	case Item::minecraft_saddle:
+		break;
+	case Item::minecraft_minecart:
+		break;
+	case Item::minecraft_chest_minecart:
+		break;
+	case Item::minecraft_furnace_minecart:
+		break;
+	case Item::minecraft_tnt_minecart:
+		break;
+	case Item::minecraft_hopper_minecart:
+		break;
+	case Item::minecraft_carrot_on_a_stick:
+		break;
+	case Item::minecraft_warped_fungus_on_a_stick:
+		break;
+	case Item::minecraft_elytra:
+		break;
+	case Item::minecraft_oak_boat:
+		break;
+	case Item::minecraft_spruce_boat:
+		break;
+	case Item::minecraft_birch_boat:
+		break;
+	case Item::minecraft_jungle_boat:
+		break;
+	case Item::minecraft_acacia_boat:
+		break;
+	case Item::minecraft_dark_oak_boat:
+		break;
+	case Item::minecraft_structure_block:
+		break;
+	case Item::minecraft_jigsaw:
+		break;
+	case Item::minecraft_turtle_helmet:
+		break;
+	case Item::minecraft_scute:
+		break;
+	case Item::minecraft_flint_and_steel:
+		break;
+	case Item::minecraft_apple:
+		break;
+	case Item::minecraft_bow:
+		break;
+	case Item::minecraft_arrow:
+		break;
+	case Item::minecraft_coal:
+		break;
+	case Item::minecraft_charcoal:
+		break;
+	case Item::minecraft_diamond:
+		break;
+	case Item::minecraft_emerald:
+		break;
+	case Item::minecraft_lapis_lazuli:
+		break;
+	case Item::minecraft_quartz:
+		break;
+	case Item::minecraft_amethyst_shard:
+		break;
+	case Item::minecraft_raw_iron:
+		break;
+	case Item::minecraft_iron_ingot:
+		break;
+	case Item::minecraft_raw_copper:
+		break;
+	case Item::minecraft_copper_ingot:
+		break;
+	case Item::minecraft_raw_gold:
+		break;
+	case Item::minecraft_gold_ingot:
+		break;
+	case Item::minecraft_netherite_ingot:
+		break;
+	case Item::minecraft_netherite_scrap:
+		break;
+	case Item::minecraft_wooden_sword:
+		break;
+	case Item::minecraft_wooden_shovel:
+		break;
+	case Item::minecraft_wooden_pickaxe:
+		break;
+	case Item::minecraft_wooden_axe:
+		break;
+	case Item::minecraft_wooden_hoe:
+		break;
+	case Item::minecraft_stone_sword:
+		break;
+	case Item::minecraft_stone_shovel:
+		break;
+	case Item::minecraft_stone_pickaxe:
+		break;
+	case Item::minecraft_stone_axe:
+		break;
+	case Item::minecraft_stone_hoe:
+		break;
+	case Item::minecraft_golden_sword:
+		break;
+	case Item::minecraft_golden_shovel:
+		break;
+	case Item::minecraft_golden_pickaxe:
+		break;
+	case Item::minecraft_golden_axe:
+		break;
+	case Item::minecraft_golden_hoe:
+		break;
+	case Item::minecraft_iron_sword:
+		break;
+	case Item::minecraft_iron_shovel:
+		break;
+	case Item::minecraft_iron_pickaxe:
+		break;
+	case Item::minecraft_iron_axe:
+		break;
+	case Item::minecraft_iron_hoe:
+		break;
+	case Item::minecraft_diamond_sword:
+		break;
+	case Item::minecraft_diamond_shovel:
+		break;
+	case Item::minecraft_diamond_pickaxe:
+		break;
+	case Item::minecraft_diamond_axe:
+		break;
+	case Item::minecraft_diamond_hoe:
+		break;
+	case Item::minecraft_netherite_sword:
+		break;
+	case Item::minecraft_netherite_shovel:
+		break;
+	case Item::minecraft_netherite_pickaxe:
+		break;
+	case Item::minecraft_netherite_axe:
+		break;
+	case Item::minecraft_netherite_hoe:
+		break;
+	case Item::minecraft_stick:
+		break;
+	case Item::minecraft_bowl:
+		break;
+	case Item::minecraft_mushroom_stew:
+		break;
+	case Item::minecraft_string:
+		break;
+	case Item::minecraft_feather:
+		break;
+	case Item::minecraft_gunpowder:
+		break;
+	case Item::minecraft_wheat_seeds:
+		break;
+	case Item::minecraft_wheat:
+		break;
+	case Item::minecraft_bread:
+		break;
+	case Item::minecraft_leather_helmet:
+		break;
+	case Item::minecraft_leather_chestplate:
+		break;
+	case Item::minecraft_leather_leggings:
+		break;
+	case Item::minecraft_leather_boots:
+		break;
+	case Item::minecraft_chainmail_helmet:
+		break;
+	case Item::minecraft_chainmail_chestplate:
+		break;
+	case Item::minecraft_chainmail_leggings:
+		break;
+	case Item::minecraft_chainmail_boots:
+		break;
+	case Item::minecraft_iron_helmet:
+		break;
+	case Item::minecraft_iron_chestplate:
+		break;
+	case Item::minecraft_iron_leggings:
+		break;
+	case Item::minecraft_iron_boots:
+		break;
+	case Item::minecraft_diamond_helmet:
+		break;
+	case Item::minecraft_diamond_chestplate:
+		break;
+	case Item::minecraft_diamond_leggings:
+		break;
+	case Item::minecraft_diamond_boots:
+		break;
+	case Item::minecraft_golden_helmet:
+		break;
+	case Item::minecraft_golden_chestplate:
+		break;
+	case Item::minecraft_golden_leggings:
+		break;
+	case Item::minecraft_golden_boots:
+		break;
+	case Item::minecraft_netherite_helmet:
+		break;
+	case Item::minecraft_netherite_chestplate:
+		break;
+	case Item::minecraft_netherite_leggings:
+		break;
+	case Item::minecraft_netherite_boots:
+		break;
+	case Item::minecraft_flint:
+		break;
+	case Item::minecraft_porkchop:
+		break;
+	case Item::minecraft_cooked_porkchop:
+		break;
+	case Item::minecraft_painting:
+		break;
+	case Item::minecraft_golden_apple:
+		break;
+	case Item::minecraft_enchanted_golden_apple:
+		break;
+	case Item::minecraft_oak_sign:
+		break;
+	case Item::minecraft_spruce_sign:
+		break;
+	case Item::minecraft_birch_sign:
+		break;
+	case Item::minecraft_jungle_sign:
+		break;
+	case Item::minecraft_acacia_sign:
+		break;
+	case Item::minecraft_dark_oak_sign:
+		break;
+	case Item::minecraft_crimson_sign:
+		break;
+	case Item::minecraft_warped_sign:
+		break;
+	case Item::minecraft_bucket:
+		break;
+	case Item::minecraft_water_bucket:
+		break;
+	case Item::minecraft_lava_bucket:
+		break;
+	case Item::minecraft_powder_snow_bucket:
+		break;
+	case Item::minecraft_snowball:
+		break;
+	case Item::minecraft_leather:
+		break;
+	case Item::minecraft_milk_bucket:
+		break;
+	case Item::minecraft_pufferfish_bucket:
+		break;
+	case Item::minecraft_salmon_bucket:
+		break;
+	case Item::minecraft_cod_bucket:
+		break;
+	case Item::minecraft_tropical_fish_bucket:
+		break;
+	case Item::minecraft_axolotl_bucket:
+		break;
+	case Item::minecraft_brick:
+		break;
+	case Item::minecraft_clay_ball:
+		break;
+	case Item::minecraft_dried_kelp_block:
+		break;
+	case Item::minecraft_paper:
+		break;
+	case Item::minecraft_book:
+		break;
+	case Item::minecraft_slime_ball:
+		break;
+	case Item::minecraft_egg:
+		break;
+	case Item::minecraft_compass:
+		break;
+	case Item::minecraft_bundle:
+		break;
+	case Item::minecraft_fishing_rod:
+		break;
+	case Item::minecraft_clock:
+		break;
+	case Item::minecraft_spyglass:
+		break;
+	case Item::minecraft_glowstone_dust:
+		break;
+	case Item::minecraft_cod:
+		break;
+	case Item::minecraft_salmon:
+		break;
+	case Item::minecraft_tropical_fish:
+		break;
+	case Item::minecraft_pufferfish:
+		break;
+	case Item::minecraft_cooked_cod:
+		break;
+	case Item::minecraft_cooked_salmon:
+		break;
+	case Item::minecraft_ink_sac:
+		break;
+	case Item::minecraft_glow_ink_sac:
+		break;
+	case Item::minecraft_cocoa_beans:
+		break;
+	case Item::minecraft_white_dye:
+		break;
+	case Item::minecraft_orange_dye:
+		break;
+	case Item::minecraft_magenta_dye:
+		break;
+	case Item::minecraft_light_blue_dye:
+		break;
+	case Item::minecraft_yellow_dye:
+		break;
+	case Item::minecraft_lime_dye:
+		break;
+	case Item::minecraft_pink_dye:
+		break;
+	case Item::minecraft_gray_dye:
+		break;
+	case Item::minecraft_light_gray_dye:
+		break;
+	case Item::minecraft_cyan_dye:
+		break;
+	case Item::minecraft_purple_dye:
+		break;
+	case Item::minecraft_blue_dye:
+		break;
+	case Item::minecraft_brown_dye:
+		break;
+	case Item::minecraft_green_dye:
+		break;
+	case Item::minecraft_red_dye:
+		break;
+	case Item::minecraft_black_dye:
+		break;
+	case Item::minecraft_bone_meal:
+		break;
+	case Item::minecraft_bone:
+		break;
+	case Item::minecraft_sugar:
+		break;
+	case Item::minecraft_cake:
+		break;
+	case Item::minecraft_white_bed:
+		break;
+	case Item::minecraft_orange_bed:
+		break;
+	case Item::minecraft_magenta_bed:
+		break;
+	case Item::minecraft_light_blue_bed:
+		break;
+	case Item::minecraft_yellow_bed:
+		break;
+	case Item::minecraft_lime_bed:
+		break;
+	case Item::minecraft_pink_bed:
+		break;
+	case Item::minecraft_gray_bed:
+		break;
+	case Item::minecraft_light_gray_bed:
+		break;
+	case Item::minecraft_cyan_bed:
+		break;
+	case Item::minecraft_purple_bed:
+		break;
+	case Item::minecraft_blue_bed:
+		break;
+	case Item::minecraft_brown_bed:
+		break;
+	case Item::minecraft_green_bed:
+		break;
+	case Item::minecraft_red_bed:
+		break;
+	case Item::minecraft_black_bed:
+		break;
+	case Item::minecraft_cookie:
+		break;
+	case Item::minecraft_filled_map:
+		break;
+	case Item::minecraft_shears:
+		break;
+	case Item::minecraft_melon_slice:
+		break;
+	case Item::minecraft_dried_kelp:
+		break;
+	case Item::minecraft_pumpkin_seeds:
+		break;
+	case Item::minecraft_melon_seeds:
+		break;
+	case Item::minecraft_beef:
+		break;
+	case Item::minecraft_cooked_beef:
+		break;
+	case Item::minecraft_chicken:
+		break;
+	case Item::minecraft_cooked_chicken:
+		break;
+	case Item::minecraft_rotten_flesh:
+		break;
+	case Item::minecraft_ender_pearl:
+		break;
+	case Item::minecraft_blaze_rod:
+		break;
+	case Item::minecraft_ghast_tear:
+		break;
+	case Item::minecraft_gold_nugget:
+		break;
+	case Item::minecraft_nether_wart:
+		break;
+	case Item::minecraft_potion:
+		break;
+	case Item::minecraft_glass_bottle:
+		break;
+	case Item::minecraft_spider_eye:
+		break;
+	case Item::minecraft_fermented_spider_eye:
+		break;
+	case Item::minecraft_blaze_powder:
+		break;
+	case Item::minecraft_magma_cream:
+		break;
+	case Item::minecraft_brewing_stand:
+		break;
+	case Item::minecraft_cauldron:
+		break;
+	case Item::minecraft_ender_eye:
+		break;
+	case Item::minecraft_glistering_melon_slice:
+		break;
+	case Item::minecraft_axolotl_spawn_egg:
+		break;
+	case Item::minecraft_bat_spawn_egg:
+		break;
+	case Item::minecraft_bee_spawn_egg:
+		break;
+	case Item::minecraft_blaze_spawn_egg:
+		break;
+	case Item::minecraft_cat_spawn_egg:
+		break;
+	case Item::minecraft_cave_spider_spawn_egg:
+		break;
+	case Item::minecraft_chicken_spawn_egg:
+		break;
+	case Item::minecraft_cod_spawn_egg:
+		break;
+	case Item::minecraft_cow_spawn_egg:
+		break;
+	case Item::minecraft_creeper_spawn_egg:
+		break;
+	case Item::minecraft_dolphin_spawn_egg:
+		break;
+	case Item::minecraft_donkey_spawn_egg:
+		break;
+	case Item::minecraft_drowned_spawn_egg:
+		break;
+	case Item::minecraft_elder_guardian_spawn_egg:
+		break;
+	case Item::minecraft_enderman_spawn_egg:
+		break;
+	case Item::minecraft_endermite_spawn_egg:
+		break;
+	case Item::minecraft_evoker_spawn_egg:
+		break;
+	case Item::minecraft_fox_spawn_egg:
+		break;
+	case Item::minecraft_ghast_spawn_egg:
+		break;
+	case Item::minecraft_glow_squid_spawn_egg:
+		break;
+	case Item::minecraft_goat_spawn_egg:
+		break;
+	case Item::minecraft_guardian_spawn_egg:
+		break;
+	case Item::minecraft_hoglin_spawn_egg:
+		break;
+	case Item::minecraft_horse_spawn_egg:
+		break;
+	case Item::minecraft_husk_spawn_egg:
+		break;
+	case Item::minecraft_llama_spawn_egg:
+		break;
+	case Item::minecraft_magma_cube_spawn_egg:
+		break;
+	case Item::minecraft_mooshroom_spawn_egg:
+		break;
+	case Item::minecraft_mule_spawn_egg:
+		break;
+	case Item::minecraft_ocelot_spawn_egg:
+		break;
+	case Item::minecraft_panda_spawn_egg:
+		break;
+	case Item::minecraft_parrot_spawn_egg:
+		break;
+	case Item::minecraft_phantom_spawn_egg:
+		break;
+	case Item::minecraft_pig_spawn_egg:
+		break;
+	case Item::minecraft_piglin_spawn_egg:
+		break;
+	case Item::minecraft_piglin_brute_spawn_egg:
+		break;
+	case Item::minecraft_pillager_spawn_egg:
+		break;
+	case Item::minecraft_polar_bear_spawn_egg:
+		break;
+	case Item::minecraft_pufferfish_spawn_egg:
+		break;
+	case Item::minecraft_rabbit_spawn_egg:
+		break;
+	case Item::minecraft_ravager_spawn_egg:
+		break;
+	case Item::minecraft_salmon_spawn_egg:
+		break;
+	case Item::minecraft_sheep_spawn_egg:
+		break;
+	case Item::minecraft_shulker_spawn_egg:
+		break;
+	case Item::minecraft_silverfish_spawn_egg:
+		break;
+	case Item::minecraft_skeleton_spawn_egg:
+		break;
+	case Item::minecraft_skeleton_horse_spawn_egg:
+		break;
+	case Item::minecraft_slime_spawn_egg:
+		break;
+	case Item::minecraft_spider_spawn_egg:
+		break;
+	case Item::minecraft_squid_spawn_egg:
+		break;
+	case Item::minecraft_stray_spawn_egg:
+		break;
+	case Item::minecraft_strider_spawn_egg:
+		break;
+	case Item::minecraft_trader_llama_spawn_egg:
+		break;
+	case Item::minecraft_tropical_fish_spawn_egg:
+		break;
+	case Item::minecraft_turtle_spawn_egg:
+		break;
+	case Item::minecraft_vex_spawn_egg:
+		break;
+	case Item::minecraft_villager_spawn_egg:
+		break;
+	case Item::minecraft_vindicator_spawn_egg:
+		break;
+	case Item::minecraft_wandering_trader_spawn_egg:
+		break;
+	case Item::minecraft_witch_spawn_egg:
+		break;
+	case Item::minecraft_wither_skeleton_spawn_egg:
+		break;
+	case Item::minecraft_wolf_spawn_egg:
+		break;
+	case Item::minecraft_zoglin_spawn_egg:
+		break;
+	case Item::minecraft_zombie_spawn_egg:
+		break;
+	case Item::minecraft_zombie_horse_spawn_egg:
+		break;
+	case Item::minecraft_zombie_villager_spawn_egg:
+		break;
+	case Item::minecraft_zombified_piglin_spawn_egg:
+		break;
+	case Item::minecraft_experience_bottle:
+		break;
+	case Item::minecraft_fire_charge:
+		break;
+	case Item::minecraft_writable_book:
+		break;
+	case Item::minecraft_written_book:
+		break;
+	case Item::minecraft_item_frame:
+		break;
+	case Item::minecraft_glow_item_frame:
+		break;
+	case Item::minecraft_flower_pot:
+		break;
+	case Item::minecraft_carrot:
+		break;
+	case Item::minecraft_potato:
+		break;
+	case Item::minecraft_baked_potato:
+		break;
+	case Item::minecraft_poisonous_potato:
+		break;
+	case Item::minecraft_map:
+		break;
+	case Item::minecraft_golden_carrot:
+		break;
+	case Item::minecraft_skeleton_skull:
+		break;
+	case Item::minecraft_wither_skeleton_skull:
+		break;
+	case Item::minecraft_player_head:
+		break;
+	case Item::minecraft_zombie_head:
+		break;
+	case Item::minecraft_creeper_head:
+		break;
+	case Item::minecraft_dragon_head:
+		break;
+	case Item::minecraft_nether_star:
+		break;
+	case Item::minecraft_pumpkin_pie:
+		break;
+	case Item::minecraft_firework_rocket:
+		break;
+	case Item::minecraft_firework_star:
+		break;
+	case Item::minecraft_enchanted_book:
+		break;
+	case Item::minecraft_nether_brick:
+		break;
+	case Item::minecraft_prismarine_shard:
+		break;
+	case Item::minecraft_prismarine_crystals:
+		break;
+	case Item::minecraft_rabbit:
+		break;
+	case Item::minecraft_cooked_rabbit:
+		break;
+	case Item::minecraft_rabbit_stew:
+		break;
+	case Item::minecraft_rabbit_foot:
+		break;
+	case Item::minecraft_rabbit_hide:
+		break;
+	case Item::minecraft_armor_stand:
+		break;
+	case Item::minecraft_iron_horse_armor:
+		break;
+	case Item::minecraft_golden_horse_armor:
+		break;
+	case Item::minecraft_diamond_horse_armor:
+		break;
+	case Item::minecraft_leather_horse_armor:
+		break;
+	case Item::minecraft_lead:
+		break;
+	case Item::minecraft_name_tag:
+		break;
+	case Item::minecraft_command_block_minecart:
+		break;
+	case Item::minecraft_mutton:
+		break;
+	case Item::minecraft_cooked_mutton:
+		break;
+	case Item::minecraft_white_banner:
+		break;
+	case Item::minecraft_orange_banner:
+		break;
+	case Item::minecraft_magenta_banner:
+		break;
+	case Item::minecraft_light_blue_banner:
+		break;
+	case Item::minecraft_yellow_banner:
+		break;
+	case Item::minecraft_lime_banner:
+		break;
+	case Item::minecraft_pink_banner:
+		break;
+	case Item::minecraft_gray_banner:
+		break;
+	case Item::minecraft_light_gray_banner:
+		break;
+	case Item::minecraft_cyan_banner:
+		break;
+	case Item::minecraft_purple_banner:
+		break;
+	case Item::minecraft_blue_banner:
+		break;
+	case Item::minecraft_brown_banner:
+		break;
+	case Item::minecraft_green_banner:
+		break;
+	case Item::minecraft_red_banner:
+		break;
+	case Item::minecraft_black_banner:
+		break;
+	case Item::minecraft_end_crystal:
+		break;
+	case Item::minecraft_chorus_fruit:
+		break;
+	case Item::minecraft_popped_chorus_fruit:
+		break;
+	case Item::minecraft_beetroot:
+		break;
+	case Item::minecraft_beetroot_seeds:
+		break;
+	case Item::minecraft_beetroot_soup:
+		break;
+	case Item::minecraft_dragon_breath:
+		break;
+	case Item::minecraft_splash_potion:
+		break;
+	case Item::minecraft_spectral_arrow:
+		break;
+	case Item::minecraft_tipped_arrow:
+		break;
+	case Item::minecraft_lingering_potion:
+		break;
+	case Item::minecraft_shield:
+		break;
+	case Item::minecraft_totem_of_undying:
+		break;
+	case Item::minecraft_shulker_shell:
+		break;
+	case Item::minecraft_iron_nugget:
+		break;
+	case Item::minecraft_knowledge_book:
+		break;
+	case Item::minecraft_debug_stick:
+		break;
+	case Item::minecraft_music_disc_13:
+		break;
+	case Item::minecraft_music_disc_cat:
+		break;
+	case Item::minecraft_music_disc_blocks:
+		break;
+	case Item::minecraft_music_disc_chirp:
+		break;
+	case Item::minecraft_music_disc_far:
+		break;
+	case Item::minecraft_music_disc_mall:
+		break;
+	case Item::minecraft_music_disc_mellohi:
+		break;
+	case Item::minecraft_music_disc_stal:
+		break;
+	case Item::minecraft_music_disc_strad:
+		break;
+	case Item::minecraft_music_disc_ward:
+		break;
+	case Item::minecraft_music_disc_11:
+		break;
+	case Item::minecraft_music_disc_wait:
+		break;
+	case Item::minecraft_music_disc_otherside:
+		break;
+	case Item::minecraft_music_disc_pigstep:
+		break;
+	case Item::minecraft_trident:
+		break;
+	case Item::minecraft_phantom_membrane:
+		break;
+	case Item::minecraft_nautilus_shell:
+		break;
+	case Item::minecraft_heart_of_the_sea:
+		break;
+	case Item::minecraft_crossbow:
+		break;
+	case Item::minecraft_suspicious_stew:
+		break;
+	case Item::minecraft_loom:
+		break;
+	case Item::minecraft_flower_banner_pattern:
+		break;
+	case Item::minecraft_creeper_banner_pattern:
+		break;
+	case Item::minecraft_skull_banner_pattern:
+		break;
+	case Item::minecraft_mojang_banner_pattern:
+		break;
+	case Item::minecraft_globe_banner_pattern:
+		break;
+	case Item::minecraft_piglin_banner_pattern:
+		break;
+	case Item::minecraft_composter:
+		break;
+	case Item::minecraft_barrel:
+		break;
+	case Item::minecraft_smoker:
+		break;
+	case Item::minecraft_blast_furnace:
+		break;
+	case Item::minecraft_cartography_table:
+		break;
+	case Item::minecraft_fletching_table:
+		break;
+	case Item::minecraft_grindstone:
+		break;
+	case Item::minecraft_smithing_table:
+		break;
+	case Item::minecraft_stonecutter:
+		break;
+	case Item::minecraft_bell:
+		break;
+	case Item::minecraft_lantern:
+		break;
+	case Item::minecraft_soul_lantern:
+		break;
+	case Item::minecraft_sweet_berries:
+		break;
+	case Item::minecraft_glow_berries:
+		break;
+	case Item::minecraft_campfire:
+		break;
+	case Item::minecraft_soul_campfire:
+		break;
+	case Item::minecraft_shroomlight:
+		break;
+	case Item::minecraft_honeycomb:
+		break;
+	case Item::minecraft_bee_nest:
+		break;
+	case Item::minecraft_beehive:
+		break;
+	case Item::minecraft_honey_bottle:
+		break;
+	case Item::minecraft_honeycomb_block:
+		break;
+	case Item::minecraft_lodestone:
+		break;
+	case Item::minecraft_crying_obsidian:
+		break;
+	case Item::minecraft_blackstone:
+		break;
+	case Item::minecraft_blackstone_slab:
+		break;
+	case Item::minecraft_blackstone_stairs:
+		break;
+	case Item::minecraft_gilded_blackstone:
+		break;
+	case Item::minecraft_polished_blackstone:
+		break;
+	case Item::minecraft_polished_blackstone_slab:
+		break;
+	case Item::minecraft_polished_blackstone_stairs:
+		break;
+	case Item::minecraft_chiseled_polished_blackstone:
+		break;
+	case Item::minecraft_polished_blackstone_bricks:
+		break;
+	case Item::minecraft_polished_blackstone_brick_slab:
+		break;
+	case Item::minecraft_polished_blackstone_brick_stairs:
+		break;
+	case Item::minecraft_cracked_polished_blackstone_bricks:
+		break;
+	case Item::minecraft_respawn_anchor:
+		break;
+	case Item::minecraft_candle:
+		break;
+	case Item::minecraft_white_candle:
+		break;
+	case Item::minecraft_orange_candle:
+		break;
+	case Item::minecraft_magenta_candle:
+		break;
+	case Item::minecraft_light_blue_candle:
+		break;
+	case Item::minecraft_yellow_candle:
+		break;
+	case Item::minecraft_lime_candle:
+		break;
+	case Item::minecraft_pink_candle:
+		break;
+	case Item::minecraft_gray_candle:
+		break;
+	case Item::minecraft_light_gray_candle:
+		break;
+	case Item::minecraft_cyan_candle:
+		break;
+	case Item::minecraft_purple_candle:
+		break;
+	case Item::minecraft_blue_candle:
+		break;
+	case Item::minecraft_brown_candle:
+		break;
+	case Item::minecraft_green_candle:
+		break;
+	case Item::minecraft_red_candle:
+		break;
+	case Item::minecraft_black_candle:
+		break;
+	case Item::minecraft_small_amethyst_bud:
+		break;
+	case Item::minecraft_medium_amethyst_bud:
+		break;
+	case Item::minecraft_large_amethyst_bud:
+		break;
+	case Item::minecraft_amethyst_cluster:
+		break;
+	case Item::minecraft_pointed_dripstone:
+		break;
+	default:
+		break;
+	}
+	return false;
 }
 
-SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ)
+SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, BlockFace face, bfloat curX, bfloat curY, bfloat curZ)
 {
-	//throw "WIP";
-	json* stateJson = nullptr;
-	nbt_compound* nbt_data = nullptr;
-	int itemId = slot->getItemId(),
-		destX = loc.x(),
-		destY = p->world->AbsToRelHeight(loc.y()),
-		destZ = loc.z();
+	//	get clicked block
+	//	if right-click is successful
+	//		right-click
+	//	else if block is directly replaceable and other conditions
+	//		place one or multiple blocks
+	//	else
+	//		change block based on clicked face
+	//		if the block is indirectly replaceable
+	//			place one or multiple blocks
 
-	if (!p->world->checkCoordinates(destY))
+	int x = loc.x(),
+		y = p->world->AbsToRelHeight(loc.y()),
+		z = loc.z();
+	Item itemId = (Item)(int)slot->getItemId();
+
+	if (!p->world->checkCoordinates(y))
+	{
 		//clicked block outside of world, maybe kick the player?
+		message::play::send::chatMessage(p, Chat("How did you do that?", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		return;
+	}
+
+	int clickedBlockId = getBlock(x, y, z);
+	const BlockState* clickedBlock = BlockState::globalPalette[clickedBlockId];
+
+	if (clickedBlock->rightClick())
+		return;
+	if (placeAux(this, x, y, z, curX, curY, curZ, face, *clickedBlock, itemId))
+		return;
+
+	switch (face)
+	{
+	case BlockFace::top:
+		y++;
+		break;
+	case BlockFace::bottom:
+		y--;
+		break;
+	case BlockFace::east:
+		x++;
+		break;
+	case BlockFace::west:
+		x--;
+		break;
+	case BlockFace::south:
+		z++;
+		break;
+	case BlockFace::north:
+		z--;
+		break;
+	}
+	//obtain block at the new position
+	clickedBlockId = getBlock(x, y, z);
+	clickedBlock = BlockState::globalPalette[clickedBlockId];
+
+	if (placeAux(this, x, y, z, curX, curY, curZ, face, *clickedBlock, itemId))
+		return;
+	message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+
+	/*json* stateJson = nullptr;
+	nbt_compound* nbt_data = nullptr;
 
 	//check block interaction first
 	BlockState targetBlockState = p->world->getBlock(destX, destY, destZ);
@@ -7230,6 +9466,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, playe
 		setBlock(destX, destY, destZ, stateJson, nbt_data, p);
 		/*destY += 3;
 		if (checkCoordinates(destY)) setBlock(destX, destY, destZ, stateJson);*/
-	}
-	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+	/*}
+	else message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));*/
 };

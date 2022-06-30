@@ -109,8 +109,8 @@ namespace CommandHandlers
 			{
 				int row = (blockid / 30 - 14) * 3,
 					col = (blockid % 30 - 14) * 3;
-				BlockState state = &Registry::getBlockState(Registry::getName(Registry::blockRegistry, blockid));
-				wld->setBlock(x + row, y, z + col, state);
+				//BlockState state = &Registry::getBlockState(Registry::getName(Registry::blockRegistry, blockid));
+				//wld->setBlock(x + row, y, z + col, state);
 			}
 			//for (int i = -5; i <= 5; i++) for (int j = -5; j <= 5; j++) message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX + i, executingPlayer->chunkZ + j, false);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));

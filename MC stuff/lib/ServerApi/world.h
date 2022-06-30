@@ -96,7 +96,7 @@ public:
 	SERVER_API int getBlock(int x, int y, int z);
 	SERVER_API void setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr, Player* broadcastException = nullptr);
 	SERVER_API void setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr);
-	SERVER_API void setBlockByItem(Player*, Slot*, Position, playerDigging::face, bfloat curX, bfloat curY, bfloat curZ);
+	SERVER_API void setBlockByItem(Player*, Slot*, Position, BlockFace, bfloat curX, bfloat curY, bfloat curZ);
 
 	//generator
 	GeneratorFunction generatorFunction = 0;
@@ -105,6 +105,7 @@ public:
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
 	SERVER_API static const Byte currentBiomeBitsPerEntry;
+	static constexpr int currentWorldVersion = 0;
 
 	SERVER_API static bool loadAll();
 	SERVER_API static void unloadAll();
