@@ -49,53 +49,24 @@ Chunk::~Chunk()
 }
 
 //reading a chunk that already contains data causes a memory leak!
-/*void Chunk::read(std::istream& file)
+void Chunk::read(std::istream& file)
 {
 	//chunk data
 
-	//read section mask
+	//read sectionMask and heightmap
 	sectionMask->read(file);
-
-	//read heightmap
 	heightmaps->read(file);
 
 	for (Section& sec : sections)
 	{
-		//read biomes
-		sec.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
-		sec.biomes->read(file);
+		sec.biomes.read(file);
+		sec.blockStates.read(file);
 
-		//read useGlobalPalette, bitsPerBlock and blockCount
-		file.read((char*)(&sec.useGlobalPallete), 4);
-
-		//read paletteSize
-		ush paletteSize = 0;
-		file.read((char*)(&paletteSize), 2);
-
-		//read palette
-		sec.palette.clear();
-		sec.palette.reserve(paletteSize);
-
-		for (ush i = 0; i < paletteSize; i++)
-		{
-			//read each palette entry
-			int stateid = 0;
-			short refCount = 0;
-			file.read((char*)(&stateid), 4);
-			file.read((char*)(&refCount), 2);
-
-			sec.palette.emplace_back(stateid, refCount);
-		}
-
-		//read blockStates
-		sec.blockStates = new BitArray(4096, sec.bitsPerBlock);
-		sec.blockStates->read(file);
-
+		//read blockCount
+		file.read((char*)(&sec.blockCount), 2);
 	}
 
 	//light data
-
-	//read light data
 
 	//read light masks
 	skyLightMask->read(file);
@@ -149,8 +120,6 @@ Chunk::~Chunk()
 			}
 		}
 	}
-
-	//throw runtimeError("Chunk::read not implemented yet.");
 }
 void Chunk::write(ostream& file)
 {
@@ -163,27 +132,11 @@ void Chunk::write(ostream& file)
 	//write each section
 	for (Section& sec : sections)
 	{
-		//write biomes
-		//file.write((char*)(&sec.biomes), 256);
-		sec.biomes->write(file);
+		sec.biomes.write(file);
+		sec.blockStates.write(file);
 
-		//write useGlobalPalette, bitsPerBlock, blockCount
-		file.write((char*)(&sec.useGlobalPallete), 4);
-
-		//write paletteSize
-		ush paletteSize = (ush)sec.palette.size();
-		file.write((char*)(&paletteSize), 2);
-
-		//write palette
-		for (PaletteEntry& entry : sec.palette)
-		{
-			//read each palette entry
-			file.write((char*)(&entry.block.id), 4);
-			file.write((char*)(&entry.referenceCount), 2);
-		}
-
-		//write blockStates
-		sec.blockStates->write(file);
+		//write blockCount
+		file.write((char*)(&sec.blockCount), 2);
 	}
 
 	//light data
@@ -209,9 +162,7 @@ void Chunk::write(ostream& file)
 			sec.blockLight->write(file);
 		}
 	}
-
-	//throw runtimeError("Chunk::write not implemented yet.");
-}*/
+}
 
 int Chunk::getBlock(int relX, int relY, int relZ)
 {

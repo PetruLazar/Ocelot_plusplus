@@ -20,6 +20,8 @@ public:
 
 	void write(char*&) const;
 	//read
+	void write(std::ostream&) const;
+	void read(std::istream&);
 };
 class SERVER_API BiomesContainer
 {
@@ -34,4 +36,6 @@ public:
 
 	void write(char*&) const;
 	//read
+	void write(std::ostream&) const;
+	void read(std::istream&);
 };

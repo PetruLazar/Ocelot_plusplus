@@ -19,7 +19,7 @@ public:
 
 	bshort blockCount;
 
-	varInt dataLength; //unused
+	//varInt dataLength; //unused
 
 	//get a copy of the block state at the desired coordinates to use with setBlock
 	SERVER_API int getBlock(int relX, int relY, int relZ);

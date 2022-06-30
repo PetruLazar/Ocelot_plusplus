@@ -204,9 +204,58 @@ public:
 		varInt(values->getCompactedSize()).write(buffer);
 		values->write(buffer);
 	}
-	void read(char*& buffer)
+	/*void read(char*& buffer)
 	{
 		throw "WIP";
+	}*/
+
+	void write(std::ostream& os) const
+	{
+		if (values == nullptr)
+		{
+			os.write("", 1);
+			varInt(palette[0].id).write(os);
+			return;
+		}
+		char bitsPerEntry = values->getBitsPerEntry();
+		os.write(&bitsPerEntry, 1);
+
+		varInt(palette.size()).write(os);
+		for (auto& entry : palette)
+		{
+			varInt(entry.id).write(os);
+			varInt(entry.refCount).write(os);
+		}
+
+		values->write(os);
+	}
+	void read(std::istream& is)
+	{
+		palette.clear();
+		if (values) delete values;
+
+		char bitsPerEntry;
+		is.read(&bitsPerEntry, 1);
+		if (bitsPerEntry == 0)
+		{
+			varInt id;
+			id.read(is);
+			palette.emplace_back(id, size);
+			return;
+		}
+		varInt paletteSize;
+		paletteSize.read(is);
+		palette.resize(paletteSize, BasicPaletteEntry(0, 0));
+		for (auto& entry : palette)
+		{
+			varInt id, refCount;
+			id.read(is);
+			refCount.read(is);
+			entry.id = id;
+			entry.refCount = refCount;
+		}
+		values = new BitArray(size, bitsPerEntry);
+		values->read(is);
 	}
 };
 
@@ -221,9 +270,13 @@ BlockStatesContainer::~BlockStatesContainer() { delete container; }
 int BlockStatesContainer::get(int index) const { return asBlock(container)->get(index); }
 bool BlockStatesContainer::set(int index, int value) { return asBlock(container)->set(index, value); }
 void BlockStatesContainer::write(char*& buffer) const { asBlock(container)->write(buffer); }
+void BlockStatesContainer::write(std::ostream& os) const { asBlock(container)->write(os); }
+void BlockStatesContainer::read(std::istream& is) { asBlock(container)->read(is); }
 
 BiomesContainer::BiomesContainer() : container(new biomeTemplate(4 * 4 * 4, 0)) {}
 BiomesContainer::~BiomesContainer() { delete container; }
 int BiomesContainer::get(int index) const { return asBiome(container)->get(index); }
 bool BiomesContainer::set(int index, int value) { return asBiome(container)->set(index, value); }
 void BiomesContainer::write(char*& buffer) const { asBiome(container)->write(buffer); }
+void BiomesContainer::write(std::ostream& os) const { asBiome(container)->write(os); }
+void BiomesContainer::read(std::istream& is) { asBiome(container)->read(is); }

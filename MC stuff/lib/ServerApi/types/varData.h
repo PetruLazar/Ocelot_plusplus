@@ -11,7 +11,7 @@ public:
 	SERVER_API varInt(int value) : v(value) {}
 	SERVER_API varInt(unsigned int value) : v(static_cast<int>(value)) {}
 	SERVER_API varInt(size_t value) : v(static_cast<int>(value)) {}
-	void SERVER_API read(std::fstream& is)
+	void SERVER_API read(std::istream& is)
 	{
 		v = 0;
 		int offset = 0;
@@ -23,7 +23,7 @@ public:
 			offset += 7;
 		} while (b & 0x80);
 	}
-	void SERVER_API write(std::fstream& os) const
+	void SERVER_API write(std::ostream& os) const
 	{
 		uint c = (uint)v;
 		Byte b;
