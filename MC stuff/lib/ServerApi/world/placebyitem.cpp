@@ -2646,7 +2646,7 @@ bool canSupportDoor(Block id, const BlockState& state)
 		case Block::minecraft_warped_trapdoor:
 			if (state.getState("half") == "top" && state.getState("open") == "false") return true;
 			return false;*/
-	/*}
+/*}
 	return false;
 }
 std::string hingeToString(doorHinge h)
@@ -3364,26 +3364,26 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	}
 	return false;
 }*/
-inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, float curZ, BlockFace face, const BlockState& currentBlock, Item itemId)
+inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, Item itemId)
 {
 	switch (itemId)
 	{
 	case Item::minecraft_air:
 		return false;
 	case Item::minecraft_stone:
-		return Stone::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Stone::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_granite:
-		return Granite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Granite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_polished_granite:
-		return Polished_Granite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Polished_Granite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_diorite:
-		return Diorite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Diorite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_polished_diorite:
-		return Polished_Diorite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Polished_Diorite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_andesite:
-		return Andesite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Andesite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_polished_andesite:
-		return Polished_Andesite::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Polished_Andesite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_deepslate:
 		break;
 	case Item::minecraft_cobbled_deepslate:
@@ -3397,13 +3397,13 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_dripstone_block:
 		break;
 	case Item::minecraft_grass_block:
-		return Grass_Block::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Grass_Block::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_dirt:
-		return Dirt::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Dirt::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_coarse_dirt:
-		return Coarse_Dirt::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Coarse_Dirt::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_podzol:
-		return Podzol::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Podzol::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_rooted_dirt:
 		break;
 	case Item::minecraft_crimson_nylium:
@@ -3411,7 +3411,7 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_warped_nylium:
 		break;
 	case Item::minecraft_cobblestone:
-		return Cobblestone::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Cobblestone::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_oak_planks:
 		break;
 	case Item::minecraft_spruce_planks:
@@ -3571,11 +3571,11 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_waxed_oxidized_cut_copper_slab:
 		break;
 	case Item::minecraft_oak_log:
-		break;
+		return Blocks::Oak_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_spruce_log:
-		break;
+		return Blocks::Spruce_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_birch_log:
-		break;
+		return Blocks::Birch_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_jungle_log:
 		break;
 	case Item::minecraft_acacia_log:
@@ -3587,11 +3587,11 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_warped_stem:
 		break;
 	case Item::minecraft_stripped_oak_log:
-		break;
+		return Blocks::Stripped_Oak_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_stripped_spruce_log:
-		break;
+		return Blocks::Stripped_Spruce_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_stripped_birch_log:
-		break;
+		return Blocks::Stripped_Birch_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_stripped_jungle_log:
 		break;
 	case Item::minecraft_stripped_acacia_log:
@@ -3635,11 +3635,11 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_warped_hyphae:
 		break;
 	case Item::minecraft_oak_leaves:
-		return Oak_Leaves::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Oak_Leaves::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_spruce_leaves:
-		return Spruce_Leaves::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Spruce_Leaves::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_birch_leaves:
-		return Birch_Leaves::place(wld, x, y, z, curX, curY, curZ, face, currentBlock);
+		return Blocks::Birch_Leaves::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_jungle_leaves:
 		break;
 	case Item::minecraft_acacia_leaves:
@@ -3669,9 +3669,9 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_cobweb:
 		break;
 	case Item::minecraft_grass:
-		break;
+		return Blocks::Grass::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_fern:
-		break;
+		return Blocks::Fern::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_azalea:
 		break;
 	case Item::minecraft_flowering_azalea:
@@ -4585,7 +4585,7 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_redstone_lamp:
 		break;
 	case Item::minecraft_note_block:
-		break;
+		return Blocks::Note_Block::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_stone_button:
 		break;
 	case Item::minecraft_polished_blackstone_button:
@@ -4923,9 +4923,9 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_bucket:
 		break;
 	case Item::minecraft_water_bucket:
-		break;
+		return Blocks::Water::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_lava_bucket:
-		break;
+		return Blocks::Lava::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_powder_snow_bucket:
 		break;
 	case Item::minecraft_snowball:
@@ -5591,6 +5591,8 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 	int x = loc.x(),
 		y = p->world->AbsToRelHeight(loc.y()),
 		z = loc.z();
+	float playerYaw = p->yaw,
+		playerPitch = p->pitch;
 	Item itemId = (Item)(int)slot->getItemId();
 
 	if (!p->world->checkCoordinates(y))
@@ -5603,9 +5605,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 	int clickedBlockId = getBlock(x, y, z);
 	const BlockState* clickedBlock = BlockState::globalPalette[clickedBlockId];
 
-	if (clickedBlock->rightClick())
+	if (clickedBlock->rightClick(this, x, y, z, itemId))
 		return;
-	if (placeAux(this, x, y, z, curX, curY, curZ, face, *clickedBlock, itemId))
+	if (placeAux(this, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, clickedBlockId, itemId))
 		return;
 
 	switch (face)
@@ -5633,7 +5635,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 	clickedBlockId = getBlock(x, y, z);
 	clickedBlock = BlockState::globalPalette[clickedBlockId];
 
-	if (placeAux(this, x, y, z, curX, curY, curZ, face, *clickedBlock, itemId))
+	if (placeAux(this, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, clickedBlockId, itemId))
 		return;
 	message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 

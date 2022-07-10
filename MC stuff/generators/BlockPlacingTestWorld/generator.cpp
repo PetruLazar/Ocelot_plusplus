@@ -57,6 +57,7 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 				//blocks[0][z][x] = 1;
 				section.blockStates.set(z << 4 | x, 1);
 				//blocks[8][z][x] = 1;
+				section.blockStates.set(0x800 | z << 4 | x, 1);
 			}
 
 			//section.blockStates = new BitArray(4096, section.bitsPerBlock, (Byte*)blocks);

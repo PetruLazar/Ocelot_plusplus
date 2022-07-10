@@ -18,20 +18,34 @@ enum class BlockFace
 	east
 };
 
-class SnowyBlock;
-class DistanceProperty;
-class LeafPersistentProperty;
+namespace Blocks
+{
+	class SnowyBlock;
+	class DistanceProperty;
+	class LeafPersistentProperty;
+	class LevelProperty;
+	class AxisProperty;
+	class InstrumentProperty;
+	class NoteProperty;
+	class PoweredProperty;
+}
 
 class BlockState
 {
 public:
 	virtual bool replaceable() const { return false; }
+	virtual bool isLiquid() const { return false; }
 
-	virtual const SnowyBlock* const snowy() const { return nullptr; }
-	virtual const DistanceProperty* const distance() const { return nullptr; }
-	virtual const LeafPersistentProperty* const persistent() const { return nullptr; }
+	virtual const Blocks::SnowyBlock* const snowy() const { return nullptr; }
+	virtual const Blocks::DistanceProperty* const distance() const { return nullptr; }
+	virtual const Blocks::LeafPersistentProperty* const persistent() const { return nullptr; }
+	virtual const Blocks::LevelProperty* const level() const { return nullptr; }
+	virtual const Blocks::AxisProperty* const axis() const { return nullptr; }
+	virtual const Blocks::InstrumentProperty* const instrument() const { return nullptr; }
+	virtual const Blocks::NoteProperty* const note() const { return nullptr; }
+	virtual const Blocks::PoweredProperty* const powered() const { return nullptr; }
 
-	virtual bool rightClick() const { return false; }
+	virtual bool rightClick(World* wld, int x, int y, int z, Item itemId) const { return false; }
 
 	virtual void free() const = 0;
 
@@ -63,9 +77,13 @@ public:
 
 #pragma warning (push)
 #pragma warning (disable : 4250)
+#include "blocks/properties/level.h"
+#include "blocks/properties/axis.h"
 #include "blocks/solid.h"
 #include "blocks/herb.h"
 #include "blocks/leaves/leaves.h"
+#include "blocks/liquids/liquids.h"
+#include "blocks/logs/logs.h"
 #pragma warning (pop)
 
 //struct blockEntity

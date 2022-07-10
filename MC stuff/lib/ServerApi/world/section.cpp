@@ -16,9 +16,11 @@ void Section::setBlock(int relX, int relY, int relZ, int blockid)
 	{
 		if (blockStates.set(index, blockid)) blockCount--;
 	}
-	else if (blockStates.get(index) == 0 && blockStates.set(index, blockid)) blockCount++;
-	
-
+	else
+	{
+		int oldBlockId = blockStates.get(index);
+		if (blockStates.set(index, blockid) && oldBlockId == 0) blockCount++;
+	}
 }
 
 const varInt LightSection::lightArrayLength = 2048;

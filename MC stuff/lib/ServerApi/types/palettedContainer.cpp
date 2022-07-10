@@ -245,14 +245,14 @@ public:
 		}
 		varInt paletteSize;
 		paletteSize.read(is);
-		palette.resize(paletteSize, BasicPaletteEntry(0, 0));
-		for (auto& entry : palette)
+		palette.reserve(paletteSize);
+		for (int i = 0; i < paletteSize; i++)
+		//for (auto& entry : palette)
 		{
 			varInt id, refCount;
 			id.read(is);
 			refCount.read(is);
-			entry.id = id;
-			entry.refCount = refCount;
+			palette.emplace_back(id, refCount);
 		}
 		values = new BitArray(size, bitsPerEntry);
 		values->read(is);

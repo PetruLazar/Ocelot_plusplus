@@ -67,6 +67,12 @@
     <Filter Include="Header Files\world\blocks\leaves">
       <UniqueIdentifier>{cdd86974-0c76-4e78-91f9-9d2cbb857f31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\world\blocks\liquids">
+      <UniqueIdentifier>{dee705b8-4892-4206-850a-58d5f304a89a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\world\blocks\logs">
+      <UniqueIdentifier>{9ade04e0-fa19-4b06-bef6-d5107bfd89aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nbt\nbt_base.h">
@@ -314,6 +320,27 @@
     </ClInclude>
     <ClInclude Include="types\palettedContainer.h">
       <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\liquids\liquids.h">
+      <Filter>Header Files\world\blocks\liquids</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\level.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\axis.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\logs\logs.h">
+      <Filter>Header Files\world\blocks\logs</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\instrument.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\note.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\powered.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

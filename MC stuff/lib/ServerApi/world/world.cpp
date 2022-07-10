@@ -422,6 +422,7 @@ void World::updateMainFile()
 	if (!worldMain.is_open())
 		throw runtimeError("Error: cannot open charactestics.bin");
 
+	varInt(currentWorldVersion).write(worldMain);
 	characteristics.write(worldMain);
 
 	spawn.X.write(worldMain);
