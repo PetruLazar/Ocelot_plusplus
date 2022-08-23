@@ -1133,7 +1133,7 @@ int World::getBlock(int x, int y, int z)
 	{
 		return reg->getBlock(x, y, z);
 	}
-	throw std::exception("World::getBlock: region not loaded");
+	throw genException("region not loaded");
 }
 void World::setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data, Player* broadcastException)
 {
@@ -1202,4 +1202,9 @@ World* World::getWorld(const mcString& worldName)
 {
 	for (World* w : worlds) if (worldName == w->name) return w;
 	return nullptr;
+}
+
+void World::tick()
+{
+	for (Region* reg : regions) reg->tick(this, randomTickSpeed);
 }

@@ -183,7 +183,7 @@ namespace CommandHandlers
 			}
 
 			Position pos(x, y, z);
-			nbt_compound thenbt("", new nbt * [4] {
+			nbt_compound thenbt("", new nbt * [4]{
 				new nbt_int("x", x),
 				new nbt_int("y", y),
 				new nbt_int("z", z),
@@ -191,10 +191,10 @@ namespace CommandHandlers
 				}, 4);
 			message::play::send::chatMessage(executingPlayer, Chat(
 				(std::to_string(x) + ' ' +
-				std::to_string(y) + ' ' + 
-				std::to_string(z) + ' ' +
-				std::to_string(id) + " becomes " + 
-				thenbt.to_string()).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+					std::to_string(y) + ' ' +
+					std::to_string(z) + ' ' +
+					std::to_string(id) + " becomes " +
+					thenbt.to_string()).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 			message::play::send::blockEntityData(executingPlayer, pos, id, thenbt);
 		}
 		break;
@@ -250,6 +250,16 @@ namespace CommandHandlers
 	{
 		Server::restartOnClose = true;
 		Server::keepServerOpen = false;
+	}
+	void randomTickSpeed(CommandHandlerArguments)
+	{
+		World* wld = executingPlayer->world;
+		if (argumentStack.size() == 0)
+		{
+			message::play::send::chatMessage(executingPlayer, Chat(("randomTickSpeed in world" + wld->name + " is " + std::to_string(wld->randomTickSpeed)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			return;
+		}
+		wld->randomTickSpeed = *(int*)argumentStack[0];
 	}
 }
 

@@ -46,6 +46,8 @@ public:
 	virtual const Blocks::PoweredProperty* const powered() const { return nullptr; }
 
 	virtual bool rightClick(World* wld, int x, int y, int z, Item itemId) const { return false; }
+	virtual bool update(World* wld, int x, int y, int z) const { return false; }
+	virtual bool randomTick(World* wld, int x, int y, int z) const { return false; }
 
 	virtual void free() const = 0;
 

@@ -102,6 +102,10 @@ public:
 	GeneratorFunction generatorFunction = 0;
 	HMODULE generatorModule = 0;
 
+	//time
+	int randomTickSpeed = 3;
+	SERVER_API void tick();
+
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
 	SERVER_API static const Byte currentBiomeBitsPerEntry;

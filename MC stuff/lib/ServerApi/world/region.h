@@ -35,4 +35,6 @@ public:
 
 	SERVER_API int getBlock(int relX, int relY, int relZ);
 	SERVER_API void setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data = nullptr);
+
+	SERVER_API void tick(World* wld, int randomTickSpeed);
 };

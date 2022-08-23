@@ -3441,7 +3441,7 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_dark_oak_sapling:
 		break;
 	case Item::minecraft_bedrock:
-		break;
+		return Blocks::Bedrock::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
 	case Item::minecraft_sand:
 		break;
 	case Item::minecraft_red_sand:

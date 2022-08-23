@@ -212,3 +212,34 @@ void Chunk::removeEntity(Entity::entity* en)
 {
 	entities.remove(en);
 }
+
+void Chunk::tick(World* wld, int cX, int cZ, int randomTickSpeed)
+{
+	int reg_y = 0;
+	cX <<= 4;
+	cZ <<= 4;
+	for (Section& sec : sections)
+	{
+		if (sec.blockCount == 0)
+		{
+			reg_y += 16;
+			continue;
+		}
+
+		//random ticks
+		for (int randomTickCount = 0; randomTickCount < randomTickSpeed; randomTickCount++)
+		{
+			int relX = rand() & 0xff,
+				relY = rand() & 0xf,
+				relZ = relX >> 4;
+			relX &= 0xf;
+			int id = sec.getBlock(relX, relY, relZ);
+			BlockState::globalPalette[id]->randomTick(wld, cX | relX, reg_y | relY, cZ | relZ);
+		}
+
+		//ticks
+		//...
+
+		reg_y += 16;
+	}
+}

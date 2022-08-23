@@ -1,5 +1,6 @@
 #include "../world.h"
 #include "../types/position.h"
+#include "../debug/mcexceptions.h"
 
 const BlockState* const BlockState::globalPalette[] =
 {
@@ -19,7 +20,8 @@ const BlockState* const BlockState::globalPalette[] =
 	/*  13   */ new Blocks::Podzol(false),
 	/*  14   */ new Blocks::Cobblestone(),
 	/*15 - 24*/ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-	/*25 - 33*/ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	/*25 - 32*/ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	/*  33   */ new Blocks::Bedrock(),
 	/*34 - 49*/ new Blocks::Water(0), new Blocks::Water(1), new Blocks::Water(2), new Blocks::Water(3), new Blocks::Water(4), new Blocks::Water(5), new Blocks::Water(6), new Blocks::Water(7), new Blocks::Water(8), new Blocks::Water(9), new Blocks::Water(10), new Blocks::Water(11), new Blocks::Water(12), new Blocks::Water(13), new Blocks::Water(14), new Blocks::Water(15),
 	/*50 - 65*/ new Blocks::Lava(0), new Blocks::Lava(1), new Blocks::Lava(2), new Blocks::Lava(3), new Blocks::Lava(4), new Blocks::Lava(5), new Blocks::Lava(6), new Blocks::Lava(7), new Blocks::Lava(8), new Blocks::Lava(9), new Blocks::Lava(10), new Blocks::Lava(11), new Blocks::Lava(12), new Blocks::Lava(13), new Blocks::Lava(14), new Blocks::Lava(15),
 	/*66 - 75*/ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -1025,6 +1027,7 @@ namespace Blocks
 		}
 		return false;
 	}
+
 	bool SnowyBlock::placeSnowy(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
@@ -1035,6 +1038,7 @@ namespace Blocks
 		}
 		return false;
 	}
+
 	bool Herb::placeHerb(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
@@ -1045,6 +1049,7 @@ namespace Blocks
 		}
 		return false;
 	}
+
 	bool Liquid::placeLiquid(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
@@ -1062,6 +1067,7 @@ namespace Blocks
 		}
 		return false;
 	}
+
 	bool Log::placeLog(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
@@ -1098,6 +1104,7 @@ namespace Blocks
 		}
 		return false;
 	}
+
 	bool Note_Block::place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
@@ -1113,6 +1120,66 @@ namespace Blocks
 		Byte newNote = NoteProperty::value + 1;
 		if (newNote == 25) newNote = 0;
 		wld->setBlock(x, y, z, getId(InstrumentProperty::value, newNote, PoweredProperty::value));
+		return false;
+	}
+
+	bool Grass_Block::randomTick(World* wld, int x, int y, int z) const
+	{
+		int action = rand() & 0xff;
+
+		switch (action & 0b11)
+		{
+		default:
+		{
+			//expand
+			int dx = action >> 2 & 0b1,
+				dz = action >> 3 & 0b1,
+				dy = action >> 4 & 0b11;
+
+			if (!dx) dx--;
+			if (!dz) dz--;
+			switch (dy)
+			{
+			case 0b00:
+			case 0b01:
+				break;
+			case 0b10:
+				dy = -1;
+				break;
+			case 0b11:
+				return false;
+			}
+
+			y += dy;
+			if (!wld->checkCoordinates(y)) return false;
+
+			x += dx;
+			z += dz;
+			try
+			{
+				int oldblock = wld->getBlock(x, y, z);
+				if (oldblock != Dirt::getId()) return false;
+			}
+			catch (mcException&)
+			{
+				return false;
+			}
+			int topy = y + 1;
+			if (wld->checkCoordinates(topy))
+			{
+				if (wld->getBlock(x, topy, z) != 0) return false; //do not expand grass if target block is covered
+			}
+			wld->setBlock(x, y, z, Grass_Block::getId(false));
+			return true;
+		}
+		case 0x2:
+			//decay
+			y++;
+			if (!wld->checkCoordinates(y)) return false;
+			if (wld->getBlock(x, y, z) == 0) return false;
+			wld->setBlock(x, y - 1, z, Dirt::getId());
+			return true;
+		}
 		return false;
 	}
 }

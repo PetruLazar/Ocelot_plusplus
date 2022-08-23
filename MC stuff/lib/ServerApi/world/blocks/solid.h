@@ -89,6 +89,8 @@ namespace Blocks
 		Grass_Block(bool snowy) : SnowyBlock(snowy) {}
 
 		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeSnowy(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
+		virtual bool randomTick(World* wld, int x, int y, int z) const override;
+
 		static int getId(bool snowy = false) { return base_id + !snowy; }
 	};
 	class Dirt : public SolidBlock
@@ -97,6 +99,7 @@ namespace Blocks
 
 	public:
 		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeSolid(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
+
 		static int getId() { return base_id; }
 	};
 	class Coarse_Dirt : public SolidBlock
@@ -120,6 +123,14 @@ namespace Blocks
 	class Cobblestone : public SolidBlock
 	{
 		static constexpr int base_id = 14;
+
+	public:
+		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeSolid(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
+		static int getId() { return base_id; }
+	};
+	class Bedrock : public SolidBlock
+	{
+		static constexpr int base_id = 33;
 
 	public:
 		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeSolid(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }

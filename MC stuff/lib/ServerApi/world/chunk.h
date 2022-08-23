@@ -63,5 +63,7 @@ public:
 	SERVER_API void removePlayer(Player*);
 	SERVER_API void addEntity(Entity::entity*);
 	SERVER_API void removeEntity(Entity::entity*);
+
+	SERVER_API void tick(World* wld, int cX, int cZ, int randomTickSpeed);
 };
 

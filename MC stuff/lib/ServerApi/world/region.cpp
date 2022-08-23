@@ -369,3 +369,10 @@ void Region::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* n
 		throw genException("Chunk not loaded");
 	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, blockid, nbt_data);
 }
+
+void Region::tick(World* wld, int randomTickSpeed)
+{
+	int rXe = rX << 5,
+		rZe = rZ << 5;
+	for (int z = 0; z < 32; z++) for (int x = 0; x < 32; x++) if (chunks[x][z]) chunks[x][z]->tick(wld, rXe | x, rZe | z, randomTickSpeed);
+}
