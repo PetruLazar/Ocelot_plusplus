@@ -89,13 +89,15 @@ public:
 	SERVER_API Region* getRegion(int rX, int rZ);
 
 	//converts a y coordinate from absolute values to relative values (to the min_y of the world)
-	SERVER_API int AbsToRelHeight(int);
-	SERVER_API int RelToAbsHeight(int);
+	inline int AbsToRelHeight(int y) { return y - min_y; }
+	inline int RelToAbsHeight(int y) { return y + min_y; }
 	//checks whether the y coordinate is in world (relative coordinate)
-	SERVER_API bool checkCoordinates(int y);
+	inline bool checkCoordinates(int y) { return y >= 0 && y < height; }
+	inline bool checkCoordinatesUpper(int y) { return y < height; }
+	inline bool checkCoordinatesLower(int y) { return y > 0; };
 	SERVER_API int getBlock(int x, int y, int z);
-	SERVER_API void setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr, Player* broadcastException = nullptr);
-	SERVER_API void setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr);
+	SERVER_API bool setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr, Player* broadcastException = nullptr);
+	SERVER_API bool setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr);
 	SERVER_API void setBlockByItem(Player*, Slot*, Position, BlockFace, bfloat curX, bfloat curY, bfloat curZ);
 
 	//generator

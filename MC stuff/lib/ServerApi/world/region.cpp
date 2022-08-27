@@ -359,15 +359,15 @@ int Region::getBlock(int relX, int relY, int relZ)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
 	if (!chunk)
-		throw genException("Chunk not loaded");
+		return -1;
 	return chunk->getBlock(relX & 0xf, relY, relZ & 0xf);
 }
-void Region::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
+bool Region::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
 	if (!chunk)
 		throw genException("Chunk not loaded");
-	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, blockid, nbt_data);
+	return chunk->setBlock(relX & 0xf, relY, relZ & 0xf, blockid, nbt_data);
 }
 
 void Region::tick(World* wld, int randomTickSpeed)

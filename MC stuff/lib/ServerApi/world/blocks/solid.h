@@ -90,6 +90,7 @@ namespace Blocks
 
 		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeSnowy(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
 		virtual bool randomTick(World* wld, int x, int y, int z) const override;
+		virtual bool updateRoot(World* wld, int x, int y, int z) const override;
 
 		static int getId(bool snowy = false) { return base_id + !snowy; }
 	};

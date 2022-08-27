@@ -1014,6 +1014,30 @@ void BlockEntity::write(char*& buffer)
 	type.write(buffer);
 	tags->write(buffer);
 }
+void BlockState::updateAround(World* wld, int x, int y, int z)
+{
+	//+y
+	if (wld->checkCoordinatesUpper(y + 1)) globalPalette[wld->getBlock(x, y + 1, z)]->update(wld, x, y + 1, z);
+
+	//-y
+	if (wld->checkCoordinatesLower(y - 1)) globalPalette[wld->getBlock(x, y - 1, z)]->update(wld, x, y - 1, z);
+
+	//+x
+	int id = wld->getBlock(x + 1, y, z);
+	if (id != -1) globalPalette[id]->update(wld, x + 1, y, z);
+
+	//-x
+	id = wld->getBlock(x - 1, y, z);
+	if (id != -1) globalPalette[id]->update(wld, x - 1, y, z);
+
+	//+z
+	id = wld->getBlock(x, y, z + 1);
+	if (id != -1) globalPalette[id]->update(wld, x, y, z + 1);
+
+	//-z
+	id = wld->getBlock(x, y, z - 1);
+	if (id != -1) globalPalette[id]->update(wld, x, y, z - 1);
+}
 
 namespace Blocks
 {
@@ -1045,6 +1069,15 @@ namespace Blocks
 		if (currentBlock->replaceable() && currentBlockId != base_id)
 		{
 			wld->setBlock(x, y, z, base_id);
+			return true;
+		}
+		return false;
+	}
+	bool Herb::updateRoot(World* wld, int x, int y, int z) const
+	{
+		if (--y < 0 || wld->getBlock(x, y, z) == Air::getId())
+		{
+			wld->setBlock(x, ++y, z, Air::getId());
 			return true;
 		}
 		return false;
@@ -1155,15 +1188,7 @@ namespace Blocks
 
 			x += dx;
 			z += dz;
-			try
-			{
-				int oldblock = wld->getBlock(x, y, z);
-				if (oldblock != Dirt::getId()) return false;
-			}
-			catch (mcException&)
-			{
-				return false;
-			}
+			if (wld->getBlock(x, y, z) != Dirt::getId()) return false;
 			int topy = y + 1;
 			if (wld->checkCoordinates(topy))
 			{
@@ -1178,6 +1203,18 @@ namespace Blocks
 			if (!wld->checkCoordinates(y)) return false;
 			if (wld->getBlock(x, y, z) == 0) return false;
 			wld->setBlock(x, y - 1, z, Dirt::getId());
+			return true;
+		}
+		return false;
+	}
+	bool Grass_Block::updateRoot(World* wld, int x, int y, int z) const
+	{
+		if (!wld->checkCoordinatesUpper(++y)) return false;
+		int topid = wld->getBlock(x, y, z);
+		bool newSnowy = (topid == /*snow layer or block*/-1);
+		if (newSnowy != SnowyBlock::value)
+		{
+			wld->setBlock(x, y, z, getId(newSnowy));
 			return true;
 		}
 		return false;

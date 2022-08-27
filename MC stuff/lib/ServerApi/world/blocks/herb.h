@@ -9,6 +9,8 @@ namespace Blocks
 	public:
 		virtual bool replaceable() const override { return true; }
 
+		virtual bool updateRoot(World* wld, int x, int y, int z) const override;
+
 		virtual void free() const override { delete this; }
 
 	protected:

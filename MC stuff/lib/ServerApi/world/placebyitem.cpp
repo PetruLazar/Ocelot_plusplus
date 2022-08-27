@@ -5606,9 +5606,9 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 	const BlockState* clickedBlock = BlockState::globalPalette[clickedBlockId];
 
 	if (clickedBlock->rightClick(this, x, y, z, itemId))
-		return;
+		return; //should there be a block update?
 	if (placeAux(this, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, clickedBlockId, itemId))
-		return;
+		return BlockState::updateAround(this, x, y, z);
 
 	switch (face)
 	{
@@ -5636,7 +5636,7 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 	clickedBlock = BlockState::globalPalette[clickedBlockId];
 
 	if (placeAux(this, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, clickedBlockId, itemId))
-		return;
+		return BlockState::updateAround(this, x, y, z);
 	message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
 	/*json* stateJson = nullptr;

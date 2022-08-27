@@ -1109,19 +1109,7 @@ Region* World::getRegion(int rX, int rZ)
 	for (Region* reg : regions) if (rX == reg->rX && rZ == reg->rZ) return reg;
 	return nullptr;
 }
-
-int World::AbsToRelHeight(int y)
-{
-	return y - min_y;
-}
-int World::RelToAbsHeight(int y)
-{
-	return y + min_y;
-}
-bool World::checkCoordinates(int y)
-{
-	return y >= 0 && y < height;
-}
+//-1 for blocks outside loaded area
 int World::getBlock(int x, int y, int z)
 {
 	int rX = x >> 9,
@@ -1133,27 +1121,16 @@ int World::getBlock(int x, int y, int z)
 	{
 		return reg->getBlock(x, y, z);
 	}
-	throw genException("region not loaded");
+	return -1;
 }
-void World::setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data, Player* broadcastException)
+bool World::setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data, Player* broadcastException)
 {
 	Position loc(x, y + min_y, z);
-
-	int rX = x >> 9,
-		rZ = z >> 9;
-	x &= 0x1ff; z &= 0x1ff;
-
-	Region* reg = getRegion(rX, rZ);
-	if (!reg) throw std::exception("World::setBlock: region not loaded");
-	reg->setBlock(x, y, z, blockid, nbt_data);
-
+	bool ret = setBlockNoBroadcast(x, y, z, blockid, nbt_data);
 	for (Player* p : players) if (p != broadcastException && p->positionInRange(loc)) message::play::send::blockChange(p, loc, blockid);
-
-	//setBlock(destX, destY, destZ, stateJson);
-	//Position destLoc = Position(destX, destY + p->world->min_y, destZ);
-	//for (Player* seener : players) if (seener != p && seener->positionInRange(destLoc)) message::play::send::blockChange(seener, destLoc, (*stateJson)["id"].iValue());
+	return ret;
 }
-void World::setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data)
+bool World::setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data)
 {
 	int rX = x >> 9,
 		rZ = z >> 9;
@@ -1161,7 +1138,7 @@ void World::setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* 
 
 	Region* reg = getRegion(rX, rZ);
 	if (!reg) throw std::exception("World::setBlock: region not loaded");
-	reg->setBlock(x, y, z, blockid, nbt_data);
+	return reg->setBlock(x, y, z, blockid, nbt_data);
 }
 
 bool World::loadAll()

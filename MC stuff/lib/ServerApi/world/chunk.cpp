@@ -168,11 +168,11 @@ int Chunk::getBlock(int relX, int relY, int relZ)
 {
 	return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ);
 }
-void Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
+bool Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Section& section = sections[relY >> 4];
 	bool hadBlocks = section.blockCount;
-	section.setBlock(relX, relY & 0xf, relZ, blockid);
+	bool ret = section.setBlock(relX, relY & 0xf, relZ, blockid);
 	if (nbt_data)
 	{
 		varInt type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
@@ -189,6 +189,8 @@ void Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nb
 	//change heightmaps? (once it is needed)
 
 	//updatelight
+
+	return ret;
 }
 
 void Chunk::writeSectionData(char*&)
