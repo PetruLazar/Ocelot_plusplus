@@ -11,10 +11,11 @@ namespace Blocks
 
 		virtual bool replaceable() const override { return true; }
 		virtual bool isLiquid() const override { return true; }
+		virtual Transparency getTransparency(BlockFace) const override { Transparency::partial; }
 		virtual void free() const override { delete this; }
 
 	protected:
-		static bool placeLiquid(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id);
+		static bool placeLiquid(DECL_BLOCKPLACE_ARGS, int base_id);
 	};
 
 	class Water : public Liquid
@@ -25,8 +26,8 @@ namespace Blocks
 		Water(Byte level) : Liquid(level) {}
 		virtual int set(Byte level) const override { return getId(level); }
 
-		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeLiquid(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
-		static int getId(Byte level) { return base_id + level; }
+		INHERIT_BLOCKPLACE(placeLiquid)
+			static int getId(Byte level) { return base_id + level; }
 	};
 
 	class Lava : public Liquid
@@ -38,7 +39,7 @@ namespace Blocks
 		//virtual int LevelProperty::set(Byte level) const override { return getId(level); }
 		virtual int set(Byte level) const override { return getId(level); }
 
-		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeLiquid(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
-		static int getId(Byte level) { return base_id + level; }
+		INHERIT_BLOCKPLACE(placeLiquid)
+			static int getId(Byte level) { return base_id + level; }
 	};
 }

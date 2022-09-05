@@ -26,6 +26,8 @@ class World
 
 	eidDispenser::Entity eidDispenser;
 
+	Byte updateLightAux(int x, int y, int z, const BlockState*);
+
 public:
 	SERVER_API World(const char* name);
 	SERVER_API ~World();
@@ -95,10 +97,23 @@ public:
 	inline bool checkCoordinates(int y) { return y >= 0 && y < height; }
 	inline bool checkCoordinatesUpper(int y) { return y < height; }
 	inline bool checkCoordinatesLower(int y) { return y > 0; };
+	inline bool checkLightCoordinates(int y) { return y >= -16 && y < height + 16; }
+	inline bool checkLightCoordinatesUpper(int y) { return y < height + 16; }
+	inline bool checkLightCoordinatesLower(int y) { return y >= -16; }
+
 	SERVER_API int getBlock(int x, int y, int z);
 	SERVER_API bool setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr, Player* broadcastException = nullptr);
 	SERVER_API bool setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr);
 	SERVER_API void setBlockByItem(Player*, Slot*, Position, BlockFace, bfloat curX, bfloat curY, bfloat curZ);
+
+	SERVER_API Byte getSkyLight(int x, int y, int z);
+	SERVER_API void setSkyLight(int x, int y, int z, Byte value);
+	SERVER_API Byte getBlockLight(int x, int y, int z);
+	SERVER_API void setBlockLight(int x, int y, int z, Byte value);
+
+	SERVER_API void setLightSource(int x, int y, int z, Byte sourceLight);
+	SERVER_API void destroyLightSource(int x, int y, int z);
+	SERVER_API void updateLight(int x, int y, int z);
 
 	//generator
 	GeneratorFunction generatorFunction = 0;

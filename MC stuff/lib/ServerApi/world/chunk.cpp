@@ -26,7 +26,7 @@ Chunk::Chunk(ull worldHeight)
 	sections.resize(sectionCount);
 
 	//light section initialization
-	lightData.resize((ull)sectionCount + 2);
+	lightSections.resize((ull)sectionCount + 2);
 	skyLightMask = new BitArray(sectionCount + 2, 1);
 	blockLightMask = new BitArray(sectionCount + 2, 1);
 	emptySkyLightMask = new BitArray(sectionCount + 2, 1);
@@ -75,9 +75,9 @@ void Chunk::read(std::istream& file)
 	emptyBlockLightMask->read(file);
 
 	//read light data for each section
-	for (uint i = 0; i < lightData.size(); i++)
+	for (uint i = 0; i < lightSections.size(); i++)
 	{
-		LightSection& sec = lightData[i];
+		LightSection& sec = lightSections[i];
 		sec.skyLight = new BitArray(4096, 4);
 		if (skyLightMask->getElement(i))
 		{
@@ -148,9 +148,9 @@ void Chunk::write(ostream& file)
 	emptyBlockLightMask->write(file);
 
 	//write light data for each section
-	for (uint i = 0; i < lightData.size(); i++)
+	for (uint i = 0; i < lightSections.size(); i++)
 	{
-		LightSection& sec = lightData[i];
+		LightSection& sec = lightSections[i];
 
 		if (skyLightMask->getElement(i))
 		{
@@ -164,10 +164,6 @@ void Chunk::write(ostream& file)
 	}
 }
 
-int Chunk::getBlock(int relX, int relY, int relZ)
-{
-	return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ);
-}
 bool Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Section& section = sections[relY >> 4];
@@ -193,26 +189,22 @@ bool Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nb
 	return ret;
 }
 
+void Chunk::setSkyLight(int relX, int relY, int relZ, Byte value)
+{
+	LightSection& sec = lightSections[((ull)relY >> 4) + 1];
+	sec.setSkyLight(relX, relY & 0xf, relZ, value);
+	//change light masks
+}
+void Chunk::setBlockLight(int relX, int relY, int relZ, Byte value)
+{
+	LightSection& sec = lightSections[((ull)relY >> 4) + 1];
+	sec.setBlockLight(relX, relY & 0xf, relZ, value);
+	//change light masks
+}
+
 void Chunk::writeSectionData(char*&)
 {
 	throw runtimeError("Chunk::writeSectionData not implemented yet");
-}
-
-void Chunk::addPlayer(Player* p)
-{
-	players.emplace_front(p);
-}
-void Chunk::removePlayer(Player* p)
-{
-	players.remove(p);
-}
-void Chunk::addEntity(Entity::entity* en)
-{
-	entities.emplace_front(en);
-}
-void Chunk::removeEntity(Entity::entity* en)
-{
-	entities.remove(en);
 }
 
 void Chunk::tick(World* wld, int cX, int cZ, int randomTickSpeed)

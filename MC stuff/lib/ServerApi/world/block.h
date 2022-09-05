@@ -8,6 +8,10 @@
 class World;
 #include "../world.h"
 
+#define DECL_BLOCKPLACE_ARGS World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId
+#define PASS_BLOCKPLACE_ARGS wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId
+#define INHERIT_BLOCKPLACE(baseFunc) static bool place(DECL_BLOCKPLACE_ARGS) { return baseFunc(PASS_BLOCKPLACE_ARGS, base_id); }
+
 enum class BlockFace
 {
 	bottom,
@@ -17,6 +21,7 @@ enum class BlockFace
 	west,
 	east
 };
+
 
 namespace Blocks
 {
@@ -28,6 +33,13 @@ namespace Blocks
 	class InstrumentProperty;
 	class NoteProperty;
 	class PoweredProperty;
+
+	enum class Transparency
+	{
+		solid,
+		transparent,
+		partial
+	};
 }
 
 class BlockState
@@ -35,6 +47,9 @@ class BlockState
 public:
 	virtual bool replaceable() const { return false; }
 	virtual bool isLiquid() const { return false; }
+
+	virtual Byte lightEmitted() const { return 0; };
+	virtual Blocks::Transparency getTransparency(BlockFace) const { return Blocks::Transparency::transparent; };
 
 	virtual const Blocks::SnowyBlock* const snowy() const { return nullptr; }
 	virtual const Blocks::DistanceProperty* const distance() const { return nullptr; }

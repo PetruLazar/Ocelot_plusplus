@@ -198,6 +198,28 @@ namespace CommandHandlers
 			message::play::send::blockEntityData(executingPlayer, pos, id, thenbt);
 		}
 		break;
+		case 8:
+		{
+			World* wld = executingPlayer->world;
+			int x = fastfloor(executingPlayer->x),
+				y = wld->AbsToRelHeight(fastfloor(executingPlayer->y)),
+				z = fastfloor(executingPlayer->z);
+			if (argumentStack.size() < 2) throw Chat("Expected a \"light level\" argument", Chat::color::red());
+			int lvl;
+			try
+			{
+				lvl = std::stoi(*(mcString*)argumentStack[1]);
+			}
+			catch (...)
+			{
+				throw Chat("Invalid argument: light level expected", Chat::color::red());
+			}
+			if (lvl < 0 || lvl > 15) throw Chat("Invalid argument: light level has to be between 0 and 15, inclusive", Chat::color::red());
+			if (!wld->checkLightCoordinates(y)) throw Chat("Coordinates outside of world", Chat::color::red());
+			wld->setSkyLight(x, y, z, lvl);
+			message::play::send::updateLight(executingPlayer, x >> 4, z >> 4);
+		}
+		break;
 		//add tests here - starting at 1
 		default:
 			message::play::send::chatMessage(executingPlayer, Chat("Invalid test", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));

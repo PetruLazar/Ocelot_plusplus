@@ -19,13 +19,15 @@ namespace Blocks
 	class Leaves : public DistanceProperty, public LeafPersistentProperty
 	{
 	protected:
-		static bool placeLeaf(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
+		static bool placeLeaf(DECL_BLOCKPLACE_ARGS, int base_id)
 		{
 			return false;
 		}
 
 	public:
 		Leaves(Byte distance, bool persistent) : DistanceProperty(distance), LeafPersistentProperty(persistent) {}
+
+		virtual Transparency getTransparency(BlockFace) const override { return Transparency::partial; }
 
 		virtual void free() const override { delete this; }
 	};
@@ -37,8 +39,8 @@ namespace Blocks
 	public:
 		Oak_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
 
-		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeLeaf(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
-		static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
 	};
 	class Spruce_Leaves : public Leaves
 	{
@@ -47,8 +49,8 @@ namespace Blocks
 	public:
 		Spruce_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
 
-		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeLeaf(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
-		static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
 	};
 	class Birch_Leaves : public Leaves
 	{
@@ -57,7 +59,7 @@ namespace Blocks
 	public:
 		Birch_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
 
-		static bool place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId) { return placeLeaf(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId, base_id); }
-		static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
 	};
 }

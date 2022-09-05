@@ -20,22 +20,22 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 			//mark light section as empty
 			ch->skyLightMask->setElement(0, 1);
 			ch->blockLightMask->setElement(0, 1);
-			ch->lightData[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 		//light section above ground - empty
 		{
 			//mark light section as empty
 			ch->blockLightMask->setElement(sectionCount, 1);
 			ch->skyLightMask->setElement(sectionCount, 1);
-			ch->lightData[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 
 		for (ull i = 0; i < sectionCount; i++)
 		{
 			Section& section = ch->sections[i];
-			LightSection& lightSection = ch->lightData[i + 1];
+			LightSection& lightSection = ch->lightSections[i + 1];
 
 			//SECTION DATA - this is a section full of air
 
@@ -93,22 +93,22 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 			//mark light section as empty
 			ch->skyLightMask->setElement(0, 1);
 			ch->blockLightMask->setElement(0, 1);
-			ch->lightData[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 		//light section above ground - empty
 		{
 			//mark light section as empty
 			ch->blockLightMask->setElement(sectionCount, 1);
 			ch->skyLightMask->setElement(sectionCount, 1);
-			ch->lightData[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 
 		for (ull i = 0; i < sectionCount; i++)
 		{
 			Section& section = ch->sections[i];
-			LightSection& lightSection = ch->lightData[i + 1];
+			LightSection& lightSection = ch->lightSections[i + 1];
 
 			//SECTION DATA - this is a section full of air
 

@@ -1041,7 +1041,7 @@ void BlockState::updateAround(World* wld, int x, int y, int z)
 
 namespace Blocks
 {
-	bool SolidBlock::placeSolid(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
+	bool SolidBlock::placeSolid(DECL_BLOCKPLACE_ARGS, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
 		if (currentBlock->replaceable())
@@ -1052,7 +1052,7 @@ namespace Blocks
 		return false;
 	}
 
-	bool SnowyBlock::placeSnowy(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
+	bool SnowyBlock::placeSnowy(DECL_BLOCKPLACE_ARGS, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
 		if (currentBlock->replaceable() && currentBlockId != base_id)
@@ -1063,7 +1063,7 @@ namespace Blocks
 		return false;
 	}
 
-	bool Herb::placeHerb(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
+	bool Herb::placeHerb(DECL_BLOCKPLACE_ARGS, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
 		if (currentBlock->replaceable() && currentBlockId != base_id)
@@ -1083,7 +1083,7 @@ namespace Blocks
 		return false;
 	}
 
-	bool Liquid::placeLiquid(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
+	bool Liquid::placeLiquid(DECL_BLOCKPLACE_ARGS, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
 		if (currentBlock->isLiquid())
@@ -1101,7 +1101,7 @@ namespace Blocks
 		return false;
 	}
 
-	bool Log::placeLog(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, int base_id)
+	bool Log::placeLog(DECL_BLOCKPLACE_ARGS, int base_id)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
 		if (currentBlock->replaceable())
@@ -1138,7 +1138,7 @@ namespace Blocks
 		return false;
 	}
 
-	bool Note_Block::place(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId)
+	bool Note_Block::place(DECL_BLOCKPLACE_ARGS)
 	{
 		const BlockState* currentBlock = BlockState::globalPalette[currentBlockId];
 		if (currentBlock->replaceable())

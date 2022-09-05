@@ -505,8 +505,8 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		//the section below the world
 		chunk->emptySkyLightMask->setElement(0, 1);
 		chunk->emptyBlockLightMask->setElement(0, 1);
-		chunk->lightData[0].skyLight = new BitArray(4096, 4);
-		chunk->lightData[0].blockLight = new BitArray(4096, 4);
+		chunk->lightSections[0].skyLight = new BitArray(4096, 4);
+		chunk->lightSections[0].blockLight = new BitArray(4096, 4);
 	}
 	//section above the world
 	{
@@ -516,8 +516,8 @@ Chunk* World::generate_def(World* world, int X, int Z)
 		for (int i = 0; i < 256; i++) temp[i] = 0xffffffffffffffff;
 		chunk->emptyBlockLightMask->setElement((ull)sectionCount + 1, 1);
 		chunk->skyLightMask->setElement((ull)sectionCount + 1, 1);
-		chunk->lightData[(ull)sectionCount + 1].skyLight = lightData;
-		chunk->lightData[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
+		chunk->lightSections[(ull)sectionCount + 1].skyLight = lightData;
+		chunk->lightSections[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
 	}
 	//[z][x]
 	uint heightmaps[16][16]{};
@@ -531,7 +531,7 @@ Chunk* World::generate_def(World* world, int X, int Z)
 	for (uint i = 0; i < sectionCount; i++)
 	{
 		Section& section = chunk->sections[i];
-		LightSection& lightSection = chunk->lightData[(ull)i + 1];
+		LightSection& lightSection = chunk->lightSections[(ull)i + 1];
 
 		//biomes
 		for (int b = 0; b < 64; b++) section.biomes.set(b, biomeId);
@@ -616,8 +616,8 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		//the section below the world
 		chunk->emptySkyLightMask->setElement(0, 1);
 		chunk->emptyBlockLightMask->setElement(0, 1);
-		chunk->lightData[0].skyLight = new BitArray(4096, 4);
-		chunk->lightData[0].blockLight = new BitArray(4096, 4);
+		chunk->lightSections[0].skyLight = new BitArray(4096, 4);
+		chunk->lightSections[0].blockLight = new BitArray(4096, 4);
 	}
 	{
 		//the section above the world
@@ -626,15 +626,15 @@ Chunk* World::generate_flat(World* world, int x, int z)
 		for (int i = 0; i < 256; i++) temp[i] = 0xffffffffffffffff;
 		chunk->emptyBlockLightMask->setElement((ull)sectionCount + 1, 1);
 		chunk->skyLightMask->setElement((ull)sectionCount + 1, 1);
-		chunk->lightData[(ull)sectionCount + 1].skyLight = lightData;
-		chunk->lightData[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
+		chunk->lightSections[(ull)sectionCount + 1].skyLight = lightData;
+		chunk->lightSections[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
 	}
 
 	if (rand() < 100) for (uint i = 0; i < sectionCount; i++)
 	{
 		//water chunk
 		Section& section = chunk->sections[i];
-		LightSection& lightSection = chunk->lightData[(ull)i + 1];
+		LightSection& lightSection = chunk->lightSections[(ull)i + 1];
 
 		//biomes
 		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
@@ -732,7 +732,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 	{
 		//lava chunk
 		Section& section = chunk->sections[i];
-		LightSection& lightSection = chunk->lightData[(ull)i + 1];
+		LightSection& lightSection = chunk->lightSections[(ull)i + 1];
 
 		//biomes
 		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
@@ -845,7 +845,7 @@ Chunk* World::generate_flat(World* world, int x, int z)
 	{
 		//normal chunk
 		Section& section = chunk->sections[i];
-		LightSection& lightSection = chunk->lightData[(ull)i + 1];
+		LightSection& lightSection = chunk->lightSections[(ull)i + 1];
 
 		//biomes
 		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
@@ -985,8 +985,8 @@ Chunk* World::generate_void(World* world, int x, int z)
 		//the section below the world
 		chunk->skyLightMask->setElement(0, 1);
 		chunk->emptyBlockLightMask->setElement(0, 1);
-		chunk->lightData[0].skyLight = lightData;
-		chunk->lightData[0].blockLight = new BitArray(4096, 4);
+		chunk->lightSections[0].skyLight = lightData;
+		chunk->lightSections[0].blockLight = new BitArray(4096, 4);
 	}
 	{
 		//the section above the world
@@ -995,8 +995,8 @@ Chunk* World::generate_void(World* world, int x, int z)
 		for (int i = 0; i < 256; i++) temp[i] = 0xffffffffffffffff;
 		chunk->emptyBlockLightMask->setElement((ull)sectionCount + 1, 1);
 		chunk->skyLightMask->setElement((ull)sectionCount + 1, 1);
-		chunk->lightData[(ull)sectionCount + 1].skyLight = lightData;
-		chunk->lightData[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
+		chunk->lightSections[(ull)sectionCount + 1].skyLight = lightData;
+		chunk->lightSections[(ull)sectionCount + 1].blockLight = new BitArray(4096, 4);
 	}
 
 	//primary mask initialization
@@ -1005,7 +1005,7 @@ Chunk* World::generate_void(World* world, int x, int z)
 	for (uint i = 0; i < sectionCount; i++)
 	{
 		Section& section = chunk->sections[i];
-		LightSection& lightSection = chunk->lightData[(ull)i + 1];
+		LightSection& lightSection = chunk->lightSections[(ull)i + 1];
 
 		//biomes
 		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
@@ -1137,8 +1137,90 @@ bool World::setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* 
 	x &= 0x1ff; z &= 0x1ff;
 
 	Region* reg = getRegion(rX, rZ);
-	if (!reg) throw std::exception("World::setBlock: region not loaded");
+	if (!reg) genException("World::setBlock: region not loaded");
 	return reg->setBlock(x, y, z, blockid, nbt_data);
+}
+
+Byte World::getSkyLight(int x, int y, int z)
+{
+	Region* reg = getRegion(x >> 9, z >> 9);
+	if (!reg)
+	{
+		//if the region is not loaded, return 0xff for now
+		return 0xff;
+	}
+	return reg->getSkyLight(x & 0x1ff, y, z & 0x1ff);
+}
+void World::setSkyLight(int x, int y, int z, Byte value)
+{
+	Region* reg = getRegion(x >> 9, z >> 9);
+	if (!reg)
+	{
+		//if the region is not loaded, do nothing for now
+		return;
+	}
+	reg->setSkyLight(x & 0x1ff, y, z & 0x1ff, value);
+}
+Byte World::getBlockLight(int x, int y, int z)
+{
+	Region* reg = getRegion(x >> 9, z >> 9);
+	if (!reg)
+	{
+		//if the region is not loaded, return 0xff for now
+		return 0xff;
+	}
+	return reg->getBlockLight(x & 0x1ff, y, z & 0x1ff);
+}
+void World::setBlockLight(int x, int y, int z, Byte value)
+{
+	Region* reg = getRegion(x >> 9, z >> 9);
+	if (!reg)
+	{
+		//if the region is not loaded, do nothing for now
+		return;
+	}
+	reg->setBlockLight(x & 0x1ff, y, z & 0x1ff, value);
+}
+
+void World::setLightSource(int x, int y, int z, Byte sourceLight)
+{
+	//wip
+}
+void World::destroyLightSource(int x, int y, int z)
+{
+	//wip
+}
+
+Byte calculateLight()
+{
+
+}
+Byte World::updateLightAux(int x, int y, int z, const BlockState* state)
+{
+	//from +y
+
+
+	//from -y
+
+	//from +x
+
+	//from -x
+
+	//from +z
+
+	//from -z
+}
+void World::updateLight(int x, int y, int z)
+{
+	const BlockState* state = BlockState::globalPalette[getBlock(x, y, z)];
+	//Blocks::Transparency transparency = state->getTransparency();
+	updateLightAux(x, y, z, state);
+
+	//update block light
+
+
+	//update sky light
+
 }
 
 bool World::loadAll()

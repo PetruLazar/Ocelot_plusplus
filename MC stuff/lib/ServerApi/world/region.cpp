@@ -369,6 +369,46 @@ bool Region::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* n
 		throw genException("Chunk not loaded");
 	return chunk->setBlock(relX & 0xf, relY, relZ & 0xf, blockid, nbt_data);
 }
+Byte Region::getSkyLight(int relX, int relY, int relZ)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, return 0xff for now
+		return 0xff;
+	}
+	return ch->getSkyLight(relX & 0xf, relY, relZ & 0xf);
+}
+void Region::setSkyLight(int relX, int relY, int relZ, Byte value)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, do nothing for now
+		return;
+	}
+	ch->setSkyLight(relX & 0xf, relY, relZ & 0xf, value);
+}
+Byte Region::getBlockLight(int relX, int relY, int relZ)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, return 0xff for now
+		return 0xff;
+	}
+	return ch->getBlockLight(relX & 0xf, relY, relZ & 0xf);
+}
+void Region::setBlockLight(int relX, int relY, int relZ, Byte value)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, do nothing for now
+		return;
+	}
+	ch->setBlockLight(relX & 0xf, relY, relZ & 0xf, value);
+}
 
 void Region::tick(World* wld, int randomTickSpeed)
 {

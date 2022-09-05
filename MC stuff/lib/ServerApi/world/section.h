@@ -22,7 +22,7 @@ public:
 	//varInt dataLength; //unused
 
 	//get a copy of the block state at the desired coordinates to use with setBlock
-	SERVER_API int getBlock(int relX, int relY, int relZ);
+	int getBlock(int relX, int relY, int relZ) { return blockStates.get(relY << 8 | relZ << 4 | relX); }
 	SERVER_API bool setBlock(int relX, int relY, int relZ, int blockid);
 };
 
@@ -35,4 +35,9 @@ public:
 
 	BitArray* skyLight,
 		* blockLight;
+
+	Byte getSkyLight(int relX, int relY, int relZ) { return (Byte)skyLight->getElement((ull)relY << 8 | (ull)relZ << 4 | relX); }
+	void setSkyLight(int relX, int relY, int relZ, Byte value) { skyLight->setElement((ull)relY << 8 | (ull)relZ << 4 | relX, value); }
+	Byte getBlockLight(int relX, int relY, int relZ) { return (Byte)blockLight->getElement((ull)relY << 8 | (ull)relZ << 4 | relX); }
+	void setBlockLight(int relX, int relY, int relZ, Byte value) { blockLight->setElement((ull)relY << 8 | (ull)relZ << 4 | relX, value); }
 };

@@ -27,7 +27,7 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 	for (ull i = 0; i < sectionCount; i++)
 	{
 		Section& section = ch->sections[i];
-		LightSection& lightSection = ch->lightData[i + 1];
+		LightSection& lightSection = ch->lightSections[i + 1];
 
 		//SECTION DATA - this is a section full of air
 

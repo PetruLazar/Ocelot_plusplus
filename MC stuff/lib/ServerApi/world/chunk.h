@@ -25,7 +25,7 @@ public:
 	BitArray* emptyBlockLightMask;
 
 	//arrays
-	std::vector<LightSection> lightData;
+	std::vector<LightSection> lightSections;
 
 	//chunk data
 	ull loadCount = 0;
@@ -53,16 +53,20 @@ public:
 	//writing and reading from buffer after/before compression
 
 	//get a copy of the block state at the desired coordinates to use with setBlock
-	SERVER_API int getBlock(int relX, int relY, int relZ);
+	int getBlock(int relX, int relY, int relZ) { return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ); }
 	SERVER_API bool setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data = nullptr);
+	Byte getSkyLight(int relX, int relY, int relZ) { return lightSections[((ull)relY >> 4) + 1].getSkyLight(relX, relY & 0xf, relZ); }
+	SERVER_API void setSkyLight(int relX, int relY, int relZ, Byte value);
+	Byte getBlockLight(int relX, int relY, int relZ) { return lightSections[((ull)relY >> 4) + 1].getBlockLight(relX, relY & 0xf, relZ); }
+	SERVER_API void setBlockLight(int relX, int relY, int relZ, Byte value);
 
 	//includes data size field of the packet
 	SERVER_API void writeSectionData(char*&);
 
-	SERVER_API void addPlayer(Player*);
-	SERVER_API void removePlayer(Player*);
-	SERVER_API void addEntity(Entity::entity*);
-	SERVER_API void removeEntity(Entity::entity*);
+	void addPlayer(Player* p) { players.emplace_front(p); }
+	void removePlayer(Player* p) { players.remove(p); }
+	void addEntity(Entity::entity* en) { entities.emplace_front(en); }
+	void removeEntity(Entity::entity* en) { entities.remove(en); }
 
 	SERVER_API void tick(World* wld, int cX, int cZ, int randomTickSpeed);
 };

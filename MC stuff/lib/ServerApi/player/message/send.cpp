@@ -527,8 +527,8 @@ void message::play::send::chunkDataAndLight(Player* p, Chunk* chunk, bint cX, bi
 	std::vector<BitArray*> skyLightArrays, blockLightArrays;
 	for (uint i = 0; i < sectionCount; i++)
 	{
-		if (chunk->skyLightMask->getElement(i)) skyLightArrays.emplace_back(chunk->lightData[i].skyLight);
-		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightData[i].blockLight);
+		if (chunk->skyLightMask->getElement(i)) skyLightArrays.emplace_back(chunk->lightSections[i].skyLight);
+		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightSections[i].blockLight);
 	}
 
 	chunkDataAndLight(p, cX, cZ, heightMaps, dataSize, chunkDataStart, chunk->blockEntities, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, (uint)skyLightArrays.size(), skyLightArrays.data(), (uint)blockLightArrays.size(), blockLightArrays.data());
@@ -1047,13 +1047,13 @@ void message::play::send::updateLight(Player* p, varInt cX, varInt cZ, bool trus
 void message::play::send::updateLight(Player* p, varInt cX, varInt cZ)
 {
 	Chunk* chunk = p->world->getChunk(cX, cZ);
-	uint sectionCount = (uint)chunk->lightData.size();
+	uint sectionCount = (uint)chunk->lightSections.size();
 
 	std::vector<BitArray*> skyLightArrays, blockLightArrays;
 	for (uint i = 0; i < sectionCount; i++)
 	{
-		if (chunk->skyLightMask->getElement(i)) skyLightArrays.emplace_back(chunk->lightData[i].skyLight);
-		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightData[i].blockLight);
+		if (chunk->skyLightMask->getElement(i)) skyLightArrays.emplace_back(chunk->lightSections[i].skyLight);
+		if (chunk->blockLightMask->getElement(i)) blockLightArrays.emplace_back(chunk->lightSections[i].blockLight);
 	}
 	updateLight(p, cX, cZ, true, *chunk->skyLightMask, *chunk->blockLightMask, *chunk->emptySkyLightMask, *chunk->emptyBlockLightMask, (uint)skyLightArrays.size(), skyLightArrays.data(), (uint)blockLightArrays.size(), blockLightArrays.data());
 }

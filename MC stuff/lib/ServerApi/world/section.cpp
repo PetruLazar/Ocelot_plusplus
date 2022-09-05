@@ -5,10 +5,6 @@
 Section::Section() {}
 //Section::~Section() {}
 
-int Section::getBlock(int relX, int relY, int relZ)
-{
-	return blockStates.get(relY << 8 | relZ << 4 | relX);
-}
 bool Section::setBlock(int relX, int relY, int relZ, int blockid)
 {
 	int index = relY << 8 | relZ << 4 | relX;
