@@ -27,7 +27,7 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 	for (ull i = 0; i < sectionCount; i++)
 	{
 		Section& section = ch->sections[i];
-		LightSection& lightSection = ch->lightData[i + 1];
+		LightSection& lightSection = ch->lightSections[i + 1];
 
 		//SECTION DATA - this is a section full of air
 
@@ -36,13 +36,11 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 
 		//block data
 		section.blockCount = 0;
-		section.bitsPerBlock = 4;
-		section.useGlobalPallete = false;
-		section.palette.emplace_back(BlockState("minecraft:air"), 0x1000);
-		section.blockStates = new BitArray(4096, section.bitsPerBlock);
+		//section.palette.emplace_back(BlockState("minecraft:air"), 0x1000);
+		//section.blockStates = new BitArray(4096, section.bitsPerBlock);
 
 		//biome data
-		section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+		//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
 
 		//LIGHTSECTION DATA - this section is light empty
 

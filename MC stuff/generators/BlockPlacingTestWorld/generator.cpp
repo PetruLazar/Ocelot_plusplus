@@ -20,22 +20,22 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 			//mark light section as empty
 			ch->skyLightMask->setElement(0, 1);
 			ch->blockLightMask->setElement(0, 1);
-			ch->lightData[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 		//light section above ground - empty
 		{
 			//mark light section as empty
 			ch->blockLightMask->setElement(sectionCount, 1);
 			ch->skyLightMask->setElement(sectionCount, 1);
-			ch->lightData[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 
 		for (ull i = 0; i < sectionCount; i++)
 		{
 			Section& section = ch->sections[i];
-			LightSection& lightSection = ch->lightData[i + 1];
+			LightSection& lightSection = ch->lightSections[i + 1];
 
 			//SECTION DATA - this is a section full of air
 
@@ -44,26 +44,26 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 
 			//block data
 			section.blockCount = 0x80;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
 
-			section.palette.emplace_back(BlockState("minecraft:air"), 0xf80);
-			section.palette.emplace_back(BlockState("minecraft:stone"), 0x80); //128 stone blocks
+			//section.palette.emplace_back(BlockState("minecraft:air"), 0xf80);
+			//section.palette.emplace_back(BlockState("minecraft:stone"), 0x80); //128 stone blocks
 
 			//			y   z   x
-			Byte blocks[16][16][16]{ 0 };
+			//Byte blocks[16][16][16]{ 0 };
 
 				//upper half
 			for (int z = 1; z < 16; z += 4) for (int x = 0; x < 16; x++)
 			{
-				blocks[0][z][x] = 1;
-				blocks[8][z][x] = 1;
+				//blocks[0][z][x] = 1;
+				section.blockStates.set(z << 4 | x, 1);
+				//blocks[8][z][x] = 1;
+				section.blockStates.set(0x800 | z << 4 | x, 1);
 			}
 
-			section.blockStates = new BitArray(4096, section.bitsPerBlock, (Byte*)blocks);
+			//section.blockStates = new BitArray(4096, section.bitsPerBlock, (Byte*)blocks);
 
 			//biome data
-			section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+			//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
 
 			//LIGHTSECTION DATA - this section is light empty
 
@@ -93,22 +93,22 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 			//mark light section as empty
 			ch->skyLightMask->setElement(0, 1);
 			ch->blockLightMask->setElement(0, 1);
-			ch->lightData[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[0].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 		//light section above ground - empty
 		{
 			//mark light section as empty
 			ch->blockLightMask->setElement(sectionCount, 1);
 			ch->skyLightMask->setElement(sectionCount, 1);
-			ch->lightData[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
-			ch->lightData[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].skyLight = new BitArray(4096, 4, (Byte*)lightData);
+			ch->lightSections[sectionCount].blockLight = new BitArray(4096, 4, (Byte*)lightData);
 		}
 
 		for (ull i = 0; i < sectionCount; i++)
 		{
 			Section& section = ch->sections[i];
-			LightSection& lightSection = ch->lightData[i + 1];
+			LightSection& lightSection = ch->lightSections[i + 1];
 
 			//SECTION DATA - this is a section full of air
 
@@ -117,13 +117,11 @@ Chunk* generate(World* wld, int chunkX, int chunkZ)
 
 			//block data
 			section.blockCount = 0x0;
-			section.bitsPerBlock = 4;
-			section.useGlobalPallete = false;
-			section.palette.emplace_back(BlockState("minecraft:air"), 0x1000);
-			section.blockStates = new BitArray(4096, section.bitsPerBlock);
+			//section.palette.emplace_back(BlockState("minecraft:air"), 0x1000);
+			//section.blockStates = new BitArray(4096, section.bitsPerBlock);
 
 			//biome data
-			section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
+			//section.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
 
 			//LIGHTSECTION DATA - this section is light empty
 

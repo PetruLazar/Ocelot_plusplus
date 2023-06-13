@@ -5,40 +5,25 @@
 #include <vector>
 #include "../types/apidef.h"
 #include "block.h"
+#include "../types/palettedContainer.h"
 
 class Section
 {
-	void decRefCount(PaletteEntry& bl, const ull& paletteIndex);
-	void updateBitsPerBlock();
-
-	//Byte internalBitsPerBlock;
-
 public:
 	SERVER_API Section();
 	//SERVER_API Section();
-	SERVER_API ~Section();
+	//SERVER_API ~Section();
 
-	//varInt biomes[4][4][4];
-	//bits per entry 4, always global palette
-	//no palette (uses global)
-	BitArray* biomes;
+	BiomesContainer biomes;
+	BlockStatesContainer blockStates;
 
-	std::vector<PaletteEntry> palette;
-	bool useGlobalPallete;
-
-	Byte bitsPerBlock;
 	bshort blockCount;
 
-	varInt dataLength; //unused
-	BitArray* blockStates;
+	//varInt dataLength; //unused
 
-	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section
-	SERVER_API BlockState& getPaletteEntry(int relX, int relY, int relZ);
-	//get direct access to the palette, allowing you to modify all the blocks with the same state in the section
-	SERVER_API BlockState& getPaletteEntry(int paletteIndex);
 	//get a copy of the block state at the desired coordinates to use with setBlock
-	SERVER_API BlockState getBlock(int relX, int relY, int relZ);
-	SERVER_API void setBlock(int relX, int relY, int relZ, const BlockState&);
+	int getBlock(int relX, int relY, int relZ) { return blockStates.get(relY << 8 | relZ << 4 | relX); }
+	SERVER_API bool setBlock(int relX, int relY, int relZ, int blockid);
 };
 
 class LightSection
@@ -50,4 +35,9 @@ public:
 
 	BitArray* skyLight,
 		* blockLight;
+
+	Byte getSkyLight(int relX, int relY, int relZ) { return (Byte)skyLight->getElement((ull)relY << 8 | (ull)relZ << 4 | relX); }
+	void setSkyLight(int relX, int relY, int relZ, Byte value) { skyLight->setElement((ull)relY << 8 | (ull)relZ << 4 | relX, value); }
+	Byte getBlockLight(int relX, int relY, int relZ) { return (Byte)blockLight->getElement((ull)relY << 8 | (ull)relZ << 4 | relX); }
+	void setBlockLight(int relX, int relY, int relZ, Byte value) { blockLight->setElement((ull)relY << 8 | (ull)relZ << 4 | relX, value); }
 };

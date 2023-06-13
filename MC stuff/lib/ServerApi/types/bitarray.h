@@ -50,6 +50,8 @@ public:
 		compactedData[compactedArrayElement] = compactedData[compactedArrayElement] & ~(mask << long_index) | ((value & mask) << long_index);
 	}
 
+	SERVER_API Byte getBitsPerEntry() const { return bitsPerEntry; }
+	SERVER_API ull getEntryCount() const { return entryCount; }
 	SERVER_API ull getCompactedSize() const { return compactedSize; }
 	SERVER_API blong* getCompactedValues() const { return compactedData; }
 	SERVER_API void changeSize(ull);

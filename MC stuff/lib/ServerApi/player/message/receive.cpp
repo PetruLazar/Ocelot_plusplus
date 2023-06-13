@@ -257,9 +257,10 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			}
 		}
 		break;
-	case 1: {
-		//button 0 and 1 are doing identical behaviors
-		//move whole slot to appropiate slot
+	case 1:
+	{
+//button 0 and 1 are doing identical behaviors
+//move whole slot to appropiate slot
 		if (length == 0)
 			return; //pretty much just a notice that the slot wasnt moved
 		else if (length != 2)
@@ -281,7 +282,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 		else
 			clickedSlot->count -= pickedAmount;
 	}
-		break;
+	break;
 	case 2:
 		if (button == 40)
 		{	//offhand swap
@@ -362,7 +363,7 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			p->inventory->paintStart(inventoryPaint::right);
 			break;
 		case 8: //start middle mouse drag (creative players in non-creative players inv)
-			if(p->gm == gamemode::creative)
+			if (p->gm == gamemode::creative)
 				p->inventory->paintStart(inventoryPaint::middle);
 			break;
 		case 1: //add slot left mouse drag
@@ -387,15 +388,16 @@ void message::play::receive::clickWindow(Player* p, Byte windowID, varInt stateI
 			break;
 		}
 		break;
-	case 6: {
-		//double click
+	case 6:
+	{
+//double click
 		Slot* clicked = p->inventory->getFloatingSlot();
 		if (!clicked->isPresent())
 			return;
 
 		p->inventory->stackItem(clicked);
 	}
-		break;
+	break;
 	}
 }
 void message::play::receive::closeWindow(Player* p, Byte winId)
@@ -651,11 +653,11 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 	case playerDigging::startedDigging:
 	{
 		if (p->gm != gamemode::creative) break;
-		//startedDigging actually breaks the block if the block breaks instantly (creative, string haste or efficiency, probably (untested) grass/torch/etc)
+		//startedDigging actually breaks the block if the block breaks instantly (creative, haste or efficiency, probably (untested) grass/torch/etc)
 		sf::Vector3i v = location.get();
 		v.y = p->world->AbsToRelHeight(v.y);
 		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
-		p->world->setBlockNoBroadcast(v.x, v.y, v.z, 0);
+		if (p->world->setBlockNoBroadcast(v.x, v.y, v.z, 0)) BlockState::updateAround(p->world, v.x, v.y, v.z);
 		//to do: send "acknowledge player digging" instead of "block change"
 		for (Player* other : p->world->players)
 			if (other != p/* && other->positionInRange(location)*/)
@@ -671,7 +673,7 @@ void message::play::receive::playerDigging(Player* p, varInt status, const Posit
 		sf::Vector3i v = location.get();
 		v.y = p->world->AbsToRelHeight(v.y);
 		if (!p->world->checkCoordinates(v.y)) throw std::exception("playerDigging location outside world");
-		p->world->setBlockNoBroadcast(v.x, v.y, v.z, 0);
+		if (p->world->setBlockNoBroadcast(v.x, v.y, v.z, 0)) BlockState::updateAround(p->world, v.z, v.y, v.z);
 		//to do: send "acknowledge player digging" instead of "block change"
 		for (Player* other : p->world->players)
 			if (other != p/* && other->positionInRange(location)*/)
@@ -801,49 +803,14 @@ void message::play::receive::nameItem(Player*, const mcString& newName)
 {
 	//de facut cand o sa am anvilurile disponibile
 }
-void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Position& location, playerDigging::face face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
+void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Position& location, BlockFace face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
-	//std::string text = "playerBlockPlacement: ";
 	Slot* slot = nullptr;
 
 	if (hand == Hand::main)
-	{
-		//text += "main ";
 		slot = p->inventory->getSelectedSlot();
-	}
 	else
-	{ //hand == Hand::offhand
-		//text += "off";
 		slot = p->inventory->getOffhandSlot();
-	}
-
-	/*text += "hand, ";
-
-	switch (face)
-	{
-	case playerDigging::top:
-		text += "top";
-		break;
-	case playerDigging::bottom:
-		text += "bottom";
-		break;
-	case playerDigging::east:
-		text += "east";
-		break;
-	case playerDigging::west:
-		text += "west";
-		break;
-	case playerDigging::south:
-		text += "south";
-		break;
-	case playerDigging::north:
-		text += "north";
-	}
-
-	text += ", (" + std::to_string(curX) + ' ' + std::to_string(curY) + ' ' + std::to_string(curZ) + "), ";
-
-	Log::info() << '\n' << p->username << " - " << text;*/
-	//play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
 	p->world->setBlockByItem(p, slot, location, face, curX, curY, curZ);
 }

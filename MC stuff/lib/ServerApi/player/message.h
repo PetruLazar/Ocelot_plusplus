@@ -418,7 +418,7 @@ struct message
 			SERVER_API static void updateSign(Player*, const Position& location, const mcString& line1, const mcString& line2, const mcString& line3, const mcString& line4);
 			SERVER_API static void animation(Player*, varInt hand);
 			SERVER_API static void spectate(Player*, const mcUUID& target);
-			SERVER_API static void playerBlockPlacement(Player*, Hand hand, const Position& location, playerDigging::face face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
+			SERVER_API static void playerBlockPlacement(Player*, Hand hand, const Position& location, BlockFace face, bfloat cursorX, bfloat cursorY, bfloat cursorZ, bool insideBlock);
 			SERVER_API static void useItem(Player*, Hand hand);
 		};
 	};

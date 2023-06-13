@@ -109,8 +109,8 @@ namespace CommandHandlers
 			{
 				int row = (blockid / 30 - 14) * 3,
 					col = (blockid % 30 - 14) * 3;
-				BlockState state = &Registry::getBlockState(Registry::getName(Registry::blockRegistry, blockid));
-				wld->setBlock(x + row, y, z + col, state);
+				//BlockState state = &Registry::getBlockState(Registry::getName(Registry::blockRegistry, blockid));
+				//wld->setBlock(x + row, y, z + col, state);
 			}
 			//for (int i = -5; i <= 5; i++) for (int j = -5; j <= 5; j++) message::play::send::sendFullChunk(executingPlayer, executingPlayer->chunkX + i, executingPlayer->chunkZ + j, false);
 			message::play::send::chatMessage(executingPlayer, Chat("Done"), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
@@ -183,19 +183,66 @@ namespace CommandHandlers
 			}
 
 			Position pos(x, y, z);
-			nbt_compound thenbt("", new nbt * [4] {
+			nbt_compound thenbt("", new nbt * [4]
+			{
 				new nbt_int("x", x),
-				new nbt_int("y", y),
-				new nbt_int("z", z),
-				new nbt_string("id", "minecraft:enchanting_table")
-				}, 4);
+					new nbt_int("y", y),
+					new nbt_int("z", z),
+					new nbt_string("id", "minecraft:enchanting_table")
+			}, 4);
 			message::play::send::chatMessage(executingPlayer, Chat(
 				(std::to_string(x) + ' ' +
-				std::to_string(y) + ' ' + 
-				std::to_string(z) + ' ' +
-				std::to_string(id) + " becomes " + 
-				thenbt.to_string()).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+					std::to_string(y) + ' ' +
+					std::to_string(z) + ' ' +
+					std::to_string(id) + " becomes " +
+					thenbt.to_string()).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 			message::play::send::blockEntityData(executingPlayer, pos, id, thenbt);
+		}
+		break;
+		case 8:
+		{
+			World* wld = executingPlayer->world;
+			int x = fastfloor(executingPlayer->x),
+				y = wld->AbsToRelHeight(fastfloor(executingPlayer->y)),
+				z = fastfloor(executingPlayer->z);
+			if (argumentStack.size() < 2) throw Chat("Expected a \"light level\" argument", Chat::color::red());
+			int lvl;
+			try
+			{
+				lvl = std::stoi(*(mcString*)argumentStack[1]);
+			}
+			catch (...)
+			{
+				throw Chat("Invalid argument: light level expected", Chat::color::red());
+			}
+			if (lvl < 0 || lvl > 15) throw Chat("Invalid argument: light level has to be between 0 and 15, inclusive", Chat::color::red());
+			if (!wld->checkLightCoordinates(y)) throw Chat("Coordinates outside of world", Chat::color::red());
+			wld->setSkyLight(x, y, z, lvl);
+			message::play::send::updateLight(executingPlayer, x >> 4, z >> 4);
+		}
+		break;
+		case 9:
+		{
+			World* wld = executingPlayer->world;
+			int x = fastfloor(executingPlayer->x),
+				y = wld->AbsToRelHeight(fastfloor(executingPlayer->y)),
+				z = fastfloor(executingPlayer->z);
+
+			if (!wld->checkCoordinates(y - 1)) throw Chat("Coordinates outside world", Chat::color::red());
+			int id = wld->getBlock(x, y - 1, z);
+			const BlockState* block = BlockState::globalPalette[id];
+			if (!block) throw Chat("Block is not implemented yet", Chat::color::red());
+			const Blocks::InstrumentProperty *instrument = block->instrument();
+			const Blocks::NoteProperty *note = block->note();
+			const Blocks::PoweredProperty *powered = block->powered();
+			Blocks::Transparency trans = block->getTransparency(BlockFace::bottom);
+			std::string msg = "Instrument: ";
+			msg = msg + (instrument ? "yes" : "no") +
+				"\nNote: " + (note ? "yes" : "no") +
+				"\nPowered: " + (powered ? "yes" : "no") +
+				"\nTransparency: " + (trans == Blocks::Transparency::solid ? "solid" : "not solid");
+			message::play::send::chatMessage(executingPlayer,
+				Chat(msg.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
 		//add tests here - starting at 1
@@ -250,6 +297,16 @@ namespace CommandHandlers
 	{
 		Server::restartOnClose = true;
 		Server::keepServerOpen = false;
+	}
+	void randomTickSpeed(CommandHandlerArguments)
+	{
+		World* wld = executingPlayer->world;
+		if (argumentStack.size() == 0)
+		{
+			message::play::send::chatMessage(executingPlayer, Chat(("randomTickSpeed in world" + wld->name + " is " + std::to_string(wld->randomTickSpeed)).c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
+			return;
+		}
+		wld->randomTickSpeed = *(int*)argumentStack[0];
 	}
 }
 

@@ -2,8 +2,6 @@
 #include "chunk.h"
 #include <fstream>
 
-class World;
-
 class Region
 {
 	Chunk* chunks[32][32] = { 0 };
@@ -35,8 +33,13 @@ public:
 	SERVER_API Chunk* get(World* world, int relX, int relZ, bool increaseLoadCount = false);
 	SERVER_API bool hasChunksLoaded();
 
-	SERVER_API BlockState& getPaletteEntry(int relX, int relY, int relZ);
-	SERVER_API BlockState& getPaletteEntry(int chunkX, int sectionY, int chunkZ, int paletteIndex);
-	SERVER_API BlockState getBlock(int relX, int relY, int relZ);
-	SERVER_API void setBlock(int relX, int relY, int relZ, const BlockState&, nbt_compound* nbt_data = nullptr);
+	SERVER_API int getBlock(int relX, int relY, int relZ);
+	//SERVER_API 
+	SERVER_API bool setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data = nullptr);
+	SERVER_API Byte getSkyLight(int relX, int relY, int relZ);
+	SERVER_API void setSkyLight(int relX, int relY, int relZ, Byte value);
+	SERVER_API Byte getBlockLight(int relX, int relY, int relZ);
+	SERVER_API void setBlockLight(int relX, int relY, int relZ, Byte value);
+
+	SERVER_API void tick(World* wld, int randomTickSpeed);
 };

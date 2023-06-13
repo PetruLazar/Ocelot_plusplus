@@ -606,7 +606,7 @@ void Player::updateNet()
 	{
 		sf::Vector2i pos = chunkLoaderHelper.Next();
 		if (!sendChunk(pos.x, pos.y)) continue;
-		//break;
+		break;
 		/*if (chunkLoaderHelper.matrix.get(pos.x, pos.y)) continue;
 		message::play::send::chunkDataAndLight(this, chunkX + pos.x, chunkZ + pos.y);
 		chunkLoaderHelper.matrix.set(pos.x, pos.y, true);*/

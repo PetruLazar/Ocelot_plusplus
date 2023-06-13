@@ -4,5 +4,15 @@
 #include <string>
 
 SERVER_API std::string to_hexstring(int value);
-SERVER_API uint bitCount(ull n);
+constexpr uint bitCount(ull n)
+{
+	if (!n) return 1;
+	uint count = 0;
+	do
+	{
+		count++;
+		n >>= 1;
+	} while (n);
+	return count;
+}
 int SERVER_API fastfloor(double x);

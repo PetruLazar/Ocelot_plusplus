@@ -1,4 +1,3 @@
-#include "chunk.h"
 #include "../debug/mcexceptions.h"
 #include "../types/utils.h"
 #include "../world.h"
@@ -27,7 +26,7 @@ Chunk::Chunk(ull worldHeight)
 	sections.resize(sectionCount);
 
 	//light section initialization
-	lightData.resize((ull)sectionCount + 2);
+	lightSections.resize((ull)sectionCount + 2);
 	skyLightMask = new BitArray(sectionCount + 2, 1);
 	blockLightMask = new BitArray(sectionCount + 2, 1);
 	emptySkyLightMask = new BitArray(sectionCount + 2, 1);
@@ -54,49 +53,20 @@ void Chunk::read(std::istream& file)
 {
 	//chunk data
 
-	//read section mask
+	//read sectionMask and heightmap
 	sectionMask->read(file);
-
-	//read heightmap
 	heightmaps->read(file);
 
 	for (Section& sec : sections)
 	{
-		//read biomes
-		sec.biomes = new BitArray(64, World::currentBiomeBitsPerEntry);
-		sec.biomes->read(file);
+		sec.biomes.read(file);
+		sec.blockStates.read(file);
 
-		//read useGlobalPalette, bitsPerBlock and blockCount
-		file.read((char*)(&sec.useGlobalPallete), 4);
-
-		//read paletteSize
-		ush paletteSize = 0;
-		file.read((char*)(&paletteSize), 2);
-
-		//read palette
-		sec.palette.clear();
-		sec.palette.reserve(paletteSize);
-
-		for (ush i = 0; i < paletteSize; i++)
-		{
-			//read each palette entry
-			int stateid = 0;
-			short refCount = 0;
-			file.read((char*)(&stateid), 4);
-			file.read((char*)(&refCount), 2);
-
-			sec.palette.emplace_back(stateid, refCount);
-		}
-
-		//read blockStates
-		sec.blockStates = new BitArray(4096, sec.bitsPerBlock);
-		sec.blockStates->read(file);
-
+		//read blockCount
+		file.read((char*)(&sec.blockCount), 2);
 	}
 
 	//light data
-
-	//read light data
 
 	//read light masks
 	skyLightMask->read(file);
@@ -105,9 +75,9 @@ void Chunk::read(std::istream& file)
 	emptyBlockLightMask->read(file);
 
 	//read light data for each section
-	for (uint i = 0; i < lightData.size(); i++)
+	for (uint i = 0; i < lightSections.size(); i++)
 	{
-		LightSection& sec = lightData[i];
+		LightSection& sec = lightSections[i];
 		sec.skyLight = new BitArray(4096, 4);
 		if (skyLightMask->getElement(i))
 		{
@@ -151,7 +121,8 @@ void Chunk::read(std::istream& file)
 		}
 	}
 
-	//throw runtimeError("Chunk::read not implemented yet.");
+	//read block entities
+
 }
 void Chunk::write(ostream& file)
 {
@@ -164,27 +135,11 @@ void Chunk::write(ostream& file)
 	//write each section
 	for (Section& sec : sections)
 	{
-		//write biomes
-		//file.write((char*)(&sec.biomes), 256);
-		sec.biomes->write(file);
+		sec.biomes.write(file);
+		sec.blockStates.write(file);
 
-		//write useGlobalPalette, bitsPerBlock, blockCount
-		file.write((char*)(&sec.useGlobalPallete), 4);
-
-		//write paletteSize
-		ush paletteSize = (ush)sec.palette.size();
-		file.write((char*)(&paletteSize), 2);
-
-		//write palette
-		for (PaletteEntry& entry : sec.palette)
-		{
-			//read each palette entry
-			file.write((char*)(&entry.block.id), 4);
-			file.write((char*)(&entry.referenceCount), 2);
-		}
-
-		//write blockStates
-		sec.blockStates->write(file);
+		//write blockCount
+		file.write((char*)(&sec.blockCount), 2);
 	}
 
 	//light data
@@ -196,9 +151,9 @@ void Chunk::write(ostream& file)
 	emptyBlockLightMask->write(file);
 
 	//write light data for each section
-	for (uint i = 0; i < lightData.size(); i++)
+	for (uint i = 0; i < lightSections.size(); i++)
 	{
-		LightSection& sec = lightData[i];
+		LightSection& sec = lightSections[i];
 
 		if (skyLightMask->getElement(i))
 		{
@@ -211,33 +166,71 @@ void Chunk::write(ostream& file)
 		}
 	}
 
-	//throw runtimeError("Chunk::write not implemented yet.");
+	return;
+	//write block entities
+	uint blockEntityCount = blockEntities.size();
+	file.write((char*)&blockEntityCount, 4);
+	for (auto entity : blockEntities)
+	{
+		//
+	}
 }
 
-BlockState& Chunk::getPaletteEntry(int relX, int relY, int relZ)
+nbt_compound* Chunk::getNbt(int relX, int relY, int relZ)
 {
-	return sections[relY >> 4].getPaletteEntry(relX, relY & 0xf, relZ);
+	//auto entity = getBlockEntity(relX, relY, relZ);
+	//if (entity) return entity->getNbt();
+	return nullptr;
 }
-BlockState& Chunk::getPaletteEntry(int sectionY, int paletteIndex)
+int Chunk::getBlockEntityIndex(int relX, int relY, int relZ)
 {
-	return sections[sectionY].getPaletteEntry(paletteIndex);
+	Byte packedXZ = relX << 4 | relZ;
+	for (uint i = blockEntities.size() - 1; i != (uint)-1; i--)
+	{
+		auto entity = blockEntities[i];
+		if (entity->y == relY && entity->packedXZ == packedXZ)
+			return (int)i;
+	}
+	return -1;
 }
-BlockState Chunk::getBlock(int relX, int relY, int relZ)
-{
-	return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ);
-}
-void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl, nbt_compound* nbt_data)
+bool Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Section& section = sections[relY >> 4];
 	bool hadBlocks = section.blockCount;
-	section.setBlock(relX, relY & 0xf, relZ, bl);
-	if (nbt_data)
+	bool ret = section.setBlock(relX, relY & 0xf, relZ, blockid);
+	int blockEntityIndex = getBlockEntityIndex(relX, relY, relZ);
+	//if there already is a block entity at this block, replace old nbt with new nbt, if there needs to be a new nbt
+	//if there is no new nbt, delete the old entity 
+	if (blockEntityIndex == -1)
 	{
-		varInt type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
-		BlockEntity* blEntity = new BlockEntity(relX << 4 | relZ, relY, type, nbt_data);
-		blockEntities.emplace_back(blEntity);
-		Log::debug() << "Nbt built: " << nbt_data->getStringValue() << Log::endl;
+		// there is no nbt yet
+		if (nbt_data)
+		{
+			varInt type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
+			BlockEntity* blEntity = new BlockEntity(relX << 4 | relZ, relY, type, nbt_data);
+			blockEntities.emplace_back(blEntity);
+			Log::debug() << "Nbt built: " << nbt_data->getStringValue() << Log::endl;
+		}
 	}
+	else
+	{
+		//there already is nbt
+		if (nbt_data)
+		{
+			//replace nbt
+			BlockEntity* entity = blockEntities[blockEntityIndex];
+			delete entity->tags;
+			entity->tags = nbt_data;
+			entity->type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
+		}
+		else
+		{
+			//delete block entity
+			delete blockEntities[blockEntityIndex];
+			blockEntities.erase(blockEntities.begin() + blockEntityIndex);
+		}
+	}
+
 	if ((bool)section.blockCount != hadBlocks)
 	{
 		//section mask modified
@@ -247,6 +240,21 @@ void Chunk::setBlock(int relX, int relY, int relZ, const BlockState& bl, nbt_com
 	//change heightmaps? (once it is needed)
 
 	//updatelight
+
+	return ret;
+}
+
+void Chunk::setSkyLight(int relX, int relY, int relZ, Byte value)
+{
+	LightSection& sec = lightSections[((ull)relY >> 4) + 1];
+	sec.setSkyLight(relX, relY & 0xf, relZ, value);
+	//change light masks
+}
+void Chunk::setBlockLight(int relX, int relY, int relZ, Byte value)
+{
+	LightSection& sec = lightSections[((ull)relY >> 4) + 1];
+	sec.setBlockLight(relX, relY & 0xf, relZ, value);
+	//change light masks
 }
 
 void Chunk::writeSectionData(char*&)
@@ -254,19 +262,35 @@ void Chunk::writeSectionData(char*&)
 	throw runtimeError("Chunk::writeSectionData not implemented yet");
 }
 
-void Chunk::addPlayer(Player* p)
+void Chunk::tick(World* wld, int cX, int cZ, int randomTickSpeed)
 {
-	players.emplace_front(p);
-}
-void Chunk::removePlayer(Player* p)
-{
-	players.remove(p);
-}
-void Chunk::addEntity(Entity::entity* en)
-{
-	entities.emplace_front(en);
-}
-void Chunk::removeEntity(Entity::entity* en)
-{
-	entities.remove(en);
+	int reg_y = 0;
+	cX <<= 4;
+	cZ <<= 4;
+	for (Section& sec : sections)
+	{
+		if (sec.blockCount == 0)
+		{
+			reg_y += 16;
+			continue;
+		}
+
+		//random ticks
+		for (int randomTickCount = 0; randomTickCount < randomTickSpeed; randomTickCount++)
+		{
+			int relX = rand() & 0xff,
+				relY = rand() & 0xf,
+				relZ = relX >> 4;
+			relX &= 0xf;
+			int id = sec.getBlock(relX, relY, relZ);
+			auto block = BlockState::globalPalette[id];
+			if (block)
+				block->randomTick(wld, cX | relX, reg_y | relY, cZ | relZ);
+		}
+
+		//ticks
+		//...
+
+		reg_y += 16;
+	}
 }

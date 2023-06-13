@@ -1,4 +1,3 @@
-#include "region.h"
 #include "../world.h"
 #include "../debug/mcexceptions.h"
 #include "../debug/log.h"
@@ -252,7 +251,7 @@ void Region::save(int relX, int relZ, bool autoFlush)
 		regionFile.write((char*)(&headerEntry), sizeof(HeaderEntry));
 	}
 
-	//flush is autoFlush is true
+	//flush if autoFlush is true
 	if (autoFlush) regionFile.flush();
 
 	//free any memory
@@ -291,7 +290,6 @@ Chunk* Region::load(World* parent, int relX, int relZ)
 	Chunk* ch = new Chunk(parent->height);
 	ch->read(regionFile);
 	return ch;
-
 }
 void Region::unload(World* parent)
 {
@@ -357,31 +355,64 @@ Chunk* Region::get(World* parent, int relX, int relZ, bool increaseLoadCount)
 
 bool Region::hasChunksLoaded() { return loadedChunks; }
 
-BlockState& Region::getPaletteEntry(int relX, int relY, int relZ)
+int Region::getBlock(int relX, int relY, int relZ)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
 	if (!chunk)
-		throw genException("Chunk not loaded");
-	return chunk->getPaletteEntry(relX & 0xf, relY, relZ & 0xf);
-}
-BlockState& Region::getPaletteEntry(int chunkX, int sectionY, int chunkZ, int paletteIndex)
-{
-	Chunk* chunk = chunks[chunkX][chunkZ];
-	if (!chunk) 
-		throw genException("Chunk not loaded");
-	return chunk->getPaletteEntry(sectionY, paletteIndex);
-}
-BlockState Region::getBlock(int relX, int relY, int relZ)
-{
-	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
-	if (!chunk)
-		throw genException("Chunk not loaded");
+		return -1;
 	return chunk->getBlock(relX & 0xf, relY, relZ & 0xf);
 }
-void Region::setBlock(int relX, int relY, int relZ, const BlockState& bl, nbt_compound* nbt_data)
+bool Region::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Chunk* chunk = chunks[relX >> 4][relZ >> 4];
 	if (!chunk)
 		throw genException("Chunk not loaded");
-	chunk->setBlock(relX & 0xf, relY, relZ & 0xf, bl, nbt_data);
+	return chunk->setBlock(relX & 0xf, relY, relZ & 0xf, blockid, nbt_data);
+}
+Byte Region::getSkyLight(int relX, int relY, int relZ)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, return 0xff for now
+		return 0xff;
+	}
+	return ch->getSkyLight(relX & 0xf, relY, relZ & 0xf);
+}
+void Region::setSkyLight(int relX, int relY, int relZ, Byte value)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, do nothing for now
+		return;
+	}
+	ch->setSkyLight(relX & 0xf, relY, relZ & 0xf, value);
+}
+Byte Region::getBlockLight(int relX, int relY, int relZ)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, return 0xff for now
+		return 0xff;
+	}
+	return ch->getBlockLight(relX & 0xf, relY, relZ & 0xf);
+}
+void Region::setBlockLight(int relX, int relY, int relZ, Byte value)
+{
+	Chunk* ch = chunks[relX >> 4][relZ >> 4];
+	if (!ch)
+	{
+		//if the chunk is not loaded, do nothing for now
+		return;
+	}
+	ch->setBlockLight(relX & 0xf, relY, relZ & 0xf, value);
+}
+
+void Region::tick(World* wld, int randomTickSpeed)
+{
+	int rXe = rX << 5,
+		rZe = rZ << 5;
+	for (int z = 0; z < 32; z++) for (int x = 0; x < 32; x++) if (chunks[x][z]) chunks[x][z]->tick(wld, rXe | x, rZe | z, randomTickSpeed);
 }

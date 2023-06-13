@@ -26,6 +26,8 @@ class World
 
 	eidDispenser::Entity eidDispenser;
 
+	Byte updateLightAux(int x, int y, int z, const BlockState*);
+
 public:
 	SERVER_API World(const char* name);
 	SERVER_API ~World();
@@ -89,25 +91,83 @@ public:
 	SERVER_API Region* getRegion(int rX, int rZ);
 
 	//converts a y coordinate from absolute values to relative values (to the min_y of the world)
-	SERVER_API int AbsToRelHeight(int);
-	SERVER_API int RelToAbsHeight(int);
+	inline int AbsToRelHeight(int y) { return y - min_y; }
+	inline int RelToAbsHeight(int y) { return y + min_y; }
 	//checks whether the y coordinate is in world (relative coordinate)
-	SERVER_API bool checkCoordinates(int y);
-	SERVER_API BlockState& getPaletteEntry(int x, int y, int z);
-	SERVER_API BlockState& getPaletteEntry(int cx, int cy, int cz, int paletteIndex);
-	SERVER_API BlockState getBlock(int x, int y, int z);
-	SERVER_API void setBlock(int x, int y, int z, const BlockState&, nbt_compound* nbt_data = nullptr, Player* broadcastException = nullptr);
-	SERVER_API void setBlockNoBroadcast(int x, int y, int z, const BlockState&, nbt_compound* nbt_data = nullptr);
-	SERVER_API void setBlockByItem(Player*, Slot*, Position, playerDigging::face, bfloat curX, bfloat curY, bfloat curZ);
+	inline bool checkCoordinates(int y) { return y >= 0 && y < height; }
+	inline bool checkCoordinatesUpper(int y) { return y < height; }
+	inline bool checkCoordinatesLower(int y) { return y > 0; };
+	inline bool checkLightCoordinates(int y) { return y >= -16 && y < height + 16; }
+	inline bool checkLightCoordinatesUpper(int y) { return y < height + 16; }
+	inline bool checkLightCoordinatesLower(int y) { return y >= -16; }
+
+	SERVER_API int getBlock(int x, int y, int z);
+	SERVER_API bool setBlock(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr, Player* broadcastException = nullptr);
+	SERVER_API bool setBlockNoBroadcast(int x, int y, int z, int blockid, nbt_compound* nbt_data = nullptr);
+	SERVER_API void setBlockByItem(Player*, Slot*, Position, BlockFace, bfloat curX, bfloat curY, bfloat curZ);
+
+	SERVER_API Byte getSkyLight(int x, int y, int z);
+	SERVER_API void setSkyLight(int x, int y, int z, Byte value);
+	SERVER_API Byte getBlockLight(int x, int y, int z);
+	SERVER_API void setBlockLight(int x, int y, int z, Byte value);
+
+	SERVER_API void setLightSource(int x, int y, int z, Byte sourceLight);
+	SERVER_API void destroyLightSource(int x, int y, int z);
+	SERVER_API void updateLight(int x, int y, int z);
 
 	//generator
 	GeneratorFunction generatorFunction = 0;
 	HMODULE generatorModule = 0;
 
+	//time
+	int randomTickSpeed = 3;
+	SERVER_API void tick();
+
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
 	SERVER_API static const Byte currentBiomeBitsPerEntry;
+	static constexpr int currentWorldVersion = 0;
 
+	class Biome
+	{
+	public:
+		enum class Precipitation
+		{
+			rain,
+			snow,
+			none
+		};
+		enum class Category
+		{
+			ocean,
+			plains,
+			desert,
+			forest,
+			extreme_hills,
+			taiga,
+			swamp,
+			river,
+			nether,
+			the_end,
+			icy,
+			mushroom,
+			beach,
+			jungle,
+			mesa,
+			savana,
+			none
+		};
+		class Color
+		{
+		public:
+			int value;
+
+			Color(int val) : value(val) {}
+			Color(Byte red, Byte green, Byte blue) : value(red << 16 | green << 8 | blue) {}
+		};
+
+		SERVER_API static nbt_compound* getNbt(int id, const std::string& name, Precipitation prec, float depth, float temperature, float scale, float downfall, Category category, Color skyColor, Color waterFogColor, Color fogColor, Color waterColor, Color foliageColor, Color grassColor);
+	};
 	SERVER_API static bool loadAll();
 	SERVER_API static void unloadAll();
 

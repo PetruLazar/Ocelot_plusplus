@@ -767,8 +767,10 @@ namespace Commands
 		/* 20 */ new LiteralNode("spawn", { 19 }, CommandHandlers::spawn),
 		/* 21 */ new LiteralNode("stop", { }, CommandHandlers::stopServer),
 		/* 22 */ new LiteralNode("restart", { }, CommandHandlers::restartServer),
+		/* 23 */ new ArgumentNode("tick speed", { }, new Integer(new PropertiesMin<bint>(0)), CommandHandlers::randomTickSpeed),
+		/* 24 */ new LiteralNode("randomTickSpeed", { 23 }, CommandHandlers::randomTickSpeed)
 	};
-	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 10, 16, 20, 21, 22 };
+	RootNode Commands::root = std::vector<varInt>{ 4, 6, 7, 10, 16, 20, 21, 22, 24 };
 
 	Commands Commands::atuomatic;
 	Commands::~Commands()

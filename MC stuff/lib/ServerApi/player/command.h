@@ -17,6 +17,7 @@ namespace CommandHandlers
 	void setSpawn(CommandHandlerArguments);
 	void stopServer(CommandHandlerArguments);
 	void restartServer(CommandHandlerArguments);
+	void randomTickSpeed(CommandHandlerArguments);
 }
 
 namespace SuggestionsHandler
