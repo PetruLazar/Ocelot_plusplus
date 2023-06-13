@@ -13,7 +13,7 @@ nbt_compound::~nbt_compound()
 		delete e;
 }
 
-void nbt_compound::write(std::fstream& os, bool iNT) const
+void nbt_compound::write(std::ostream& os, bool iNT) const
 {
 	if (values.empty()) os.write("", 1);
 
@@ -28,7 +28,7 @@ void nbt_compound::write(std::fstream& os, bool iNT) const
 
 	os.write("", 1);
 }
-void nbt_compound::read(std::fstream& is, const std::string& name)
+void nbt_compound::read(std::istream& is, const std::string& name)
 {
 	if (!values.empty())
 	{

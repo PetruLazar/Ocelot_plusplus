@@ -84,7 +84,7 @@ nbt::nbt(tag t, std::string name) : type(t), name(name) { }
 nbt::~nbt() { }
 std::string nbt::getName() const { return name; }
 nbt::tag nbt::getType() const { return type; }
-void nbt::readName(std::fstream& is)
+void nbt::readName(std::istream& is)
 {
 	bigEndian<ush> nameSize;
 	nameSize.read(is);
@@ -94,7 +94,7 @@ void nbt::readName(std::fstream& is)
 	name.assign(cname, nameSize);
 	delete[] cname;
 }
-void nbt::writeName(std::fstream& os) const
+void nbt::writeName(std::ostream& os) const
 {
 	bigEndian<ush> nameSize = (ush)name.length();
 	nameSize.write(os);

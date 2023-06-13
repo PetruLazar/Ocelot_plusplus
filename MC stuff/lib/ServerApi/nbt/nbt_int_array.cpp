@@ -8,7 +8,7 @@ nbt_int_array::~nbt_int_array()
 	_size = 0;
 }
 
-void nbt_int_array::write(std::fstream& os, bool iNT) const
+void nbt_int_array::write(std::ostream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -24,7 +24,7 @@ void nbt_int_array::write(std::fstream& os, bool iNT) const
 		values[i].write(os);
 	}
 }
-void nbt_int_array::read(std::fstream& is, const std::string& name)
+void nbt_int_array::read(std::istream& is, const std::string& name)
 {
 	if (values)
 	{

@@ -28,8 +28,8 @@ public:
 		LongArray
 	};
 protected:
-	SERVER_API void readName(std::fstream&);
-	SERVER_API void writeName(std::fstream&) const;
+	SERVER_API void readName(std::istream&);
+	SERVER_API void writeName(std::ostream&) const;
 	SERVER_API void readName(char*&);
 	SERVER_API void writeName(char*&) const;
 
@@ -40,9 +40,9 @@ public:
 	SERVER_API nbt(tag, std::string name = "");
 	SERVER_API virtual ~nbt() = 0;
 
-	SERVER_API virtual void write(std::fstream&, bool includeNameAndType = true) const = 0;
+	SERVER_API virtual void write(std::ostream&, bool includeNameAndType = true) const = 0;
 	//make sure to either use checkTag() or skip a Byte manually
-	SERVER_API virtual void read(std::fstream&, const std::string& name = "") = 0;
+	SERVER_API virtual void read(std::istream&, const std::string& name = "") = 0;
 	SERVER_API virtual void write(char*&, bool includeNameAndType = true) const = 0;
 	//make sure to either use checkTag() or skip a Byte manually
 	SERVER_API virtual void read(char*&, const std::string& name = "") = 0;

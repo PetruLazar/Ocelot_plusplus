@@ -18,7 +18,7 @@ nbt_list::~nbt_list()
 	_size = 0;
 }
 
-void nbt_list::write(std::fstream& os, bool iNT) const
+void nbt_list::write(std::ostream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -36,7 +36,7 @@ void nbt_list::write(std::fstream& os, bool iNT) const
 		values[i]->write(os, false);
 	}
 }
-void nbt_list::read(std::fstream& is, const std::string& name)
+void nbt_list::read(std::istream& is, const std::string& name)
 {
 	if (values)
 	{

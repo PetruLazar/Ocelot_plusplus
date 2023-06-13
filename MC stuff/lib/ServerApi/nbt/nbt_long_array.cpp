@@ -16,7 +16,7 @@ nbt_long_array::~nbt_long_array()
 	_size = 0;
 }
 
-void nbt_long_array::write(std::fstream& os, bool iNT) const
+void nbt_long_array::write(std::ostream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -32,7 +32,7 @@ void nbt_long_array::write(std::fstream& os, bool iNT) const
 		values[i].write(os);
 	}
 }
-void nbt_long_array::read(std::fstream& is, const std::string& name)
+void nbt_long_array::read(std::istream& is, const std::string& name)
 {
 	if (values)
 	{

@@ -2,7 +2,7 @@
 
 nbt_long::nbt_long(const std::string& name, int64 v) : nbt(tag::Long, name), value(v) { }
 
-void nbt_long::write(std::fstream& os, bool iNT) const
+void nbt_long::write(std::ostream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -13,7 +13,7 @@ void nbt_long::write(std::fstream& os, bool iNT) const
 
 	value.write(os);
 }
-void nbt_long::read(std::fstream& is, const std::string& name)
+void nbt_long::read(std::istream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 

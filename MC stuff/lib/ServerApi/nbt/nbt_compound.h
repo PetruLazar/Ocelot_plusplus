@@ -11,8 +11,8 @@ public:
 	SERVER_API nbt_compound(const std::string& name = "", nbt** values = nullptr, uint size = 0);
 	SERVER_API ~nbt_compound();
 
-	void SERVER_API write(std::fstream&, bool includeNameAndType = true) const;
-	void SERVER_API read(std::fstream&, const std::string& name = "");
+	void SERVER_API write(std::ostream&, bool includeNameAndType = true) const;
+	void SERVER_API read(std::istream&, const std::string& name = "");
 	void SERVER_API write(char*&, bool includeNameAndType = true) const;
 	void _fastcall read(char*&, const std::string& name = "");
 	//get the value of the tag as a string

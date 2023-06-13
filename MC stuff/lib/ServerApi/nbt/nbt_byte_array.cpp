@@ -8,7 +8,7 @@ nbt_Byte_array::~nbt_Byte_array()
 	_size = 0;
 }
 
-void nbt_Byte_array::write(std::fstream& os, bool iNT) const
+void nbt_Byte_array::write(std::ostream& os, bool iNT) const
 {
 	if (iNT)
 	{
@@ -21,7 +21,7 @@ void nbt_Byte_array::write(std::fstream& os, bool iNT) const
 
 	os.write(values, _size);
 }
-void nbt_Byte_array::read(std::fstream& is, const std::string& name)
+void nbt_Byte_array::read(std::istream& is, const std::string& name)
 {
 	std::streampos begin = is.tellg();
 

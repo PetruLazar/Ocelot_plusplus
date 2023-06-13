@@ -18,12 +18,12 @@ template <class T> class bigEndian
 public:
 	bigEndian() : v(0) { }
 	bigEndian(T value) : v(value) { }
-	void write(std::fstream& os) const
+	void write(std::ostream& os) const
 	{
 		//write the Bytes in reverse
 		for (int i = sizeof(T) - 1; i >= 0; i--) os.write((char*)&v + i, 1);
 	}
-	void read(std::fstream& is)
+	void read(std::istream& is)
 	{
 		//read the Bytes in reverse
 		for (int i = sizeof(T) - 1; i >= 0; i--) is.read((char*)&v + i, 1);
