@@ -120,6 +120,9 @@ void Chunk::read(std::istream& file)
 			}
 		}
 	}
+
+	//read block entities
+
 }
 void Chunk::write(ostream& file)
 {
@@ -162,20 +165,72 @@ void Chunk::write(ostream& file)
 			sec.blockLight->write(file);
 		}
 	}
+
+	return;
+	//write block entities
+	uint blockEntityCount = blockEntities.size();
+	file.write((char*)&blockEntityCount, 4);
+	for (auto entity : blockEntities)
+	{
+		//
+	}
 }
 
+nbt_compound* Chunk::getNbt(int relX, int relY, int relZ)
+{
+	//auto entity = getBlockEntity(relX, relY, relZ);
+	//if (entity) return entity->getNbt();
+	return nullptr;
+}
+int Chunk::getBlockEntityIndex(int relX, int relY, int relZ)
+{
+	Byte packedXZ = relX << 4 | relZ;
+	for (uint i = blockEntities.size() - 1; i != (uint)-1; i--)
+	{
+		auto entity = blockEntities[i];
+		if (entity->y == relY && entity->packedXZ == packedXZ)
+			return (int)i;
+	}
+	return -1;
+}
 bool Chunk::setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data)
 {
 	Section& section = sections[relY >> 4];
 	bool hadBlocks = section.blockCount;
 	bool ret = section.setBlock(relX, relY & 0xf, relZ, blockid);
-	if (nbt_data)
+	int blockEntityIndex = getBlockEntityIndex(relX, relY, relZ);
+	//if there already is a block entity at this block, replace old nbt with new nbt, if there needs to be a new nbt
+	//if there is no new nbt, delete the old entity 
+	if (blockEntityIndex == -1)
 	{
-		varInt type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
-		BlockEntity* blEntity = new BlockEntity(relX << 4 | relZ, relY, type, nbt_data);
-		blockEntities.emplace_back(blEntity);
-		Log::debug() << "Nbt built: " << nbt_data->getStringValue() << Log::endl;
+		// there is no nbt yet
+		if (nbt_data)
+		{
+			varInt type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
+			BlockEntity* blEntity = new BlockEntity(relX << 4 | relZ, relY, type, nbt_data);
+			blockEntities.emplace_back(blEntity);
+			Log::debug() << "Nbt built: " << nbt_data->getStringValue() << Log::endl;
+		}
 	}
+	else
+	{
+		//there already is nbt
+		if (nbt_data)
+		{
+			//replace nbt
+			BlockEntity* entity = blockEntities[blockEntityIndex];
+			delete entity->tags;
+			entity->tags = nbt_data;
+			entity->type = Registry::getId(Registry::blockEntityRegistry, (*nbt_data)["id"].vString());
+		}
+		else
+		{
+			//delete block entity
+			delete blockEntities[blockEntityIndex];
+			blockEntities.erase(blockEntities.begin() + blockEntityIndex);
+		}
+	}
+
 	if ((bool)section.blockCount != hadBlocks)
 	{
 		//section mask modified
@@ -228,7 +283,9 @@ void Chunk::tick(World* wld, int cX, int cZ, int randomTickSpeed)
 				relZ = relX >> 4;
 			relX &= 0xf;
 			int id = sec.getBlock(relX, relY, relZ);
-			BlockState::globalPalette[id]->randomTick(wld, cX | relX, reg_y | relY, cZ | relZ);
+			auto block = BlockState::globalPalette[id];
+			if (block)
+				block->randomTick(wld, cX | relX, reg_y | relY, cZ | relZ);
 		}
 
 		//ticks

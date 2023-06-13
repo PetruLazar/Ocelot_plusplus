@@ -183,12 +183,13 @@ namespace CommandHandlers
 			}
 
 			Position pos(x, y, z);
-			nbt_compound thenbt("", new nbt * [4]{
+			nbt_compound thenbt("", new nbt * [4]
+			{
 				new nbt_int("x", x),
-				new nbt_int("y", y),
-				new nbt_int("z", z),
-				new nbt_string("id", "minecraft:enchanting_table")
-				}, 4);
+					new nbt_int("y", y),
+					new nbt_int("z", z),
+					new nbt_string("id", "minecraft:enchanting_table")
+			}, 4);
 			message::play::send::chatMessage(executingPlayer, Chat(
 				(std::to_string(x) + ' ' +
 					std::to_string(y) + ' ' +
@@ -218,6 +219,30 @@ namespace CommandHandlers
 			if (!wld->checkLightCoordinates(y)) throw Chat("Coordinates outside of world", Chat::color::red());
 			wld->setSkyLight(x, y, z, lvl);
 			message::play::send::updateLight(executingPlayer, x >> 4, z >> 4);
+		}
+		break;
+		case 9:
+		{
+			World* wld = executingPlayer->world;
+			int x = fastfloor(executingPlayer->x),
+				y = wld->AbsToRelHeight(fastfloor(executingPlayer->y)),
+				z = fastfloor(executingPlayer->z);
+
+			if (!wld->checkCoordinates(y - 1)) throw Chat("Coordinates outside world", Chat::color::red());
+			int id = wld->getBlock(x, y - 1, z);
+			const BlockState* block = BlockState::globalPalette[id];
+			if (!block) throw Chat("Block is not implemented yet", Chat::color::red());
+			const Blocks::InstrumentProperty *instrument = block->instrument();
+			const Blocks::NoteProperty *note = block->note();
+			const Blocks::PoweredProperty *powered = block->powered();
+			Blocks::Transparency trans = block->getTransparency(BlockFace::bottom);
+			std::string msg = "Instrument: ";
+			msg = msg + (instrument ? "yes" : "no") +
+				"\nNote: " + (note ? "yes" : "no") +
+				"\nPowered: " + (powered ? "yes" : "no") +
+				"\nTransparency: " + (trans == Blocks::Transparency::solid ? "solid" : "not solid");
+			message::play::send::chatMessage(executingPlayer,
+				Chat(msg.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 		}
 		break;
 		//add tests here - starting at 1

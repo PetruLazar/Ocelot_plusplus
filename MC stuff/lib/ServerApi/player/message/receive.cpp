@@ -807,47 +807,12 @@ void message::play::receive::nameItem(Player*, const mcString& newName)
 }
 void message::play::receive::playerBlockPlacement(Player* p, Hand hand, const Position& location, BlockFace face, bfloat curX, bfloat curY, bfloat curZ, bool insideBlock)
 {
-	//std::string text = "playerBlockPlacement: ";
 	Slot* slot = nullptr;
 
 	if (hand == Hand::main)
-	{
-		//text += "main ";
 		slot = p->inventory->getSelectedSlot();
-	}
 	else
-	{ //hand == Hand::offhand
-		//text += "off";
 		slot = p->inventory->getOffhandSlot();
-	}
-
-	/*text += "hand, ";
-
-	switch (face)
-	{
-	case playerDigging::top:
-		text += "top";
-		break;
-	case playerDigging::bottom:
-		text += "bottom";
-		break;
-	case playerDigging::east:
-		text += "east";
-		break;
-	case playerDigging::west:
-		text += "west";
-		break;
-	case playerDigging::south:
-		text += "south";
-		break;
-	case playerDigging::north:
-		text += "north";
-	}
-
-	text += ", (" + std::to_string(curX) + ' ' + std::to_string(curY) + ' ' + std::to_string(curZ) + "), ";
-
-	Log::info() << '\n' << p->username << " - " << text;*/
-	//play::send::chatMessage(p, Chat(text.c_str()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
 	p->world->setBlockByItem(p, slot, location, face, curX, curY, curZ);
 }

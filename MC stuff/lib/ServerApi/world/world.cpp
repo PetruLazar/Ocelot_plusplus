@@ -1193,7 +1193,7 @@ void World::destroyLightSource(int x, int y, int z)
 
 Byte calculateLight()
 {
-
+	return 0;
 }
 Byte World::updateLightAux(int x, int y, int z, const BlockState* state)
 {
@@ -1209,6 +1209,7 @@ Byte World::updateLightAux(int x, int y, int z, const BlockState* state)
 	//from +z
 
 	//from -z
+	return 0;
 }
 void World::updateLight(int x, int y, int z)
 {
@@ -1266,4 +1267,81 @@ World* World::getWorld(const mcString& worldName)
 void World::tick()
 {
 	for (Region* reg : regions) reg->tick(this, randomTickSpeed);
+}
+
+string precToString(World::Biome::Precipitation prec)
+{
+	switch (prec)
+	{
+	case World::Biome::Precipitation::rain:
+		return "rain";
+	case World::Biome::Precipitation::snow:
+		return "snow";
+	default:
+		return "none";
+	}
+}
+string categoryToString(World::Biome::Category category)
+{
+	switch (category)
+	{
+	case World::Biome::Category::ocean:
+		return "ocean";
+	case World::Biome::Category::plains:
+		return "plains";
+	case World::Biome::Category::desert:
+		return "ddesert";
+	case World::Biome::Category::forest:
+		return "forest";
+	case World::Biome::Category::extreme_hills:
+		return "extreme_hills";
+	case World::Biome::Category::taiga:
+		return "taiga";
+	case World::Biome::Category::swamp:
+		return "swamp";
+	case World::Biome::Category::river:
+		return "river";
+	case World::Biome::Category::nether:
+		return "nether";
+	case World::Biome::Category::the_end:
+		return "the_end";
+	case World::Biome::Category::icy:
+		return "icy";
+	case World::Biome::Category::mushroom:
+		return "mushroom";
+	case World::Biome::Category::beach:
+		return "beach";
+	case World::Biome::Category::jungle:
+		return "jungle";
+	case World::Biome::Category::mesa:
+		return "mesa";
+	case World::Biome::Category::savana:
+		return "savana";
+	default:
+		return "none";
+	}
+}
+
+nbt_compound* World::Biome::getNbt(int id, const std::string& name, Precipitation prec, float depth, float temperature, float scale, float downfall, Category category, Color skyColor, Color waterFogColor, Color fogColor, Color waterColor, Color foliageColor, Color grassColor)
+{
+	return new nbt_compound("", new nbt * [3]{
+				new nbt_string("name", name),
+				new nbt_int("id",8),
+				new nbt_compound("element",new nbt * [7]{
+					new nbt_string("precipitation", precToString(prec)),
+					new nbt_float("depth", depth),
+					new nbt_float("temperature", temperature),
+					new nbt_float("scale", scale),
+					new nbt_float("downfall", downfall),
+					new nbt_string("category", categoryToString(category)),
+					new nbt_compound("effects",new nbt * [6] {
+						new nbt_int("sky_color", skyColor.value),
+						new nbt_int("water_fog_color", waterFogColor.value),
+						new nbt_int("fog_color", fogColor.value),
+						new nbt_int("water_color", waterColor.value),
+						new nbt_int("foliage_color", foliageColor.value),
+						new nbt_int("grass_color", grassColor.value)
+					},6)
+				},7)
+		}, 3);
 }

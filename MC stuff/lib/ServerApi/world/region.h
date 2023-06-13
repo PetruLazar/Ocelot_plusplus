@@ -34,6 +34,7 @@ public:
 	SERVER_API bool hasChunksLoaded();
 
 	SERVER_API int getBlock(int relX, int relY, int relZ);
+	//SERVER_API 
 	SERVER_API bool setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data = nullptr);
 	SERVER_API Byte getSkyLight(int relX, int relY, int relZ);
 	SERVER_API void setSkyLight(int relX, int relY, int relZ, Byte value);

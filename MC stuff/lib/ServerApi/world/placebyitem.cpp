@@ -8,21 +8,6 @@
 	top,
 	dbl
 };
-enum class logAxis : Byte
-{
-	x,
-	y,
-	z
-};
-enum class blockFacing : Byte
-{
-	north,
-	south,
-	east,
-	west,
-	up,
-	down
-};
 enum class doorHinge :Byte
 {
 	right,
@@ -89,93 +74,6 @@ const int waterSurceBlockStateId = 34;
 Block stateToBlock(const BlockState& state)
 {
 	return (Block)Registry::getId(Registry::blockRegistry, Registry::getBlock(state.id));
-}
-
-float rotationOffset(Item itemId)
-{
-	switch (itemId)
-	{
-	case Item::minecraft_anvil:
-	case Item::minecraft_chipped_anvil:
-	case Item::minecraft_damaged_anvil:
-		return -90.f;
-	case Item::minecraft_observer:
-	case Item::minecraft_iron_door:
-	case Item::minecraft_oak_door:
-	case Item::minecraft_spruce_door:
-	case Item::minecraft_birch_door:
-	case Item::minecraft_jungle_door:
-	case Item::minecraft_acacia_door:
-	case Item::minecraft_dark_oak_door:
-	case Item::minecraft_crimson_door:
-	case Item::minecraft_warped_door:
-	case Item::minecraft_cut_copper_stairs:
-	case Item::minecraft_exposed_cut_copper_stairs:
-	case Item::minecraft_weathered_cut_copper_stairs:
-	case Item::minecraft_oxidized_cut_copper_stairs:
-	case Item::minecraft_waxed_cut_copper_stairs:
-	case Item::minecraft_waxed_exposed_cut_copper_stairs:
-	case Item::minecraft_waxed_weathered_cut_copper_stairs:
-	case Item::minecraft_waxed_oxidized_cut_copper_stairs:
-	case Item::minecraft_purpur_stairs:
-	case Item::minecraft_oak_stairs:
-	case Item::minecraft_spruce_stairs:
-	case Item::minecraft_birch_stairs:
-	case Item::minecraft_jungle_stairs:
-	case Item::minecraft_crimson_stairs:
-	case Item::minecraft_warped_stairs:
-	case Item::minecraft_cobblestone_stairs:
-	case Item::minecraft_acacia_stairs:
-	case Item::minecraft_dark_oak_stairs:
-	case Item::minecraft_brick_stairs:
-	case Item::minecraft_stone_brick_stairs:
-	case Item::minecraft_nether_brick_stairs:
-	case Item::minecraft_sandstone_stairs:
-	case Item::minecraft_quartz_stairs:
-	case Item::minecraft_prismarine_stairs:
-	case Item::minecraft_prismarine_brick_stairs:
-	case Item::minecraft_dark_prismarine_stairs:
-	case Item::minecraft_red_sandstone_stairs:
-	case Item::minecraft_polished_granite_stairs:
-	case Item::minecraft_smooth_red_sandstone_stairs:
-	case Item::minecraft_mossy_stone_brick_stairs:
-	case Item::minecraft_polished_diorite_stairs:
-	case Item::minecraft_mossy_cobblestone_stairs:
-	case Item::minecraft_end_stone_brick_stairs:
-	case Item::minecraft_stone_stairs:
-	case Item::minecraft_smooth_sandstone_stairs:
-	case Item::minecraft_smooth_quartz_stairs:
-	case Item::minecraft_granite_stairs:
-	case Item::minecraft_andesite_stairs:
-	case Item::minecraft_red_nether_brick_stairs:
-	case Item::minecraft_polished_andesite_stairs:
-	case Item::minecraft_diorite_stairs:
-	case Item::minecraft_cobbled_deepslate_stairs:
-	case Item::minecraft_polished_deepslate_stairs:
-	case Item::minecraft_deepslate_brick_stairs:
-	case Item::minecraft_deepslate_tile_stairs:
-	case Item::minecraft_blackstone_stairs:
-	case Item::minecraft_polished_blackstone_stairs:
-	case Item::minecraft_polished_blackstone_brick_stairs:
-	case Item::minecraft_white_bed:
-	case Item::minecraft_orange_bed:
-	case Item::minecraft_magenta_bed:
-	case Item::minecraft_light_blue_bed:
-	case Item::minecraft_yellow_bed:
-	case Item::minecraft_lime_bed:
-	case Item::minecraft_pink_bed:
-	case Item::minecraft_gray_bed:
-	case Item::minecraft_light_gray_bed:
-	case Item::minecraft_cyan_bed:
-	case Item::minecraft_purple_bed:
-	case Item::minecraft_blue_bed:
-	case Item::minecraft_brown_bed:
-	case Item::minecraft_green_bed:
-	case Item::minecraft_red_bed:
-	case Item::minecraft_black_bed:
-		return 180.f;
-	}
-	return 0.f;
 }
 std::string facingToString(blockFacing f)
 {
@@ -2809,62 +2707,7 @@ doorHinge chooseDoorHinge(blockFacing facing, World* wld, int destX, int destY, 
 	throw std::exception("Could not choose door hinge");
 }
 
-bool isStair(Block id)
-{
-	switch (id)
-	{
-	case Block::minecraft_cut_copper_stairs:
-	case Block::minecraft_exposed_cut_copper_stairs:
-	case Block::minecraft_weathered_cut_copper_stairs:
-	case Block::minecraft_oxidized_cut_copper_stairs:
-	case Block::minecraft_waxed_cut_copper_stairs:
-	case Block::minecraft_waxed_exposed_cut_copper_stairs:
-	case Block::minecraft_waxed_weathered_cut_copper_stairs:
-	case Block::minecraft_waxed_oxidized_cut_copper_stairs:
-	case Block::minecraft_purpur_stairs:
-	case Block::minecraft_oak_stairs:
-	case Block::minecraft_spruce_stairs:
-	case Block::minecraft_birch_stairs:
-	case Block::minecraft_jungle_stairs:
-	case Block::minecraft_crimson_stairs:
-	case Block::minecraft_warped_stairs:
-	case Block::minecraft_cobblestone_stairs:
-	case Block::minecraft_acacia_stairs:
-	case Block::minecraft_dark_oak_stairs:
-	case Block::minecraft_brick_stairs:
-	case Block::minecraft_stone_brick_stairs:
-	case Block::minecraft_nether_brick_stairs:
-	case Block::minecraft_sandstone_stairs:
-	case Block::minecraft_quartz_stairs:
-	case Block::minecraft_prismarine_stairs:
-	case Block::minecraft_prismarine_brick_stairs:
-	case Block::minecraft_dark_prismarine_stairs:
-	case Block::minecraft_red_sandstone_stairs:
-	case Block::minecraft_polished_granite_stairs:
-	case Block::minecraft_smooth_red_sandstone_stairs:
-	case Block::minecraft_mossy_stone_brick_stairs:
-	case Block::minecraft_polished_diorite_stairs:
-	case Block::minecraft_mossy_cobblestone_stairs:
-	case Block::minecraft_end_stone_brick_stairs:
-	case Block::minecraft_stone_stairs:
-	case Block::minecraft_smooth_sandstone_stairs:
-	case Block::minecraft_smooth_quartz_stairs:
-	case Block::minecraft_granite_stairs:
-	case Block::minecraft_andesite_stairs:
-	case Block::minecraft_red_nether_brick_stairs:
-	case Block::minecraft_polished_andesite_stairs:
-	case Block::minecraft_diorite_stairs:
-	case Block::minecraft_cobbled_deepslate_stairs:
-	case Block::minecraft_polished_deepslate_stairs:
-	case Block::minecraft_deepslate_brick_stairs:
-	case Block::minecraft_deepslate_tile_stairs:
-	case Block::minecraft_blackstone_stairs:
-	case Block::minecraft_polished_blackstone_stairs:
-	case Block::minecraft_polished_blackstone_brick_stairs:
-		return true;
-	}
-	return false;
-}
+
 bool isStairFacing(World* wld, int refX, int refY, int refZ, char facing, char half)
 {
 	BlockState state = wld->getBlock(refX, refY, refZ);
@@ -3038,187 +2881,6 @@ std::string getStairShape(World* wld, blockFacing refStairFacing, char half, int
 	return "straight";
 }
 
-//is this block waterloggable?
-bool waterloggable(Block id, const BlockState& state)
-{
-	switch (id)
-	{
-	case Block::minecraft_cut_copper_slab:
-	case Block::minecraft_exposed_cut_copper_slab:
-	case Block::minecraft_weathered_cut_copper_slab:
-	case Block::minecraft_oxidized_cut_copper_slab:
-	case Block::minecraft_waxed_cut_copper_slab:
-	case Block::minecraft_waxed_exposed_cut_copper_slab:
-	case Block::minecraft_waxed_weathered_cut_copper_slab:
-	case Block::minecraft_waxed_oxidized_cut_copper_slab:
-	case Block::minecraft_oak_slab:
-	case Block::minecraft_spruce_slab:
-	case Block::minecraft_birch_slab:
-	case Block::minecraft_jungle_slab:
-	case Block::minecraft_acacia_slab:
-	case Block::minecraft_dark_oak_slab:
-	case Block::minecraft_crimson_slab:
-	case Block::minecraft_warped_slab:
-	case Block::minecraft_stone_slab:
-	case Block::minecraft_smooth_stone_slab:
-	case Block::minecraft_sandstone_slab:
-	case Block::minecraft_cut_sandstone_slab:
-	case Block::minecraft_petrified_oak_slab:
-	case Block::minecraft_cobblestone_slab:
-	case Block::minecraft_brick_slab:
-	case Block::minecraft_stone_brick_slab:
-	case Block::minecraft_nether_brick_slab:
-	case Block::minecraft_quartz_slab:
-	case Block::minecraft_red_sandstone_slab:
-	case Block::minecraft_cut_red_sandstone_slab:
-	case Block::minecraft_purpur_slab:
-	case Block::minecraft_prismarine_slab:
-	case Block::minecraft_prismarine_brick_slab:
-	case Block::minecraft_dark_prismarine_slab:
-	case Block::minecraft_polished_granite_slab:
-	case Block::minecraft_smooth_red_sandstone_slab:
-	case Block::minecraft_mossy_stone_brick_slab:
-	case Block::minecraft_polished_diorite_slab:
-	case Block::minecraft_mossy_cobblestone_slab:
-	case Block::minecraft_end_stone_brick_slab:
-	case Block::minecraft_smooth_sandstone_slab:
-	case Block::minecraft_smooth_quartz_slab:
-	case Block::minecraft_granite_slab:
-	case Block::minecraft_andesite_slab:
-	case Block::minecraft_red_nether_brick_slab:
-	case Block::minecraft_polished_andesite_slab:
-	case Block::minecraft_diorite_slab:
-	case Block::minecraft_cobbled_deepslate_slab:
-	case Block::minecraft_polished_deepslate_slab:
-	case Block::minecraft_deepslate_brick_slab:
-	case Block::minecraft_deepslate_tile_slab:
-		if (state.getState("waterlogged")[0] == 'f' && state.getState("type")[0] != 'd')
-			return true;
-		return false;
-	case Block::minecraft_small_amethyst_bud:
-	case Block::minecraft_medium_amethyst_bud:
-	case Block::minecraft_large_amethyst_bud:
-	case Block::minecraft_amethyst_cluster:
-	case Block::minecraft_lightning_rod:
-	case Block::minecraft_iron_trapdoor:
-	case Block::minecraft_oak_trapdoor:
-	case Block::minecraft_spruce_trapdoor:
-	case Block::minecraft_birch_trapdoor:
-	case Block::minecraft_jungle_trapdoor:
-	case Block::minecraft_acacia_trapdoor:
-	case Block::minecraft_dark_oak_trapdoor:
-	case Block::minecraft_crimson_trapdoor:
-	case Block::minecraft_warped_trapdoor:
-	case Block::minecraft_cut_copper_stairs:
-	case Block::minecraft_exposed_cut_copper_stairs:
-	case Block::minecraft_weathered_cut_copper_stairs:
-	case Block::minecraft_oxidized_cut_copper_stairs:
-	case Block::minecraft_waxed_cut_copper_stairs:
-	case Block::minecraft_waxed_exposed_cut_copper_stairs:
-	case Block::minecraft_waxed_weathered_cut_copper_stairs:
-	case Block::minecraft_waxed_oxidized_cut_copper_stairs:
-	case Block::minecraft_purpur_stairs:
-	case Block::minecraft_oak_stairs:
-	case Block::minecraft_spruce_stairs:
-	case Block::minecraft_birch_stairs:
-	case Block::minecraft_jungle_stairs:
-	case Block::minecraft_crimson_stairs:
-	case Block::minecraft_warped_stairs:
-	case Block::minecraft_cobblestone_stairs:
-	case Block::minecraft_acacia_stairs:
-	case Block::minecraft_dark_oak_stairs:
-	case Block::minecraft_brick_stairs:
-	case Block::minecraft_stone_brick_stairs:
-	case Block::minecraft_nether_brick_stairs:
-	case Block::minecraft_sandstone_stairs:
-	case Block::minecraft_quartz_stairs:
-	case Block::minecraft_prismarine_stairs:
-	case Block::minecraft_prismarine_brick_stairs:
-	case Block::minecraft_dark_prismarine_stairs:
-	case Block::minecraft_red_sandstone_stairs:
-	case Block::minecraft_polished_granite_stairs:
-	case Block::minecraft_smooth_red_sandstone_stairs:
-	case Block::minecraft_mossy_stone_brick_stairs:
-	case Block::minecraft_polished_diorite_stairs:
-	case Block::minecraft_mossy_cobblestone_stairs:
-	case Block::minecraft_end_stone_brick_stairs:
-	case Block::minecraft_stone_stairs:
-	case Block::minecraft_smooth_sandstone_stairs:
-	case Block::minecraft_smooth_quartz_stairs:
-	case Block::minecraft_granite_stairs:
-	case Block::minecraft_andesite_stairs:
-	case Block::minecraft_red_nether_brick_stairs:
-	case Block::minecraft_polished_andesite_stairs:
-	case Block::minecraft_diorite_stairs:
-	case Block::minecraft_cobbled_deepslate_stairs:
-	case Block::minecraft_polished_deepslate_stairs:
-	case Block::minecraft_deepslate_brick_stairs:
-	case Block::minecraft_deepslate_tile_stairs:
-	case Block::minecraft_blackstone_stairs:
-	case Block::minecraft_polished_blackstone_stairs:
-	case Block::minecraft_polished_blackstone_brick_stairs:
-		return state.getState("waterlogged")[0] == 'f';
-	}
-	return false;
-}
-//does water destroy this block?
-bool destroyedByWater(Block id)
-{
-	switch (id)
-	{
-	case Block::minecraft_oak_sapling:
-	case Block::minecraft_spruce_sapling:
-	case Block::minecraft_birch_sapling:
-	case Block::minecraft_jungle_sapling:
-	case Block::minecraft_acacia_sapling:
-	case Block::minecraft_dark_oak_sapling:
-	case Block::minecraft_grass:
-	case Block::minecraft_fern:
-	case Block::minecraft_dandelion:
-	case Block::minecraft_poppy:
-	case Block::minecraft_blue_orchid:
-	case Block::minecraft_allium:
-	case Block::minecraft_azure_bluet:
-	case Block::minecraft_red_tulip:
-	case Block::minecraft_orange_tulip:
-	case Block::minecraft_white_tulip:
-	case Block::minecraft_pink_tulip:
-	case Block::minecraft_oxeye_daisy:
-	case Block::minecraft_azalea:
-	case Block::minecraft_flowering_azalea:
-	case Block::minecraft_cornflower:
-	case Block::minecraft_lily_of_the_valley:
-	case Block::minecraft_wither_rose:
-		return true;
-	}
-	return false;
-}
-//replaceable by rightclicking on the block?
-bool replaceableDirect(Block id)
-{
-	switch (id)
-	{
-	case Block::minecraft_grass:
-	case Block::minecraft_fern:
-		return true;
-	}
-	return false;
-}
-//replaceable by clicking on a wall nearby and placing a block there?
-bool replaceableIndirect(Block id)
-{
-	switch (id)
-	{
-	case Block::minecraft_air:
-	case Block::minecraft_water:
-	case Block::minecraft_lava:
-	case Block::minecraft_grass:
-	case Block::minecraft_fern:
-		return true;
-	}
-	return false;
-}
-
 bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, BlockState& state, Position loc)
 {
 	//cannot right-click while crouching
@@ -3364,26 +3026,26 @@ bool rightClickBlock(Player* p, Block bid, int destX, int destY, int destZ, Bloc
 	}
 	return false;
 }*/
-inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, float curZ, float playerYaw, float playerPitch, BlockFace face, int currentBlockId, Item itemId)
+inline bool placeAux(BlockEventArgs &args)
 {
-	switch (itemId)
+	switch (args.heldItem)
 	{
 	case Item::minecraft_air:
 		return false;
 	case Item::minecraft_stone:
-		return Blocks::Stone::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Stone::place(args);
 	case Item::minecraft_granite:
-		return Blocks::Granite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Granite::place(args);
 	case Item::minecraft_polished_granite:
-		return Blocks::Polished_Granite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Polished_Granite::place(args);
 	case Item::minecraft_diorite:
-		return Blocks::Diorite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Diorite::place(args);
 	case Item::minecraft_polished_diorite:
-		return Blocks::Polished_Diorite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Polished_Diorite::place(args);
 	case Item::minecraft_andesite:
-		return Blocks::Andesite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Andesite::place(args);
 	case Item::minecraft_polished_andesite:
-		return Blocks::Polished_Andesite::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Polished_Andesite::place(args);
 	case Item::minecraft_deepslate:
 		break;
 	case Item::minecraft_cobbled_deepslate:
@@ -3397,13 +3059,13 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_dripstone_block:
 		break;
 	case Item::minecraft_grass_block:
-		return Blocks::Grass_Block::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Grass_Block::place(args);
 	case Item::minecraft_dirt:
-		return Blocks::Dirt::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Dirt::place(args);
 	case Item::minecraft_coarse_dirt:
-		return Blocks::Coarse_Dirt::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Coarse_Dirt::place(args);
 	case Item::minecraft_podzol:
-		return Blocks::Podzol::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Podzol::place(args);
 	case Item::minecraft_rooted_dirt:
 		break;
 	case Item::minecraft_crimson_nylium:
@@ -3411,19 +3073,19 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_warped_nylium:
 		break;
 	case Item::minecraft_cobblestone:
-		return Blocks::Cobblestone::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Cobblestone::place(args);
 	case Item::minecraft_oak_planks:
-		break;
+		return Blocks::Oak_Planks::place(args);
 	case Item::minecraft_spruce_planks:
-		break;
+		return Blocks::Spruce_Planks::place(args);
 	case Item::minecraft_birch_planks:
-		break;
+		return Blocks::Birch_Planks::place(args);
 	case Item::minecraft_jungle_planks:
-		break;
+		return Blocks::Jungle_Planks::place(args);
 	case Item::minecraft_acacia_planks:
-		break;
+		return Blocks::Acacia_Planks::place(args);
 	case Item::minecraft_dark_oak_planks:
-		break;
+		return Blocks::Dark_Oak_Planks::place(args);
 	case Item::minecraft_crimson_planks:
 		break;
 	case Item::minecraft_warped_planks:
@@ -3441,29 +3103,29 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_dark_oak_sapling:
 		break;
 	case Item::minecraft_bedrock:
-		return Blocks::Bedrock::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Bedrock::place(args);
 	case Item::minecraft_sand:
-		break;
+		return Blocks::Sand::place(args);
 	case Item::minecraft_red_sand:
-		break;
+		return Blocks::Red_Sand::place(args);
 	case Item::minecraft_gravel:
-		break;
+		return Blocks::Gravel::place(args);
 	case Item::minecraft_coal_ore:
-		break;
+		return Blocks::Coal_Ore::place(args);
 	case Item::minecraft_deepslate_coal_ore:
-		break;
+		return Blocks::Deepslate_Coal_Ore::place(args);
 	case Item::minecraft_iron_ore:
-		break;
+		return Blocks::Iron_Ore::place(args);
 	case Item::minecraft_deepslate_iron_ore:
-		break;
+		return Blocks::Deepslate_Iron_Ore::place(args);
 	case Item::minecraft_copper_ore:
 		break;
 	case Item::minecraft_deepslate_copper_ore:
 		break;
 	case Item::minecraft_gold_ore:
-		break;
+		return Blocks::Gold_Ore::place(args);
 	case Item::minecraft_deepslate_gold_ore:
-		break;
+		return Blocks::Deepslate_Gold_Ore::place(args);
 	case Item::minecraft_redstone_ore:
 		break;
 	case Item::minecraft_deepslate_redstone_ore:
@@ -3473,15 +3135,15 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_deepslate_emerald_ore:
 		break;
 	case Item::minecraft_lapis_ore:
-		break;
+		return Blocks::Lapis_Ore::place(args);
 	case Item::minecraft_deepslate_lapis_ore:
-		break;
+		return Blocks::Deepslate_Lapis_Ore::place(args);
 	case Item::minecraft_diamond_ore:
 		break;
 	case Item::minecraft_deepslate_diamond_ore:
 		break;
 	case Item::minecraft_nether_gold_ore:
-		break;
+		return Blocks::Nether_Gold_Ore::place(args);
 	case Item::minecraft_nether_quartz_ore:
 		break;
 	case Item::minecraft_ancient_debris:
@@ -3571,107 +3233,107 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_waxed_oxidized_cut_copper_slab:
 		break;
 	case Item::minecraft_oak_log:
-		return Blocks::Oak_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Oak_Log::place(args);
 	case Item::minecraft_spruce_log:
-		return Blocks::Spruce_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Spruce_Log::place(args);
 	case Item::minecraft_birch_log:
-		return Blocks::Birch_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Birch_Log::place(args);
 	case Item::minecraft_jungle_log:
-		break;
+		return Blocks::Jungle_Log::place(args);
 	case Item::minecraft_acacia_log:
-		break;
+		return Blocks::Acacia_Log::place(args);
 	case Item::minecraft_dark_oak_log:
-		break;
+		return Blocks::Dark_Oak_Log::place(args);
 	case Item::minecraft_crimson_stem:
 		break;
 	case Item::minecraft_warped_stem:
 		break;
 	case Item::minecraft_stripped_oak_log:
-		return Blocks::Stripped_Oak_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Stripped_Oak_Log::place(args);
 	case Item::minecraft_stripped_spruce_log:
-		return Blocks::Stripped_Spruce_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Stripped_Spruce_Log::place(args);
 	case Item::minecraft_stripped_birch_log:
-		return Blocks::Stripped_Birch_Log::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Stripped_Birch_Log::place(args);
 	case Item::minecraft_stripped_jungle_log:
-		break;
+		return Blocks::Stripped_Jungle_Log::place(args);
 	case Item::minecraft_stripped_acacia_log:
-		break;
+		return Blocks::Stripped_Acacia_Log::place(args);
 	case Item::minecraft_stripped_dark_oak_log:
-		break;
+		return Blocks::Stripped_Dark_Oak_Log::place(args);
 	case Item::minecraft_stripped_crimson_stem:
 		break;
 	case Item::minecraft_stripped_warped_stem:
 		break;
 	case Item::minecraft_stripped_oak_wood:
-		break;
+		return Blocks::Stripped_Oak_Wood::place(args);
 	case Item::minecraft_stripped_spruce_wood:
-		break;
+		return Blocks::Stripped_Spruce_Wood::place(args);
 	case Item::minecraft_stripped_birch_wood:
-		break;
+		return Blocks::Stripped_Birch_Wood::place(args);
 	case Item::minecraft_stripped_jungle_wood:
-		break;
+		return Blocks::Stripped_Jungle_Wood::place(args);
 	case Item::minecraft_stripped_acacia_wood:
-		break;
+		return Blocks::Stripped_Acacia_Wood::place(args);
 	case Item::minecraft_stripped_dark_oak_wood:
-		break;
+		return Blocks::Stripped_Dark_Oak_Wood::place(args);
 	case Item::minecraft_stripped_crimson_hyphae:
 		break;
 	case Item::minecraft_stripped_warped_hyphae:
 		break;
 	case Item::minecraft_oak_wood:
-		break;
+		return Blocks::Oak_Wood::place(args);
 	case Item::minecraft_spruce_wood:
-		break;
+		return Blocks::Spruce_Wood::place(args);
 	case Item::minecraft_birch_wood:
-		break;
+		return Blocks::Birch_Wood::place(args);
 	case Item::minecraft_jungle_wood:
-		break;
+		return Blocks::Jungle_Wood::place(args);
 	case Item::minecraft_acacia_wood:
-		break;
+		return Blocks::Acacia_Wood::place(args);
 	case Item::minecraft_dark_oak_wood:
-		break;
+		return Blocks::Dark_Oak_Wood::place(args);
 	case Item::minecraft_crimson_hyphae:
 		break;
 	case Item::minecraft_warped_hyphae:
 		break;
 	case Item::minecraft_oak_leaves:
-		return Blocks::Oak_Leaves::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Oak_Leaves::place(args);
 	case Item::minecraft_spruce_leaves:
-		return Blocks::Spruce_Leaves::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Spruce_Leaves::place(args);
 	case Item::minecraft_birch_leaves:
-		return Blocks::Birch_Leaves::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Birch_Leaves::place(args);
 	case Item::minecraft_jungle_leaves:
-		break;
+		return Blocks::Jungle_Leaves::place(args);
 	case Item::minecraft_acacia_leaves:
-		break;
+		return Blocks::Acacia_Leaves::place(args);
 	case Item::minecraft_dark_oak_leaves:
-		break;
+		return Blocks::Dark_Oak_Leaves::place(args);
 	case Item::minecraft_azalea_leaves:
-		break;
+		return Blocks::Azalea_Leaves::place(args);
 	case Item::minecraft_flowering_azalea_leaves:
-		break;
+		return Blocks::Flowering_Azalea_Leaves::place(args);
 	case Item::minecraft_sponge:
-		break;
+		return Blocks::Sponge::place(args);
 	case Item::minecraft_wet_sponge:
-		break;
+		return Blocks::Wet_Sponge::place(args);
 	case Item::minecraft_glass:
-		break;
+		return Blocks::Glass::place(args);
 	case Item::minecraft_tinted_glass:
 		break;
 	case Item::minecraft_lapis_block:
-		break;
+		return Blocks::Lapis_Block::place(args);
 	case Item::minecraft_sandstone:
-		break;
+		return Blocks::Sandstone::place(args);
 	case Item::minecraft_chiseled_sandstone:
-		break;
+		return Blocks::Chiseled_Sandstone::place(args);
 	case Item::minecraft_cut_sandstone:
-		break;
+		return Blocks::Cut_Sandstone::place(args);
 	case Item::minecraft_cobweb:
 		break;
 	case Item::minecraft_grass:
-		return Blocks::Grass::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Grass::place(args);
 	case Item::minecraft_fern:
-		return Blocks::Fern::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Fern::place(args);
 	case Item::minecraft_azalea:
 		break;
 	case Item::minecraft_flowering_azalea:
@@ -4561,7 +4223,7 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_hopper:
 		break;
 	case Item::minecraft_dispenser:
-		break;
+		return Blocks::Dispenser::place(args);
 	case Item::minecraft_dropper:
 		break;
 	case Item::minecraft_lectern:
@@ -4585,7 +4247,7 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_redstone_lamp:
 		break;
 	case Item::minecraft_note_block:
-		return Blocks::Note_Block::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Note_Block::place(args);
 	case Item::minecraft_stone_button:
 		break;
 	case Item::minecraft_polished_blackstone_button:
@@ -4923,9 +4585,9 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_bucket:
 		break;
 	case Item::minecraft_water_bucket:
-		return Blocks::Water::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Water::place(args);
 	case Item::minecraft_lava_bucket:
-		return Blocks::Lava::place(wld, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, currentBlockId);
+		return Blocks::Lava::place(args);
 	case Item::minecraft_powder_snow_bucket:
 		break;
 	case Item::minecraft_snowball:
@@ -5029,37 +4691,37 @@ inline bool placeAux(World* wld, int x, int y, int z, float curX, float curY, fl
 	case Item::minecraft_cake:
 		break;
 	case Item::minecraft_white_bed:
-		break;
+		return Blocks::White_Bed::place(args);
 	case Item::minecraft_orange_bed:
-		break;
+		return Blocks::Orange_Bed::place(args);
 	case Item::minecraft_magenta_bed:
-		break;
+		return Blocks::Magenta_Bed::place(args);
 	case Item::minecraft_light_blue_bed:
-		break;
+		return Blocks::Light_Blue_Bed::place(args);
 	case Item::minecraft_yellow_bed:
-		break;
+		return Blocks::Yellow_Bed::place(args);
 	case Item::minecraft_lime_bed:
-		break;
+		return Blocks::Lime_Bed::place(args);
 	case Item::minecraft_pink_bed:
-		break;
+		return Blocks::Pink_Bed::place(args);
 	case Item::minecraft_gray_bed:
-		break;
+		return Blocks::Gray_Bed::place(args);
 	case Item::minecraft_light_gray_bed:
-		break;
+		return Blocks::Light_Gray_Bed::place(args);
 	case Item::minecraft_cyan_bed:
-		break;
+		return Blocks::Cyan_Bed::place(args);
 	case Item::minecraft_purple_bed:
-		break;
+		return Blocks::Purple_Bed::place(args);
 	case Item::minecraft_blue_bed:
-		break;
+		return Blocks::Blue_Bed::place(args);
 	case Item::minecraft_brown_bed:
-		break;
+		return Blocks::Brown_Bed::place(args);
 	case Item::minecraft_green_bed:
-		break;
+		return Blocks::Green_Bed::place(args);
 	case Item::minecraft_red_bed:
-		break;
+		return Blocks::Red_Bed::place(args);
 	case Item::minecraft_black_bed:
-		break;
+		return Blocks::Black_Bed::place(args);
 	case Item::minecraft_cookie:
 		break;
 	case Item::minecraft_filled_map:
@@ -5595,6 +5257,13 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 		playerPitch = p->pitch;
 	Item itemId = (Item)(int)slot->getItemId();
 
+	if (playerPitch > 180)
+		playerPitch -= 360;
+
+	BlockEventArgs args(this, p,
+		x, y, z, curX, curY, curZ, playerYaw, playerPitch,
+		face, itemId, 0, nullptr);
+
 	if (!p->world->checkCoordinates(y))
 	{
 		//clicked block outside of world, maybe kick the player?
@@ -5602,40 +5271,43 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 		return;
 	}
 
-	int clickedBlockId = getBlock(x, y, z);
-	const BlockState* clickedBlock = BlockState::globalPalette[clickedBlockId];
+	args.currentBlockId = getBlock(x, y, z);
+	args.currentBlock = BlockState::globalPalette[args.currentBlockId];
 
-	if (clickedBlock->rightClick(this, x, y, z, itemId))
+	if (args.currentBlock->rightClick(args))
 		return; //should there be a block update?
-	if (placeAux(this, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, clickedBlockId, itemId))
+	if (placeAux(args))
 		return BlockState::updateAround(this, x, y, z);
 
 	switch (face)
 	{
 	case BlockFace::top:
-		y++;
+		args.y = ++y;
 		break;
 	case BlockFace::bottom:
-		y--;
+		args.y = --y;
 		break;
 	case BlockFace::east:
-		x++;
+		args.x = ++x;
 		break;
 	case BlockFace::west:
-		x--;
+		args.x = --x;
 		break;
 	case BlockFace::south:
-		z++;
+		args.z = ++z;
 		break;
 	case BlockFace::north:
-		z--;
+		args.z = --z;
 		break;
 	}
-	//obtain block at the new position
-	clickedBlockId = getBlock(x, y, z);
-	clickedBlock = BlockState::globalPalette[clickedBlockId];
+	if (!p->world->checkCoordinates(y))
+		return;
 
-	if (placeAux(this, x, y, z, curX, curY, curZ, playerYaw, playerPitch, face, clickedBlockId, itemId))
+	//obtain block at the new position
+	args.currentBlockId = getBlock(x, y, z);
+	args.currentBlock = BlockState::globalPalette[args.currentBlockId];
+
+	if (placeAux(args))
 		return BlockState::updateAround(this, x, y, z);
 	message::play::send::chatMessage(p, Chat("Debug: setBlockByItem: no block placed", Chat::color::red()), ChatMessage::systemMessage, mcUUID(0, 0, 0, 0));
 
@@ -5660,282 +5332,6 @@ SERVER_API void World::setBlockByItem(Player* p, Slot* slot, Position loc, Block
 			return;
 			}
 
-			//blocks with no states dependent on placement
-			{
-		case Item::minecraft_stone:
-		case Item::minecraft_granite:
-		case Item::minecraft_polished_granite:
-		case Item::minecraft_diorite:
-		case Item::minecraft_polished_diorite:
-		case Item::minecraft_andesite:
-		case Item::minecraft_polished_andesite:
-		case Item::minecraft_cobbled_deepslate:
-		case Item::minecraft_polished_deepslate:
-		case Item::minecraft_calcite:
-		case Item::minecraft_tuff:
-		case Item::minecraft_dripstone_block:
-		case Item::minecraft_dirt:
-		case Item::minecraft_coarse_dirt:
-		case Item::minecraft_rooted_dirt:
-		case Item::minecraft_crimson_nylium:
-		case Item::minecraft_warped_nylium:
-		case Item::minecraft_cobblestone:
-		case Item::minecraft_oak_planks:
-		case Item::minecraft_spruce_planks:
-		case Item::minecraft_birch_planks:
-		case Item::minecraft_jungle_planks:
-		case Item::minecraft_acacia_planks:
-		case Item::minecraft_dark_oak_planks:
-		case Item::minecraft_crimson_planks:
-		case Item::minecraft_warped_planks:
-		case Item::minecraft_bedrock:
-		case Item::minecraft_sand:
-		case Item::minecraft_red_sand:
-		case Item::minecraft_gravel:
-		case Item::minecraft_coal_ore:
-		case Item::minecraft_deepslate_coal_ore:
-		case Item::minecraft_iron_ore:
-		case Item::minecraft_deepslate_iron_ore:
-		case Item::minecraft_copper_ore:
-		case Item::minecraft_deepslate_copper_ore:
-		case Item::minecraft_gold_ore:
-		case Item::minecraft_deepslate_gold_ore:
-		case Item::minecraft_redstone_ore:
-		case Item::minecraft_deepslate_redstone_ore:
-		case Item::minecraft_emerald_ore:
-		case Item::minecraft_deepslate_emerald_ore:
-		case Item::minecraft_lapis_ore:
-		case Item::minecraft_deepslate_lapis_ore:
-		case Item::minecraft_diamond_ore:
-		case Item::minecraft_deepslate_diamond_ore:
-		case Item::minecraft_nether_gold_ore:
-		case Item::minecraft_nether_quartz_ore:
-		case Item::minecraft_ancient_debris:
-		case Item::minecraft_coal_block:
-		case Item::minecraft_raw_iron_block:
-		case Item::minecraft_raw_copper_block:
-		case Item::minecraft_raw_gold_block:
-		case Item::minecraft_amethyst_block:
-		case Item::minecraft_budding_amethyst:
-		case Item::minecraft_iron_block:
-		case Item::minecraft_copper_block:
-		case Item::minecraft_gold_block:
-		case Item::minecraft_diamond_block:
-		case Item::minecraft_netherite_block:
-		case Item::minecraft_exposed_copper:
-		case Item::minecraft_weathered_copper:
-		case Item::minecraft_oxidized_copper:
-		case Item::minecraft_cut_copper:
-		case Item::minecraft_exposed_cut_copper:
-		case Item::minecraft_weathered_cut_copper:
-		case Item::minecraft_oxidized_cut_copper:
-		case Item::minecraft_waxed_copper_block:
-		case Item::minecraft_waxed_exposed_copper:
-		case Item::minecraft_waxed_weathered_copper:
-		case Item::minecraft_waxed_oxidized_copper:
-		case Item::minecraft_waxed_cut_copper:
-		case Item::minecraft_waxed_exposed_cut_copper:
-		case Item::minecraft_waxed_weathered_cut_copper:
-		case Item::minecraft_waxed_oxidized_cut_copper:
-		case Item::minecraft_white_wool:
-		case Item::minecraft_orange_wool:
-		case Item::minecraft_magenta_wool:
-		case Item::minecraft_light_blue_wool:
-		case Item::minecraft_yellow_wool:
-		case Item::minecraft_lime_wool:
-		case Item::minecraft_pink_wool:
-		case Item::minecraft_gray_wool:
-		case Item::minecraft_light_gray_wool:
-		case Item::minecraft_cyan_wool:
-		case Item::minecraft_purple_wool:
-		case Item::minecraft_blue_wool:
-		case Item::minecraft_brown_wool:
-		case Item::minecraft_green_wool:
-		case Item::minecraft_red_wool:
-		case Item::minecraft_black_wool:
-		case Item::minecraft_sponge:
-		case Item::minecraft_wet_sponge:
-		case Item::minecraft_glass:
-		case Item::minecraft_tinted_glass:
-		case Item::minecraft_lapis_block:
-		case Item::minecraft_sandstone:
-		case Item::minecraft_chiseled_sandstone:
-		case Item::minecraft_cut_sandstone:
-		case Item::minecraft_cobweb:
-		case Item::minecraft_smooth_quartz:
-		case Item::minecraft_smooth_red_sandstone:
-		case Item::minecraft_smooth_sandstone:
-		case Item::minecraft_smooth_stone:
-		case Item::minecraft_bricks:
-		case Item::minecraft_bookshelf:
-		case Item::minecraft_mossy_cobblestone:
-		case Item::minecraft_obsidian:
-		case Item::minecraft_purpur_block:
-		case Item::minecraft_glowstone:
-		case Item::minecraft_infested_stone:
-		case Item::minecraft_infested_cobblestone:
-		case Item::minecraft_infested_stone_bricks:
-		case Item::minecraft_infested_mossy_stone_bricks:
-		case Item::minecraft_infested_cracked_stone_bricks:
-		case Item::minecraft_infested_chiseled_stone_bricks:
-		case Item::minecraft_infested_deepslate:
-		case Item::minecraft_stone_bricks:
-		case Item::minecraft_mossy_stone_bricks:
-		case Item::minecraft_cracked_stone_bricks:
-		case Item::minecraft_chiseled_stone_bricks:
-		case Item::minecraft_deepslate_bricks:
-		case Item::minecraft_cracked_deepslate_bricks:
-		case Item::minecraft_deepslate_tiles:
-		case Item::minecraft_cracked_deepslate_tiles:
-		case Item::minecraft_chiseled_deepslate:
-		case Item::minecraft_crafting_table:
-		case Item::minecraft_snow_block:
-		case Item::minecraft_ice:
-		case Item::minecraft_clay:
-		case Item::minecraft_jukebox:
-		case Item::minecraft_netherrack:
-		case Item::minecraft_soul_sand:
-		case Item::minecraft_soul_soil:
-		case Item::minecraft_pumpkin:
-		case Item::minecraft_smooth_basalt:
-		case Item::minecraft_melon:
-		case Item::minecraft_nether_bricks:
-		case Item::minecraft_cracked_nether_bricks:
-		case Item::minecraft_chiseled_nether_bricks:
-		case Item::minecraft_emerald_block:
-		case Item::minecraft_white_terracotta:
-		case Item::minecraft_orange_terracotta:
-		case Item::minecraft_magenta_terracotta:
-		case Item::minecraft_light_blue_terracotta:
-		case Item::minecraft_yellow_terracotta:
-		case Item::minecraft_lime_terracotta:
-		case Item::minecraft_pink_terracotta:
-		case Item::minecraft_gray_terracotta:
-		case Item::minecraft_light_gray_terracotta:
-		case Item::minecraft_cyan_terracotta:
-		case Item::minecraft_purple_terracotta:
-		case Item::minecraft_blue_terracotta:
-		case Item::minecraft_brown_terracotta:
-		case Item::minecraft_green_terracotta:
-		case Item::minecraft_red_terracotta:
-		case Item::minecraft_black_terracotta:
-		case Item::minecraft_barrier:
-		case Item::minecraft_white_stained_glass:
-		case Item::minecraft_orange_stained_glass:
-		case Item::minecraft_magenta_stained_glass:
-		case Item::minecraft_light_blue_stained_glass:
-		case Item::minecraft_yellow_stained_glass:
-		case Item::minecraft_lime_stained_glass:
-		case Item::minecraft_pink_stained_glass:
-		case Item::minecraft_gray_stained_glass:
-		case Item::minecraft_light_gray_stained_glass:
-		case Item::minecraft_cyan_stained_glass:
-		case Item::minecraft_purple_stained_glass:
-		case Item::minecraft_blue_stained_glass:
-		case Item::minecraft_brown_stained_glass:
-		case Item::minecraft_green_stained_glass:
-		case Item::minecraft_red_stained_glass:
-		case Item::minecraft_black_stained_glass:
-		case Item::minecraft_terracotta:
-		case Item::minecraft_packed_ice:
-		case Item::minecraft_end_stone:
-		case Item::minecraft_end_stone_bricks:
-		case Item::minecraft_chiseled_quartz_block:
-		case Item::minecraft_quartz_block:
-		case Item::minecraft_quartz_bricks:
-		case Item::minecraft_white_concrete:
-		case Item::minecraft_orange_concrete:
-		case Item::minecraft_magenta_concrete:
-		case Item::minecraft_light_blue_concrete:
-		case Item::minecraft_yellow_concrete:
-		case Item::minecraft_lime_concrete:
-		case Item::minecraft_pink_concrete:
-		case Item::minecraft_gray_concrete:
-		case Item::minecraft_light_gray_concrete:
-		case Item::minecraft_cyan_concrete:
-		case Item::minecraft_purple_concrete:
-		case Item::minecraft_blue_concrete:
-		case Item::minecraft_brown_concrete:
-		case Item::minecraft_green_concrete:
-		case Item::minecraft_red_concrete:
-		case Item::minecraft_black_concrete:
-		case Item::minecraft_white_concrete_powder:
-		case Item::minecraft_orange_concrete_powder:
-		case Item::minecraft_magenta_concrete_powder:
-		case Item::minecraft_light_blue_concrete_powder:
-		case Item::minecraft_yellow_concrete_powder:
-		case Item::minecraft_lime_concrete_powder:
-		case Item::minecraft_pink_concrete_powder:
-		case Item::minecraft_gray_concrete_powder:
-		case Item::minecraft_light_gray_concrete_powder:
-		case Item::minecraft_cyan_concrete_powder:
-		case Item::minecraft_purple_concrete_powder:
-		case Item::minecraft_blue_concrete_powder:
-		case Item::minecraft_brown_concrete_powder:
-		case Item::minecraft_green_concrete_powder:
-		case Item::minecraft_red_concrete_powder:
-		case Item::minecraft_black_concrete_powder:
-		case Item::minecraft_prismarine:
-		case Item::minecraft_prismarine_bricks:
-		case Item::minecraft_dark_prismarine:
-		case Item::minecraft_sea_lantern:
-		case Item::minecraft_red_sandstone:
-		case Item::minecraft_chiseled_red_sandstone:
-		case Item::minecraft_cut_red_sandstone:
-		case Item::minecraft_magma_block:
-		case Item::minecraft_nether_wart_block:
-		case Item::minecraft_warped_wart_block:
-		case Item::minecraft_red_nether_bricks:
-		case Item::minecraft_dead_tube_coral_block:
-		case Item::minecraft_dead_brain_coral_block:
-		case Item::minecraft_dead_bubble_coral_block:
-		case Item::minecraft_dead_fire_coral_block:
-		case Item::minecraft_dead_horn_coral_block:
-		case Item::minecraft_tube_coral_block:
-		case Item::minecraft_brain_coral_block:
-		case Item::minecraft_bubble_coral_block:
-		case Item::minecraft_fire_coral_block:
-		case Item::minecraft_horn_coral_block:
-		case Item::minecraft_blue_ice:
-		case Item::minecraft_redstone_block:
-		case Item::minecraft_slime_block:
-		case Item::minecraft_honey_block:
-		case Item::minecraft_target:
-		case Item::minecraft_tnt:
-		case Item::minecraft_dried_kelp_block:
-		case Item::minecraft_moss_block:
-		case Item::minecraft_enchanting_table:
-		case Item::minecraft_shroomlight:
-		case Item::minecraft_honeycomb_block:
-		case Item::minecraft_lodestone:
-		case Item::minecraft_crying_obsidian:
-		case Item::minecraft_blackstone:
-		case Item::minecraft_gilded_blackstone:
-		case Item::minecraft_polished_blackstone:
-		case Item::minecraft_chiseled_polished_blackstone:
-		case Item::minecraft_polished_blackstone_bricks:
-		case Item::minecraft_cracked_polished_blackstone_bricks:
-		case Item::minecraft_cartography_table:
-		case Item::minecraft_fletching_table:
-		case Item::minecraft_smithing_table:
-		case Item::minecraft_cauldron:
-			if (replaceableDirect(targetBlockId))
-			{
-				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
-				break;
-			}
-			modifyXYZbyFace(face, destX, destY, destZ);
-			if (!p->world->checkCoordinates(destY))
-				return;
-
-			BlockState oldBlockState = getBlock(destX, destY, destZ);
-			std::string oldBlockName = Registry::getBlock(oldBlockState.id);
-			Block oldBlockId = (Block)Registry::getId(Registry::blockRegistry, oldBlockName);
-
-			if (replaceableIndirect(oldBlockId))
-				stateJson = &Registry::getBlockState(Registry::getName(Registry::itemRegistry, itemId));
-			break;
-			}
 
 			//blocks that need to be placed on dirt
 			{

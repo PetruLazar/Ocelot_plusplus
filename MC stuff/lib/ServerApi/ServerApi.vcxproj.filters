@@ -342,6 +342,21 @@
     <ClInclude Include="world\blocks\properties\powered.h">
       <Filter>Header Files\world\blocks\properties</Filter>
     </ClInclude>
+    <ClInclude Include="world\blocks\properties\facing.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\bed.h">
+      <Filter>Header Files\world\blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\part.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\occupied.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="world\blocks\properties\triggered.h">
+      <Filter>Header Files\world\blocks\properties</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

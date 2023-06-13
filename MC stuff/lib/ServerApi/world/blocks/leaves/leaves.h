@@ -19,7 +19,7 @@ namespace Blocks
 	class Leaves : public DistanceProperty, public LeafPersistentProperty
 	{
 	protected:
-		static bool placeLeaf(DECL_BLOCKPLACE_ARGS, int base_id)
+		static bool placeLeaf(BlockEventArgs &args, int base_id)
 		{
 			return false;
 		}
@@ -58,6 +58,56 @@ namespace Blocks
 
 	public:
 		Birch_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
+
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+	};
+	class Jungle_Leaves : public Leaves
+	{
+		static constexpr int base_id = 190;
+
+	public:
+		Jungle_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
+
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+	};
+	class Acacia_Leaves : public Leaves
+	{
+		static constexpr int base_id = 204;
+
+	public:
+		Acacia_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
+
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+	};
+	class Dark_Oak_Leaves : public Leaves
+	{
+		static constexpr int base_id = 218;
+
+	public:
+		Dark_Oak_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
+
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+	};
+	class Azalea_Leaves : public Leaves
+	{
+		static constexpr int base_id = 232;
+
+	public:
+		Azalea_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
+
+		INHERIT_BLOCKPLACE(placeLeaf)
+			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }
+	};
+	class Flowering_Azalea_Leaves : public Leaves
+	{
+		static constexpr int base_id = 246;
+
+	public:
+		Flowering_Azalea_Leaves(Byte distance, bool persistent) : Leaves(distance, persistent) {}
 
 		INHERIT_BLOCKPLACE(placeLeaf)
 			static int getId(Byte distance, bool persistent) { return base_id + (distance - 1) * 2 + !persistent; }

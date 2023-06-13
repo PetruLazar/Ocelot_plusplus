@@ -54,6 +54,8 @@ public:
 
 	//get a copy of the block state at the desired coordinates to use with setBlock
 	int getBlock(int relX, int relY, int relZ) { return sections[relY >> 4].getBlock(relX, relY & 0xf, relZ); }
+	SERVER_API nbt_compound* getNbt(int relX, int relY, int relZ);
+	int getBlockEntityIndex(int relX, int relY, int relZ);
 	SERVER_API bool setBlock(int relX, int relY, int relZ, int blockid, nbt_compound* nbt_data = nullptr);
 	Byte getSkyLight(int relX, int relY, int relZ) { return lightSections[((ull)relY >> 4) + 1].getSkyLight(relX, relY & 0xf, relZ); }
 	SERVER_API void setSkyLight(int relX, int relY, int relZ, Byte value);

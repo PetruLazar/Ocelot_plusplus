@@ -14,7 +14,7 @@ namespace Blocks
 		virtual void free() const override { delete this; }
 
 	protected:
-		static bool placeHerb(DECL_BLOCKPLACE_ARGS, int base_id);
+		static bool placeHerb(BlockEventArgs &args, int base_id);
 	};
 
 	class Grass : public Herb

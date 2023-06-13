@@ -11,11 +11,11 @@ namespace Blocks
 
 		virtual bool replaceable() const override { return true; }
 		virtual bool isLiquid() const override { return true; }
-		virtual Transparency getTransparency(BlockFace) const override { Transparency::partial; }
+		virtual Transparency getTransparency(BlockFace) const override { return Transparency::partial; }
 		virtual void free() const override { delete this; }
 
 	protected:
-		static bool placeLiquid(DECL_BLOCKPLACE_ARGS, int base_id);
+		static bool placeLiquid(BlockEventArgs &args, int base_id);
 	};
 
 	class Water : public Liquid

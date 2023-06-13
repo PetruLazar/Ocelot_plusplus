@@ -128,6 +128,46 @@ public:
 	SERVER_API static const Byte currentBiomeBitsPerEntry;
 	static constexpr int currentWorldVersion = 0;
 
+	class Biome
+	{
+	public:
+		enum class Precipitation
+		{
+			rain,
+			snow,
+			none
+		};
+		enum class Category
+		{
+			ocean,
+			plains,
+			desert,
+			forest,
+			extreme_hills,
+			taiga,
+			swamp,
+			river,
+			nether,
+			the_end,
+			icy,
+			mushroom,
+			beach,
+			jungle,
+			mesa,
+			savana,
+			none
+		};
+		class Color
+		{
+		public:
+			int value;
+
+			Color(int val) : value(val) {}
+			Color(Byte red, Byte green, Byte blue) : value(red << 16 | green << 8 | blue) {}
+		};
+
+		SERVER_API static nbt_compound* getNbt(int id, const std::string& name, Precipitation prec, float depth, float temperature, float scale, float downfall, Category category, Color skyColor, Color waterFogColor, Color fogColor, Color waterColor, Color foliageColor, Color grassColor);
+	};
 	SERVER_API static bool loadAll();
 	SERVER_API static void unloadAll();
 
