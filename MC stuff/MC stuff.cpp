@@ -100,10 +100,11 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	Log::info() << "Loading worlds..." << Log::flush;
 	if (!World::loadAll())
 	{
-		Log::error() << "Error: Spawn world \"" << Options::mainWorldName() << "\" not found." << Log::flush;
+		Log::error() << "Error: Spawn world \"" << Options::mainWorldName() << "\" not loaded." << Log::flush;
 		Log::warn() << "Shutting down..." << Log::flush;
 		World::unloadAll();
 		Registry::unloadRegistriesAndPalette();
+		system("pause");
 		Server::FreeConsole();
 		return 0;
 	}

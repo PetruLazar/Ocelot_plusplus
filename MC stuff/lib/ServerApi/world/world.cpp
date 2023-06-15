@@ -1235,18 +1235,40 @@ bool World::loadAll()
 		futures.emplace_back(Server::threadPool.enqueue([name]
 		{
 			Log::Bench(name);
-			World* zaWarudo = new World(name.c_str());
+			World *zaWarudo;
+			try
+			{
+				zaWarudo = new World(name.c_str());
+
 			loader.lock();
 			Log::info() << "thread-" << std::this_thread::get_id() << " loaded \"" << name << "\" " << Log::Bench(name) << Log::endl;
 			loader.unlock();
+			}
+			catch (mcException &e)
+			{
+				zaWarudo = nullptr;
+
+				loader.lock();
+				Log::error() << e.what() << Log::endl;
+				Log::info() << "thread-" << std::this_thread::get_id() << " failed to load \"" << name << "\" " << Log::Bench(name) << Log::endl;
+				loader.unlock();
+			}
 			return zaWarudo;
 		}));
 	}
 
+	ull worldCount = 0;
 	for (auto&& fut : futures)
-		worlds.emplace_front(fut.get());
+	{
+		World *wld = fut.get();
+		if (wld)
+		{
+			worlds.emplace_front(wld);
+			worldCount++;
+		}
+	}
 
-	Log::info() << "Finished loading " << futures.size() << " worlds! " << Log::Bench("worlds") << Log::flush;
+	Log::info() << "Successfully loaded " << worldCount << " worlds! " << Log::Bench("worlds") << Log::flush;
 	worldList.close();
 
 	spawnWorld = getWorld(Options::mainWorldName());
