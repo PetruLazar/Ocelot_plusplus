@@ -1,32 +1,30 @@
 #pragma once
-#include <filesystem>
-#include <fstream>
 #include "types/varData.h"
+#include "regionFiles.h"
 
-using namespace std;
-using namespace std::filesystem;
-
-void convertWorldHeader(const path& filename)
+namespace Archive
 {
-	//write a varInt(0) at the beginning of the file
-	//string filename = "worlds\\" + name + "\\characteristics.bin";
-	fstream worldMain(filename, ios::binary | ios::in | ios::ate);
-	if (!worldMain.is_open())
-		throw 0;
-	ull filesize = worldMain.tellg();
-	worldMain.seekg(0);
-	char* filedata = new char[filesize];
-	worldMain.read(filedata, filesize);
-	worldMain.close();
 
-	worldMain.open(filename, ios::binary | ios::out);
-	if (!worldMain.is_open())
-	{
-		delete[] filedata;
-		throw 0;
-	}
-	varInt(0).write(worldMain);
-	worldMain.write(filedata, filesize);
-	delete[] filedata;
-	worldMain.close();
+}
+
+void convertWorld0to1(const path& wldPath)
+{
+	ifstream wld(wldPath / "characteristics.bin", ios::binary);
+	if (!wld.is_open())
+		throw "Could not open main world file";
+	varInt version;
+	version.read(wld);
+	if (version != 0)
+		throw "Invalid version";
+	if (!nbt::checkTag(wld))
+		throw "World's main file has invalid format";
+	nbt_compound characteristics;
+	characteristics.read(wld);
+	wld.close();
+
+	convertRegions0to1(wldPath, characteristics["height"].vInt());
+	
+	fstream nWld(wldPath / "characteristics.bin", ios::binary | ios::in | ios::out);
+	varInt(1).write(nWld); // since converting from 0 to 1, only that byte changes
+	nWld.close();
 }
