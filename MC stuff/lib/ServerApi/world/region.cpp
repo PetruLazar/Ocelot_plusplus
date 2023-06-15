@@ -185,7 +185,13 @@ void Region::save(int relX, int relZ, bool autoFlush)
 	{
 		//leave chunk uncompressed
 		buffer.write("", 1); // 0 for uncompressed
+		uint chunkSize = 0;
+		buffer.write((char*)&chunkSize, sizeof(chunkSize)); //place-holder for chunk data size
+		std::streampos start = buffer.tellp();
 		chunks[relX][relZ]->write(buffer); //write the chunk to the buffer
+		chunkSize = (uint)(buffer.tellp() - start);
+		buffer.seekp(1); //go back to chunk data size and write it
+		buffer.write((char*)&chunkSize, sizeof(chunkSize));
 		std::string bufferContents = buffer.str();
 
 		//get data address and length
@@ -288,6 +294,8 @@ Chunk* Region::load(World* parent, int relX, int relZ)
 	//not compressed
 	//read chunk from buffer;
 	Chunk* ch = new Chunk(parent->height);
+	uint chunkSize;
+	regionFile.read((char*)&chunkSize, sizeof(chunkSize)); //ignore chunk data size
 	ch->read(regionFile);
 	return ch;
 }

@@ -179,7 +179,7 @@ public:
 	//access on right click
 	//access on tick
 	//access on block break
-	//SERVER_API BlockEntity();
+	inline BlockEntity() {}
 	SERVER_API BlockEntity(Byte packedXZ, bshort y, varInt type, nbt_compound* tags);
 	SERVER_API ~BlockEntity();
 
@@ -187,5 +187,5 @@ public:
 	SERVER_API void write(char*& buffer);
 
 	SERVER_API void read(std::istream &is);
-	SERVER_API void write(std::ofstream &os);
+	SERVER_API void write(std::ostream &os);
 };

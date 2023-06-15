@@ -49,7 +49,7 @@ Chunk::~Chunk()
 }
 
 //reading a chunk that already contains data causes a memory leak!
-void Chunk::read(std::istream& file)
+void Chunk::read(istream& file)
 {
 	//chunk data
 
@@ -122,7 +122,20 @@ void Chunk::read(std::istream& file)
 	}
 
 	//read block entities
-
+	uint blockEntityCount;
+	file.read((char*)&blockEntityCount, sizeof(blockEntityCount));
+	blockEntities.resize(blockEntityCount);
+	for (auto& entity : blockEntities)
+	{
+		entity = new BlockEntity();
+		entity->read(file);
+	}
+	
+	//read entities - reserved for now, must be none
+	uint entityCount;
+	file.read((char*)&entityCount, sizeof(entityCount));
+	if (entityCount)
+		Log::warn() << "Found chunk with a non-zero entity count" << Log::flush;
 }
 void Chunk::write(ostream& file)
 {
@@ -166,14 +179,17 @@ void Chunk::write(ostream& file)
 		}
 	}
 
-	return;
 	//write block entities
 	uint blockEntityCount = blockEntities.size();
-	file.write((char*)&blockEntityCount, 4);
+	file.write((char*)&blockEntityCount, sizeof(blockEntityCount));
 	for (auto entity : blockEntities)
 	{
-		//
+		entity->write(file);
 	}
+	
+	//write entities - reserved for now, must be none
+	uint entityCount = 0;
+	file.write((char*)&entityCount, sizeof(entityCount));
 }
 
 nbt_compound* Chunk::getNbt(int relX, int relY, int relZ)

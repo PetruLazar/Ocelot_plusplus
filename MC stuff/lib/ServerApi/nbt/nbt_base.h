@@ -95,7 +95,7 @@ public:
 	SERVER_API virtual void changeType(tag);
 
 	//check if an nbt file has the specified nbt tag
-	SERVER_API static bool checkTag(std::fstream&, tag = tag::Compound);
+	SERVER_API static bool checkTag(std::istream&, tag = tag::Compound);
 	//check if an nbt in memory contains the specified tag
 	SERVER_API static bool checkTag(char*&, tag = tag::Compound);
 	//allocate a pointer of the specified type

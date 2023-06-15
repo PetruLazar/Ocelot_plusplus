@@ -2079,7 +2079,6 @@ void BlockState::operator=(const BlockState& that)
 
 //PaletteEntry::PaletteEntry(int blockid, short refCount) : blockid(blockid), referenceCount(refCount) {}
 
-//BlockEntity::BlockEntity() {}
 BlockEntity::BlockEntity(Byte packedXZ, bshort y, varInt type, nbt_compound* tags) : packedXZ(packedXZ), y(y), type(type), tags(tags) {}
 BlockEntity::~BlockEntity()
 {
@@ -2101,13 +2100,17 @@ void BlockEntity::write(char*& buffer)
 }
 void BlockEntity::read(std::istream& is)
 {
-	//read first 3 fields:
+	//read first 3 fields: 1 + 1 padding + 2 + 4 bytes, then the nbt
 	is.read((char*)this, 8);
+	tags = new nbt_compound();
+	if (nbt::checkTag(is))
+		tags->read(is);
 }
-void BlockEntity::write(std::ofstream& os)
+void BlockEntity::write(std::ostream& os)
 {
 	//write first 3 fields: 1 + 1 padding + 2 + 4 bytes, then the nbt
 	os.write((char*)this, 8);
+	tags->write(os);
 }
 void BlockState::updateAround(World* wld, int x, int y, int z)
 {

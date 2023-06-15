@@ -126,7 +126,7 @@ public:
 	//static members
 	SERVER_API static nbt_compound dimension_codec;
 	SERVER_API static const Byte currentBiomeBitsPerEntry;
-	static constexpr int currentWorldVersion = 0;
+	static constexpr int currentWorldVersion = 1;
 
 	class Biome
 	{

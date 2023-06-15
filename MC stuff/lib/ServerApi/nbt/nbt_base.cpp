@@ -67,7 +67,7 @@ nbt* nbt::getTagP(tag t)
 	}
 	return nullptr;
 }*/
-bool nbt::checkTag(std::fstream& is, tag t)
+bool nbt::checkTag(std::istream& is, tag t)
 {
 	tag ft = tag::End;
 	is.read((char*)&ft, sizeof(ft));

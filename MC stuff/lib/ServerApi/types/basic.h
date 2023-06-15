@@ -5,7 +5,7 @@
 #include "../../zlib/include/zlib.h"
 #include <ctime>
 
-const int protocolVersionCurrent = 756; // 1.17.1
+const int protocolVersionCurrent = 756; // 1.18.2
 #define ignoreExceptions(x) try {x;} catch (...){}
 
 extern SERVER_API clock_t cycleTime;
